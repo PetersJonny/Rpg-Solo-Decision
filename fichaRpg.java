@@ -6,13 +6,17 @@ public class fichaRpg {
 	
 		String mago = "mago";
 		int vidaMago = 10;
+		int manaMago = 8;
 
 		String guerreiro = "guerreiro";
 		int vidaGuerreiro = 20;
+		int manaGuerreiro = 2;
 
 		String healer = "healer";
 		int vidaHealer = 14;
+		int manaHealer = 5;
 
+		int manaPersonagem = 0;
 		int vidaPersonagem = 0;
 
 		String classeEscolhida = "";
@@ -33,14 +37,17 @@ public class fichaRpg {
 				case 1:
 					classeEscolhida = mago;
 					vidaPersonagem = vidaMago;
+					manaPersonagem = manaMago;
 					break;
 				case 2:
 					classeEscolhida = guerreiro;
 					vidaPersonagem = vidaGuerreiro;
+					manaPersonagem = manaGuerreiro;
 					break;
 				case 3: 
 					classeEscolhida = healer;
 					vidaPersonagem = vidaHealer;
+					manaPersonagem = manaHealer;
 					break;
 				default:
 					System.out.println("Escolha entre 1, 2 ou 3.");
@@ -49,6 +56,6 @@ public class fichaRpg {
 		
 		}
 
-		System.out.println("\n --------FICHA-------- \n\nNome: " + nomePersonagem + "\t\tDono da ficha: " + nomePessoa + "\t\tClasse: " + classeEscolhida + "\nVida: " + vidaPersonagem + "\n----------------------");
+		System.out.println("\n --------FICHA-------- \n\nNome: " + nomePersonagem + "\t\tDono da ficha: " + nomePessoa + "\t\tClasse: " + classeEscolhida + "\nVida: " + vidaPersonagem + "\t\tMana: " + manaPersonagem + "\n----------------------");
 	}
 }
