@@ -15,7 +15,7 @@ public class fichaRpg {
 		System.out.println("Escolha o nome do seu personagem:");
 		String nomePersonagem = scn.nextLine();
 		
-		System.out.println("Escolha o nome de quem é a ficha:");
+		System.out.println("\nEscolha o nome de quem é a ficha:");
 		String nomePessoa = scn.nextLine();
 
 		while(classe < 1 || classe > 3) {
