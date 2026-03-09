@@ -5,9 +5,16 @@ public class fichaRpg {
 		Scanner scn = new Scanner (System.in);
 	
 		String mago = "mago";
+		int vidaMago = 10;
+
 		String guerreiro = "guerreiro";
+		int vidaGuerreiro = 20;
+
 		String healer = "healer";
-	
+		int vidaHealer = 14;
+
+		int vidaPersonagem = 0;
+
 		String classeEscolhida = "";
 		
 		int classe = 0;
@@ -25,12 +32,15 @@ public class fichaRpg {
 			switch(classe) {
 				case 1:
 					classeEscolhida = mago;
+					vidaPersonagem = vidaMago;
 					break;
 				case 2:
 					classeEscolhida = guerreiro;
+					vidaPersonagem = vidaGuerreiro;
 					break;
 				case 3: 
 					classeEscolhida = healer;
+					vidaPersonagem = vidaHealer;
 					break;
 				default:
 					System.out.println("Escolha entre 1, 2 ou 3.");
@@ -39,7 +49,6 @@ public class fichaRpg {
 		
 		}
 
-		System.out.println("\n --------FICHA-------- \n\nNome: " + nomePersonagem + "\t\tDono da ficha: " + nomePessoa + "\t\tClasse: " + classeEscolhida + "\n----------------------");
-
+		System.out.println("\n --------FICHA-------- \n\nNome: " + nomePersonagem + "\t\tDono da ficha: " + nomePessoa + "\t\tClasse: " + classeEscolhida + "\nVida: " + vidaPersonagem + "\n----------------------");
 	}
 }
