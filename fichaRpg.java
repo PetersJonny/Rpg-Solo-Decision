@@ -3,26 +3,29 @@ import java.util.Scanner;
 public class fichaRpg {
 	public static void main (String[] args) {
 		Scanner scn = new Scanner (System.in);
-	
+		
+		// declaração das classes do jogo
 		String mago = "mago";
-		int vidaMago = 10;
-		int manaMago = 8;
-
 		String guerreiro = "guerreiro";
-		int vidaGuerreiro = 20;
-		int manaGuerreiro = 2;
-
 		String healer = "healer";
-		int vidaHealer = 14;
-		int manaHealer = 5;
 
+		// vida e mana do personagem
 		int manaPersonagem = 0;
 		int vidaPersonagem = 0;
 
+		// variáveis sobre a classe
 		String classeEscolhida = "";
-		
 		int classe = 0;
 
+		// atributos
+		int constituicao = 0;
+		int destreza = 0;
+		int forca = 0;
+		int sabedoria = 0;
+		int intelecto = 0;
+		int presenca = 0;	
+
+		// interface de escolhas
 		System.out.println("Escolha o nome do seu personagem:");
 		String nomePersonagem = scn.nextLine();
 		
@@ -33,21 +36,31 @@ public class fichaRpg {
 			System.out.println("\n Escolha entre uma das 3 classes abaixo: \n 1.Mago (só pode usar cajado, conjura magias poderosas, porém é mais fragil). \n 2.Guerreiro (só pode usar espada e atacar corpo a corpo, porém é mais resistente). \n 3.Healer (tem poderes de cura, pode curar a si mesmo e aos outros, tem uma vida mediana).");
 			classe = scn.nextInt();
 
+			// definição de valores para escolha
 			switch(classe) {
 				case 1:
 					classeEscolhida = mago;
-					vidaPersonagem = vidaMago;
-					manaPersonagem = manaMago;
+					vidaPersonagem = 10 + constituicao;
+					manaPersonagem = 8 + presenca;
+					constituicao = constituicao - 2;
+					presenca = presenca + 2;
+					intelecto = intelecto + 1;
 					break;
 				case 2:
 					classeEscolhida = guerreiro;
-					vidaPersonagem = vidaGuerreiro;
-					manaPersonagem = manaGuerreiro;
+					vidaPersonagem = 20 + constituicao;
+					manaPersonagem = 2 + presenca;
+					constituicao = constituicao + 2;
+					forca = forca + 1;
+					intelecto = intelecto - 2;
 					break;
 				case 3: 
 					classeEscolhida = healer;
-					vidaPersonagem = vidaHealer;
-					manaPersonagem = manaHealer;
+					vidaPersonagem = 14 + constituicao;
+					manaPersonagem = 5 + presenca;
+					sabedoria = sabedoria + 1;
+					intelecto = intelecto + 2;
+					forca = forca - 2;
 					break;
 				default:
 					System.out.println("Escolha entre 1, 2 ou 3.");
@@ -56,6 +69,7 @@ public class fichaRpg {
 		
 		}
 
+		// print da ficha
 		System.out.println("\n --------FICHA-------- \n\nNome: " + nomePersonagem + "\t\tDono da ficha: " + nomePessoa + "\t\tClasse: " + classeEscolhida + "\nVida: " + vidaPersonagem + "\t\tMana: " + manaPersonagem + "\n----------------------");
 	}
 }
