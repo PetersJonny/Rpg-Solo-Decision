@@ -41,39 +41,36 @@ public class fichaRpg {
 		while (totalDePontos > 0) {
 			System.out.println("\nVocê tem 6 pontos para distribuir entre constituição, destreza, força, sabedoria, intelecto e presença. Caso escolha gastar mais pontos do que tem gasta tudo e não mais do que tem. Escolha qual atributo quer botar pontos: \n\n1.Constituição\n2.Destreza\n3.Força\n4.sabedoria\n5.Intelecto\n6.Presença"); 
 			escolhaDeGastos = scn.nextInt();
+			scn.nextLine();
 
 			System.out.println("Quantos pontos deseja gastar? Tem " + totalDePontos + " pontos ainda.");
 			gastoDePontos = scn.nextInt();
+			scn.nextLine();
 
 			if(gastoDePontos <= totalDePontos) {
 				switch (escolhaDeGastos) {
 					case 1:
-						totalDePontos = totalDePontos - gastoDePontos;
 						constituicao = constituicao + gastoDePontos;
 						break;
 					case 2:
-						totalDePontos = totalDePontos - gastoDePontos;
 						destreza = destreza + gastoDePontos;
 						break;
 					case 3:
-						totalDePontos = totalDePontos - gastoDePontos;
 						forca = forca + gastoDePontos;
 						break;
 					case 4:
-						totalDePontos = totalDePontos - gastoDePontos;
 						sabedoria = sabedoria + gastoDePontos;
 						break;
 					case 5:
-						totalDePontos = totalDePontos - gastoDePontos;
 						intelecto = intelecto + gastoDePontos;
 						break;
 					case 6:
-						totalDePontos = totalDePontos - gastoDePontos;
 						presenca = presenca + gastoDePontos;
 						break;
 					default:
 						System.out.println("Escolha o número derivado a cada atributo.");
 				}
+				totalDePontos = totalDePontos - gastoDePontos;
 			}else{
 				System.out.println("Você tem " + totalDePontos + " pontos para gastar, não gaste mais que isso.");
 			}
@@ -83,6 +80,7 @@ public class fichaRpg {
 		while(classe < 1 || classe > 3) {
 			System.out.println("\n Escolha entre uma das 3 classes abaixo: \n 1.Mago (só pode usar cajado, conjura magias poderosas, porém é mais fragil). \n 2.Guerreiro (só pode usar espada e atacar corpo a corpo, porém é mais resistente). \n 3.Healer (tem poderes de cura, pode curar a si mesmo e aos outros, tem uma vida mediana).");
 			classe = scn.nextInt();
+			scn.nextLine();
 
 			// definição de valores para escolha
 			switch(classe) {
