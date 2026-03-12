@@ -27,3 +27,6 @@ Este é um projeto desenvolvido em **Java** para criar um RPG de dado com fichas
 3. No terminal, execute o arquivo:
    ```bash
    javac Main.java
+4. Execute:
+   ```bash
+   java Main
