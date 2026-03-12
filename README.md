@@ -26,4 +26,4 @@ Este é um projeto desenvolvido em **Java** para criar um RPG de dado com fichas
 2. Clone este repositório ou baixe o arquivo `fichaRpg.java`.
 3. No terminal, execute o arquivo:
    ```bash
-   java fichaRpg.java
+   javac Main.java
