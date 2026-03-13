@@ -16,8 +16,6 @@ Este é um projeto desenvolvido em **Java** para criar um RPG de dado com fichas
 ## 🛠️ Tecnologias e Conceitos Aplicados
 
 * **Linguagem:** Java.
-* **Entrada de Dados:** `Scanner` com tratamento de limpeza de buffer.
-* **Estruturas de Controle:** `while`, `switch-case` e condicionais `if-else`.
 * **Lógica de RPG:** Modificadores de atributos influenciando variáveis de status.
 
 ## 🎮 Como Rodar o Projeto
