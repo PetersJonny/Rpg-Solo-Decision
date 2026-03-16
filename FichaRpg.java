@@ -9,6 +9,11 @@ public class FichaRpg {
     // atributos base
     public int constituicao, destreza, forca, sabedoria, intelecto, presenca;
 
+    // armas de cada classe
+    public String arma; 
+    public String danoArma;
+    public String tipoArma;
+
     // definir nome do personagem e dono da ficha
     public FichaRpg(String nomePersonagem, String nomePessoa) {
         this.nomePersonagem = nomePersonagem;
@@ -37,6 +42,9 @@ public class FichaRpg {
                 this.constituicao -= 2;
                 this.presenca += 2;
                 this.intelecto += 1;
+                this.arma = "cajado";
+                this.danoArma = "1d4";
+                this.tipoArma = "CaC/mágico";
                 break;
             case 2: // Guerreiro
                 this.classeEscolhida = "Guerreiro";
@@ -45,6 +53,9 @@ public class FichaRpg {
                 this.constituicao += 2;
                 this.forca += 1;
                 this.intelecto -= 2;
+                this.arma = "espada";
+                this.danoArma = "1d8";
+                this.tipoArma = "CaC";
                 break;
             case 3: // Healer
                 this.classeEscolhida = "Healer";
@@ -53,12 +64,15 @@ public class FichaRpg {
                 this.sabedoria += 1;
                 this.intelecto += 2;
                 this.forca -= 2;
+                this.arma = "arco";
+                this.tipoArma = "LA";
+                this.danoArma = "1d6";
                 break;
         }
     }
 
     // mostrar ficha
     public void mostrarFicha() {
-        System.out.println("\n --------FICHA-------- \n\nNome: " + nomePersonagem + "\t\tDono da ficha: " + nomePessoa + "\t\tClasse: " + classeEscolhida + "\nVida: " + vidaPersonagem + "\t\tMana: " + manaPersonagem + "\n\nConstituição: " + constituicao + "\nDestreza: " + destreza + "\nForça: " + forca + "\nSabedoria: " + sabedoria + "\nIntelecto: " + intelecto + "\nPresença: " + presenca + "\n----------------------");
+        System.out.println("\n --------FICHA-------- \n\nNome: " + nomePersonagem + "\t\tDono da ficha: " + nomePessoa + "\t\tClasse: " + classeEscolhida + "\nVida: " + vidaPersonagem + "\t\tMana: " + manaPersonagem + "\n\nAtributos: \nConstituição: " + constituicao + "\nDestreza: " + destreza + "\nForça: " + forca + "\nSabedoria: " + sabedoria + "\nIntelecto: " + intelecto + "\nPresença: " + presenca + "\n\nCombate: \nArma: " + arma + "\tDano da arma: " + danoArma + "\t tipo da arma: " + tipoArma + "\n----------------------");
     }
 }
