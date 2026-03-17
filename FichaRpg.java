@@ -1,18 +1,15 @@
 public class FichaRpg {
 
     // variáveis base do personagem
-    public String nomePersonagem, nomePessoa;
-    public String classeEscolhida;
-    public int vidaPersonagem;
-    public int manaPersonagem;
+    protected String nomePersonagem, nomePessoa;
+    protected String classeEscolhida;
+    protected int vidaPersonagem, manaPersonagem;
 
     // atributos base
-    public int constituicao, destreza, forca, sabedoria, intelecto, presenca;
+    protected int constituicao, destreza, forca, sabedoria, intelecto, presenca;
 
     // armas de cada classe
-    public String arma; 
-    public String danoArma;
-    public String tipoArma;
+    protected String arma, danoArma, tipoArma;
 
     // definir nome do personagem e dono da ficha
     public FichaRpg(String nomePersonagem, String nomePessoa) {
