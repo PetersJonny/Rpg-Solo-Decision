@@ -1,15 +1,15 @@
 public class FichaRpg {
 
     // variáveis base do personagem
-    protected String nomePersonagem, nomePessoa;
-    protected String classeEscolhida;
-    protected int vidaPersonagem, manaPersonagem;
+    private String nomePersonagem, nomePessoa;
+    private String classeEscolhida;
+    private int vidaPersonagem, manaPersonagem;
 
     // atributos base
-    protected int constituicao, destreza, forca, sabedoria, intelecto, presenca;
+    private int constituicao, destreza, forca, sabedoria, intelecto, presenca;
 
     // armas de cada classe
-    protected String arma, danoArma, tipoArma;
+    private String arma, danoArma, tipoArma;
 
     // definir nome do personagem e dono da ficha
     public FichaRpg(String nomePersonagem, String nomePessoa) {
@@ -66,6 +66,15 @@ public class FichaRpg {
                 this.danoArma = "1d6";
                 break;
         }
+    }
+
+    public void ResetarPontos() {
+        this.constituicao = 0;
+        this.presenca = 0;
+        this.destreza = 0;
+        this.sabedoria = 0;
+        this.intelecto = 0;
+        this.forca = 0;
     }
 
     // mostrar ficha
