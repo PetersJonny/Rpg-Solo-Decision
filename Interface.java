@@ -23,6 +23,11 @@ public class Interface {
         System.out.println();
     }
 
+    // barra divisoria
+    public static void barraDivisoria() {
+        System.out.println(CIANO + "==========================================================================================" + RESET);
+    }
+
     // criação barra grafica de carregamento
     public static void BarraCarregamento(String mensagem) {
         int totalBlocos = 100;

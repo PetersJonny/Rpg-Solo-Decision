@@ -1,19 +1,30 @@
+
+import java.util.Scanner;
+
 public class FichaRpg {
+
+    // cores
+    private static final String CIANO = "\u001B[36m";
+    private static final String RESET = "\u001B[0m";
 
     // variáveis base do personagem
     private String nomePersonagem, nomePessoa;
-    private String classeEscolhida;
     private int vidaPersonagem, manaPersonagem;
 
     // atributos base
     private int constituicao, destreza, forca, sabedoria, intelecto, presenca;
+    private int escolhaDeGastos, gastoDePontos, totalDePontos = 6;
 
-    // armas de cada classe
+    //classe
     private String arma, danoArma, tipoArma;
+    private String classeEscolhida ="";
+    private int escolhaClasse;
+
+    // criando objetos
+    Scanner scanner = new Scanner(System.in);
 
     // definir nome do personagem e dono da ficha
-    public FichaRpg(String nomePersonagem, String nomePessoa) {
-        this.nomePersonagem = nomePersonagem;
+    public FichaRpg(String nomePessoa) {
         this.nomePessoa = nomePessoa;
     }
 
@@ -29,11 +40,100 @@ public class FichaRpg {
         }
     }
 
+    // escolha de ação
+    public void EscolhaInterface(int escolhaInterface) {
+        switch (escolhaInterface) {
+            case 1:
+                System.out.println(CIANO + "==========================================================================================" + RESET);
+                System.out.println("\nQual o nome do seu personagem?");
+                nomePersonagem = scanner.nextLine();
+                break;
+            case 2:
+                ResetarPontos();
+
+                if (classeEscolhida != "") {
+                    AplicandoBonus(classeEscolhida);
+                }
+
+                System.out.println(CIANO + "==========================================================================================" + RESET);
+                System.out.println("\nVocê tem 6 pontos para distribuir entre constituição, destreza, força, sabedoria, intelecto e presença. Caso escolha gastar mais pontos do que tem gasta tudo e não mais do que tem. Escolha qual atributo quer botar pontos: \n\n1.Constituição\n2.Destreza\n3.Força\n4.sabedoria\n5.Intelecto\n6.Presença"); 
+ 			    escolhaDeGastos = scanner.nextInt();
+ 			    scanner.nextLine();
+
+                System.out.println("\nQuantos pontos deseja gastar? Tem " + totalDePontos + " pontos ainda.");
+ 			    gastoDePontos = scanner.nextInt();
+ 			    scanner.nextLine();
+
+                if(gastoDePontos > totalDePontos) {
+                    gastoDePontos = totalDePontos;
+                }
+
+                if (escolhaDeGastos >= 1 && escolhaDeGastos <= 6) {
+                    DistribuirAtributos(escolhaDeGastos, gastoDePontos);
+                    totalDePontos -= gastoDePontos;
+                } else {
+                    System.out.println("Opção inválida!");
+                }
+                break;
+            case 3:
+                if (classeEscolhida != "") {
+                      switch (classeEscolhida) {
+                        case "Mago": // Mago
+                            this.constituicao += 2;
+                            this.presenca -= 2;
+                            this.intelecto -= 1;                    
+                            break;
+                        case "Guerreiro": // Guerreiro
+                            this.constituicao -= 2;
+                            this.forca -= 1;
+                            this.intelecto += 2;
+                            break;
+                        case "Healer": // Healer
+                            this.sabedoria -= 1;
+                            this.intelecto -= 2;
+                            this.forca += 2;
+                            break;
+                    }  
+                }
+
+                System.out.println(CIANO + "==========================================================================================" + RESET);
+                System.out.println("\n Escolha entre uma das 3 classes abaixo: \n 1.Mago (só pode usar cajado, conjura magias poderosas, porém é mais fragil). \n 2.Guerreiro (só pode usar espada e atacar corpo a corpo, porém é mais resistente). \n 3.Healer (tem poderes de cura, pode curar a si mesmo e aos outros, tem uma vida mediana).");
+ 			    escolhaClasse = scanner.nextInt();
+ 		        scanner.nextLine();
+
+                EscolhendoClasse(escolhaClasse);
+                AplicandoBonus(classeEscolhida);
+
+                break;
+            case 4:
+                System.out.println(CIANO + "==========================================================================================" + RESET);
+                MostrarFicha();
+                break;
+            default:
+                System.out.println("Opção inválida!");
+        }
+    }
+
+    // escolhendo classe
+    public void EscolhendoClasse(int escolhaClasse) {
+        switch (escolhaClasse) {
+            case 1:
+                classeEscolhida = "Mago";
+                break;
+            case 2:
+                classeEscolhida = "Guerreiro";
+                break;
+            case 3:
+                classeEscolhida = "Healer";
+            default:
+                System.out.println("Opção inválida!");
+        }
+    }
+
     // definir coisas da classe
-    public void EscolhaDaClasse(int classe) {
-        switch (classe) {
-            case 1: // Mago
-                this.classeEscolhida = "Mago";
+    public void AplicandoBonus(String classeEscolhida) {
+        switch (classeEscolhida) {
+            case "Mago": // Mago
                 this.vidaPersonagem = 10 + constituicao;
                 this.manaPersonagem = 8 + presenca;
                 this.constituicao -= 2;
@@ -43,8 +143,7 @@ public class FichaRpg {
                 this.danoArma = "1d4";
                 this.tipoArma = "CaC/mágico";
                 break;
-            case 2: // Guerreiro
-                this.classeEscolhida = "Guerreiro";
+            case "Guerreiro": // Guerreiro
                 this.vidaPersonagem = 20 + constituicao;
                 this.manaPersonagem = 2 + presenca;
                 this.constituicao += 2;
@@ -54,8 +153,7 @@ public class FichaRpg {
                 this.danoArma = "1d8";
                 this.tipoArma = "CaC";
                 break;
-            case 3: // Healer
-                this.classeEscolhida = "Healer";
+            case "Healer": // Healer
                 this.vidaPersonagem = 14 + constituicao;
                 this.manaPersonagem = 5 + presenca;
                 this.sabedoria += 1;
@@ -68,6 +166,7 @@ public class FichaRpg {
         }
     }
 
+    // reset pontos 
     public void ResetarPontos() {
         this.constituicao = 0;
         this.presenca = 0;
@@ -78,7 +177,7 @@ public class FichaRpg {
     }
 
     // mostrar ficha
-    public void mostrarFicha() {
+    public void MostrarFicha() {
         System.out.println("\n --------FICHA-------- \n\nNome: " + nomePersonagem + "\t\tDono da ficha: " + nomePessoa + "\t\tClasse: " + classeEscolhida + "\nVida: " + vidaPersonagem + "\t\tMana: " + manaPersonagem + "\n\nAtributos: \nConstituição: " + constituicao + "\nDestreza: " + destreza + "\nForça: " + forca + "\nSabedoria: " + sabedoria + "\nIntelecto: " + intelecto + "\nPresença: " + presenca + "\n\nCombate: \nArma: " + arma + "\tDano da arma: " + danoArma + "\t tipo da arma: " + tipoArma + "\n----------------------");
     }
 }
