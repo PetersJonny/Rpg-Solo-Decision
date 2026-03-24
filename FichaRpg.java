@@ -54,25 +54,26 @@ public class FichaRpg {
                 if (classeEscolhida != "") {
                     AplicandoBonus(classeEscolhida);
                 }
+                while (totalDePontos > 0) {
+                    System.out.println(CIANO + "==========================================================================================" + RESET);
+                    System.out.println("\nVocê tem 6 pontos para distribuir entre constituição, destreza, força, sabedoria, intelecto e presença. Caso escolha gastar mais pontos do que tem gasta tudo e não mais do que tem. Escolha qual atributo quer botar pontos: \n\n1.Constituição\n2.Destreza\n3.Força\n4.sabedoria\n5.Intelecto\n6.Presença"); 
+                    escolhaDeGastos = scanner.nextInt();
+                    scanner.nextLine();
 
-                System.out.println(CIANO + "==========================================================================================" + RESET);
-                System.out.println("\nVocê tem 6 pontos para distribuir entre constituição, destreza, força, sabedoria, intelecto e presença. Caso escolha gastar mais pontos do que tem gasta tudo e não mais do que tem. Escolha qual atributo quer botar pontos: \n\n1.Constituição\n2.Destreza\n3.Força\n4.sabedoria\n5.Intelecto\n6.Presença"); 
- 			    escolhaDeGastos = scanner.nextInt();
- 			    scanner.nextLine();
+                    System.out.println("\nQuantos pontos deseja gastar? Tem " + totalDePontos + " pontos ainda.");
+                    gastoDePontos = scanner.nextInt();
+                    scanner.nextLine();
 
-                System.out.println("\nQuantos pontos deseja gastar? Tem " + totalDePontos + " pontos ainda.");
- 			    gastoDePontos = scanner.nextInt();
- 			    scanner.nextLine();
+                    if(gastoDePontos > totalDePontos) {
+                        gastoDePontos = totalDePontos;
+                    }
 
-                if(gastoDePontos > totalDePontos) {
-                    gastoDePontos = totalDePontos;
-                }
-
-                if (escolhaDeGastos >= 1 && escolhaDeGastos <= 6) {
-                    DistribuirAtributos(escolhaDeGastos, gastoDePontos);
-                    totalDePontos -= gastoDePontos;
-                } else {
-                    System.out.println("Opção inválida!");
+                    if (escolhaDeGastos >= 1 && escolhaDeGastos <= 6) {
+                        DistribuirAtributos(escolhaDeGastos, gastoDePontos);
+                        totalDePontos -= gastoDePontos;
+                    } else {
+                        System.out.println("Opção inválida!");
+                    }
                 }
                 break;
             case 3:
