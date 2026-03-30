@@ -16,9 +16,11 @@ public class FichaRpg {
     private int escolhaDeGastos, gastoDePontos, totalDePontos = 6;
 
     //classe
-    private String arma, danoArma, tipoArma;
+    private String arma, tipoArma;
     private String classeEscolhida ="";
     private int escolhaClasse;
+    private int dadoDanoArma, quantidadeDanoArma;
+    private int defesa, bonusDeDefesa;
 
     // criando objetos
     Scanner scanner = new Scanner(System.in);
@@ -141,8 +143,10 @@ public class FichaRpg {
                 this.presenca += 2;
                 this.intelecto += 1;
                 this.arma = "cajado";
-                this.danoArma = "1d4";
+                this.dadoDanoArma = 4;
+                this.quantidadeDanoArma = 1;
                 this.tipoArma = "CaC/mágico";
+                this.defesa = 10 + destreza + bonusDeDefesa;
                 break;
             case "Guerreiro": // Guerreiro
                 this.vidaPersonagem = 20 + constituicao;
@@ -151,7 +155,8 @@ public class FichaRpg {
                 this.forca += 1;
                 this.intelecto -= 2;
                 this.arma = "espada";
-                this.danoArma = "1d8";
+                this.dadoDanoArma = 8;
+                this.quantidadeDanoArma = 1;
                 this.tipoArma = "CaC";
                 break;
             case "Healer": // Healer
@@ -162,7 +167,8 @@ public class FichaRpg {
                 this.forca -= 2;
                 this.arma = "arco";
                 this.tipoArma = "LA";
-                this.danoArma = "1d6";
+                this.dadoDanoArma = 6;
+                this.quantidadeDanoArma = 1;
                 break;
         }
     }
@@ -179,6 +185,6 @@ public class FichaRpg {
 
     // mostrar ficha
     public void MostrarFicha() {
-        System.out.println("\n --------FICHA-------- \n\nNome: " + nomePersonagem + "\t\tDono da ficha: " + nomePessoa + "\t\tClasse: " + classeEscolhida + "\nVida: " + vidaPersonagem + "\t\tMana: " + manaPersonagem + "\n\nAtributos: \nConstituição: " + constituicao + "\nDestreza: " + destreza + "\nForça: " + forca + "\nSabedoria: " + sabedoria + "\nIntelecto: " + intelecto + "\nPresença: " + presenca + "\n\nCombate: \nArma: " + arma + "\tDano da arma: " + danoArma + "\t tipo da arma: " + tipoArma + "\n----------------------");
+        System.out.println("\n --------FICHA-------- \n\nNome: " + nomePersonagem + "\t\tDono da ficha: " + nomePessoa + "\t\tClasse: " + classeEscolhida + "\nVida: " + vidaPersonagem + "\t\tMana: " + manaPersonagem + "\n\nAtributos: \nConstituição: " + constituicao + "\nDestreza: " + destreza + "\nForça: " + forca + "\nSabedoria: " + sabedoria + "\nIntelecto: " + intelecto + "\nPresença: " + presenca + "\n\nCombate: \nArma: " + arma + "\tDano da arma: " + quantidadeDanoArma + "d" + dadoDanoArma + "\t tipo da arma: " + tipoArma + "\n----------------------");
     }
 }
