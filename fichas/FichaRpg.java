@@ -1,3 +1,6 @@
+package fichas;
+
+import classes.*;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -11,43 +14,40 @@ public class FichaRpg {
     private String nomePersonagem, nomePessoa;
     private int vidaPersonagem, manaPersonagem;
 
-    // atributos base
+    // atributos base (como vieram da distribuição, antes da classe modificar)
+    private int constituicaoBase, destrezaBase, forcaBase, sabedoriaBase, intelectoBase, presencaBase;
+    
+    // atributos finais (depois da classe aplicar os bônus)
     private int constituicao, destreza, forca, sabedoria, intelecto, presenca;
+
     private int escolhaDeGastos, gastoDePontos, totalDePontos = 6;
 
-    //classe
-    private String arma, tipoArma;
-    private String classeEscolhida ="";
-    private int dadoDanoArma, quantidadeDanoArma;
+    // A mágica da POO: O personagem tem UM objeto do tipo ClasseRpg
+    private ClasseRpg classeDoPersonagem = null;
+    
     private int defesa, bonusDeDefesa;
 
     // iniciativa player
     int iniciativaPlayer;
 
-    // criando objetos
     Random random = new Random();
     Scanner scanner = new Scanner(System.in);
 
-    // definir nome do personagem e dono da ficha
     public FichaRpg(String nomePessoa) {
         this.nomePessoa = nomePessoa;
     }
 
-
-
-    // distribuição de atributos base
     public void DistribuirAtributos(int opcao, int pontos) {
         switch (opcao) {
-            case 1 -> constituicao += pontos;
-            case 2 -> destreza += pontos;
-            case 3 -> forca += pontos;
-            case 4 -> sabedoria += pontos;
-            case 5 -> intelecto += pontos;
-            case 6 -> presenca += pontos;
+            case 1 -> constituicaoBase += pontos;
+            case 2 -> destrezaBase += pontos;
+            case 3 -> forcaBase += pontos;
+            case 4 -> sabedoriaBase += pontos;
+            case 5 -> intelectoBase += pontos;
+            case 6 -> presencaBase += pontos;
         }
     }
 
-    // escolha de ação
     public void EscolhaInterface(int escolhaInterface) {
         switch (escolhaInterface) {
             case 1:
@@ -86,38 +86,16 @@ public class FichaRpg {
                     }
                 }
                 
-                if (classeEscolhida != "") {
-                    AplicandoBonus(classeEscolhida);
-                }
+                AplicandoBonus();
                 break;
             case 3:
-                if (classeEscolhida != "") {
-                      switch (classeEscolhida) {
-                        case "Mago": // Mago
-                            this.constituicao += 2;
-                            this.presenca -= 2;
-                            this.intelecto -= 1;                    
-                            break;
-                        case "Guerreiro": // Guerreiro
-                            this.constituicao -= 2;
-                            this.forca -= 1;
-                            this.intelecto += 2;
-                            break;
-                        case "Healer": // Healer
-                            this.sabedoria -= 1;
-                            this.intelecto -= 2;
-                            this.forca += 2;
-                            break;
-                    }  
-                }
-
                 System.out.println(CIANO + "==========================================================================================" + RESET);
                 System.out.println("\n Escolha entre uma das 3 classes abaixo: \n 1.Mago (só pode usar cajado, conjura magias poderosas, porém é mais fragil). \n 2.Guerreiro (só pode usar espada e atacar corpo a corpo, porém é mais resistente). \n 3.Healer (tem poderes de cura, pode curar a si mesmo e aos outros, tem uma vida mediana).");
  			    int escolhaClasse = scanner.nextInt();
  		        scanner.nextLine();
 
                 EscolhendoClasse(escolhaClasse);
-                AplicandoBonus(classeEscolhida);
+                AplicandoBonus();
 
                 break;
             case 4:
@@ -133,79 +111,74 @@ public class FichaRpg {
         }
     }
 
-    // escolhendo classe
     public void EscolhendoClasse(int escolhaClasse) {
         switch (escolhaClasse) {
             case 1:
-                classeEscolhida = "Mago";
+                classeDoPersonagem = new Mago();
                 break;
             case 2:
-                classeEscolhida = "Guerreiro";
+                classeDoPersonagem = new Guerreiro();
                 break;
             case 3:
-                classeEscolhida = "Healer";
+                classeDoPersonagem = new Healer();
                 break;
             default:
                 System.out.println("Opção inválida!");
         }
     }
 
-    // definir coisas da classe
-    public void AplicandoBonus(String classeEscolhida) {
-        switch (classeEscolhida) {
-            case "Mago": // Mago
-                this.vidaPersonagem = 10 + constituicao;
-                this.manaPersonagem = 8 + presenca;
-                this.constituicao -= 2;
-                this.presenca += 2;
-                this.intelecto += 1;
-                this.arma = "cajado";
-                this.dadoDanoArma = 4;
-                this.quantidadeDanoArma = 1;
-                this.tipoArma = "CaC/mágico";
-                this.defesa = 10 + destreza + bonusDeDefesa;
-                break;
-            case "Guerreiro": // Guerreiro
-                this.vidaPersonagem = 20 + constituicao;
-                this.manaPersonagem = 2 + presenca;
-                this.constituicao += 2;
-                this.forca += 1;
-                this.intelecto -= 2;
-                this.arma = "espada";
-                this.dadoDanoArma = 8;
-                this.quantidadeDanoArma = 1;
-                this.tipoArma = "CaC";
-                break;
-            case "Healer": // Healer
-                this.vidaPersonagem = 14 + constituicao;
-                this.manaPersonagem = 5 + presenca;
-                this.sabedoria += 1;
-                this.intelecto += 2;
-                this.forca -= 2;
-                this.arma = "arco";
-                this.tipoArma = "LA";
-                this.dadoDanoArma = 6;
-                this.quantidadeDanoArma = 1;
-                break;
+    public void AplicandoBonus() {
+        // Inicialmente, os atributos finais são iguais aos atributos distribuídos (base)
+        this.constituicao = constituicaoBase;
+        this.destreza = destrezaBase;
+        this.forca = forcaBase;
+        this.sabedoria = sabedoriaBase;
+        this.intelecto = intelectoBase;
+        this.presenca = presencaBase;
+        
+        // Se ainda não escolheu classe, não calcula vida e mana
+        if (classeDoPersonagem == null) {
+            this.vidaPersonagem = 0;
+            this.manaPersonagem = 0;
+            this.defesa = 10 + this.destreza + bonusDeDefesa;
+            return;
         }
+
+        // Calcula a Vida e Mana USANDO os atributos base ORIGINAIS (como era no seu jogo)
+        this.vidaPersonagem = classeDoPersonagem.calcularVidaBase(this.constituicaoBase);
+        this.manaPersonagem = classeDoPersonagem.calcularManaBase(this.presencaBase);
+        
+        // Agora aplicamos os bônus/penalidades da classe
+        this.constituicao += classeDoPersonagem.getBonusConstituicao();
+        this.forca += classeDoPersonagem.getBonusForca();
+        this.destreza += classeDoPersonagem.getBonusDestreza();
+        this.sabedoria += classeDoPersonagem.getBonusSabedoria();
+        this.intelecto += classeDoPersonagem.getBonusIntelecto();
+        this.presenca += classeDoPersonagem.getBonusPresenca();
+        
+        this.defesa = 10 + this.destreza + bonusDeDefesa;
     }
 
-    // reset pontos 
     public void ResetarPontos() {
-        this.constituicao = 0;
-        this.presenca = 0;
-        this.destreza = 0;
-        this.sabedoria = 0;
-        this.intelecto = 0;
-        this.forca = 0;
+        this.constituicaoBase = 0;
+        this.presencaBase = 0;
+        this.destrezaBase = 0;
+        this.sabedoriaBase = 0;
+        this.intelectoBase = 0;
+        this.forcaBase = 0;
+        AplicandoBonus();
     }
 
-    // mostrar ficha
     public void MostrarFicha() {
-        System.out.println("\n --------FICHA-------- \n\nNome: " + nomePersonagem + "\t\tDono da ficha: " + nomePessoa + "\t\tClasse: " + classeEscolhida + "\nVida: " + vidaPersonagem + "\t\tMana: " + manaPersonagem + "\n\nAtributos: \nConstituição: " + constituicao + "\nDestreza: " + destreza + "\nForça: " + forca + "\nSabedoria: " + sabedoria + "\nIntelecto: " + intelecto + "\nPresença: " + presenca + "\n\nCombate: \nArma: " + arma + "\tDano da arma: " + quantidadeDanoArma + "d" + dadoDanoArma + "\t tipo da arma: " + tipoArma + "\n----------------------");
+        String nomeDaClasse = (classeDoPersonagem != null) ? classeDoPersonagem.getNome() : "Nenhuma";
+        String armaDaClasse = (classeDoPersonagem != null) ? classeDoPersonagem.getArma() : "Nenhuma";
+        String tipoArma = (classeDoPersonagem != null) ? classeDoPersonagem.getTipoArma() : "-";
+        int qtdDano = (classeDoPersonagem != null) ? classeDoPersonagem.getQuantidadeDanoArma() : 0;
+        int dadoDano = (classeDoPersonagem != null) ? classeDoPersonagem.getDadoDanoArma() : 0;
+
+        System.out.println("\n --------FICHA-------- \n\nNome: " + nomePersonagem + "\t\tDono da ficha: " + nomePessoa + "\t\tClasse: " + nomeDaClasse + "\nVida: " + vidaPersonagem + "\t\tMana: " + manaPersonagem + "\n\nAtributos: \nConstituição: " + constituicao + "\nDestreza: " + destreza + "\nForça: " + forca + "\nSabedoria: " + sabedoria + "\nIntelecto: " + intelecto + "\nPresença: " + presenca + "\n\nCombate: \nArma: " + armaDaClasse + "\tDano da arma: " + qtdDano + "d" + dadoDano + "\t tipo da arma: " + tipoArma + "\nDefesa: " + defesa + "\n----------------------");
     }
 
-    // iniciativa player
     public void IniciativaPlayer() {
         this.iniciativaPlayer = (random.nextInt(20) + 1) + this.destreza;
         System.out.println("O " + nomePersonagem + " rolou " + this.iniciativaPlayer+ " de iniciativa!");

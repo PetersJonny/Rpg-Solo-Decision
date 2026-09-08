@@ -1,3 +1,5 @@
+package telas;
+
 public class Interface {
 
     // códigos de Cores ANSI

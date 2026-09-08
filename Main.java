@@ -1,13 +1,11 @@
+import fichas.FichaRpg;
+import telas.Interface;
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-
         int escolhaInterface = 0;
-
-        // classe
-        int classe = 0;
 
         // interface carregando barra
         Interface.BarraCarregamento("Carregando jogo...");
@@ -16,7 +14,7 @@ public class Main {
         Interface.ExibirBoasVindas();
 
         // escolha do nome do dono da ficha
-        System.out.print("Qual seu nome?" + "\n");
+        System.out.print("Qual seu nome?\n");
         String nomePessoa = scanner.nextLine();
 
         // criação do objeto da ficha
@@ -38,8 +36,5 @@ public class Main {
 
             fichaRpg.EscolhaInterface(escolhaInterface);
         }
-
-        
-
     }
 }
