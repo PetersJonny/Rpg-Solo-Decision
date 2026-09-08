@@ -1,4 +1,4 @@
-
+import java.util.Random;
 import java.util.Scanner;
 
 public class FichaRpg {
@@ -18,17 +18,22 @@ public class FichaRpg {
     //classe
     private String arma, tipoArma;
     private String classeEscolhida ="";
-    private int escolhaClasse;
     private int dadoDanoArma, quantidadeDanoArma;
     private int defesa, bonusDeDefesa;
 
+    // iniciativa player
+    int iniciativaPlayer;
+
     // criando objetos
+    Random random = new Random();
     Scanner scanner = new Scanner(System.in);
 
     // definir nome do personagem e dono da ficha
     public FichaRpg(String nomePessoa) {
         this.nomePessoa = nomePessoa;
     }
+
+
 
     // distribuição de atributos base
     public void DistribuirAtributos(int opcao, int pontos) {
@@ -52,19 +57,22 @@ public class FichaRpg {
                 break;
             case 2:
                 ResetarPontos();
+                totalDePontos = 6;
 
-                if (classeEscolhida != "") {
-                    AplicandoBonus(classeEscolhida);
-                }
                 while (totalDePontos > 0) {
                     System.out.println(CIANO + "==========================================================================================" + RESET);
-                    System.out.println("\nVocê tem 6 pontos para distribuir entre constituição, destreza, força, sabedoria, intelecto e presença. Caso escolha gastar mais pontos do que tem gasta tudo e não mais do que tem. Escolha qual atributo quer botar pontos: \n\n1.Constituição\n2.Destreza\n3.Força\n4.sabedoria\n5.Intelecto\n6.Presença"); 
+                    System.out.println("\nVocê tem " + totalDePontos + " pontos para distribuir entre constituição, destreza, força, sabedoria, intelecto e presença. Caso escolha gastar mais pontos do que tem gasta tudo e não mais do que tem. Escolha qual atributo quer botar pontos: \n\n1.Constituição\n2.Destreza\n3.Força\n4.Sabedoria\n5.Intelecto\n6.Presença"); 
                     escolhaDeGastos = scanner.nextInt();
                     scanner.nextLine();
 
                     System.out.println("\nQuantos pontos deseja gastar? Tem " + totalDePontos + " pontos ainda.");
                     gastoDePontos = scanner.nextInt();
                     scanner.nextLine();
+
+                    if (gastoDePontos <= 0) {
+                        System.out.println("Por favor, insira um valor maior que zero!");
+                        continue;
+                    }
 
                     if(gastoDePontos > totalDePontos) {
                         gastoDePontos = totalDePontos;
@@ -76,6 +84,10 @@ public class FichaRpg {
                     } else {
                         System.out.println("Opção inválida!");
                     }
+                }
+                
+                if (classeEscolhida != "") {
+                    AplicandoBonus(classeEscolhida);
                 }
                 break;
             case 3:
@@ -101,7 +113,7 @@ public class FichaRpg {
 
                 System.out.println(CIANO + "==========================================================================================" + RESET);
                 System.out.println("\n Escolha entre uma das 3 classes abaixo: \n 1.Mago (só pode usar cajado, conjura magias poderosas, porém é mais fragil). \n 2.Guerreiro (só pode usar espada e atacar corpo a corpo, porém é mais resistente). \n 3.Healer (tem poderes de cura, pode curar a si mesmo e aos outros, tem uma vida mediana).");
- 			    escolhaClasse = scanner.nextInt();
+ 			    int escolhaClasse = scanner.nextInt();
  		        scanner.nextLine();
 
                 EscolhendoClasse(escolhaClasse);
@@ -113,7 +125,11 @@ public class FichaRpg {
                 MostrarFicha();
                 break;
             default:
-                System.out.println("Opção inválida!");
+                if (escolhaInterface == 5) {
+                    break;
+                } else {
+                    System.out.println("Opção inválida!");
+                }
         }
     }
 
@@ -128,6 +144,7 @@ public class FichaRpg {
                 break;
             case 3:
                 classeEscolhida = "Healer";
+                break;
             default:
                 System.out.println("Opção inválida!");
         }
@@ -186,5 +203,11 @@ public class FichaRpg {
     // mostrar ficha
     public void MostrarFicha() {
         System.out.println("\n --------FICHA-------- \n\nNome: " + nomePersonagem + "\t\tDono da ficha: " + nomePessoa + "\t\tClasse: " + classeEscolhida + "\nVida: " + vidaPersonagem + "\t\tMana: " + manaPersonagem + "\n\nAtributos: \nConstituição: " + constituicao + "\nDestreza: " + destreza + "\nForça: " + forca + "\nSabedoria: " + sabedoria + "\nIntelecto: " + intelecto + "\nPresença: " + presenca + "\n\nCombate: \nArma: " + arma + "\tDano da arma: " + quantidadeDanoArma + "d" + dadoDanoArma + "\t tipo da arma: " + tipoArma + "\n----------------------");
+    }
+
+    // iniciativa player
+    public void IniciativaPlayer() {
+        this.iniciativaPlayer = (random.nextInt(20) + 1) + this.destreza;
+        System.out.println("O " + nomePersonagem + " rolou " + this.iniciativaPlayer+ " de iniciativa!");
     }
 }
