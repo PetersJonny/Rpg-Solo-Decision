@@ -1,24 +1,28 @@
 package classes;
 
+import itens.Arma;
+
 public class Mago extends ClasseRpg {
     
-    // No construtor, o Mago preenche sua própria ficha básica
+    // Construtor
     public Mago() {
         this.nome = "Mago";
-        this.arma = "cajado";
-        this.tipoArma = "CaC/mágico";
-        this.dadoDanoArma = 4;
-        this.quantidadeDanoArma = 1;
+        
+        // Mago cria sua arma como um Objeto
+        this.armaPrincipal = new Arma("cajado", "CaC/mágico", 4, 1);
+        
+        // Coloca a arma na bolsa de itens
+        this.itensIniciais.add(this.armaPrincipal);
     }
 
-    // A vida e mana específicas do Mago
+    // Status Base
     @Override
     public int calcularVidaBase(int constituicaoBase) { return 10 + constituicaoBase; }
 
     @Override
     public int calcularManaBase(int presencaBase) { return 8 + presencaBase; }
 
-    // Bônus e penalidades exclusivos do Mago
+    // Modificadores de Status
     @Override
     public int getBonusConstituicao() { return -2; }
 

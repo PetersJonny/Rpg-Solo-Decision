@@ -1,40 +1,103 @@
+import classes.*;
 import fichas.FichaRpg;
 import telas.Interface;
-import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        int escolhaInterface = 0;
-
-        // interface carregando barra
+        
         Interface.BarraCarregamento("Carregando jogo...");
-
-        // interface de boas vindas
         Interface.ExibirBoasVindas();
 
-        // escolha do nome do dono da ficha
-        System.out.print("Qual seu nome?\n");
-        String nomePessoa = scanner.nextLine();
+        // Inicialização
+        String nomePessoa = Interface.PedirNomeJogador();
+        FichaRpg ficha = new FichaRpg(nomePessoa);
 
-        // criação do objeto da ficha
-        FichaRpg fichaRpg = new FichaRpg(nomePessoa);
+        // Fase de Criação de Personagem
+        boolean criandoFicha = true;
 
-        // interface de escolha para criar a ficha
-        while(escolhaInterface < 5) {
+        while (criandoFicha) {
+            int escolhaInterface = Interface.MenuCriacaoFicha();
 
-            System.out.println("\n");
-            Interface.barraDivisoria();
+            switch (escolhaInterface) {
+                case 1:
+                    String nomePersonagem = Interface.PedirNomePersonagem();
+                    ficha.setNomePersonagem(nomePersonagem);
+                    break;
+                
+                case 2:
+                    ficha.resetarPontosBase();
+                    int totalDePontos = 6;
 
-            System.out.println("O que deseja fazer entre as seguintes opções?");
-            System.out.println("\n1.Escolher nome do personagem/alterar");
-            System.out.println("\n2.Distribuir pontos entre atributos/mudar pontos");
-            System.out.println("\n3.Escolher classe/mudar classe");
-            System.out.println("\n4.Mostrar ficha");
-            System.out.println("\n5.Finalizar criação do personagem.");
-            escolhaInterface = scanner.nextInt();
+                    while (totalDePontos > 0) {
+                        int atributoEscolhido = Interface.MenuDistribuirAtributos(totalDePontos);
+                        int gastoDePontos = Interface.PedirQuantidadePontos(totalDePontos);
 
-            fichaRpg.EscolhaInterface(escolhaInterface);
+                        if (gastoDePontos <= 0) {
+                            Interface.ExibirErro("Por favor, insira um valor maior que zero!");
+                            continue;
+                        }
+
+                        if (gastoDePontos > totalDePontos) {
+                            gastoDePontos = totalDePontos;
+                        }
+
+                        if (atributoEscolhido >= 1 && atributoEscolhido <= 6) {
+                            ficha.adicionarAtributo(atributoEscolhido, gastoDePontos);
+                            totalDePontos -= gastoDePontos;
+                        } else {
+                            Interface.ExibirErro("Opção inválida!");
+                        }
+                    }
+                    ficha.aplicarBonus();
+                    break;
+                
+                case 3:
+                    int escolhaClasse = Interface.MenuEscolherClasse();
+                    switch (escolhaClasse) {
+                        case 1: ficha.setClasse(new Mago()); break;
+                        case 2: ficha.setClasse(new Guerreiro()); break;
+                        case 3: ficha.setClasse(new Healer()); break;
+                        default: Interface.ExibirErro("Opção inválida!");
+                    }
+                    break;
+                
+                case 4:
+                    Interface.MostrarFicha(ficha);
+                    break;
+                
+                case 5:
+                    criandoFicha = false;
+                    break;
+                
+                default:
+                    Interface.ExibirErro("Opção inválida!");
+                    break;
+            }
+        }
+        
+        Interface.MostrarMensagem("\nA criação da ficha foi finalizada com sucesso!");
+        
+        // Fase da Aventura
+        boolean jogando = true;
+
+        while (jogando) {
+            int escolhaAventura = Interface.MenuPrincipalAventura();
+
+            switch (escolhaAventura) {
+                case 1:
+                    Interface.MostrarFicha(ficha);
+                    break;
+                case 2:
+                    Interface.MostrarMensagem("\nA aventura está prestes a começar... (Em breve)");
+                    break;
+                case 3:
+                    Interface.MostrarMensagem("\nEncerrando o jogo... Até a próxima aventura!");
+                    jogando = false;
+                    break;
+                default:
+                    Interface.ExibirErro("Opção inválida!");
+                    break;
+            }
         }
     }
 }

@@ -1,25 +1,28 @@
 package classes;
 
+import itens.Arma;
+import itens.ItemRpg;
+import java.util.ArrayList;
+import java.util.List;
+
 public abstract class ClasseRpg {
-    // Estas são as características que TODA classe vai ter
+    // Identificação
     protected String nome;
-    protected String arma;
-    protected String tipoArma;
-    protected int dadoDanoArma;
-    protected int quantidadeDanoArma;
+    
+    // Equipamentos
+    protected Arma armaPrincipal;
+    protected List<ItemRpg> itensIniciais = new ArrayList<>();
 
-    // Métodos para a FichaRpg conseguir ler essas informações
+    // Getters
     public String getNome() { return nome; }
-    public String getArma() { return arma; }
-    public String getTipoArma() { return tipoArma; }
-    public int getDadoDanoArma() { return dadoDanoArma; }
-    public int getQuantidadeDanoArma() { return quantidadeDanoArma; }
+    public Arma getArmaPrincipal() { return armaPrincipal; }
+    public List<ItemRpg> getItensIniciais() { return itensIniciais; }
 
-    // Cada classe terá uma matemática diferente para Vida e Mana
+    // Status Base
     public abstract int calcularVidaBase(int constituicaoBase);
     public abstract int calcularManaBase(int presencaBase);
 
-    // Bônus de status padrão (se a classe não alterar, é 0)
+    // Modificadores de Status
     public int getBonusConstituicao() { return 0; }
     public int getBonusForca() { return 0; }
     public int getBonusDestreza() { return 0; }
