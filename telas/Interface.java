@@ -234,7 +234,7 @@ public class Interface {
             socoDado = classe.getAtaqueDesarmado().getDadoDanoArma();
         }
 
-        System.out.println("\n --------FICHA-------- \n\nNome: " + ficha.getNomePersonagem() + "\t\tDono da ficha: " + ficha.getNomePessoa() + "\t\tClasse: " + nomeDaClasse + "\nVida: " + ficha.getVidaPersonagem() + "\t\tMana: " + ficha.getManaPersonagem() + "\n\nAtributos: \nConstituição: " + ficha.getConstituicao() + "\nDestreza: " + ficha.getDestreza() + "\nForça: " + ficha.getForca() + "\nSabedoria: " + ficha.getSabedoria() + "\nIntelecto: " + ficha.getIntelecto() + "\nPresença: " + ficha.getPresenca() + "\n\nCombate: \n- " + armaDaClasse + "\t(Dano: " + qtdDano + "d" + dadoDano + ", Tipo: " + tipoArma + ")\n- " + socoNome + "\t(Dano: " + socoQtdDano + "d" + socoDado + ", Tipo: " + socoTipo + ")\n\nDefesa: " + ficha.getDefesa());
+        System.out.println("\n --------FICHA-------- \n\nNome: " + ficha.getNomePersonagem() + "\t\tNível: " + ficha.getNivel() + "\nDono da ficha: " + ficha.getNomePessoa() + "\t\tClasse: " + nomeDaClasse + "\nVida: " + ficha.getVidaPersonagem() + "\t\tMana: " + ficha.getManaPersonagem() + "\n\nAtributos: \nConstituição: " + ficha.getConstituicao() + "\nDestreza: " + ficha.getDestreza() + "\nForça: " + ficha.getForca() + "\nSabedoria: " + ficha.getSabedoria() + "\nIntelecto: " + ficha.getIntelecto() + "\nPresença: " + ficha.getPresenca() + "\n\nCombate: \n- " + armaDaClasse + "\t(Dano: " + qtdDano + "d" + dadoDano + ", Tipo: " + tipoArma + ")\n- " + socoNome + "\t(Dano: " + socoQtdDano + "d" + socoDado + ", Tipo: " + socoTipo + ")\n\nDefesa: " + ficha.getDefesa());
         
         System.out.println("\nInventário:");
         if (ficha.getInventario().isEmpty()) {

@@ -91,6 +91,7 @@ public class Main {
         
         // Fase da Aventura
         boolean jogando = true;
+        boolean prologoFeito = false;
 
         while (jogando) {
             int escolhaAventura = Interface.MenuPrincipalAventura();
@@ -118,8 +119,27 @@ public class Main {
                     }
                     break;
                 case 2:
-                    narrativa.Aventura.IniciarPrologo(ficha);
-                    Interface.MostrarMensagem("\n[SISTEMA] O Prólogo foi concluído! Retornando ao menu até descobrirmos os próximos passos da aventura...");
+                    if (!prologoFeito) {
+                        narrativa.Aventura.IniciarPrologo(ficha);
+                        prologoFeito = true;
+                    }
+                    
+                    boolean explorando = true;
+                    while (explorando) {
+                        System.out.println("\n--- MAPA DE FREIJORD ---");
+                        System.out.println("1. Explorar a Floresta");
+                        System.out.println("2. Voltar ao Acampamento Seguro (Menu Principal)");
+                        int escMapa = Interface.scanner.nextInt();
+                        Interface.scanner.nextLine();
+                        
+                        if (escMapa == 1) {
+                            eventos.Floresta.Explorar(ficha);
+                        } else if (escMapa == 2) {
+                            explorando = false;
+                        } else {
+                            Interface.ExibirErro("Opção inválida!");
+                        }
+                    }
                     break;
                 case 3:
                     Interface.MostrarMensagem("\nEncerrando o jogo... Até a próxima aventura!");

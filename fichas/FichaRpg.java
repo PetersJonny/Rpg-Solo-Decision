@@ -11,6 +11,7 @@ public class FichaRpg {
     private String nomePersonagem = "Desconhecido", nomePessoa;
     
     // Status de Sobrevivência
+    private int nivel = 1;
     private int vidaPersonagem, manaPersonagem;
     
     // Atributos Base
@@ -129,6 +130,7 @@ public class FichaRpg {
     // Getters
     public String getNomePersonagem() { return nomePersonagem; }
     public String getNomePessoa() { return nomePessoa; }
+    public int getNivel() { return nivel; }
     public int getVidaPersonagem() { return vidaPersonagem; }
     public int getManaPersonagem() { return manaPersonagem; }
     public int getConstituicao() { return constituicao; }
