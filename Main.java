@@ -118,7 +118,8 @@ public class Main {
                     }
                     break;
                 case 2:
-                    Interface.MostrarMensagem("\nA aventura está prestes a começar... (Em breve)");
+                    narrativa.Aventura.IniciarPrologo(ficha);
+                    Interface.MostrarMensagem("\n[SISTEMA] O Prólogo foi concluído! Retornando ao menu até descobrirmos os próximos passos da aventura...");
                     break;
                 case 3:
                     Interface.MostrarMensagem("\nEncerrando o jogo... Até a próxima aventura!");
