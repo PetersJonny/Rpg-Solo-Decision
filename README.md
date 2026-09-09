@@ -1,4 +1,4 @@
-# 🎲 RPG de dados com ficha e ainda mais
+# 🎲 RPG de dados com ficha
 
 Este é um projeto desenvolvido em **Java** para criar um RPG de dado com fichas personalizadas de RPG para diversão própria. O sistema permite que o jogador distribua pontos de atributos e escolha uma classe, calculando automaticamente os status de Vida e Mana baseados nessas escolhas.
 
