@@ -1,28 +1,23 @@
 package classes;
 
 import itens.Arma;
+import itens.Armadura;
 
 public class Guerreiro extends ClasseRpg {
     
-    // Construtor
     public Guerreiro() {
         this.nome = "Guerreiro";
-        
-        // Guerreiro cria sua arma como um Objeto
-        this.armaPrincipal = new Arma("espada", "CaC", 8, 1);
-        
-        // Coloca a arma na bolsa de itens
+        this.armaPrincipal = new Arma("Espada", "CaC", 8, 1, 1);
         this.itensIniciais.add(this.armaPrincipal);
+        this.itensIniciais.add(new Armadura("Armadura Leve", 3, 1));
     }
 
-    // Status Base
     @Override
     public int calcularVidaBase(int constituicaoBase) { return 20 + constituicaoBase; }
 
     @Override
     public int calcularManaBase(int presencaBase) { return 2 + presencaBase; }
 
-    // Modificadores de Status
     @Override
     public int getBonusConstituicao() { return 2; }
 

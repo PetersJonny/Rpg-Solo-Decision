@@ -1,28 +1,24 @@
 package classes;
 
 import itens.Arma;
+import itens.Consumivel;
 
 public class Healer extends ClasseRpg {
     
-    // Construtor
     public Healer() {
         this.nome = "Healer";
-        
-        // Healer cria sua arma como um Objeto
-        this.armaPrincipal = new Arma("arco", "LA", 6, 1);
-        
-        // Coloca a arma na bolsa de itens
+        this.armaPrincipal = new Arma("Arco", "LA", 6, 1, 1);
         this.itensIniciais.add(this.armaPrincipal);
+        this.itensIniciais.add(new Consumivel("Kit Médico", 1));
+        this.itensIniciais.add(new Consumivel("Flechas", 15));
     }
 
-    // Status Base
     @Override
     public int calcularVidaBase(int constituicaoBase) { return 14 + constituicaoBase; }
 
     @Override
     public int calcularManaBase(int presencaBase) { return 5 + presencaBase; }
 
-    // Modificadores de Status
     @Override
     public int getBonusSabedoria() { return 1; }
 

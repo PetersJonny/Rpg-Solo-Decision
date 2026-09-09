@@ -1,7 +1,8 @@
 package mecanicas;
 
-import fichas.FichaRpg;
 import java.util.Random;
+import fichas.FichaRpg;
+import itens.Arma;
 
 public class MecanicasRpg {
     // Randomizador
@@ -9,7 +10,7 @@ public class MecanicasRpg {
 
     // Rolar Dado Genérico
     public static int rolarDado(int lados) {
-        return random.nextInt(lados);
+        return random.nextInt(lados) + 1;
     }
 
     // Rolar Iniciativa
@@ -17,5 +18,19 @@ public class MecanicasRpg {
         int resultadoDado = rolarDado(20);
         int total = resultadoDado + ficha.getDestreza();
         return total;
+    }
+
+    // Cálculo de Dano Físico
+    public static int rolarDanoFisico(FichaRpg ficha, Arma armaUsada) {
+        int danoBase = 0;
+        for (int i = 0; i < armaUsada.getQuantidadeDanoArma(); i++) {
+            danoBase += rolarDado(armaUsada.getDadoDanoArma());
+        }
+
+        if (armaUsada.getTipoArma().contains("CaC")) {
+            danoBase += ficha.getForca();
+        }
+
+        return danoBase;
     }
 }

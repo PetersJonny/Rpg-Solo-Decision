@@ -5,8 +5,8 @@ public class Arma extends ItemRpg {
     private int dadoDanoArma;
     private int quantidadeDanoArma;
 
-    public Arma(String nome, String tipoArma, int dadoDanoArma, int quantidadeDanoArma) {
-        super(nome); // Chama o construtor do ItemRpg para definir o nome
+    public Arma(String nome, String tipoArma, int dadoDanoArma, int quantidadeDanoArma, int quantidade) {
+        super(nome, quantidade);
         this.tipoArma = tipoArma;
         this.dadoDanoArma = dadoDanoArma;
         this.quantidadeDanoArma = quantidadeDanoArma;

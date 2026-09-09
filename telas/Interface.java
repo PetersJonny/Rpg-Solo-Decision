@@ -134,15 +134,27 @@ public class Interface {
             dadoDano = ficha.getArmaEquipada().getDadoDanoArma();
         }
 
-        System.out.println("\n --------FICHA-------- \n\nNome: " + ficha.getNomePersonagem() + "\t\tDono da ficha: " + ficha.getNomePessoa() + "\t\tClasse: " + nomeDaClasse + "\nVida: " + ficha.getVidaPersonagem() + "\t\tMana: " + ficha.getManaPersonagem() + "\n\nAtributos: \nConstituição: " + ficha.getConstituicao() + "\nDestreza: " + ficha.getDestreza() + "\nForça: " + ficha.getForca() + "\nSabedoria: " + ficha.getSabedoria() + "\nIntelecto: " + ficha.getIntelecto() + "\nPresença: " + ficha.getPresenca() + "\n\nCombate: \nArma: " + armaDaClasse + "\tDano da arma: " + qtdDano + "d" + dadoDano + "\t tipo da arma: " + tipoArma + "\nDefesa: " + ficha.getDefesa());
+        // Puxando dados do Soco
+        String socoNome = "Soco";
+        String socoTipo = "-";
+        int socoQtdDano = 0;
+        int socoDado = 0;
+
+        if (classe != null && classe.getAtaqueDesarmado() != null) {
+            socoNome = classe.getAtaqueDesarmado().getNome();
+            socoTipo = classe.getAtaqueDesarmado().getTipoArma();
+            socoQtdDano = classe.getAtaqueDesarmado().getQuantidadeDanoArma();
+            socoDado = classe.getAtaqueDesarmado().getDadoDanoArma();
+        }
+
+        System.out.println("\n --------FICHA-------- \n\nNome: " + ficha.getNomePersonagem() + "\t\tDono da ficha: " + ficha.getNomePessoa() + "\t\tClasse: " + nomeDaClasse + "\nVida: " + ficha.getVidaPersonagem() + "\t\tMana: " + ficha.getManaPersonagem() + "\n\nAtributos: \nConstituição: " + ficha.getConstituicao() + "\nDestreza: " + ficha.getDestreza() + "\nForça: " + ficha.getForca() + "\nSabedoria: " + ficha.getSabedoria() + "\nIntelecto: " + ficha.getIntelecto() + "\nPresença: " + ficha.getPresenca() + "\n\nCombate: \n- " + armaDaClasse + "\t(Dano: " + qtdDano + "d" + dadoDano + ", Tipo: " + tipoArma + ")\n- " + socoNome + "\t(Dano: " + socoQtdDano + "d" + socoDado + ", Tipo: " + socoTipo + ")\n\nDefesa: " + ficha.getDefesa());
         
         System.out.println("\nInventário:");
         if (ficha.getInventario().isEmpty()) {
             System.out.println("- Vazio");
         } else {
             for (ItemRpg item : ficha.getInventario()) {
-                // Aqui imprime SÓ o nome, como pedido
-                System.out.println("- " + item.getNome());
+                System.out.println("- " + item.getNome() + " (x" + item.getQuantidade() + ")");
             }
         }
         

@@ -66,7 +66,11 @@ public class Main {
                     break;
                 
                 case 5:
-                    criandoFicha = false;
+                    if (ficha.isFichaCompleta()) {
+                        criandoFicha = false;
+                    } else {
+                        Interface.ExibirErro("Ficha incompleta! Preencha seu Nome, distribua os 6 Atributos e escolha sua Classe.");
+                    }
                     break;
                 
                 default:

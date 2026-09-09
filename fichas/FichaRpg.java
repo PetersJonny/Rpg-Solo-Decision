@@ -96,6 +96,28 @@ public class FichaRpg {
         // Ficha ganha a arma e os itens da classe
         this.armaEquipada = classeDoPersonagem.getArmaPrincipal();
         this.inventario = new ArrayList<>(classeDoPersonagem.getItensIniciais());
+
+        // Calcula a defesa extra provida pelas Armaduras na mochila
+        for (ItemRpg item : this.inventario) {
+            if (item instanceof itens.Armadura) {
+                this.defesa += ((itens.Armadura) item).getBonusDefesa();
+            }
+        }
+    }
+
+    // Validador de Ficha
+    public boolean isFichaCompleta() {
+        if (nomePersonagem.equals("Desconhecido") || nomePersonagem.trim().isEmpty()) {
+            return false;
+        }
+        if (classeDoPersonagem == null) {
+            return false;
+        }
+        int totalAtributosBase = constituicaoBase + destrezaBase + forcaBase + sabedoriaBase + intelectoBase + presencaBase;
+        if (totalAtributosBase < 6) {
+            return false;
+        }
+        return true;
     }
 
     // Getters
