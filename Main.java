@@ -54,10 +54,18 @@ public class Main {
                 case 3:
                     int escolhaClasse = Interface.MenuEscolherClasse();
                     switch (escolhaClasse) {
-                        case 1: ficha.setClasse(new Mago()); break;
-                        case 2: ficha.setClasse(new Guerreiro()); break;
-                        case 3: ficha.setClasse(new Healer()); break;
-                        default: Interface.ExibirErro("Opção inválida!");
+                        case 1: 
+                            String elemento = Interface.EscolherElementoMago();
+                            ficha.setClasse(new Mago(elemento)); 
+                            break;
+                        case 2: 
+                            ficha.setClasse(new Guerreiro()); 
+                            break;
+                        case 3: 
+                            ficha.setClasse(new Healer()); 
+                            break;
+                        default: 
+                            Interface.ExibirErro("Opção inválida!");
                     }
                     break;
                 
@@ -90,6 +98,24 @@ public class Main {
             switch (escolhaAventura) {
                 case 1:
                     Interface.MostrarFicha(ficha);
+                    boolean naFicha = true;
+                    while (naFicha) {
+                        int acaoFicha = Interface.MenuFicha();
+                        switch (acaoFicha) {
+                            case 1:
+                                Interface.InspecionarHabilidades(ficha);
+                                break;
+                            case 2:
+                                Interface.InspecionarInventario(ficha);
+                                break;
+                            case 3:
+                                naFicha = false;
+                                break;
+                            default:
+                                Interface.ExibirErro("Opção inválida!");
+                                break;
+                        }
+                    }
                     break;
                 case 2:
                     Interface.MostrarMensagem("\nA aventura está prestes a começar... (Em breve)");

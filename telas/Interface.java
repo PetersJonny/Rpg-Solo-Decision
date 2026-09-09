@@ -96,6 +96,25 @@ public class Interface {
         return escolha;
     }
 
+    public static String EscolherElementoMago() {
+        barraDivisoria();
+        System.out.println("\nComo Mago, você deve escolher o elemento da sua Bola Elementar:");
+        System.out.println("1. Fogo\n2. Água\n3. Gelo\n4. Elétrico\n5. Terra\n6. Ácido");
+        int escolha = scanner.nextInt();
+        scanner.nextLine();
+        switch (escolha) {
+            case 1: return "Fogo";
+            case 2: return "Água";
+            case 3: return "Gelo";
+            case 4: return "Elétrico";
+            case 5: return "Terra";
+            case 6: return "Ácido";
+            default: 
+                ExibirErro("Opção inválida, definindo como Fogo por padrão.");
+                return "Fogo";
+        }
+    }
+
     public static int MenuPrincipalAventura() {
         System.out.println("\n");
         barraDivisoria();
@@ -106,6 +125,74 @@ public class Interface {
         int escolha = scanner.nextInt();
         scanner.nextLine();
         return escolha;
+    }
+
+    // Interação com a Ficha
+    public static int MenuFicha() {
+        System.out.println("\n");
+        barraDivisoria();
+        System.out.println("--- INTERAÇÃO COM A FICHA ---");
+        System.out.println("1. Ver Habilidades");
+        System.out.println("2. Ver Inventário (Ler descrições)");
+        System.out.println("3. Voltar para a Aventura");
+        int escolha = scanner.nextInt();
+        scanner.nextLine();
+        return escolha;
+    }
+
+    public static void InspecionarInventario(FichaRpg ficha) {
+        if (ficha.getInventario().isEmpty()) {
+            System.out.println(AMARELO + "Seu inventário está vazio." + RESET);
+            return;
+        }
+
+        System.out.println("\n--- SEU INVENTÁRIO ---");
+        for (int i = 0; i < ficha.getInventario().size(); i++) {
+            ItemRpg item = ficha.getInventario().get(i);
+            System.out.println((i + 1) + ". " + item.getNome() + " (x" + item.getQuantidade() + ")");
+        }
+        System.out.println("0. Voltar");
+
+        System.out.println("\nDigite o número do item que deseja ler a descrição:");
+        int escolha = scanner.nextInt();
+        scanner.nextLine();
+
+        if (escolha > 0 && escolha <= ficha.getInventario().size()) {
+            ItemRpg itemEscolhido = ficha.getInventario().get(escolha - 1);
+            System.out.println("\n" + CIANO + "-- " + itemEscolhido.getNome().toUpperCase() + " --" + RESET);
+            System.out.println("Descrição: " + itemEscolhido.getDescricao());
+            System.out.println(CIANO + "-----------------------" + RESET);
+        } else if (escolha != 0) {
+            ExibirErro("Opção inválida!");
+        }
+    }
+
+    public static void InspecionarHabilidades(FichaRpg ficha) {
+        if (ficha.getHabilidades().isEmpty()) {
+            System.out.println(AMARELO + "Você não possui nenhuma habilidade." + RESET);
+            return;
+        }
+
+        System.out.println("\n--- SUAS HABILIDADES ---");
+        for (int i = 0; i < ficha.getHabilidades().size(); i++) {
+            habilidades.Habilidade hab = ficha.getHabilidades().get(i);
+            System.out.println((i + 1) + ". " + hab.getNome() + " (Custo: " + hab.getCustoMana() + " Mana)");
+        }
+        System.out.println("0. Voltar");
+
+        System.out.println("\nDigite o número da habilidade que deseja ler a descrição:");
+        int escolha = scanner.nextInt();
+        scanner.nextLine();
+
+        if (escolha > 0 && escolha <= ficha.getHabilidades().size()) {
+            habilidades.Habilidade habEscolhida = ficha.getHabilidades().get(escolha - 1);
+            System.out.println("\n" + CIANO + "-- " + habEscolhida.getNome().toUpperCase() + " --" + RESET);
+            System.out.println("Custo de Mana: " + habEscolhida.getCustoMana());
+            System.out.println("Descrição: " + habEscolhida.getDescricao());
+            System.out.println(CIANO + "-----------------------" + RESET);
+        } else if (escolha != 0) {
+            ExibirErro("Opção inválida!");
+        }
     }
 
     public static void ExibirErro(String erro) {
@@ -155,6 +242,15 @@ public class Interface {
         } else {
             for (ItemRpg item : ficha.getInventario()) {
                 System.out.println("- " + item.getNome() + " (x" + item.getQuantidade() + ")");
+            }
+        }
+
+        System.out.println("\nHabilidades:");
+        if (ficha.getHabilidades().isEmpty()) {
+            System.out.println("- Nenhuma");
+        } else {
+            for (habilidades.Habilidade hab : ficha.getHabilidades()) {
+                System.out.println("- " + hab.getNome() + " (Custo: " + hab.getCustoMana() + " Mana)");
             }
         }
         

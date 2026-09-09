@@ -13,14 +13,18 @@ public abstract class ClasseRpg {
     protected Arma armaPrincipal;
     protected List<ItemRpg> itensIniciais = new ArrayList<>();
     
-    // Ataque Básico Universal (Não é um item no inventário)
-    protected Arma ataqueDesarmado = new Arma("Soco", "CaC", 3, 1, 0);
+    // Habilidades
+    protected List<habilidades.Habilidade> habilidadesIniciais = new ArrayList<>();
+    
+    // Ataque Básico Universal
+    protected Arma ataqueDesarmado = new Arma("Soco", "Um ataque corpo a corpo simples e direto que causa 1d3 de dano.", "CaC", 3, 1, 0);
 
     // Getters
     public String getNome() { return nome; }
     public Arma getArmaPrincipal() { return armaPrincipal; }
     public Arma getAtaqueDesarmado() { return ataqueDesarmado; }
     public List<ItemRpg> getItensIniciais() { return itensIniciais; }
+    public List<habilidades.Habilidade> getHabilidadesIniciais() { return habilidadesIniciais; }
 
     // Status Base
     public abstract int calcularVidaBase(int constituicaoBase);

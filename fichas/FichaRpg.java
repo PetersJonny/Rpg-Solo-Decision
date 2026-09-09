@@ -28,6 +28,9 @@ public class FichaRpg {
     // Equipamento e Inventário
     private Arma armaEquipada;
     private List<ItemRpg> inventario = new ArrayList<>();
+    
+    // Habilidades
+    private List<habilidades.Habilidade> habilidades = new ArrayList<>();
 
     // Construtor
     public FichaRpg(String nomePessoa) {
@@ -96,6 +99,9 @@ public class FichaRpg {
         // Ficha ganha a arma e os itens da classe
         this.armaEquipada = classeDoPersonagem.getArmaPrincipal();
         this.inventario = new ArrayList<>(classeDoPersonagem.getItensIniciais());
+        
+        // Ficha ganha as habilidades da classe
+        this.habilidades = new ArrayList<>(classeDoPersonagem.getHabilidadesIniciais());
 
         // Calcula a defesa extra provida pelas Armaduras na mochila
         for (ItemRpg item : this.inventario) {
@@ -135,4 +141,5 @@ public class FichaRpg {
     public ClasseRpg getClasseDoPersonagem() { return classeDoPersonagem; }
     public Arma getArmaEquipada() { return armaEquipada; }
     public List<ItemRpg> getInventario() { return inventario; }
+    public List<habilidades.Habilidade> getHabilidades() { return habilidades; }
 }

@@ -5,11 +5,14 @@ import itens.Consumivel;
 
 public class Mago extends ClasseRpg {
     
-    public Mago() {
+    public Mago(String elemento) {
         this.nome = "Mago";
-        this.armaPrincipal = new Arma("Cajado", "CaC/mágico", 4, 1, 1);
+        this.armaPrincipal = new Arma("Cajado", "Um cajado de madeira simples que causa 1d4 de dano. Pode ser usado para canalizar magia ou para bater.", "CaC/mágico", 4, 1, 1);
         this.itensIniciais.add(this.armaPrincipal);
-        this.itensIniciais.add(new Consumivel("Poção de Mana", 1));
+        this.itensIniciais.add(new Consumivel("Poção de Mana", "Restaura 5 pontos de mana. É consumida após o uso.", 1));
+        
+        // Magia Base
+        this.habilidadesIniciais.add(new habilidades.Magia("Bola Elementar (" + elemento + ")", "Lança uma esfera de " + elemento.toLowerCase() + " que causa 2d8 de dano do elemento escolhido.", 3));
     }
 
     @Override
