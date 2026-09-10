@@ -214,34 +214,37 @@ public class Floresta {
         Interface.MostrarMensagem("-> Iniciativa [" + ficha.getNomePersonagem() + "]: " + dadoJogador + " (Dado) + " + ficha.getDestreza() + " (Destreza) + " + bonusIniciativaJogador + " (Bônus) = " + iniciativaJogador);
         Interface.Pausa(2500);
 
-        int melhorIniciativaInimiga = -1000;
-        Criatura maisRapido = null;
-        for (Criatura c : inimigos) {
+        List<int[]> ordem = new ArrayList<>();
+        ordem.add(new int[]{iniciativaJogador, 0});
+
+        for (int i = 0; i < inimigos.size(); i++) {
+            Criatura c = inimigos.get(i);
             int dadoInimigo = MecanicasRpg.rolarDado(20);
             int iniciativaInimigo = dadoInimigo + c.getIniciativa();
             Interface.MostrarMensagem("-> Iniciativa [" + rotuloCriatura(inimigos, c) + "]: " + dadoInimigo + " (Dado) + " + c.getIniciativa() + " (Iniciativa Base) = " + iniciativaInimigo);
-            if (iniciativaInimigo > melhorIniciativaInimiga) {
-                melhorIniciativaInimiga = iniciativaInimigo;
-                maisRapido = c;
-            }
             Interface.Pausa(1500);
+            ordem.add(new int[]{iniciativaInimigo, i + 1});
         }
 
-        if (iniciativaJogador >= melhorIniciativaInimiga) {
-            Interface.MostrarMensagem("\n" + ficha.getNomePersonagem() + " é mais ágil e age primeiro!");
-        } else {
-            Interface.MostrarMensagem("\n" + rotuloCriatura(inimigos, maisRapido) + " é mais rápido e age primeiro!");
+        ordem.sort((a, b) -> Integer.compare(b[0], a[0]));
+
+        StringBuilder ordemTexto = new StringBuilder();
+        for (int[] token : ordem) {
+            String nomeOrdem = (token[1] == 0) ? ficha.getNomePersonagem() : rotuloCriatura(inimigos, inimigos.get(token[1] - 1));
+            if (ordemTexto.length() > 0) ordemTexto.append(" > ");
+            ordemTexto.append(nomeOrdem);
         }
+        Interface.MostrarMensagem("\nOrdem de Iniciativa: " + ordemTexto);
         Interface.Pausa(2500);
 
-        RodadasDeCombate(ficha, inimigos, iniciativaJogador >= melhorIniciativaInimiga);
+        RodadasDeCombate(ficha, inimigos, ordem);
     }
 
     // ==================== RODADAS DE COMBATE ====================
 
-    private static void RodadasDeCombate(FichaRpg ficha, List<Criatura> inimigos, boolean jogadorMaisRapido) {
-        int tentativasFuga = 0;
-        boolean cascaGrossaAtiva = false;
+    private static void RodadasDeCombate(FichaRpg ficha, List<Criatura> inimigos, List<int[]> ordem) {
+        boolean[] cascaGrossaAtiva = {false};
+        int[] tentativasFuga = {0};
 
         while (ficha.getVidaPersonagem() > 0 && !inimigosVivos(inimigos).isEmpty()) {
             Interface.barraDivisoria();
@@ -253,86 +256,30 @@ public class Floresta {
                     Interface.MostrarMensagem("  " + (i + 1) + ". " + c.getNome() + " (Vida: " + c.getVida() + ")");
                 }
             }
-            if (tentativasFuga > 0) {
-                Interface.MostrarMensagem("Tentativas de fuga: " + tentativasFuga + "/3");
+            if (tentativasFuga[0] > 0) {
+                Interface.MostrarMensagem("Tentativas de fuga: " + tentativasFuga[0] + "/3");
             }
             Interface.Pausa(1500);
 
-            cascaGrossaAtiva = false;
-            int tipoAcao = -1;
-            int alvoIndex = -1;
-            int armaEscolhidaIndex = -1;
-            int habilidadeEscolhidaIndex = -1;
+            cascaGrossaAtiva[0] = false;
 
-            System.out.println("\nO que deseja fazer?");
-            System.out.println("1. Lutar");
-            System.out.println("2. Abrir Mochila");
-            System.out.println("3. Tentar Fugir");
-            System.out.println("4. Ver Ficha");
+            for (int[] token : ordem) {
+                if (ficha.getVidaPersonagem() <= 0 || inimigosVivos(inimigos).isEmpty()) break;
 
-            int escolha = Interface.scanner.nextInt();
-            Interface.scanner.nextLine();
-
-            if (escolha == 4) {
-                Interface.MostrarFicha(ficha);
-                Interface.Pausa(1500);
-                continue;
-            }
-
-            if (escolha == 1) {
-                int[] resultado = MenuLutarComEscolha(ficha, inimigos, cascaGrossaAtiva);
-                if (resultado != null) {
-                    tipoAcao = resultado[0];
-                    alvoIndex = resultado[1];
-                    armaEscolhidaIndex = resultado[2];
-                    habilidadeEscolhidaIndex = resultado[3];
-                    if (tipoAcao == 5) {
-                        cascaGrossaAtiva = true;
-                        resultado = MenuLutarComEscolha(ficha, inimigos, true);
-                        if (resultado != null) {
-                            tipoAcao = resultado[0];
-                            alvoIndex = resultado[1];
-                            armaEscolhidaIndex = resultado[2];
-                            habilidadeEscolhidaIndex = resultado[3];
-                        } else {
-                            tipoAcao = -1;
-                        }
+                if (token[1] == 0) {
+                    int resultado = VezDoJogador(ficha, inimigos, cascaGrossaAtiva, tentativasFuga);
+                    if (resultado == 0) {
+                        Interface.MostrarMensagem("\nVocê conseguiu escapar da floresta!");
+                        Interface.Pausa(2500);
+                        return;
                     }
-                }
-            } else if (escolha == 2) {
-                tipoAcao = AbrirMochilaCombate(ficha);
-            } else if (escolha == 3) {
-                int resultadoFuga = TentarFugir(ficha, inimigos, tentativasFuga);
-                if (resultadoFuga == -1) {
-                    tipoAcao = 4;
-                } else if (resultadoFuga == 3) {
-                    Interface.MostrarMensagem("\nVocê conseguiu escapar da floresta!");
-                    Interface.Pausa(2500);
-                    return;
                 } else {
-                    tentativasFuga = resultadoFuga;
-                    tipoAcao = 3;
-                }
-            } else {
-                Interface.ExibirErro("Escolha inválida! Você hesitou e perdeu a vez!");
-                Interface.Pausa(1500);
-            }
-
-            boolean playerAtacou = (tipoAcao == 1 || tipoAcao == 2);
-
-            if (playerAtacou) {
-                if (jogadorMaisRapido) {
-                    executarAcaoJogador(ficha, inimigos, tipoAcao, alvoIndex, armaEscolhidaIndex, habilidadeEscolhidaIndex);
-                    atacarTodosInimigos(inimigos, ficha, cascaGrossaAtiva);
-                } else {
-                    atacarTodosInimigos(inimigos, ficha, cascaGrossaAtiva);
-                    if (ficha.getVidaPersonagem() > 0) {
-                        executarAcaoJogador(ficha, inimigos, tipoAcao, alvoIndex, armaEscolhidaIndex, habilidadeEscolhidaIndex);
+                    Criatura c = inimigos.get(token[1] - 1);
+                    if (c.getVida() > 0) {
+                        Interface.MostrarMensagem("\n" + rotuloCriatura(inimigos, c) + " avança para atacar!");
+                        Interface.Pausa(1500);
+                        c.atacarJogador(ficha, cascaGrossaAtiva[0]);
                     }
-                }
-            } else if (tipoAcao == 4) {
-                if (ficha.getVidaPersonagem() > 0) {
-                    atacarTodosInimigos(inimigos, ficha, false);
                 }
             }
         }
@@ -353,15 +300,90 @@ public class Floresta {
         Interface.barraDivisoria();
     }
 
-    // Todos os inimigos vivos atacam o jogador
-    private static void atacarTodosInimigos(List<Criatura> inimigos, FichaRpg ficha, boolean cascaGrossaAtiva) {
-        for (Criatura c : inimigos) {
-            if (c.getVida() > 0 && ficha.getVidaPersonagem() > 0) {
-                Interface.MostrarMensagem("\n" + rotuloCriatura(inimigos, c) + " avança para atacar!");
+    // ==================== VEZ DO JOGADOR ====================
+
+    private static int VezDoJogador(FichaRpg ficha, List<Criatura> inimigos, boolean[] cascaGrossaAtiva, int[] tentativasFuga) {
+        while (true) {
+            System.out.println("\nO que deseja fazer?");
+            System.out.println("1. Lutar");
+            System.out.println("2. Abrir Mochila");
+            System.out.println("3. Tentar Fugir");
+            System.out.println("4. Ver Ficha");
+
+            int escolha = Interface.scanner.nextInt();
+            Interface.scanner.nextLine();
+
+            if (escolha == 4) {
+                Interface.MostrarFicha(ficha);
                 Interface.Pausa(1500);
-                c.atacarJogador(ficha, cascaGrossaAtiva);
+                continue;
+            }
+
+            if (escolha == 1) {
+                int[] resultado = MenuLutarComEscolha(ficha, inimigos, cascaGrossaAtiva[0]);
+                if (resultado == null) continue;
+
+                int tipoAcao = resultado[0];
+                int alvoIndex = resultado[1];
+                int armaIndex = resultado[2];
+                int habIndex = resultado[3];
+
+                if (tipoAcao == 5) {
+                    cascaGrossaAtiva[0] = true;
+                    resultado = MenuLutarComEscolha(ficha, inimigos, true);
+                    if (resultado == null) return 1;
+                    tipoAcao = resultado[0];
+                    alvoIndex = resultado[1];
+                    armaIndex = resultado[2];
+                    habIndex = resultado[3];
+                }
+
+                executarAcaoJogador(ficha, inimigos, tipoAcao, alvoIndex, armaIndex, habIndex);
+                return 1;
+            } else if (escolha == 2) {
+                int novo = AbrirMochilaCombate(ficha);
+                if (novo == -1) continue;
+                if (novo == 4) {
+                    return TentarFugirNaVez(ficha, inimigos, cascaGrossaAtiva, tentativasFuga);
+                }
+                return 1;
+            } else if (escolha == 3) {
+                return TentarFugirNaVez(ficha, inimigos, cascaGrossaAtiva, tentativasFuga);
+            } else {
+                Interface.ExibirErro("Escolha inválida!");
+                Interface.Pausa(1500);
             }
         }
+    }
+
+    // Tenta fugir gastando o turno; retorna 0 se escapou do combate ou 1 se o turno foi gasto
+    private static int TentarFugirNaVez(FichaRpg ficha, List<Criatura> inimigos, boolean[] cascaGrossaAtiva, int[] tentativasFuga) {
+        int resultadoFuga = TentarFugir(ficha, inimigos, tentativasFuga[0]);
+        if (resultadoFuga == -1) {
+            Interface.MostrarMensagem("\nA ameaça te alcança e aproveita a abertura!");
+            Interface.Pausa(1500);
+            Criatura maisRapido = inimigoMaisRapidoVivo(inimigos);
+            if (maisRapido != null) {
+                maisRapido.atacarJogador(ficha, cascaGrossaAtiva[0]);
+            }
+        } else if (resultadoFuga == 3) {
+            return 0;
+        } else {
+            tentativasFuga[0] = resultadoFuga;
+        }
+        return 1;
+    }
+
+    // Retorna a criatura viva com maior iniciativa base
+    private static Criatura inimigoMaisRapidoVivo(List<Criatura> inimigos) {
+        Criatura maisRapido = null;
+        for (Criatura c : inimigos) {
+            if (c.getVida() <= 0) continue;
+            if (maisRapido == null || c.getIniciativa() > maisRapido.getIniciativa()) {
+                maisRapido = c;
+            }
+        }
+        return maisRapido;
     }
 
     private static void executarAcaoJogador(FichaRpg ficha, List<Criatura> inimigos, int tipoAcao, int alvoIndex, int armaIndex, int habIndex) {
@@ -799,26 +821,30 @@ public class Floresta {
 
             if (ficha.getInventario().isEmpty()) {
                 System.out.println("Sua mochila está vazia.");
-                System.out.println("\n0. Voltar");
-                Interface.scanner.nextInt();
-                Interface.scanner.nextLine();
-                return -1;
+            } else {
+                for (int i = 0; i < ficha.getInventario().size(); i++) {
+                    ItemRpg item = ficha.getInventario().get(i);
+                    String tipo = "";
+                    if (ehItemConsumivel(item)) tipo = " [Consumível]";
+                    else if (item instanceof Arma) tipo = " [Arma]";
+                    else if (item.getNome().equals("Flechas")) tipo = " [Munição]";
+                    System.out.println((i + 1) + ". " + item.getNome() + " (x" + item.getQuantidade() + ")" + tipo);
+                }
             }
-
-            for (int i = 0; i < ficha.getInventario().size(); i++) {
-                ItemRpg item = ficha.getInventario().get(i);
-                String tipo = "";
-                if (ehItemConsumivel(item)) tipo = " [Consumível]";
-                else if (item instanceof Arma) tipo = " [Arma]";
-                else if (item.getNome().equals("Flechas")) tipo = " [Munição]";
-                System.out.println((i + 1) + ". " + item.getNome() + " (x" + item.getQuantidade() + ")" + tipo);
-            }
-            System.out.println("0. Voltar");
+            System.out.println("0. Voltar ao combate");
+            System.out.println("9. Tentar fugir do combate");
 
             int escolha = Interface.scanner.nextInt();
             Interface.scanner.nextLine();
 
             if (escolha == 0) return -1;
+            if (escolha == 9) return 4;
+
+            if (ficha.getInventario().isEmpty()) {
+                Interface.ExibirErro("Escolha inválida!");
+                Interface.Pausa(1500);
+                continue;
+            }
 
             if (escolha > 0 && escolha <= ficha.getInventario().size()) {
                 ItemRpg itemEscolhido = ficha.getInventario().get(escolha - 1);

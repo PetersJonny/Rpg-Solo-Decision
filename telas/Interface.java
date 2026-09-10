@@ -214,33 +214,35 @@ public class Interface {
         ClasseRpg classe = ficha.getClasseDoPersonagem();
         String nomeDaClasse = (classe != null) ? classe.getNome() : "Nenhuma";
         
-        // Puxando dados da Arma Equipada
-        String armaDaClasse = "Nenhuma";
-        String tipoArma = "-";
-        int qtdDano = 0;
-        int dadoDano = 0;
-
-        if (ficha.getArmaEquipada() != null) {
-            armaDaClasse = ficha.getArmaEquipada().getNome();
-            tipoArma = ficha.getArmaEquipada().getTipoArma();
-            qtdDano = ficha.getArmaEquipada().getQuantidadeDanoArma();
-            dadoDano = ficha.getArmaEquipada().getDadoDanoArma();
+        // Lista todas as armas do inventário na seção de Combate
+        StringBuilder combate = new StringBuilder();
+        for (ItemRpg item : ficha.getInventario()) {
+            if (item instanceof itens.Arma) {
+                itens.Arma arma = (itens.Arma) item;
+                combate.append("\n- ").append(arma.getNome())
+                    .append("\t(Dano: ").append(arma.getQuantidadeDanoArma())
+                    .append("d").append(arma.getDadoDanoArma())
+                    .append(", Tipo: ").append(arma.getTipoArma())
+                    .append(", Atributo: ").append(arma.getAtributoAtaque()).append(")");
+            }
         }
 
-        // Puxando dados do Soco
+        // Ataque desarmado
         String socoNome = "Soco";
         String socoTipo = "-";
         int socoQtdDano = 0;
         int socoDado = 0;
-
         if (classe != null && classe.getAtaqueDesarmado() != null) {
             socoNome = classe.getAtaqueDesarmado().getNome();
             socoTipo = classe.getAtaqueDesarmado().getTipoArma();
             socoQtdDano = classe.getAtaqueDesarmado().getQuantidadeDanoArma();
             socoDado = classe.getAtaqueDesarmado().getDadoDanoArma();
         }
+        combate.append("\n- ").append(socoNome)
+            .append("\t(Dano: ").append(socoQtdDano).append("d").append(socoDado)
+            .append(", Tipo: ").append(socoTipo).append(")");
 
-        System.out.println("\n --------FICHA-------- \n\nNome: " + ficha.getNomePersonagem() + "\t\tNível: " + ficha.getNivel() + "\nDono da ficha: " + ficha.getNomePessoa() + "\t\tClasse: " + nomeDaClasse + "\nVida: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima() + "\t\tMana: " + ficha.getManaPersonagem() + "/" + ficha.getManaMaxima() + "\nOuro: " + ficha.getOuro() + "\n\nAtributos: \nConstituição: " + ficha.getConstituicao() + "\nDestreza: " + ficha.getDestreza() + "\nForça: " + ficha.getForca() + "\nSabedoria: " + ficha.getSabedoria() + "\nIntelecto: " + ficha.getIntelecto() + "\nPresença: " + ficha.getPresenca() + "\n\nCombate: \n- " + armaDaClasse + "\t(Dano: " + qtdDano + "d" + dadoDano + ", Tipo: " + tipoArma + ")\n- " + socoNome + "\t(Dano: " + socoQtdDano + "d" + socoDado + ", Tipo: " + socoTipo + ")\n\nDefesa: " + ficha.getDefesa());
+        System.out.println("\n --------FICHA-------- \n\nNome: " + ficha.getNomePersonagem() + "\t\tNível: " + ficha.getNivel() + "\nDono da ficha: " + ficha.getNomePessoa() + "\t\tClasse: " + nomeDaClasse + "\nVida: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima() + "\t\tMana: " + ficha.getManaPersonagem() + "/" + ficha.getManaMaxima() + "\nOuro: " + ficha.getOuro() + "\n\nAtributos: \nConstituição: " + ficha.getConstituicao() + "\nDestreza: " + ficha.getDestreza() + "\nForça: " + ficha.getForca() + "\nSabedoria: " + ficha.getSabedoria() + "\nIntelecto: " + ficha.getIntelecto() + "\nPresença: " + ficha.getPresenca() + "\n\nCombate: " + combate + "\n\nDefesa: " + ficha.getDefesa());
         
         System.out.println("\nInventário:");
         if (ficha.getInventario().isEmpty()) {
