@@ -1,9 +1,9 @@
 package telas;
 
-import java.util.Scanner;
-import fichas.FichaRpg;
 import classes.ClasseRpg;
+import fichas.FichaRpg;
 import itens.ItemRpg;
+import java.util.Scanner;
 
 public class Interface {
     // Códigos de Cores ANSI
@@ -14,6 +14,11 @@ public class Interface {
 
     // Entrada de Dados
     public static final Scanner scanner = new Scanner(System.in);
+
+    // Pausa para leitura
+    public static void Pausa(int milisegundos) {
+        try { Thread.sleep(milisegundos); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
+    }
 
     // Menus e Telas
     public static void ExibirBoasVindas() {
@@ -208,7 +213,7 @@ public class Interface {
         ClasseRpg classe = ficha.getClasseDoPersonagem();
         String nomeDaClasse = (classe != null) ? classe.getNome() : "Nenhuma";
         
-        // Puxando dados da Arma Equipada (agora um Objeto)
+        // Puxando dados da Arma Equipada
         String armaDaClasse = "Nenhuma";
         String tipoArma = "-";
         int qtdDano = 0;

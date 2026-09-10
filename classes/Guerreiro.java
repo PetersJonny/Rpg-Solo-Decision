@@ -12,7 +12,7 @@ public class Guerreiro extends ClasseRpg {
         this.itensIniciais.add(new Armadura("Armadura Leve", "Oferece proteção básica para combate. Concede +3 de Defesa.", 3, 1));
         
         // Habilidade Base
-        this.habilidadesIniciais.add(new habilidades.Habilidade("Casca Grossa", "Endurece a pele, diminuindo 5 de dano recebido de um ataque.", 1));
+        this.habilidadesIniciais.add(new habilidades.Habilidade("Casca Grossa", "Endurece a pele, diminuindo 5 de dano recebido de um ataque.", 1, true));
     }
 
     @Override

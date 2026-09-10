@@ -13,6 +13,7 @@ public class FichaRpg {
     // Status de Sobrevivência
     private int nivel = 1;
     private int vidaPersonagem, manaPersonagem;
+    private int vidaMaxima, manaMaxima;
     
     // Atributos Base
     private int constituicaoBase, destrezaBase, forcaBase, sabedoriaBase, intelectoBase, presencaBase;
@@ -87,6 +88,8 @@ public class FichaRpg {
 
         this.vidaPersonagem = classeDoPersonagem.calcularVidaBase(this.constituicaoBase);
         this.manaPersonagem = classeDoPersonagem.calcularManaBase(this.presencaBase);
+        this.vidaMaxima = this.vidaPersonagem;
+        this.manaMaxima = this.manaPersonagem;
         
         this.constituicao += classeDoPersonagem.getBonusConstituicao();
         this.forca += classeDoPersonagem.getBonusForca();
@@ -144,4 +147,12 @@ public class FichaRpg {
     public Arma getArmaEquipada() { return armaEquipada; }
     public List<ItemRpg> getInventario() { return inventario; }
     public List<habilidades.Habilidade> getHabilidades() { return habilidades; }
+
+    // Setters de Combate
+    public void setVidaPersonagem(int vida) { this.vidaPersonagem = Math.min(vida, vidaMaxima); }
+    public void setManaPersonagem(int mana) { this.manaPersonagem = Math.min(mana, manaMaxima); }
+
+    // Getters de Máximo
+    public int getVidaMaxima() { return vidaMaxima; }
+    public int getManaMaxima() { return manaMaxima; }
 }
