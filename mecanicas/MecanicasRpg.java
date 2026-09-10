@@ -13,6 +13,11 @@ public class MecanicasRpg {
         return random.nextInt(lados) + 1;
     }
 
+    // Rolar Entre um Intervalo (valor mínimo e máximo inclusivos)
+    public static int rolarEntre(int minimo, int maximo) {
+        return minimo + random.nextInt(maximo - minimo + 1);
+    }
+
     // Rolar Iniciativa
     public static int rolarIniciativa(FichaRpg ficha) {
         int resultadoDado = rolarDado(20);
@@ -27,9 +32,8 @@ public class MecanicasRpg {
             danoBase += rolarDado(armaUsada.getDadoDanoArma());
         }
 
-        if (armaUsada.getTipoArma().contains("CaC")) {
-            danoBase += ficha.getForca();
-        }
+        String atributo = armaUsada.getAtributoAtaque();
+        danoBase += atributo.equals("Destreza") ? ficha.getDestreza() : ficha.getForca();
 
         return danoBase;
     }

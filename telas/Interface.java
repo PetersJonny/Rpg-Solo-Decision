@@ -73,6 +73,7 @@ public class Interface {
         System.out.println("\n3.Escolher classe/mudar classe");
         System.out.println("\n4.Mostrar ficha");
         System.out.println("\n5.Finalizar criação do personagem.");
+        System.out.println("\n6.Fechar o jogo");
         int escolha = scanner.nextInt();
         scanner.nextLine();
         return escolha;
@@ -239,7 +240,7 @@ public class Interface {
             socoDado = classe.getAtaqueDesarmado().getDadoDanoArma();
         }
 
-        System.out.println("\n --------FICHA-------- \n\nNome: " + ficha.getNomePersonagem() + "\t\tNível: " + ficha.getNivel() + "\nDono da ficha: " + ficha.getNomePessoa() + "\t\tClasse: " + nomeDaClasse + "\nVida: " + ficha.getVidaPersonagem() + "\t\tMana: " + ficha.getManaPersonagem() + "\n\nAtributos: \nConstituição: " + ficha.getConstituicao() + "\nDestreza: " + ficha.getDestreza() + "\nForça: " + ficha.getForca() + "\nSabedoria: " + ficha.getSabedoria() + "\nIntelecto: " + ficha.getIntelecto() + "\nPresença: " + ficha.getPresenca() + "\n\nCombate: \n- " + armaDaClasse + "\t(Dano: " + qtdDano + "d" + dadoDano + ", Tipo: " + tipoArma + ")\n- " + socoNome + "\t(Dano: " + socoQtdDano + "d" + socoDado + ", Tipo: " + socoTipo + ")\n\nDefesa: " + ficha.getDefesa());
+        System.out.println("\n --------FICHA-------- \n\nNome: " + ficha.getNomePersonagem() + "\t\tNível: " + ficha.getNivel() + "\nDono da ficha: " + ficha.getNomePessoa() + "\t\tClasse: " + nomeDaClasse + "\nVida: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima() + "\t\tMana: " + ficha.getManaPersonagem() + "/" + ficha.getManaMaxima() + "\nOuro: " + ficha.getOuro() + "\n\nAtributos: \nConstituição: " + ficha.getConstituicao() + "\nDestreza: " + ficha.getDestreza() + "\nForça: " + ficha.getForca() + "\nSabedoria: " + ficha.getSabedoria() + "\nIntelecto: " + ficha.getIntelecto() + "\nPresença: " + ficha.getPresenca() + "\n\nCombate: \n- " + armaDaClasse + "\t(Dano: " + qtdDano + "d" + dadoDano + ", Tipo: " + tipoArma + ")\n- " + socoNome + "\t(Dano: " + socoQtdDano + "d" + socoDado + ", Tipo: " + socoTipo + ")\n\nDefesa: " + ficha.getDefesa());
         
         System.out.println("\nInventário:");
         if (ficha.getInventario().isEmpty()) {

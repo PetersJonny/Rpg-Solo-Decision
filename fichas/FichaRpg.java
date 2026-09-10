@@ -5,6 +5,7 @@ import itens.Arma;
 import itens.ItemRpg;
 import java.util.ArrayList;
 import java.util.List;
+import mecanicas.MecanicasRpg;
 
 public class FichaRpg {
     // Identificação
@@ -12,6 +13,7 @@ public class FichaRpg {
     
     // Status de Sobrevivência
     private int nivel = 1;
+    private int ouro = 0;
     private int vidaPersonagem, manaPersonagem;
     private int vidaMaxima, manaMaxima;
     
@@ -134,6 +136,7 @@ public class FichaRpg {
     public String getNomePersonagem() { return nomePersonagem; }
     public String getNomePessoa() { return nomePessoa; }
     public int getNivel() { return nivel; }
+    public int getOuro() { return ouro; }
     public int getVidaPersonagem() { return vidaPersonagem; }
     public int getManaPersonagem() { return manaPersonagem; }
     public int getConstituicao() { return constituicao; }
@@ -155,4 +158,31 @@ public class FichaRpg {
     // Getters de Máximo
     public int getVidaMaxima() { return vidaMaxima; }
     public int getManaMaxima() { return manaMaxima; }
+
+    // Dinheiro
+    public void adicionarOuro(int quantidade) { this.ouro += Math.max(0, quantidade); }
+
+    // Adicionar item ao inventário, empilhando se já existir
+    public void adicionarItem(ItemRpg novoItem) {
+        for (ItemRpg existente : inventario) {
+            if (existente.getNome().equals(novoItem.getNome())) {
+                existente.setQuantidade(existente.getQuantidade() + novoItem.getQuantidade());
+                return;
+            }
+        }
+        inventario.add(novoItem);
+    }
+
+    // Bônus aleatório de atributo (concedido pela Fada)
+    public String aumentarAtributoAleatorio() {
+        int sorteado = MecanicasRpg.rolarDado(6);
+        switch (sorteado) {
+            case 1 -> { constituicao++; return "Constituição"; }
+            case 2 -> { destreza++; return "Destreza"; }
+            case 3 -> { forca++; return "Força"; }
+            case 4 -> { sabedoria++; return "Sabedoria"; }
+            case 5 -> { intelecto++; return "Intelecto"; }
+            default -> { presenca++; return "Presença"; }
+        }
+    }
 }

@@ -5,6 +5,8 @@ import fichas.FichaRpg;
 import itens.Arma;
 import itens.Consumivel;
 import itens.ItemRpg;
+import java.util.ArrayList;
+import java.util.List;
 import mecanicas.MecanicasRpg;
 import telas.Interface;
 
@@ -17,21 +19,30 @@ public class Floresta {
         EventoAnimal(ficha);
     }
 
-    private static void EventoAnimal(FichaRpg ficha) {
-        Criatura animal = new Criatura("Lobo Selvagem", 1, 14, 10, 3);
-        animal.adicionarAtaque("Mordida", 1, 6);
-        animal.adicionarAtaque("Aranhão", 2, 4);
+    // ==================== SORTEIO DE ENCONTRO ====================
 
+    private static void EventoAnimal(FichaRpg ficha) {
         Interface.MostrarMensagem("\nAlgo se move por entre as árvores...");
         Interface.Pausa(2500);
 
+        // 20% de chance de encontrar uma Fada
+        if (MecanicasRpg.rolarDado(100) <= 20) {
+            EncontrarFada(ficha);
+            return;
+        }
+
+        // Sorteia o tipo de criatura (1 = Lobo, 2 = Urso, 3 = Bandido)
+        int tipo = MecanicasRpg.rolarDado(3);
+        List<Criatura> inimigos = criarGrupoMonstros(tipo);
+        Criatura referencia = inimigos.get(0);
+
         int dadoPresenca = MecanicasRpg.rolarDado(20);
         int totalPresenca = dadoPresenca + ficha.getPresenca();
-        Interface.MostrarMensagem("-> Teste de Presença: " + dadoPresenca + " (Dado) + " + ficha.getPresenca() + " (Atributo) = " + totalPresenca);
+        Interface.MostrarMensagem("-> Teste de Presença: " + dadoPresenca + " (Dado) + " + ficha.getPresenca() + " (Atributo) = " + totalPresenca + " (Dificuldade: " + referencia.getTestePresenca() + ")");
         Interface.Pausa(2500);
 
-        if (totalPresenca > 8 && animal.getNivel() <= 2) {
-            Interface.MostrarMensagem("\nUm Lobo Selvagem apareceu entre as sombras das árvores!");
+        if (totalPresenca >= referencia.getTestePresenca()) {
+            Interface.MostrarMensagem("\n" + nomesDosInimigos(inimigos) + " apareceu entre as sombras das árvores e você o avistou antes!");
             Interface.Pausa(2500);
 
             System.out.println("O que deseja fazer?");
@@ -41,9 +52,9 @@ public class Floresta {
             Interface.scanner.nextLine();
 
             if (escolha == 1) {
-                Interface.MostrarMensagem("\nVocê saca sua arma e parte para cima do Lobo!");
+                Interface.MostrarMensagem("\nVocê saca sua arma e parte para cima!");
                 Interface.Pausa(2500);
-                IniciarCombate(ficha, animal, true);
+                IniciarCombate(ficha, inimigos, true);
             } else if (escolha == 2) {
                 int dadoDestreza = MecanicasRpg.rolarDado(20);
                 int totalDestreza = dadoDestreza + ficha.getDestreza();
@@ -53,62 +64,203 @@ public class Floresta {
                     Interface.MostrarMensagem("\nVocê recua lentamente pelas sombras e foge com sucesso, sem ser notado.");
                     Interface.Pausa(2500);
                 } else {
-                    Interface.MostrarMensagem("\nVocê pisa em um galho seco! O Lobo percebe você e avança!");
+                    Interface.MostrarMensagem("\nVocê pisa em um galho seco! A ameaça percebe você e avança!");
                     Interface.Pausa(2500);
-                    IniciarCombate(ficha, animal, false);
+                    IniciarCombate(ficha, inimigos, false);
                 }
             } else {
-                Interface.ExibirErro("Escolha inválida! Você hesitou e a criatura te notou!");
+                Interface.ExibirErro("Escolha inválida! Você hesitou e foi notado!");
                 Interface.Pausa(2500);
-                IniciarCombate(ficha, animal, false);
+                IniciarCombate(ficha, inimigos, false);
             }
         } else {
-            Interface.MostrarMensagem("\nUm Lobo Selvagem saltou das sombras e te surpreendeu!");
+            Interface.MostrarMensagem("\n" + nomesDosInimigos(inimigos) + " saltou das sombras e te surpreendeu!");
             Interface.Pausa(2500);
-            IniciarCombate(ficha, animal, false);
+            IniciarCombate(ficha, inimigos, false);
         }
     }
 
-    private static void IniciarCombate(FichaRpg ficha, Criatura inimigo, boolean jogadorSurpreendeu) {
+    // Cria o grupo de monstros conforme o tipo
+    private static List<Criatura> criarGrupoMonstros(int tipo) {
+        List<Criatura> grupo = new ArrayList<>();
+        int quantidade;
+
+        switch (tipo) {
+            case 1: { // Lobo Selvagem: 1-3
+                quantidade = MecanicasRpg.rolarEntre(1, 3);
+                for (int i = 0; i < quantidade; i++) {
+                    grupo.add(criarLobo());
+                }
+                break;
+            }
+            case 2: { // Urso: 1
+                grupo.add(criarUrso());
+                break;
+            }
+            default: { // Bandido: 1-5
+                quantidade = MecanicasRpg.rolarEntre(1, 5);
+                for (int i = 0; i < quantidade; i++) {
+                    grupo.add(criarBandido());
+                }
+                break;
+            }
+        }
+
+        return grupo;
+    }
+
+    private static Criatura criarLobo() {
+        Criatura c = new Criatura("Lobo Selvagem", 1, 14, 10, 3);
+        c.setBonusAcerto(3);
+        c.setTestePresenca(8);
+        c.adicionarAtaque("Mordida", "", 1, 6);
+        c.adicionarAtaque("Aranhão", "", 2, 4);
+        c.adicionarDrop("Couro", 1, 2, 40);
+        return c;
+    }
+
+    private static Criatura criarUrso() {
+        Criatura c = new Criatura("Urso", 3, 35, 7, 0);
+        c.setBonusAcerto(1);
+        c.setTestePresenca(5);
+        c.adicionarAtaque("Mordida", "", 1, 10);
+        c.adicionarAtaque("Aranhão", "", 2, 8);
+        c.adicionarDrop("Couro", 2, 4, 60);
+        c.adicionarDrop("Dente de Urso", 1, 1, 20);
+        return c;
+    }
+
+    private static Criatura criarBandido() {
+        Criatura c = new Criatura("Bandido", 2, 9, 12, 1);
+        c.setBonusAcerto(2);
+        c.setTestePresenca(15);
+        c.adicionarAtaque("Facada", "", 1, 4);
+        c.adicionarAtaque("Soco", "", 1, 3);
+        c.setOuroDrop(9, 27, 100);
+        c.adicionarDrop("Faca", 1, 1, 35);
+        return c;
+    }
+
+    private static Criatura criarFada() {
+        Criatura c = new Criatura("Fada", 1, 4, 14, 0);
+        c.setAcertoAutomatico(true);
+        c.setTestePresenca(18);
+        c.setChanceAparecer(20);
+        c.adicionarAtaque("Brilho Cintilante", "luz", 1, 6);
+        c.adicionarDrop("Brilho Mágico", 1, 1, 100);
+        return c;
+    }
+
+    // ==================== ENCONTRO COM A FADA ====================
+
+    private static void EncontrarFada(FichaRpg ficha) {
+        int dadoPresenca = MecanicasRpg.rolarDado(20);
+        int totalPresenca = dadoPresenca + ficha.getPresenca();
+        Interface.MostrarMensagem("-> Teste de Presença: " + dadoPresenca + " (Dado) + " + ficha.getPresenca() + " (Atributo) = " + totalPresenca + " (Dificuldade: 18)");
+        Interface.Pausa(2500);
+
+        boolean avistou = totalPresenca >= 18;
+
+        if (avistou) {
+            Interface.MostrarMensagem("\nUm leve brilho chama sua atenção: uma pequena Fada flutua entre as árvores!");
+        } else {
+            Interface.MostrarMensagem("\nUma Fada surge diante de você, espalhando um brilho suave!");
+        }
+        Interface.Pausa(2500);
+
+        System.out.println("\nO que deseja fazer?");
+        System.out.println("1. Tentar conversar com a Fada");
+        System.out.println("2. Lutar contra a Fada");
+        System.out.println("3. Deixá-la em paz e seguir caminho");
+        int escolha = Interface.scanner.nextInt();
+        Interface.scanner.nextLine();
+
+        if (escolha == 1) {
+            int dadoSabedoria = MecanicasRpg.rolarDado(20);
+            int totalSabedoria = dadoSabedoria + ficha.getSabedoria();
+            Interface.MostrarMensagem("-> Teste de Sabedoria (Conversa): " + dadoSabedoria + " (Dado) + " + ficha.getSabedoria() + " (Atributo) = " + totalSabedoria + " (Dificuldade: 14)");
+            Interface.Pausa(2500);
+
+            if (totalSabedoria >= 14) {
+                String atributoAumentado = ficha.aumentarAtributoAleatorio();
+                Interface.MostrarMensagem("\nConvencida pela sua gentileza, a Fada concede a você +1 de " + atributoAumentado + "!");
+                Interface.Pausa(2500);
+            } else {
+                Interface.MostrarMensagem("\nA Fada não confia em você e se afasta, sumindo entre as árvores.");
+                Interface.Pausa(2500);
+            }
+        } else if (escolha == 2) {
+            Interface.MostrarMensagem("\nVocê avança contra a Fada, que reage irritada!");
+            Interface.Pausa(2500);
+            List<Criatura> fadaBatalha = new ArrayList<>();
+            fadaBatalha.add(criarFada());
+            IniciarCombate(ficha, fadaBatalha, avistou);
+        } else {
+            Interface.MostrarMensagem("\nA Fada é deixada em paz e você segue seu caminho tranquilamente.");
+            Interface.Pausa(2500);
+        }
+    }
+
+    // ==================== INICIAR COMBATE ====================
+
+    private static void IniciarCombate(FichaRpg ficha, List<Criatura> inimigos, boolean jogadorSurpreendeu) {
         Interface.MostrarMensagem("\n================ COMBATE ================");
         Interface.Pausa(2500);
 
         int bonusIniciativaJogador = jogadorSurpreendeu ? 2 : 0;
         int dadoJogador = MecanicasRpg.rolarDado(20);
         int iniciativaJogador = dadoJogador + ficha.getDestreza() + bonusIniciativaJogador;
-        int dadoInimigo = MecanicasRpg.rolarDado(20);
-        int iniciativaInimigo = dadoInimigo + inimigo.getIniciativa();
 
         Interface.MostrarMensagem("-> Iniciativa [" + ficha.getNomePersonagem() + "]: " + dadoJogador + " (Dado) + " + ficha.getDestreza() + " (Destreza) + " + bonusIniciativaJogador + " (Bônus) = " + iniciativaJogador);
         Interface.Pausa(2500);
-        Interface.MostrarMensagem("-> Iniciativa [" + inimigo.getNome() + "]: " + dadoInimigo + " (Dado) + " + inimigo.getIniciativa() + " (Iniciativa Base) = " + iniciativaInimigo);
-        Interface.Pausa(2500);
 
-        if (iniciativaJogador >= iniciativaInimigo) {
+        int melhorIniciativaInimiga = -1000;
+        Criatura maisRapido = null;
+        for (Criatura c : inimigos) {
+            int dadoInimigo = MecanicasRpg.rolarDado(20);
+            int iniciativaInimigo = dadoInimigo + c.getIniciativa();
+            Interface.MostrarMensagem("-> Iniciativa [" + rotuloCriatura(inimigos, c) + "]: " + dadoInimigo + " (Dado) + " + c.getIniciativa() + " (Iniciativa Base) = " + iniciativaInimigo);
+            if (iniciativaInimigo > melhorIniciativaInimiga) {
+                melhorIniciativaInimiga = iniciativaInimigo;
+                maisRapido = c;
+            }
+            Interface.Pausa(1500);
+        }
+
+        if (iniciativaJogador >= melhorIniciativaInimiga) {
             Interface.MostrarMensagem("\n" + ficha.getNomePersonagem() + " é mais ágil e age primeiro!");
         } else {
-            Interface.MostrarMensagem("\nO " + inimigo.getNome() + " é mais rápido e age primeiro!");
+            Interface.MostrarMensagem("\n" + rotuloCriatura(inimigos, maisRapido) + " é mais rápido e age primeiro!");
         }
         Interface.Pausa(2500);
 
-        RodadasDeCombate(ficha, inimigo, iniciativaJogador >= iniciativaInimigo);
+        RodadasDeCombate(ficha, inimigos, iniciativaJogador >= melhorIniciativaInimiga);
     }
 
-    private static void RodadasDeCombate(FichaRpg ficha, Criatura inimigo, boolean jogadorMaisRapido) {
+    // ==================== RODADAS DE COMBATE ====================
+
+    private static void RodadasDeCombate(FichaRpg ficha, List<Criatura> inimigos, boolean jogadorMaisRapido) {
         int tentativasFuga = 0;
-        int turno = 1;
         boolean cascaGrossaAtiva = false;
 
-        while (ficha.getVidaPersonagem() > 0 && inimigo.getVida() > 0) {
+        while (ficha.getVidaPersonagem() > 0 && !inimigosVivos(inimigos).isEmpty()) {
             Interface.barraDivisoria();
             Interface.MostrarMensagem("Sua Vida: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima() + " | Mana: " + ficha.getManaPersonagem() + "/" + ficha.getManaMaxima());
-            Interface.MostrarMensagem("Vida do " + inimigo.getNome() + ": " + inimigo.getVida());
+            Interface.MostrarMensagem("Inimigos:");
+            for (int i = 0; i < inimigos.size(); i++) {
+                Criatura c = inimigos.get(i);
+                if (c.getVida() > 0) {
+                    Interface.MostrarMensagem("  " + (i + 1) + ". " + c.getNome() + " (Vida: " + c.getVida() + ")");
+                }
+            }
             if (tentativasFuga > 0) {
                 Interface.MostrarMensagem("Tentativas de fuga: " + tentativasFuga + "/3");
             }
             Interface.Pausa(1500);
 
             cascaGrossaAtiva = false;
+            int tipoAcao = -1;
+            int alvoIndex = -1;
             int armaEscolhidaIndex = -1;
             int habilidadeEscolhidaIndex = -1;
 
@@ -116,28 +268,41 @@ public class Floresta {
             System.out.println("1. Lutar");
             System.out.println("2. Abrir Mochila");
             System.out.println("3. Tentar Fugir");
+            System.out.println("4. Ver Ficha");
 
             int escolha = Interface.scanner.nextInt();
             Interface.scanner.nextLine();
 
-            int tipoAcao = -1;
+            if (escolha == 4) {
+                Interface.MostrarFicha(ficha);
+                Interface.Pausa(1500);
+                continue;
+            }
 
             if (escolha == 1) {
-                int[] resultado = MenuLutarComEscolha(ficha, inimigo, cascaGrossaAtiva);
-                tipoAcao = resultado[0];
-                armaEscolhidaIndex = resultado[1];
-                habilidadeEscolhidaIndex = resultado[2];
-                if (tipoAcao == 5) {
-                    cascaGrossaAtiva = true;
-                    resultado = MenuLutarComEscolha(ficha, inimigo, cascaGrossaAtiva);
+                int[] resultado = MenuLutarComEscolha(ficha, inimigos, cascaGrossaAtiva);
+                if (resultado != null) {
                     tipoAcao = resultado[0];
-                    armaEscolhidaIndex = resultado[1];
-                    habilidadeEscolhidaIndex = resultado[2];
+                    alvoIndex = resultado[1];
+                    armaEscolhidaIndex = resultado[2];
+                    habilidadeEscolhidaIndex = resultado[3];
+                    if (tipoAcao == 5) {
+                        cascaGrossaAtiva = true;
+                        resultado = MenuLutarComEscolha(ficha, inimigos, true);
+                        if (resultado != null) {
+                            tipoAcao = resultado[0];
+                            alvoIndex = resultado[1];
+                            armaEscolhidaIndex = resultado[2];
+                            habilidadeEscolhidaIndex = resultado[3];
+                        } else {
+                            tipoAcao = -1;
+                        }
+                    }
                 }
             } else if (escolha == 2) {
                 tipoAcao = AbrirMochilaCombate(ficha);
             } else if (escolha == 3) {
-                int resultadoFuga = TentarFugir(ficha, inimigo, tentativasFuga);
+                int resultadoFuga = TentarFugir(ficha, inimigos, tentativasFuga);
                 if (resultadoFuga == -1) {
                     tipoAcao = 4;
                 } else if (resultadoFuga == 3) {
@@ -153,63 +318,68 @@ public class Floresta {
                 Interface.Pausa(1500);
             }
 
-            // Execução
             boolean playerAtacou = (tipoAcao == 1 || tipoAcao == 2);
 
             if (playerAtacou) {
                 if (jogadorMaisRapido) {
-                    executarAcaoJogador(ficha, inimigo, tipoAcao, armaEscolhidaIndex, habilidadeEscolhidaIndex);
-                    if (inimigo.getVida() > 0) {
-                        Interface.MostrarMensagem("\nO Lobo revida!");
-                        Interface.Pausa(1500);
-                        inimigo.atacarJogador(ficha, cascaGrossaAtiva);
-                    }
+                    executarAcaoJogador(ficha, inimigos, tipoAcao, alvoIndex, armaEscolhidaIndex, habilidadeEscolhidaIndex);
+                    atacarTodosInimigos(inimigos, ficha, cascaGrossaAtiva);
                 } else {
-                    if (inimigo.getVida() > 0) {
-                        Interface.MostrarMensagem("\nO Lobo ataca antes de você!");
-                        Interface.Pausa(1500);
-                        inimigo.atacarJogador(ficha, cascaGrossaAtiva);
-                    }
+                    atacarTodosInimigos(inimigos, ficha, cascaGrossaAtiva);
                     if (ficha.getVidaPersonagem() > 0) {
-                        executarAcaoJogador(ficha, inimigo, tipoAcao, armaEscolhidaIndex, habilidadeEscolhidaIndex);
+                        executarAcaoJogador(ficha, inimigos, tipoAcao, alvoIndex, armaEscolhidaIndex, habilidadeEscolhidaIndex);
                     }
                 }
             } else if (tipoAcao == 4) {
                 if (ficha.getVidaPersonagem() > 0) {
-                    inimigo.atacarJogador(ficha, false);
+                    atacarTodosInimigos(inimigos, ficha, false);
                 }
             }
-
-            turno++;
         }
 
         Interface.barraDivisoria();
         if (ficha.getVidaPersonagem() <= 0) {
-            Interface.MostrarMensagem("\nVocê foi derrotado... O Lobo vagueia triunfante pela floresta.");
+            Interface.MostrarMensagem("\nVocê foi derrotado... A floresta recupera o silêncio.");
             Interface.Pausa(3000);
-        } else if (inimigo.getVida() <= 0) {
-            Interface.MostrarMensagem("\nVocê derrotou o Lobo Selvagem!");
-            Interface.Pausa(3000);
+        } else {
+            Interface.MostrarMensagem("\nVocê derrotou todos os inimigos!");
+            Interface.Pausa(2500);
+            for (Criatura c : inimigos) {
+                if (c.getVida() <= 0) {
+                    c.processarDrops(ficha);
+                }
+            }
         }
         Interface.barraDivisoria();
     }
 
-    private static void executarAcaoJogador(FichaRpg ficha, Criatura inimigo, int tipoAcao, int armaIndex, int habIndex) {
+    // Todos os inimigos vivos atacam o jogador
+    private static void atacarTodosInimigos(List<Criatura> inimigos, FichaRpg ficha, boolean cascaGrossaAtiva) {
+        for (Criatura c : inimigos) {
+            if (c.getVida() > 0 && ficha.getVidaPersonagem() > 0) {
+                Interface.MostrarMensagem("\n" + rotuloCriatura(inimigos, c) + " avança para atacar!");
+                Interface.Pausa(1500);
+                c.atacarJogador(ficha, cascaGrossaAtiva);
+            }
+        }
+    }
+
+    private static void executarAcaoJogador(FichaRpg ficha, List<Criatura> inimigos, int tipoAcao, int alvoIndex, int armaIndex, int habIndex) {
         boolean sucesso;
         if (tipoAcao == 1) {
-            sucesso = executarAtaqueComArma(ficha, inimigo, armaIndex);
+            sucesso = executarAtaqueComArma(ficha, inimigos, alvoIndex, armaIndex);
         } else {
-            sucesso = executarHabilidadeEscolhida(ficha, inimigo, habIndex);
+            sucesso = executarHabilidadeEscolhida(ficha, inimigos, alvoIndex, habIndex);
         }
 
         if (!sucesso) {
-            tentarConhecimentoAvancado(ficha, inimigo, tipoAcao, armaIndex, habIndex);
+            tentarConhecimentoAvancado(ficha, inimigos, tipoAcao, alvoIndex, armaIndex, habIndex);
         }
     }
 
     // ==================== CONHECIMENTO AVANÇADO ====================
 
-    private static void tentarConhecimentoAvancado(FichaRpg ficha, Criatura inimigo, int tipoAcao, int armaIndex, int habIndex) {
+    private static void tentarConhecimentoAvancado(FichaRpg ficha, List<Criatura> inimigos, int tipoAcao, int alvoIndex, int armaIndex, int habIndex) {
         for (habilidades.Habilidade hab : ficha.getHabilidades()) {
             if (hab.getNome().equals("Conhecimento Avançado") && ficha.getManaPersonagem() >= hab.getCustoMana()) {
                 System.out.println("\nDeseja usar Conhecimento Avançado para rerrolar? (Custo: " + hab.getCustoMana() + " Mana)");
@@ -225,13 +395,13 @@ public class Floresta {
 
                     boolean sucessoReroll;
                     if (tipoAcao == 1) {
-                        sucessoReroll = executarAtaqueComArma(ficha, inimigo, armaIndex);
+                        sucessoReroll = executarAtaqueComArma(ficha, inimigos, alvoIndex, armaIndex);
                     } else {
-                        sucessoReroll = executarHabilidadeEscolhida(ficha, inimigo, habIndex);
+                        sucessoReroll = executarHabilidadeEscolhida(ficha, inimigos, alvoIndex, habIndex);
                     }
 
                     if (!sucessoReroll) {
-                        Interface.MostrarMensagem("Mesmo com seu conhecimento, o ataque falhou.");
+                        Interface.MostrarMensagem("Mesmo com seu conhecimento, a ação falhou.");
                         Interface.Pausa(1500);
                     }
                 }
@@ -242,7 +412,7 @@ public class Floresta {
 
     // ==================== MENU LUTAR ====================
 
-    private static int[] MenuLutarComEscolha(FichaRpg ficha, Criatura inimigo, boolean cascaGrossaAtiva) {
+    private static int[] MenuLutarComEscolha(FichaRpg ficha, List<Criatura> inimigos, boolean cascaGrossaAtiva) {
         Interface.barraDivisoria();
         System.out.println("\n--- COMO DESEJA LUTAR? ---");
         System.out.println("1. Atacar com Arma");
@@ -262,12 +432,16 @@ public class Floresta {
 
         if (escolha == 1) {
             int armaIdx = EscolherArma(ficha);
-            if (armaIdx == -1) return new int[]{-1, -1, -1};
-            return new int[]{1, armaIdx, -1};
+            if (armaIdx == -1) return null;
+            int alvo = escolherAlvo(inimigos);
+            if (alvo == -1) return null;
+            return new int[]{1, alvo, armaIdx, -1};
         } else if (escolha == 2) {
             int habIdx = EscolherHabilidadeAtiva(ficha);
-            if (habIdx == -1) return new int[]{-1, -1, -1};
-            return new int[]{2, -1, habIdx};
+            if (habIdx == -1) return null;
+            int alvo = escolherAlvo(inimigos);
+            if (alvo == -1) return null;
+            return new int[]{2, alvo, -1, habIdx};
         } else if (escolha == 3) {
             for (int i = 0; i < ficha.getHabilidades().size(); i++) {
                 habilidades.Habilidade hab = ficha.getHabilidades().get(i);
@@ -276,20 +450,79 @@ public class Floresta {
                     Interface.MostrarMensagem("\nVocê ativa " + hab.getNome() + "!");
                     Interface.MostrarMensagem(hab.getDescricao());
                     Interface.Pausa(2000);
-                    return new int[]{5, -1, -1};
+                    return new int[]{5, -1, -1, -1};
                 }
             }
-            return new int[]{-1, -1, -1};
+            return null;
         } else {
-            return new int[]{-1, -1, -1};
+            return null;
+        }
+    }
+
+    // Escolhe o alvo entre os inimigos vivos
+    private static int escolherAlvo(List<Criatura> inimigos) {
+        List<Criatura> vivos = new ArrayList<>();
+        for (Criatura c : inimigos) {
+            if (c.getVida() > 0) {
+                vivos.add(c);
+            }
+        }
+
+        if (vivos.isEmpty()) return -1;
+        if (vivos.size() == 1) return inimigos.indexOf(vivos.get(0));
+
+        System.out.println("\n--- ESCOLHA SEU ALVO ---");
+        for (int i = 0; i < vivos.size(); i++) {
+            Criatura c = vivos.get(i);
+            System.out.println((i + 1) + ". " + rotuloCriatura(inimigos, c) + " (Vida: " + c.getVida() + ")");
+        }
+        System.out.println("0. Voltar");
+
+        int escolha = Interface.scanner.nextInt();
+        Interface.scanner.nextLine();
+
+        if (escolha < 1 || escolha > vivos.size()) return -1;
+
+        return inimigos.indexOf(vivos.get(escolha - 1));
+    }
+
+    private static List<Criatura> inimigosVivos(List<Criatura> inimigos) {
+        List<Criatura> vivos = new ArrayList<>();
+        for (Criatura c : inimigos) {
+            if (c.getVida() > 0) {
+                vivos.add(c);
+            }
+        }
+        return vivos;
+    }
+
+    private static String rotuloCriatura(List<Criatura> inimigos, Criatura alvo) {
+        int contagem = 0;
+        for (Criatura c : inimigos) {
+            if (c.getNome().equals(alvo.getNome())) {
+                contagem++;
+            }
+        }
+        if (contagem <= 1) return alvo.getNome();
+        return alvo.getNome() + " " + (inimigos.indexOf(alvo) + 1);
+    }
+
+    private static String nomesDosInimigos(List<Criatura> inimigos) {
+        Criatura c = inimigos.get(0);
+        if (inimigos.size() == 1) return c.getNome();
+        switch (c.getNome()) {
+            case "Lobo Selvagem": return "Lobos Selvagens";
+            case "Urso": return "Ursos";
+            case "Bandido": return "Bandidos";
+            default: return c.getNome();
         }
     }
 
     // ==================== ESCOLHER ARMA ====================
 
     private static int EscolherArma(FichaRpg ficha) {
-        java.util.List<Arma> armas = new java.util.ArrayList<>();
-        java.util.List<Boolean> ehFlecha = new java.util.ArrayList<>();
+        List<Arma> armas = new ArrayList<>();
+        List<Boolean> ehFlecha = new ArrayList<>();
 
         for (ItemRpg item : ficha.getInventario()) {
             if (item instanceof Arma) {
@@ -315,18 +548,15 @@ public class Floresta {
             socoDado = soco.getDadoDanoArma();
             socoQtd = soco.getQuantidadeDanoArma();
         }
-        final String socoNomeF = socoNome;
-        final int socoDadoF = socoDado;
-        final int socoQtdF = socoQtd;
 
         Interface.barraDivisoria();
         System.out.println("\n--- ESCOLHA SUA ARMA ---");
         for (int i = 0; i < armas.size(); i++) {
             Arma arma = armas.get(i);
             String extra = ehFlecha.get(i) ? " (Flechas: " + getQtdFlechas(ficha) + ")" : "";
-            System.out.println((i + 1) + ". " + arma.getNome() + " (" + arma.getQuantidadeDanoArma() + "d" + arma.getDadoDanoArma() + " - " + arma.getTipoArma() + ")" + extra);
+            System.out.println((i + 1) + ". " + arma.getNome() + " (" + arma.getQuantidadeDanoArma() + "d" + arma.getDadoDanoArma() + " - " + arma.getTipoArma() + " - " + arma.getAtributoAtaque() + ")" + extra);
         }
-        System.out.println((armas.size() + 1) + ". " + socoNomeF + " (" + socoQtdF + "d" + socoDadoF + " - CaC)");
+        System.out.println((armas.size() + 1) + ". " + socoNome + " (" + socoQtd + "d" + socoDado + " - CaC - Força)");
         System.out.println("0. Voltar");
 
         int escolha = Interface.scanner.nextInt();
@@ -378,11 +608,16 @@ public class Floresta {
 
     // ==================== EXECUTAR ATAQUE ====================
 
-    private static boolean executarAtaqueComArma(FichaRpg ficha, Criatura inimigo, int armaIndex) {
-        Interface.MostrarMensagem("\nVocê prepara seu ataque...");
+    private static boolean executarAtaqueComArma(FichaRpg ficha, List<Criatura> inimigos, int alvoIndex, int armaIndex) {
+        if (alvoIndex < 0 || alvoIndex >= inimigos.size()) return false;
+        Criatura inimigo = inimigos.get(alvoIndex);
+
+        Interface.MostrarMensagem("\nVocê prepara seu ataque contra " + rotuloCriatura(inimigos, inimigo) + "...");
         Interface.Pausa(1500);
 
         int dadoAtaque, totalAtaque, dano = 0;
+        int atributoBonus;
+        String nomeAtributo;
 
         if (armaIndex == -2) {
             String socoNome = "Soco";
@@ -394,37 +629,49 @@ public class Floresta {
                 socoDado = soco.getDadoDanoArma();
                 socoQtd = soco.getQuantidadeDanoArma();
             }
-
-            dadoAtaque = MecanicasRpg.rolarDado(20);
-            totalAtaque = dadoAtaque + ficha.getForca();
-            Interface.MostrarMensagem("-> Ataque [" + socoNome + "]: " + dadoAtaque + " (Dado) + " + ficha.getForca() + " (Força) = " + totalAtaque);
-            Interface.Pausa(2000);
-
-            if (totalAtaque >= inimigo.getDefesa()) {
-                for (int i = 0; i < socoQtd; i++) {
-                    dano += MecanicasRpg.rolarDado(socoDado);
-                }
-                dano += ficha.getForca();
-            }
-        } else if (armaIndex >= 0 && armaIndex < ficha.getInventario().size()) {
-            Arma armaEscolhida = (Arma) ficha.getInventario().get(armaIndex);
-            String tipoArma = armaEscolhida.getTipoArma();
-            int atributoBonus = tipoArma.contains("CaC") ? ficha.getForca() : ficha.getDestreza();
-            String nomeAtributo = tipoArma.contains("CaC") ? "Força" : "Destreza";
+            atributoBonus = ficha.getForca();
+            nomeAtributo = "Força";
 
             dadoAtaque = MecanicasRpg.rolarDado(20);
             totalAtaque = dadoAtaque + atributoBonus;
-            Interface.MostrarMensagem("-> Ataque [" + armaEscolhida.getNome() + "]: " + dadoAtaque + " (Dado) + " + atributoBonus + " (" + nomeAtributo + ") = " + totalAtaque);
+            boolean critico = dadoAtaque == 20;
+            Interface.MostrarMensagem("-> Ataque [" + socoNome + "]: " + dadoAtaque + " (Dado) + " + atributoBonus + " (" + nomeAtributo + ") = " + totalAtaque + (critico ? " [CRÍTICO!]" : ""));
+            if (critico) {
+                Interface.MostrarMensagem("Golpe crítico! O dano de dados será dobrado!");
+            }
             Interface.Pausa(2000);
 
             if (totalAtaque >= inimigo.getDefesa()) {
-                for (int i = 0; i < armaEscolhida.getQuantidadeDanoArma(); i++) {
+                int dadosTotais = socoQtd * (critico ? 2 : 1);
+                for (int i = 0; i < dadosTotais; i++) {
+                    dano += MecanicasRpg.rolarDado(socoDado);
+                }
+                dano += atributoBonus;
+            }
+        } else if (armaIndex >= 0 && armaIndex < ficha.getInventario().size()) {
+            Arma armaEscolhida = (Arma) ficha.getInventario().get(armaIndex);
+            String atributo = armaEscolhida.getAtributoAtaque();
+            atributoBonus = atributo.equals("Destreza") ? ficha.getDestreza() : ficha.getForca();
+            nomeAtributo = atributo;
+
+            dadoAtaque = MecanicasRpg.rolarDado(20);
+            totalAtaque = dadoAtaque + atributoBonus;
+            boolean critico = dadoAtaque == 20;
+            Interface.MostrarMensagem("-> Ataque [" + armaEscolhida.getNome() + "]: " + dadoAtaque + " (Dado) + " + atributoBonus + " (" + nomeAtributo + ") = " + totalAtaque + (critico ? " [CRÍTICO!]" : ""));
+            if (critico) {
+                Interface.MostrarMensagem("Golpe crítico! O dano de dados será dobrado!");
+            }
+            Interface.Pausa(2000);
+
+            if (totalAtaque >= inimigo.getDefesa()) {
+                int dadosTotais = armaEscolhida.getQuantidadeDanoArma() * (critico ? 2 : 1);
+                for (int i = 0; i < dadosTotais; i++) {
                     dano += MecanicasRpg.rolarDado(armaEscolhida.getDadoDanoArma());
                 }
-                dano += tipoArma.contains("CaC") ? ficha.getForca() : ficha.getDestreza();
+                dano += atributoBonus;
             }
 
-            if (tipoArma.contains("LA")) {
+            if (armaEscolhida.getTipoArma().contains("LA")) {
                 consumirFlecha(ficha);
             }
         } else {
@@ -435,7 +682,7 @@ public class Floresta {
             Interface.MostrarMensagem("-> Acertou! Dano: " + dano + " (defesa do alvo: " + inimigo.getDefesa() + ")");
             Interface.Pausa(2000);
             inimigo.setVida(inimigo.getVida() - dano);
-            Interface.MostrarMensagem(inimigo.getNome() + " agora tem " + inimigo.getVida() + " de vida.");
+            Interface.MostrarMensagem(rotuloCriatura(inimigos, inimigo) + " agora tem " + Math.max(0, inimigo.getVida()) + " de vida.");
             Interface.Pausa(2000);
             return true;
         } else {
@@ -448,7 +695,7 @@ public class Floresta {
     // ==================== HABILIDADES ====================
 
     private static int EscolherHabilidadeAtiva(FichaRpg ficha) {
-        java.util.List<habilidades.Habilidade> ativas = new java.util.ArrayList<>();
+        List<habilidades.Habilidade> ativas = new ArrayList<>();
         for (habilidades.Habilidade hab : ficha.getHabilidades()) {
             if (!hab.isPassiva()) {
                 ativas.add(hab);
@@ -491,10 +738,10 @@ public class Floresta {
         return ficha.getHabilidades().indexOf(habEscolhida);
     }
 
-    private static boolean executarHabilidadeEscolhida(FichaRpg ficha, Criatura inimigo, int habilidadeIndex) {
-        if (habilidadeIndex < 0 || habilidadeIndex >= ficha.getHabilidades().size()) {
-            return true;
-        }
+    private static boolean executarHabilidadeEscolhida(FichaRpg ficha, List<Criatura> inimigos, int alvoIndex, int habilidadeIndex) {
+        if (alvoIndex < 0 || alvoIndex >= inimigos.size()) return true;
+        if (habilidadeIndex < 0 || habilidadeIndex >= ficha.getHabilidades().size()) return true;
+        Criatura inimigo = inimigos.get(alvoIndex);
 
         habilidades.Habilidade hab = ficha.getHabilidades().get(habilidadeIndex);
 
@@ -512,10 +759,10 @@ public class Floresta {
             int dano = 0;
             dano += MecanicasRpg.rolarDado(8);
             dano += MecanicasRpg.rolarDado(8);
-            Interface.MostrarMensagem("-> Dano Mágico: " + dano + " (2d8)");
+            Interface.MostrarMensagem("-> Dano Mágico: " + dano + " causado em " + rotuloCriatura(inimigos, inimigo) + "!");
             Interface.Pausa(2000);
             inimigo.setVida(inimigo.getVida() - dano);
-            Interface.MostrarMensagem(inimigo.getNome() + " agora tem " + inimigo.getVida() + " de vida.");
+            Interface.MostrarMensagem(rotuloCriatura(inimigos, inimigo) + " agora tem " + Math.max(0, inimigo.getVida()) + " de vida.");
             Interface.Pausa(2000);
             return true;
         } else {
@@ -621,7 +868,7 @@ public class Floresta {
 
     // ==================== FUGA ====================
 
-    private static int TentarFugir(FichaRpg ficha, Criatura inimigo, int tentativasAtuais) {
+    private static int TentarFugir(FichaRpg ficha, List<Criatura> inimigos, int tentativasAtuais) {
         Interface.barraDivisoria();
         System.out.println("\nDeseja realmente tentar fugir?");
         System.out.println("1. Sim, tentar fugir");
@@ -635,18 +882,23 @@ public class Floresta {
         Interface.MostrarMensagem("\nVocê tenta se esquivar e recuar...");
         Interface.Pausa(2000);
 
+        // Só o jogador rola: a dificuldade é fixa (10 + iniciativa da ameaça mais rápida)
+        int melhorIniciativa = -1000;
+        for (Criatura c : inimigos) {
+            if (c.getVida() <= 0) continue;
+            if (c.getIniciativa() > melhorIniciativa) {
+                melhorIniciativa = c.getIniciativa();
+            }
+        }
+        int dificuldadeFuga = 10 + melhorIniciativa;
+
         int dadoJogador = MecanicasRpg.rolarDado(20);
         int totalJogador = dadoJogador + ficha.getDestreza();
-        Interface.MostrarMensagem("-> Sua Tentativa de Fuga: " + dadoJogador + " (Dado) + " + ficha.getDestreza() + " (Destreza) = " + totalJogador);
+        Interface.MostrarMensagem("-> Sua Tentativa de Fuga: " + dadoJogador + " (Dado) + " + ficha.getDestreza() + " (Destreza) = " + totalJogador + " (Dificuldade: " + dificuldadeFuga + ")");
         Interface.Pausa(2000);
 
-        int dadoInimigo = MecanicasRpg.rolarDado(20);
-        int totalInimigo = dadoInimigo + inimigo.getIniciativa();
-        Interface.MostrarMensagem("-> Reação do Lobo: " + dadoInimigo + " (Dado) + " + inimigo.getIniciativa() + " (Iniciativa) = " + totalInimigo);
-        Interface.Pausa(2000);
-
-        if (totalInimigo > totalJogador) {
-            Interface.MostrarMensagem("\nO Lobo te alcança! Você perdeu a chance de fugir dessa vez.");
+        if (totalJogador < dificuldadeFuga) {
+            Interface.MostrarMensagem("\nA ameaça te alcança! Você perdeu a chance de fugir dessa vez.");
             return -1;
         }
 
