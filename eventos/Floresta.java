@@ -712,7 +712,14 @@ public class Floresta {
         System.out.println("\n--- SUAS HABILIDADES ---");
         for (int i = 0; i < ativas.size(); i++) {
             habilidades.Habilidade hab = ativas.get(i);
-            System.out.println((i + 1) + ". " + hab.getNome() + " (Custo: " + hab.getCustoMana() + " Mana)");
+            String extra = "";
+            if (hab instanceof habilidades.Magia) {
+                habilidades.Magia magia = (habilidades.Magia) hab;
+                if (magia.getDadoDano() > 0) {
+                    extra = " - Dano: " + magia.getQuantidadeDano() + "d" + magia.getDadoDano();
+                }
+            }
+            System.out.println((i + 1) + ". " + hab.getNome() + " (Custo: " + hab.getCustoMana() + " Mana)" + extra);
         }
         System.out.println("0. Voltar");
 
@@ -756,10 +763,16 @@ public class Floresta {
         Interface.Pausa(1500);
 
         if (hab instanceof habilidades.Magia) {
+            habilidades.Magia magia = (habilidades.Magia) hab;
+            StringBuilder roladas = new StringBuilder();
             int dano = 0;
-            dano += MecanicasRpg.rolarDado(8);
-            dano += MecanicasRpg.rolarDado(8);
-            Interface.MostrarMensagem("-> Dano Mágico: " + dano + " causado em " + rotuloCriatura(inimigos, inimigo) + "!");
+            for (int i = 0; i < magia.getQuantidadeDano(); i++) {
+                int dadoRolado = MecanicasRpg.rolarDado(magia.getDadoDano());
+                dano += dadoRolado;
+                if (roladas.length() > 0) roladas.append(" + ");
+                roladas.append(dadoRolado);
+            }
+            Interface.MostrarMensagem("-> Dados Rolados: " + roladas + " = " + dano + " (Dano Mágico: " + magia.getQuantidadeDano() + "d" + magia.getDadoDano() + ")");
             Interface.Pausa(2000);
             inimigo.setVida(inimigo.getVida() - dano);
             Interface.MostrarMensagem(rotuloCriatura(inimigos, inimigo) + " agora tem " + Math.max(0, inimigo.getVida()) + " de vida.");
