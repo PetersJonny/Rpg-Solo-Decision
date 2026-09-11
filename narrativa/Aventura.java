@@ -13,6 +13,10 @@ public class Aventura {
         System.out.println("1. Assistir ao prólogo");
         System.out.println("2. Pular o prólogo");
         int escolha = Interface.lerInteiro();
+        while (escolha != 1 && escolha != 2) {
+            Interface.ExibirErro("Opção inválida! Digite 1 para assistir ou 2 para pular.");
+            escolha = Interface.lerInteiro();
+        }
 
 
         if (escolha == 2) {
