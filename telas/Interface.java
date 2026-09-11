@@ -15,11 +15,6 @@ public class Interface {
     // Entrada de Dados
     public static final Scanner scanner = new Scanner(System.in);
 
-    // Limpa o terminal
-    public static void limparTela() {
-        System.out.print("\u001B[2J\u001B[H");
-    }
-
     // Aguarda o jogador apertar ENTER
     public static void esperarEnter() {
         System.out.println("\nPressione ENTER para continuar...");

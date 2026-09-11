@@ -19,7 +19,6 @@ public class Main {
             boolean criandoFicha = true;
 
             while (criandoFicha) {
-                Interface.limparTela();
                 int escolhaInterface = Interface.MenuCriacaoFicha();
 
                 switch (escolhaInterface) {
@@ -49,8 +48,14 @@ public class Main {
                                 continue;
                             }
 
-                            if (gastoDePontos > totalDePontos) {
+                            if (gastoDePontos > 6) {
+                                Interface.MostrarMensagem("Você colocou mais que 6 pontos! Por isso, foram aplicados apenas 6.");
+                                gastoDePontos = 6;
+                            }
+
+                            if (gastoDePontos > totalDePontos && totalDePontos < 6) {
                                 gastoDePontos = totalDePontos;
+                                Interface.MostrarMensagem("Como só restavam " + totalDePontos + " pontos, foram aplicados apenas " + totalDePontos + ".");
                             }
 
                             ficha.adicionarAtributo(atributoEscolhido, gastoDePontos);
@@ -114,7 +119,6 @@ public class Main {
             boolean personagemFaleceu = false;
 
             while (jogando) {
-                Interface.limparTela();
                 int escolhaAventura = Interface.MenuPrincipalAventura();
 
                 switch (escolhaAventura) {
@@ -122,7 +126,6 @@ public class Main {
                         Interface.MostrarFicha(ficha);
                         boolean naFicha = true;
                         while (naFicha) {
-                            Interface.limparTela();
                             int acaoFicha = Interface.MenuFicha();
                             switch (acaoFicha) {
                                 case 1:
@@ -148,7 +151,6 @@ public class Main {
                         
                         boolean explorando = true;
                         while (explorando) {
-                            Interface.limparTela();
                             System.out.println("\n--- MAPA DE FREIJORD ---");
                             System.out.println("1. Explorar a Floresta");
                             System.out.println("2. Ver Ficha");

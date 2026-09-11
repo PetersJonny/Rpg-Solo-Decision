@@ -262,7 +262,6 @@ public class Floresta {
         List<Criatura> mortesProcessadas = new ArrayList<>();
 
         while (ficha.getVidaPersonagem() > 0 && !inimigosVivos(inimigos).isEmpty()) {
-            Interface.limparTela();
             Interface.barraDivisoria();
             Interface.MostrarMensagem("Sua Vida: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima() + " | Mana: " + ficha.getManaPersonagem() + "/" + ficha.getManaMaxima());
             Interface.MostrarMensagem("Inimigos:");
