@@ -6,7 +6,9 @@ import itens.Arma;
 import itens.Consumivel;
 import itens.ItemRpg;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import mecanicas.MecanicasRpg;
 import telas.Interface;
 
@@ -277,11 +279,21 @@ public class Floresta {
 
             cascaGrossaAtiva[0] = false;
 
+            if (ficha.getVidaPersonagem() <= 0 || inimigosVivos(inimigos).isEmpty()) break;
+
+            // O jogador escolhe a ação da rodada ANTES de qualquer ataque acontecer
+            int[] acaoDeclarada = declararAcao(ficha, inimigos, cascaGrossaAtiva);
+
+            // Registra inimigos que já atacaram nesta rodada (ex.: reação à fuga)
+            Set<Criatura> jaAtacouNaRodada = new HashSet<>();
+
+            // As ações são resolvidas na ORDEM REAL da iniciativa:
+            // se um inimigo tem iniciativa maior que a sua, ele age antes de você executar
             for (int[] token : ordem) {
                 if (ficha.getVidaPersonagem() <= 0 || inimigosVivos(inimigos).isEmpty()) break;
 
                 if (token[1] == 0) {
-                    int resultado = VezDoJogador(ficha, inimigos, cascaGrossaAtiva, tentativasFuga);
+                    int resultado = executarAcaoDeclarada(ficha, inimigos, cascaGrossaAtiva, tentativasFuga, jaAtacouNaRodada, acaoDeclarada);
                     if (resultado == 0) {
                         Interface.MostrarMensagem("\nVocê conseguiu escapar da floresta!");
                         Interface.Pausa(2500);
@@ -291,7 +303,7 @@ public class Floresta {
                     processarMortes(inimigos, mortesProcessadas, ficha);
                 } else {
                     Criatura c = inimigos.get(token[1] - 1);
-                    if (c.getVida() > 0) {
+                    if (c.getVida() > 0 && !jaAtacouNaRodada.contains(c)) {
                         Interface.MostrarMensagem("\n" + rotuloCriatura(inimigos, c) + " avança para atacar!");
                         Interface.Pausa(1500);
                         c.atacarJogador(ficha, cascaGrossaAtiva[0]);
@@ -346,7 +358,9 @@ public class Floresta {
 
     // ==================== VEZ DO JOGADOR ====================
 
-    private static int VezDoJogador(FichaRpg ficha, List<Criatura> inimigos, boolean[] cascaGrossaAtiva, int[] tentativasFuga) {
+    // Fase de declaração: o jogador escolhe a ação da rodada SEM executar ainda.
+    // A execução acontece quando chega a vez dele na ordem de iniciativa.
+    private static int[] declararAcao(FichaRpg ficha, List<Criatura> inimigos, boolean[] cascaGrossaAtiva) {
         while (true) {
             System.out.println("\nO que deseja fazer?");
             System.out.println("1. Lutar");
@@ -355,7 +369,6 @@ public class Floresta {
             System.out.println("4. Ver Ficha");
 
             int escolha = Interface.lerInteiro();
-
 
             if (escolha == 4) {
                 Interface.MostrarFicha(ficha);
@@ -367,32 +380,21 @@ public class Floresta {
                 int[] resultado = MenuLutarComEscolha(ficha, inimigos, cascaGrossaAtiva[0]);
                 if (resultado == null) continue;
 
-                int tipoAcao = resultado[0];
-                int alvoIndex = resultado[1];
-                int armaIndex = resultado[2];
-                int habIndex = resultado[3];
-
-                if (tipoAcao == 5) {
+                if (resultado[0] == 5) {
                     cascaGrossaAtiva[0] = true;
                     resultado = MenuLutarComEscolha(ficha, inimigos, true);
-                    if (resultado == null) return 1;
-                    tipoAcao = resultado[0];
-                    alvoIndex = resultado[1];
-                    armaIndex = resultado[2];
-                    habIndex = resultado[3];
+                    if (resultado == null || resultado[0] == 5) {
+                        return new int[]{6, -1, -1, -1};
+                    }
                 }
-
-                executarAcaoJogador(ficha, inimigos, tipoAcao, alvoIndex, armaIndex, habIndex);
-                return 1;
+                return resultado;
             } else if (escolha == 2) {
-                int novo = AbrirMochilaCombate(ficha);
-                if (novo == -1) continue;
-                if (novo == 4) {
-                    return TentarFugirNaVez(ficha, inimigos, cascaGrossaAtiva, tentativasFuga);
-                }
-                return 1;
+                int item = escolherItemParaUsar(ficha);
+                if (item == -1) continue;
+                if (item == -2) return new int[]{4, -1, -1, -1};
+                return new int[]{3, item, -1, -1};
             } else if (escolha == 3) {
-                return TentarFugirNaVez(ficha, inimigos, cascaGrossaAtiva, tentativasFuga);
+                return new int[]{4, -1, -1, -1};
             } else {
                 Interface.ExibirErro("Escolha inválida!");
                 Interface.Pausa(1500);
@@ -400,14 +402,34 @@ public class Floresta {
         }
     }
 
+    // Fase de resolução: executa a ação declarada quando chega a vez do jogador na iniciativa
+    private static int executarAcaoDeclarada(FichaRpg ficha, List<Criatura> inimigos, boolean[] cascaGrossaAtiva, int[] tentativasFuga, Set<Criatura> jaAtacouNaRodada, int[] acao) {
+        int tipo = acao[0];
+
+        if (tipo == 1 || tipo == 2) {
+            executarAcaoJogador(ficha, inimigos, tipo, acao[1], acao[2], acao[3]);
+            return 1;
+        } else if (tipo == 3) {
+            usarItemNaVez(ficha, acao[1]);
+            return 1;
+        } else if (tipo == 6) {
+            Interface.MostrarMensagem("\nVocê aguarda, mantendo a guarda.");
+            Interface.Pausa(1500);
+            return 1;
+        } else {
+            return TentarFugirNaVez(ficha, inimigos, cascaGrossaAtiva, tentativasFuga, jaAtacouNaRodada);
+        }
+    }
+
     // Tenta fugir gastando o turno; retorna 0 se escapou do combate ou 1 se o turno foi gasto
-    private static int TentarFugirNaVez(FichaRpg ficha, List<Criatura> inimigos, boolean[] cascaGrossaAtiva, int[] tentativasFuga) {
+    private static int TentarFugirNaVez(FichaRpg ficha, List<Criatura> inimigos, boolean[] cascaGrossaAtiva, int[] tentativasFuga, Set<Criatura> jaAtacouNaRodada) {
         int resultadoFuga = TentarFugir(ficha, inimigos, tentativasFuga[0]);
         if (resultadoFuga == -1) {
             Interface.MostrarMensagem("\nA ameaça te alcança e aproveita a abertura!");
             Interface.Pausa(1500);
             Criatura maisRapido = inimigoMaisRapidoVivo(inimigos);
             if (maisRapido != null) {
+                jaAtacouNaRodada.add(maisRapido);
                 maisRapido.atacarJogador(ficha, cascaGrossaAtiva[0]);
             }
         } else if (resultadoFuga == 3) {
@@ -883,7 +905,9 @@ public class Floresta {
         return !item.getNome().equals("Flechas");
     }
 
-    private static int AbrirMochilaCombate(FichaRpg ficha) {
+    // Fase de declaração da mochila: escolhe e confirma o item (sem aplicar ainda).
+    // Retorna o índice do item, -1 para voltar ao menu principal ou -2 para declarar fuga.
+    private static int escolherItemParaUsar(FichaRpg ficha) {
         while (true) {
             Interface.barraDivisoria();
             System.out.println("\n--- SUA MOCHILA ---");
@@ -905,9 +929,8 @@ public class Floresta {
 
             int escolha = Interface.lerInteiro();
 
-
             if (escolha == 0) return -1;
-            if (escolha == 9) return 4;
+            if (escolha == 9) return -2;
 
             if (ficha.getInventario().isEmpty()) {
                 Interface.ExibirErro("Escolha inválida!");
@@ -939,32 +962,13 @@ public class Floresta {
                         continue;
                     }
 
-                    System.out.println("\nDeseja usar este item? (Usará sua ação)");
+                    System.out.println("\nDeseja usar este item? (Usará sua ação quando chegar sua vez)");
                     System.out.println("1. Sim");
                     System.out.println("2. Não");
                     int confirmar = Interface.lerInteiro();
 
-
                     if (confirmar == 1) {
-                        if (itemEscolhido.getNome().equals("Poção de Mana")) {
-                            ficha.setManaPersonagem(ficha.getManaPersonagem() + 5);
-                            Interface.MostrarMensagem("Você recuperou 5 de mana! Mana atual: " + ficha.getManaPersonagem() + "/" + ficha.getManaMaxima());
-                        } else if (itemEscolhido.getNome().equals("Kit Médico")) {
-                            int cura = MecanicasRpg.rolarDado(4);
-                            ficha.setVidaPersonagem(ficha.getVidaPersonagem() + cura);
-                            Interface.MostrarMensagem("Você recuperou " + cura + " de vida! Vida atual: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima());
-                        }
-
-                        itemEscolhido.setQuantidade(itemEscolhido.getQuantidade() - 1);
-                        if (itemEscolhido.getQuantidade() <= 0) {
-                            ficha.getInventario().remove(itemEscolhido);
-                            Interface.MostrarMensagem("O item foi consumido e removido do inventário.");
-                        } else {
-                            Interface.MostrarMensagem("Restam " + itemEscolhido.getQuantidade() + "x " + itemEscolhido.getNome() + ".");
-                        }
-
-                        Interface.Pausa(2000);
-                        return 3;
+                        return escolha - 1;
                     }
                 } else {
                     Interface.MostrarMensagem("Item não é consumível. Apenas visualização.");
@@ -972,6 +976,37 @@ public class Floresta {
                 }
             }
         }
+    }
+
+    // Fase de resolução: aplica o item escolhido quando chega a vez do jogador na iniciativa
+    private static void usarItemNaVez(FichaRpg ficha, int itemIndex) {
+        if (itemIndex < 0 || itemIndex >= ficha.getInventario().size()) return;
+        ItemRpg itemEscolhido = ficha.getInventario().get(itemIndex);
+
+        if (!ehItemConsumivel(itemEscolhido)) {
+            Interface.MostrarMensagem("Item não é consumível.");
+            Interface.Pausa(1500);
+            return;
+        }
+
+        if (itemEscolhido.getNome().equals("Poção de Mana")) {
+            ficha.setManaPersonagem(ficha.getManaPersonagem() + 5);
+            Interface.MostrarMensagem("Você recuperou 5 de mana! Mana atual: " + ficha.getManaPersonagem() + "/" + ficha.getManaMaxima());
+        } else if (itemEscolhido.getNome().equals("Kit Médico")) {
+            int cura = MecanicasRpg.rolarDado(4);
+            ficha.setVidaPersonagem(ficha.getVidaPersonagem() + cura);
+            Interface.MostrarMensagem("Você recuperou " + cura + " de vida! Vida atual: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima());
+        }
+
+        itemEscolhido.setQuantidade(itemEscolhido.getQuantidade() - 1);
+        if (itemEscolhido.getQuantidade() <= 0) {
+            ficha.getInventario().remove(itemEscolhido);
+            Interface.MostrarMensagem("O item foi consumido e removido do inventário.");
+        } else {
+            Interface.MostrarMensagem("Restam " + itemEscolhido.getQuantidade() + "x " + itemEscolhido.getNome() + ".");
+        }
+
+        Interface.Pausa(2000);
     }
 
     // ==================== FUGA ====================
