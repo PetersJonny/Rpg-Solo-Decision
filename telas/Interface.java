@@ -95,12 +95,14 @@ public class Interface {
 
     // Lê um nome com limite de 20 caracteres
     private static String lerNome() {
-        String nome = scanner.nextLine().trim();
-        if (nome.length() > 20) {
-            nome = nome.substring(0, 20);
-            ExibirErro("Nome muito longo! Aplicado apenas os 20 primeiros caracteres.");
+        while (true) {
+            String nome = scanner.nextLine().trim();
+            if (nome.length() > 20) {
+                ExibirErro("O nome pode ter no máximo 20 caracteres. Digite novamente:");
+                continue;
+            }
+            return nome;
         }
-        return nome;
     }
 
     public static int MenuCriacaoFicha() {
