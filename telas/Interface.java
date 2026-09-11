@@ -32,6 +32,12 @@ public class Interface {
         scanner.nextLine();
     }
 
+    // Aguarda o ENTER antes de um teste, citando o atributo
+    public static void pressionarParaTeste(String atributo) {
+        System.out.println("\nPressione ENTER para rodar um teste de " + atributo + "...");
+        scanner.nextLine();
+    }
+
     // Lê um número inteiro com validação (letras/caracteres mostram opção inválida e pedem novamente)
     public static int lerInteiro() {
         while (true) {

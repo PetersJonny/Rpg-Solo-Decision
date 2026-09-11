@@ -82,7 +82,6 @@ public class Criatura {
 
         // Acerto automático não rola d20, portanto sem chance de crítico
         if (acertoAutomatico) {
-            Interface.pressionarParaRolar();
             int dano = rolarDanoDoAtaque(ataqueEscolhido, false);
             if (cascaGrossaAtiva) {
                 dano = Math.max(0, dano - 5);
@@ -94,7 +93,6 @@ public class Criatura {
             return ataqueEscolhido;
         }
 
-        Interface.pressionarParaRolar();
         int dadoAtaque = MecanicasRpg.rolarDado(20);
         int totalAtaque = dadoAtaque + bonusAcerto;
         boolean critico = dadoAtaque == 20;
@@ -105,7 +103,6 @@ public class Criatura {
         Interface.Pausa(2000);
 
         if (totalAtaque >= ficha.getDefesa()) {
-            Interface.pressionarParaRolar();
             int dano = rolarDanoDoAtaque(ataqueEscolhido, critico);
             if (cascaGrossaAtiva) {
                 dano = Math.max(0, dano - 5);

@@ -39,7 +39,7 @@ public class Floresta {
 
         int dadoPresenca = 0;
         int totalPresenca = 0;
-        Interface.pressionarParaRolar();
+        Interface.pressionarParaTeste("Presença");
         dadoPresenca = MecanicasRpg.rolarDado(20);
         totalPresenca = dadoPresenca + ficha.getPresenca();
         Interface.MostrarMensagem("-> Teste de Presença: " + dadoPresenca + " (Dado) + " + ficha.getPresenca() + " (Atributo) = " + totalPresenca + " (Dificuldade: " + referencia.getTestePresenca() + ")");
@@ -60,7 +60,7 @@ public class Floresta {
                 Interface.Pausa(2500);
                 IniciarCombate(ficha, inimigos, true);
             } else if (escolha == 2) {
-                Interface.pressionarParaRolar();
+                Interface.pressionarParaTeste("Destreza (Fuga)");
                 int dadoDestreza = MecanicasRpg.rolarDado(20);
                 int totalDestreza = dadoDestreza + ficha.getDestreza();
                 Interface.MostrarMensagem("-> Teste de Destreza (Fuga): " + dadoDestreza + " (Dado) + " + ficha.getDestreza() + " (Atributo) = " + totalDestreza);
@@ -163,7 +163,7 @@ public class Floresta {
     // ==================== ENCONTRO COM A FADA ====================
 
     private static void EncontrarFada(FichaRpg ficha) {
-        Interface.pressionarParaRolar();
+        Interface.pressionarParaTeste("Presença");
         int dadoPresenca = MecanicasRpg.rolarDado(20);
         int totalPresenca = dadoPresenca + ficha.getPresenca();
         Interface.MostrarMensagem("-> Teste de Presença: " + dadoPresenca + " (Dado) + " + ficha.getPresenca() + " (Atributo) = " + totalPresenca + " (Dificuldade: 18)");
@@ -186,7 +186,7 @@ public class Floresta {
 
 
         if (escolha == 1) {
-            Interface.pressionarParaRolar();
+            Interface.pressionarParaTeste("Sabedoria");
             int dadoSabedoria = MecanicasRpg.rolarDado(20);
             int totalSabedoria = dadoSabedoria + ficha.getSabedoria();
             Interface.MostrarMensagem("-> Teste de Sabedoria (Conversa): " + dadoSabedoria + " (Dado) + " + ficha.getSabedoria() + " (Atributo) = " + totalSabedoria + " (Dificuldade: 14)");
@@ -219,7 +219,7 @@ public class Floresta {
         Interface.Pausa(2500);
 
         int bonusIniciativaJogador = jogadorSurpreendeu ? 2 : 0;
-        Interface.pressionarParaRolar();
+        Interface.pressionarParaTeste("Destreza");
         int dadoJogador = MecanicasRpg.rolarDado(20);
         int iniciativaJogador = dadoJogador + ficha.getDestreza() + bonusIniciativaJogador;
 
@@ -231,7 +231,6 @@ public class Floresta {
 
         for (int i = 0; i < inimigos.size(); i++) {
             Criatura c = inimigos.get(i);
-            Interface.pressionarParaRolar();
             int dadoInimigo = MecanicasRpg.rolarDado(20);
             int iniciativaInimigo = dadoInimigo + c.getIniciativa();
             Interface.MostrarMensagem("-> Iniciativa [" + rotuloCriatura(inimigos, c) + "]: " + dadoInimigo + " (Dado) + " + c.getIniciativa() + " (Iniciativa Base) = " + iniciativaInimigo);
@@ -993,7 +992,7 @@ public class Floresta {
         }
         int dificuldadeFuga = 10 + melhorIniciativa;
 
-        Interface.pressionarParaRolar();
+        Interface.pressionarParaTeste("Destreza");
         int dadoJogador = MecanicasRpg.rolarDado(20);
         int totalJogador = dadoJogador + ficha.getDestreza();
         Interface.MostrarMensagem("-> Sua Tentativa de Fuga: " + dadoJogador + " (Dado) + " + ficha.getDestreza() + " (Destreza) = " + totalJogador + " (Dificuldade: " + dificuldadeFuga + ")");
