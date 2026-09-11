@@ -709,6 +709,9 @@ public class Floresta {
             Interface.Pausa(2000);
 
             if (totalAtaque >= inimigo.getDefesa()) {
+                Interface.MostrarMensagem("-> Acertou! (defesa do alvo: " + inimigo.getDefesa() + ")");
+                Interface.Pausa(1500);
+
                 int dadosTotais = socoQtd * (critico ? 2 : 1);
                 StringBuilder roladas = new StringBuilder();
                 Interface.pressionarParaRolar();
@@ -721,6 +724,9 @@ public class Floresta {
                 dano += atributoBonus;
                 Interface.MostrarMensagem("-> Dados Rolados: " + roladas + " = " + dano + " (Dano: " + socoQtd + "d" + socoDado + " + " + nomeAtributo + ": " + atributoBonus + ")");
                 Interface.Pausa(2000);
+            } else {
+                Interface.MostrarMensagem("-> Errou! (defesa do alvo: " + inimigo.getDefesa() + ")");
+                Interface.Pausa(1500);
             }
         } else if (armaIndex >= 0 && armaIndex < ficha.getInventario().size()) {
             Arma armaEscolhida = (Arma) ficha.getInventario().get(armaIndex);
@@ -739,6 +745,9 @@ public class Floresta {
             Interface.Pausa(2000);
 
             if (totalAtaque >= inimigo.getDefesa()) {
+                Interface.MostrarMensagem("-> Acertou! (defesa do alvo: " + inimigo.getDefesa() + ")");
+                Interface.Pausa(1500);
+
                 int dadosTotais = armaEscolhida.getQuantidadeDanoArma() * (critico ? 2 : 1);
                 StringBuilder roladas = new StringBuilder();
                 Interface.pressionarParaRolar();
@@ -751,6 +760,9 @@ public class Floresta {
                 dano += atributoBonus;
                 Interface.MostrarMensagem("-> Dados Rolados: " + roladas + " = " + dano + " (Dano: " + armaEscolhida.getQuantidadeDanoArma() + "d" + armaEscolhida.getDadoDanoArma() + " + " + nomeAtributo + ": " + atributoBonus + ")");
                 Interface.Pausa(2000);
+            } else {
+                Interface.MostrarMensagem("-> Errou! (defesa do alvo: " + inimigo.getDefesa() + ")");
+                Interface.Pausa(1500);
             }
 
             if (armaEscolhida.getTipoArma().contains("LA")) {
@@ -761,15 +773,11 @@ public class Floresta {
         }
 
         if (dano > 0) {
-            Interface.MostrarMensagem("-> Acertou! Dano: " + dano + " (defesa do alvo: " + inimigo.getDefesa() + ")");
-            Interface.Pausa(2000);
             inimigo.setVida(inimigo.getVida() - dano);
             Interface.MostrarMensagem(rotuloCriatura(inimigos, inimigo) + " agora tem " + Math.max(0, inimigo.getVida()) + " de vida.");
             Interface.Pausa(2000);
             return true;
         } else {
-            Interface.MostrarMensagem("-> Errou! (defesa do alvo: " + inimigo.getDefesa() + ")");
-            Interface.Pausa(1500);
             return false;
         }
     }
