@@ -25,8 +25,9 @@ public class Floresta {
         Interface.MostrarMensagem("\nAlgo se move por entre as árvores...");
         Interface.Pausa(2500);
 
-        // 20% de chance de encontrar uma Fada
-        if (MecanicasRpg.rolarDado(100) <= 20) {
+        // 20% de chance de encontrar uma Fada (apenas uma vez por personagem)
+        if (!ficha.isFadaEncontrada() && MecanicasRpg.rolarDado(100) <= 20) {
+            ficha.setFadaEncontrada(true);
             EncontrarFada(ficha);
             return;
         }
@@ -36,8 +37,11 @@ public class Floresta {
         List<Criatura> inimigos = criarGrupoMonstros(tipo);
         Criatura referencia = inimigos.get(0);
 
-        int dadoPresenca = MecanicasRpg.rolarDado(20);
-        int totalPresenca = dadoPresenca + ficha.getPresenca();
+        int dadoPresenca = 0;
+        int totalPresenca = 0;
+        Interface.pressionarParaRolar();
+        dadoPresenca = MecanicasRpg.rolarDado(20);
+        totalPresenca = dadoPresenca + ficha.getPresenca();
         Interface.MostrarMensagem("-> Teste de Presença: " + dadoPresenca + " (Dado) + " + ficha.getPresenca() + " (Atributo) = " + totalPresenca + " (Dificuldade: " + referencia.getTestePresenca() + ")");
         Interface.Pausa(2500);
 
@@ -48,14 +52,15 @@ public class Floresta {
             System.out.println("O que deseja fazer?");
             System.out.println("1. Lutar (Você terá +2 de Iniciativa extra por surpreendê-lo)");
             System.out.println("2. Tentar Fugir furtivamente");
-            int escolha = Interface.scanner.nextInt();
-            Interface.scanner.nextLine();
+            int escolha = Interface.lerInteiro();
+
 
             if (escolha == 1) {
                 Interface.MostrarMensagem("\nVocê saca sua arma e parte para cima!");
                 Interface.Pausa(2500);
                 IniciarCombate(ficha, inimigos, true);
             } else if (escolha == 2) {
+                Interface.pressionarParaRolar();
                 int dadoDestreza = MecanicasRpg.rolarDado(20);
                 int totalDestreza = dadoDestreza + ficha.getDestreza();
                 Interface.MostrarMensagem("-> Teste de Destreza (Fuga): " + dadoDestreza + " (Dado) + " + ficha.getDestreza() + " (Atributo) = " + totalDestreza);
@@ -113,6 +118,7 @@ public class Floresta {
         Criatura c = new Criatura("Lobo Selvagem", 1, 14, 10, 3);
         c.setBonusAcerto(3);
         c.setTestePresenca(8);
+        c.setXpGanho(25);
         c.adicionarAtaque("Mordida", "", 1, 6);
         c.adicionarAtaque("Aranhão", "", 2, 4);
         c.adicionarDrop("Couro", 1, 2, 40);
@@ -123,6 +129,7 @@ public class Floresta {
         Criatura c = new Criatura("Urso", 3, 35, 7, 0);
         c.setBonusAcerto(1);
         c.setTestePresenca(5);
+        c.setXpGanho(50);
         c.adicionarAtaque("Mordida", "", 1, 10);
         c.adicionarAtaque("Aranhão", "", 2, 8);
         c.adicionarDrop("Couro", 2, 4, 60);
@@ -134,6 +141,7 @@ public class Floresta {
         Criatura c = new Criatura("Bandido", 2, 9, 12, 1);
         c.setBonusAcerto(2);
         c.setTestePresenca(15);
+        c.setXpGanho(10);
         c.adicionarAtaque("Facada", "", 1, 4);
         c.adicionarAtaque("Soco", "", 1, 3);
         c.setOuroDrop(9, 27, 100);
@@ -146,6 +154,7 @@ public class Floresta {
         c.setAcertoAutomatico(true);
         c.setTestePresenca(18);
         c.setChanceAparecer(20);
+        c.setXpGanho(30);
         c.adicionarAtaque("Brilho Cintilante", "luz", 1, 6);
         c.adicionarDrop("Brilho Mágico", 1, 1, 100);
         return c;
@@ -154,6 +163,7 @@ public class Floresta {
     // ==================== ENCONTRO COM A FADA ====================
 
     private static void EncontrarFada(FichaRpg ficha) {
+        Interface.pressionarParaRolar();
         int dadoPresenca = MecanicasRpg.rolarDado(20);
         int totalPresenca = dadoPresenca + ficha.getPresenca();
         Interface.MostrarMensagem("-> Teste de Presença: " + dadoPresenca + " (Dado) + " + ficha.getPresenca() + " (Atributo) = " + totalPresenca + " (Dificuldade: 18)");
@@ -172,10 +182,11 @@ public class Floresta {
         System.out.println("1. Tentar conversar com a Fada");
         System.out.println("2. Lutar contra a Fada");
         System.out.println("3. Deixá-la em paz e seguir caminho");
-        int escolha = Interface.scanner.nextInt();
-        Interface.scanner.nextLine();
+        int escolha = Interface.lerInteiro();
+
 
         if (escolha == 1) {
+            Interface.pressionarParaRolar();
             int dadoSabedoria = MecanicasRpg.rolarDado(20);
             int totalSabedoria = dadoSabedoria + ficha.getSabedoria();
             Interface.MostrarMensagem("-> Teste de Sabedoria (Conversa): " + dadoSabedoria + " (Dado) + " + ficha.getSabedoria() + " (Atributo) = " + totalSabedoria + " (Dificuldade: 14)");
@@ -208,6 +219,7 @@ public class Floresta {
         Interface.Pausa(2500);
 
         int bonusIniciativaJogador = jogadorSurpreendeu ? 2 : 0;
+        Interface.pressionarParaRolar();
         int dadoJogador = MecanicasRpg.rolarDado(20);
         int iniciativaJogador = dadoJogador + ficha.getDestreza() + bonusIniciativaJogador;
 
@@ -219,6 +231,7 @@ public class Floresta {
 
         for (int i = 0; i < inimigos.size(); i++) {
             Criatura c = inimigos.get(i);
+            Interface.pressionarParaRolar();
             int dadoInimigo = MecanicasRpg.rolarDado(20);
             int iniciativaInimigo = dadoInimigo + c.getIniciativa();
             Interface.MostrarMensagem("-> Iniciativa [" + rotuloCriatura(inimigos, c) + "]: " + dadoInimigo + " (Dado) + " + c.getIniciativa() + " (Iniciativa Base) = " + iniciativaInimigo);
@@ -226,6 +239,7 @@ public class Floresta {
             ordem.add(new int[]{iniciativaInimigo, i + 1});
         }
 
+        // Ordena os combatentes pela iniciativa (do maior para o menor)
         ordem.sort((a, b) -> Integer.compare(b[0], a[0]));
 
         StringBuilder ordemTexto = new StringBuilder();
@@ -245,8 +259,10 @@ public class Floresta {
     private static void RodadasDeCombate(FichaRpg ficha, List<Criatura> inimigos, List<int[]> ordem) {
         boolean[] cascaGrossaAtiva = {false};
         int[] tentativasFuga = {0};
+        List<Criatura> mortesProcessadas = new ArrayList<>();
 
         while (ficha.getVidaPersonagem() > 0 && !inimigosVivos(inimigos).isEmpty()) {
+            Interface.limparTela();
             Interface.barraDivisoria();
             Interface.MostrarMensagem("Sua Vida: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima() + " | Mana: " + ficha.getManaPersonagem() + "/" + ficha.getManaMaxima());
             Interface.MostrarMensagem("Inimigos:");
@@ -273,6 +289,8 @@ public class Floresta {
                         Interface.Pausa(2500);
                         return;
                     }
+                    // Processa XP/drops dos inimigos que acabaram de morrer
+                    processarMortes(inimigos, mortesProcessadas, ficha);
                 } else {
                     Criatura c = inimigos.get(token[1] - 1);
                     if (c.getVida() > 0) {
@@ -291,13 +309,41 @@ public class Floresta {
         } else {
             Interface.MostrarMensagem("\nVocê derrotou todos os inimigos!");
             Interface.Pausa(2500);
-            for (Criatura c : inimigos) {
-                if (c.getVida() <= 0) {
-                    c.processarDrops(ficha);
+        }
+        Interface.barraDivisoria();
+    }
+
+    // Concede XP e drops dos inimigos mortos ainda não processados, com mensagens de level up
+    private static void processarMortes(List<Criatura> inimigos, List<Criatura> mortesProcessadas, FichaRpg ficha) {
+        for (Criatura c : inimigos) {
+            if (c.getVida() <= 0 && !mortesProcessadas.contains(c)) {
+                mortesProcessadas.add(c);
+                Interface.MostrarMensagem("\nVocê derrotou " + rotuloCriatura(inimigos, c) + "!");
+                Interface.Pausa(1500);
+                c.processarDrops(ficha);
+
+                if (c.getXpGanho() > 0) {
+                    Interface.MostrarMensagem("-> Você ganhou " + c.getXpGanho() + " XP!");
+                    Interface.Pausa(1500);
+                    int vidasAntes = ficha.getVidaMaxima();
+                    int manaAntes = ficha.getManaMaxima();
+                    int niveisGanhos = ficha.adicionarXp(c.getXpGanho());
+                    if (niveisGanhos > 0) {
+                        Interface.MostrarMensagem("\n*** SUBIU PARA O NÍVEL " + ficha.getNivel() + "! ***");
+                        Interface.Pausa(2000);
+                        Interface.MostrarMensagem("+ " + (ficha.getVidaMaxima() - vidasAntes) + " de vida máxima.");
+                        Interface.MostrarMensagem("+ " + (ficha.getManaMaxima() - manaAntes) + " de mana máxima.");
+                        Interface.Pausa(2000);
+                        if (ficha.getNivel() < 10) {
+                            Interface.MostrarMensagem("XP para o próximo nível: " + fichas.FichaRpg.getXpNecessaria(ficha.getNivel()));
+                        } else {
+                            Interface.MostrarMensagem("Você atingiu o nível máximo!");
+                        }
+                        Interface.Pausa(2000);
+                    }
                 }
             }
         }
-        Interface.barraDivisoria();
     }
 
     // ==================== VEZ DO JOGADOR ====================
@@ -310,8 +356,8 @@ public class Floresta {
             System.out.println("3. Tentar Fugir");
             System.out.println("4. Ver Ficha");
 
-            int escolha = Interface.scanner.nextInt();
-            Interface.scanner.nextLine();
+            int escolha = Interface.lerInteiro();
+
 
             if (escolha == 4) {
                 Interface.MostrarFicha(ficha);
@@ -407,8 +453,8 @@ public class Floresta {
                 System.out.println("\nDeseja usar Conhecimento Avançado para rerrolar? (Custo: " + hab.getCustoMana() + " Mana)");
                 System.out.println("1. Sim");
                 System.out.println("2. Não");
-                int escolha = Interface.scanner.nextInt();
-                Interface.scanner.nextLine();
+                int escolha = Interface.lerInteiro();
+
 
                 if (escolha == 1) {
                     ficha.setManaPersonagem(ficha.getManaPersonagem() - hab.getCustoMana());
@@ -449,8 +495,8 @@ public class Floresta {
 
         System.out.println("0. Voltar");
 
-        int escolha = Interface.scanner.nextInt();
-        Interface.scanner.nextLine();
+        int escolha = Interface.lerInteiro();
+
 
         if (escolha == 1) {
             int armaIdx = EscolherArma(ficha);
@@ -500,8 +546,8 @@ public class Floresta {
         }
         System.out.println("0. Voltar");
 
-        int escolha = Interface.scanner.nextInt();
-        Interface.scanner.nextLine();
+        int escolha = Interface.lerInteiro();
+
 
         if (escolha < 1 || escolha > vivos.size()) return -1;
 
@@ -581,8 +627,8 @@ public class Floresta {
         System.out.println((armas.size() + 1) + ". " + socoNome + " (" + socoQtd + "d" + socoDado + " - CaC - Força)");
         System.out.println("0. Voltar");
 
-        int escolha = Interface.scanner.nextInt();
-        Interface.scanner.nextLine();
+        int escolha = Interface.lerInteiro();
+
 
         if (escolha == 0) return -1;
         if (escolha < 1 || escolha > armas.size() + 1) return -1;
@@ -654,6 +700,7 @@ public class Floresta {
             atributoBonus = ficha.getForca();
             nomeAtributo = "Força";
 
+            Interface.pressionarParaRolar();
             dadoAtaque = MecanicasRpg.rolarDado(20);
             totalAtaque = dadoAtaque + atributoBonus;
             boolean critico = dadoAtaque == 20;
@@ -665,10 +712,17 @@ public class Floresta {
 
             if (totalAtaque >= inimigo.getDefesa()) {
                 int dadosTotais = socoQtd * (critico ? 2 : 1);
+                StringBuilder roladas = new StringBuilder();
+                Interface.pressionarParaRolar();
                 for (int i = 0; i < dadosTotais; i++) {
-                    dano += MecanicasRpg.rolarDado(socoDado);
+                    int dado = MecanicasRpg.rolarDado(socoDado);
+                    dano += dado;
+                    if (roladas.length() > 0) roladas.append(" + ");
+                    roladas.append(dado);
                 }
                 dano += atributoBonus;
+                Interface.MostrarMensagem("-> Dados Rolados: " + roladas + " = " + dano + " (Dano: " + socoQtd + "d" + socoDado + " + " + nomeAtributo + ": " + atributoBonus + ")");
+                Interface.Pausa(2000);
             }
         } else if (armaIndex >= 0 && armaIndex < ficha.getInventario().size()) {
             Arma armaEscolhida = (Arma) ficha.getInventario().get(armaIndex);
@@ -676,6 +730,7 @@ public class Floresta {
             atributoBonus = atributo.equals("Destreza") ? ficha.getDestreza() : ficha.getForca();
             nomeAtributo = atributo;
 
+            Interface.pressionarParaRolar();
             dadoAtaque = MecanicasRpg.rolarDado(20);
             totalAtaque = dadoAtaque + atributoBonus;
             boolean critico = dadoAtaque == 20;
@@ -687,10 +742,17 @@ public class Floresta {
 
             if (totalAtaque >= inimigo.getDefesa()) {
                 int dadosTotais = armaEscolhida.getQuantidadeDanoArma() * (critico ? 2 : 1);
+                StringBuilder roladas = new StringBuilder();
+                Interface.pressionarParaRolar();
                 for (int i = 0; i < dadosTotais; i++) {
-                    dano += MecanicasRpg.rolarDado(armaEscolhida.getDadoDanoArma());
+                    int dado = MecanicasRpg.rolarDado(armaEscolhida.getDadoDanoArma());
+                    dano += dado;
+                    if (roladas.length() > 0) roladas.append(" + ");
+                    roladas.append(dado);
                 }
                 dano += atributoBonus;
+                Interface.MostrarMensagem("-> Dados Rolados: " + roladas + " = " + dano + " (Dano: " + armaEscolhida.getQuantidadeDanoArma() + "d" + armaEscolhida.getDadoDanoArma() + " + " + nomeAtributo + ": " + atributoBonus + ")");
+                Interface.Pausa(2000);
             }
 
             if (armaEscolhida.getTipoArma().contains("LA")) {
@@ -745,8 +807,8 @@ public class Floresta {
         }
         System.out.println("0. Voltar");
 
-        int escolha = Interface.scanner.nextInt();
-        Interface.scanner.nextLine();
+        int escolha = Interface.lerInteiro();
+
 
         if (escolha == 0) return -1;
 
@@ -788,6 +850,7 @@ public class Floresta {
             habilidades.Magia magia = (habilidades.Magia) hab;
             StringBuilder roladas = new StringBuilder();
             int dano = 0;
+            Interface.pressionarParaRolar();
             for (int i = 0; i < magia.getQuantidadeDano(); i++) {
                 int dadoRolado = MecanicasRpg.rolarDado(magia.getDadoDano());
                 dano += dadoRolado;
@@ -834,8 +897,8 @@ public class Floresta {
             System.out.println("0. Voltar ao combate");
             System.out.println("9. Tentar fugir do combate");
 
-            int escolha = Interface.scanner.nextInt();
-            Interface.scanner.nextLine();
+            int escolha = Interface.lerInteiro();
+
 
             if (escolha == 0) return -1;
             if (escolha == 9) return 4;
@@ -873,8 +936,8 @@ public class Floresta {
                     System.out.println("\nDeseja usar este item? (Usará sua ação)");
                     System.out.println("1. Sim");
                     System.out.println("2. Não");
-                    int confirmar = Interface.scanner.nextInt();
-                    Interface.scanner.nextLine();
+                    int confirmar = Interface.lerInteiro();
+
 
                     if (confirmar == 1) {
                         if (itemEscolhido.getNome().equals("Poção de Mana")) {
@@ -913,8 +976,8 @@ public class Floresta {
         System.out.println("1. Sim, tentar fugir");
         System.out.println("2. Não, voltar ao combate");
 
-        int confirmar = Interface.scanner.nextInt();
-        Interface.scanner.nextLine();
+        int confirmar = Interface.lerInteiro();
+
 
         if (confirmar != 1) return tentativasAtuais;
 
@@ -931,6 +994,7 @@ public class Floresta {
         }
         int dificuldadeFuga = 10 + melhorIniciativa;
 
+        Interface.pressionarParaRolar();
         int dadoJogador = MecanicasRpg.rolarDado(20);
         int totalJogador = dadoJogador + ficha.getDestreza();
         Interface.MostrarMensagem("-> Sua Tentativa de Fuga: " + dadoJogador + " (Dado) + " + ficha.getDestreza() + " (Destreza) = " + totalJogador + " (Dificuldade: " + dificuldadeFuga + ")");

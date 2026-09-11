@@ -1,5 +1,6 @@
 package classes;
 
+import fichas.FichaRpg;
 import itens.Arma;
 import itens.Consumivel;
 
@@ -21,6 +22,16 @@ public class Healer extends ClasseRpg {
 
     @Override
     public int calcularManaBase(int presencaBase) { return 5 + presencaBase; }
+
+    @Override
+    public void aplicarBonusNivel(FichaRpg ficha) {
+        int ganhoVida = 3 + ficha.getConstituicao();
+        ficha.setVidaMaxima(ficha.getVidaMaxima() + ganhoVida);
+        ficha.setVidaPersonagem(ficha.getVidaPersonagem() + ganhoVida);
+        int ganhoMana = 2 + ficha.getPresenca();
+        ficha.setManaMaxima(ficha.getManaMaxima() + ganhoMana);
+        ficha.setManaPersonagem(ficha.getManaPersonagem() + ganhoMana);
+    }
 
     @Override
     public int getBonusSabedoria() { return 1; }

@@ -15,6 +15,40 @@ public class Interface {
     // Entrada de Dados
     public static final Scanner scanner = new Scanner(System.in);
 
+    // Limpa o terminal
+    public static void limparTela() {
+        System.out.print("\u001B[2J\u001B[H");
+    }
+
+    // Aguarda o jogador apertar ENTER
+    public static void esperarEnter() {
+        System.out.println("\nPressione ENTER para continuar...");
+        scanner.nextLine();
+    }
+
+    public static void esperarEnter(String mensagem) {
+        System.out.println("\n" + mensagem);
+        scanner.nextLine();
+    }
+
+    // Aguarda o ENTER do jogador antes de rolar dados (não retorna o valor rolado)
+    public static void pressionarParaRolar() {
+        System.out.println("\nPressione ENTER para rolar os dados...");
+        scanner.nextLine();
+    }
+
+    // Lê um número inteiro com validação (letras/caracteres mostram opção inválida e pedem novamente)
+    public static int lerInteiro() {
+        while (true) {
+            String entrada = scanner.nextLine();
+            try {
+                return Integer.parseInt(entrada.trim());
+            } catch (NumberFormatException e) {
+                ExibirErro("Opção inválida! Digite um número.");
+            }
+        }
+    }
+
     // Pausa para leitura
     public static void Pausa(int milisegundos) {
         try { Thread.sleep(milisegundos); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
@@ -74,40 +108,35 @@ public class Interface {
         System.out.println("\n4.Mostrar ficha");
         System.out.println("\n5.Finalizar criação do personagem.");
         System.out.println("\n6.Fechar o jogo");
-        int escolha = scanner.nextInt();
-        scanner.nextLine();
+        int escolha = lerInteiro();
         return escolha;
     }
 
     public static int MenuDistribuirAtributos(int pontosSobrando) {
         barraDivisoria();
-        System.out.println("\nVocê tem " + pontosSobrando + " pontos para distribuir. Escolha qual atributo quer melhorar: \n\n1.Constituição\n2.Destreza\n3.Força\n4.Sabedoria\n5.Intelecto\n6.Presença"); 
-        int escolha = scanner.nextInt();
-        scanner.nextLine();
+        System.out.println("\nVocê tem " + pontosSobrando + " pontos para distribuir. Escolha qual atributo quer melhorar: \n\n1.Constituição\n2.Destreza\n3.Força\n4.Sabedoria\n5.Intelecto\n6.Presença\n\n0.Voltar"); 
+        int escolha = lerInteiro();
         return escolha;
     }
 
     public static int PedirQuantidadePontos(int pontosSobrando) {
         System.out.println("\nQuantos pontos deseja gastar? Tem " + pontosSobrando + " pontos ainda.");
-        int gasto = scanner.nextInt();
-        scanner.nextLine();
+        int gasto = lerInteiro();
         return gasto;
     }
 
     public static int MenuEscolherClasse() {
         barraDivisoria();
-        System.out.println("\n Escolha entre uma das 3 classes abaixo: \n 1.Mago (só pode usar cajado, conjura magias poderosas, porém é mais fragil). \n 2.Guerreiro (só pode usar espada e atacar corpo a corpo, porém é mais resistente). \n 3.Healer (tem poderes de cura, pode curar a si mesmo e aos outros, tem uma vida mediana).");
-        int escolha = scanner.nextInt();
-        scanner.nextLine();
+        System.out.println("\n Escolha entre uma das 3 classes abaixo: \n 1.Mago (só pode usar cajado, conjura magias poderosas, porém é mais fragil). \n 2.Guerreiro (só pode usar espada e atacar corpo a corpo, porém é mais resistente). \n 3.Healer (tem poderes de cura, pode curar a si mesmo e aos outros, tem uma vida mediana).\n\n0.Voltar");
+        int escolha = lerInteiro();
         return escolha;
     }
 
     public static String EscolherElementoMago() {
         barraDivisoria();
         System.out.println("\nComo Mago, você deve escolher o elemento da sua Bola Elementar:");
-        System.out.println("1. Fogo\n2. Água\n3. Gelo\n4. Elétrico\n5. Terra\n6. Ácido");
-        int escolha = scanner.nextInt();
-        scanner.nextLine();
+        System.out.println("1. Fogo\n2. Água\n3. Gelo\n4. Elétrico\n5. Terra\n6. Ácido\n\n0. Voltar");
+        int escolha = lerInteiro();
         switch (escolha) {
             case 1: return "Fogo";
             case 2: return "Água";
@@ -115,9 +144,7 @@ public class Interface {
             case 4: return "Elétrico";
             case 5: return "Terra";
             case 6: return "Ácido";
-            default: 
-                ExibirErro("Opção inválida, definindo como Fogo por padrão.");
-                return "Fogo";
+            default: return null;
         }
     }
 
@@ -128,8 +155,7 @@ public class Interface {
         System.out.println("\n1. Ver ficha");
         System.out.println("2. Começar a aventura");
         System.out.println("3. Encerrar jogo");
-        int escolha = scanner.nextInt();
-        scanner.nextLine();
+        int escolha = lerInteiro();
         return escolha;
     }
 
@@ -141,8 +167,7 @@ public class Interface {
         System.out.println("1. Ver Habilidades");
         System.out.println("2. Ver Inventário (Ler descrições)");
         System.out.println("3. Voltar para a Aventura");
-        int escolha = scanner.nextInt();
-        scanner.nextLine();
+        int escolha = lerInteiro();
         return escolha;
     }
 
@@ -160,8 +185,7 @@ public class Interface {
         System.out.println("0. Voltar");
 
         System.out.println("\nDigite o número do item que deseja ler a descrição:");
-        int escolha = scanner.nextInt();
-        scanner.nextLine();
+        int escolha = lerInteiro();
 
         if (escolha > 0 && escolha <= ficha.getInventario().size()) {
             ItemRpg itemEscolhido = ficha.getInventario().get(escolha - 1);
@@ -187,8 +211,7 @@ public class Interface {
         System.out.println("0. Voltar");
 
         System.out.println("\nDigite o número da habilidade que deseja ler a descrição:");
-        int escolha = scanner.nextInt();
-        scanner.nextLine();
+        int escolha = lerInteiro();
 
         if (escolha > 0 && escolha <= ficha.getHabilidades().size()) {
             habilidades.Habilidade habEscolhida = ficha.getHabilidades().get(escolha - 1);
@@ -242,7 +265,7 @@ public class Interface {
             .append("\t(Dano: ").append(socoQtdDano).append("d").append(socoDado)
             .append(", Tipo: ").append(socoTipo).append(")");
 
-        System.out.println("\n --------FICHA-------- \n\nNome: " + ficha.getNomePersonagem() + "\t\tNível: " + ficha.getNivel() + "\nDono da ficha: " + ficha.getNomePessoa() + "\t\tClasse: " + nomeDaClasse + "\nVida: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima() + "\t\tMana: " + ficha.getManaPersonagem() + "/" + ficha.getManaMaxima() + "\nOuro: " + ficha.getOuro() + "\n\nAtributos: \nConstituição: " + ficha.getConstituicao() + "\nDestreza: " + ficha.getDestreza() + "\nForça: " + ficha.getForca() + "\nSabedoria: " + ficha.getSabedoria() + "\nIntelecto: " + ficha.getIntelecto() + "\nPresença: " + ficha.getPresenca() + "\n\nCombate: " + combate + "\n\nDefesa: " + ficha.getDefesa());
+        System.out.println("\n --------FICHA-------- \n\nNome: " + ficha.getNomePersonagem() + "\t\tNível: " + ficha.getNivel() + (ficha.getNivel() < 10 ? " (XP: " + ficha.getXp() + "/" + fichas.FichaRpg.getXpNecessaria(ficha.getNivel()) + ")" : " (XP: " + ficha.getXp() + " - Nível máximo)") + "\nDono da ficha: " + ficha.getNomePessoa() + "\t\tClasse: " + nomeDaClasse + "\nVida: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima() + "\t\tMana: " + ficha.getManaPersonagem() + "/" + ficha.getManaMaxima() + "\nOuro: " + ficha.getOuro() + "\n\nAtributos: \nConstituição: " + ficha.getConstituicao() + "\nDestreza: " + ficha.getDestreza() + "\nForça: " + ficha.getForca() + "\nSabedoria: " + ficha.getSabedoria() + "\nIntelecto: " + ficha.getIntelecto() + "\nPresença: " + ficha.getPresenca() + "\n\nCombate: " + combate + "\n\nDefesa: " + ficha.getDefesa());
         
         System.out.println("\nInventário:");
         if (ficha.getInventario().isEmpty()) {

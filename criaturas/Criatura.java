@@ -19,6 +19,7 @@ public class Criatura {
     private int testePresenca;
     private int chanceAparecer;
     private int ouroMin, ouroMax, chanceOuro;
+    private int xpGanho;
     private List<Ataque> ataques = new ArrayList<>();
     private List<Drop> drops = new ArrayList<>();
 
@@ -55,6 +56,8 @@ public class Criatura {
         this.chanceOuro = chanceOuro;
     }
 
+    public void setXpGanho(int xpGanho) { this.xpGanho = xpGanho; }
+
     // Getters
     public String getNome() { return nome; }
     public int getNivel() { return nivel; }
@@ -66,6 +69,7 @@ public class Criatura {
     public int getTestePresenca() { return testePresenca; }
     public int getChanceAparecer() { return chanceAparecer; }
     public List<Ataque> getAtaques() { return ataques; }
+    public int getXpGanho() { return xpGanho; }
 
     public void setVida(int vida) { this.vida = vida; }
 
@@ -78,6 +82,7 @@ public class Criatura {
 
         // Acerto automático não rola d20, portanto sem chance de crítico
         if (acertoAutomatico) {
+            Interface.pressionarParaRolar();
             int dano = rolarDanoDoAtaque(ataqueEscolhido, false);
             if (cascaGrossaAtiva) {
                 dano = Math.max(0, dano - 5);
@@ -89,6 +94,7 @@ public class Criatura {
             return ataqueEscolhido;
         }
 
+        Interface.pressionarParaRolar();
         int dadoAtaque = MecanicasRpg.rolarDado(20);
         int totalAtaque = dadoAtaque + bonusAcerto;
         boolean critico = dadoAtaque == 20;
@@ -99,6 +105,7 @@ public class Criatura {
         Interface.Pausa(2000);
 
         if (totalAtaque >= ficha.getDefesa()) {
+            Interface.pressionarParaRolar();
             int dano = rolarDanoDoAtaque(ataqueEscolhido, critico);
             if (cascaGrossaAtiva) {
                 dano = Math.max(0, dano - 5);
@@ -107,7 +114,8 @@ public class Criatura {
             ficha.setVidaPersonagem(ficha.getVidaPersonagem() - dano);
             Interface.MostrarMensagem("-> Acertou! Dano: " + dano + danoTipo + " (defesa do jogador: " + ficha.getDefesa() + ")");
         } else {
-            Interface.MostrarMensagem("-> Errou! (defesa do jogador: " + ficha.getDefesa() + ")");
+            int danoQueCausaria = rolarDanoDoAtaque(ataqueEscolhido, false);
+            Interface.MostrarMensagem("-> Errou! Dano que causaria: " + danoQueCausaria + danoTipo + " (defesa do jogador: " + ficha.getDefesa() + ")");
         }
         Interface.Pausa(2000);
 

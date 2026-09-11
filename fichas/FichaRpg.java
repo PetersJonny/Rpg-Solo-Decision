@@ -13,9 +13,14 @@ public class FichaRpg {
     
     // Status de Sobrevivência
     private int nivel = 1;
+    private int xp = 0;
     private int ouro = 0;
     private int vidaPersonagem, manaPersonagem;
     private int vidaMaxima, manaMaxima;
+
+
+    // Encontros
+    private boolean fadaEncontrada = false;
     
     // Atributos Base
     private int constituicaoBase, destrezaBase, forcaBase, sabedoriaBase, intelectoBase, presencaBase;
@@ -150,6 +155,8 @@ public class FichaRpg {
     public Arma getArmaEquipada() { return armaEquipada; }
     public List<ItemRpg> getInventario() { return inventario; }
     public List<habilidades.Habilidade> getHabilidades() { return habilidades; }
+    public boolean isFadaEncontrada() { return fadaEncontrada; }
+    public void setFadaEncontrada(boolean fadaEncontrada) { this.fadaEncontrada = fadaEncontrada; }
 
     // Setters de Combate
     public void setVidaPersonagem(int vida) { this.vidaPersonagem = Math.min(vida, vidaMaxima); }
@@ -159,8 +166,51 @@ public class FichaRpg {
     public int getVidaMaxima() { return vidaMaxima; }
     public int getManaMaxima() { return manaMaxima; }
 
+    // Setters de Máximo (usados no level up)
+    public void setVidaMaxima(int vidaMaxima) { this.vidaMaxima = vidaMaxima; }
+    public void setManaMaxima(int manaMaxima) { this.manaMaxima = manaMaxima; }
+
     // Dinheiro
     public void adicionarOuro(int quantidade) { this.ouro += Math.max(0, quantidade); }
+
+    // XP necessária para subir do nível atual para o próximo
+    public static int getXpNecessaria(int nivel) {
+        switch (nivel) {
+            case 1: return 100;
+            case 2: return 300;
+            case 3: return 700;
+            case 4: return 1500;
+            case 5: return 3500;
+            case 6: return 8000;
+            case 7: return 15000;
+            case 8: return 40000;
+            case 9: return 100000;
+            default: return -1; // Nível 10 é o máximo
+        }
+    }
+
+    // Adiciona XP e trata os up's de nível; retorna quantos níveis foram ganhos
+    public int adicionarXp(int quantidade) {
+        this.xp += Math.max(0, quantidade);
+        int niveisGanhos = 0;
+        while (nivel < 10) {
+            int necessaria = getXpNecessaria(nivel);
+            if (xp >= necessaria) {
+                xp = 0; // ao subir de nível, a XP é resetada
+                nivel++;
+                niveisGanhos++;
+                // Aplica bônus de vida e mana da classe
+                if (classeDoPersonagem != null) {
+                    classeDoPersonagem.aplicarBonusNivel(this);
+                }
+            } else {
+                break;
+            }
+        }
+        return niveisGanhos;
+    }
+
+    public int getXp() { return xp; }
 
     // Adicionar item ao inventário, empilhando se já existir
     public void adicionarItem(ItemRpg novoItem) {

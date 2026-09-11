@@ -19,6 +19,7 @@ public class Main {
             boolean criandoFicha = true;
 
             while (criandoFicha) {
+                Interface.limparTela();
                 int escolhaInterface = Interface.MenuCriacaoFicha();
 
                 switch (escolhaInterface) {
@@ -33,6 +34,14 @@ public class Main {
 
                         while (totalDePontos > 0) {
                             int atributoEscolhido = Interface.MenuDistribuirAtributos(totalDePontos);
+
+                            if (atributoEscolhido == 0) break;
+
+                            if (atributoEscolhido < 1 || atributoEscolhido > 6) {
+                                Interface.ExibirErro("Opção inválida!");
+                                continue;
+                            }
+
                             int gastoDePontos = Interface.PedirQuantidadePontos(totalDePontos);
 
                             if (gastoDePontos <= 0) {
@@ -44,12 +53,8 @@ public class Main {
                                 gastoDePontos = totalDePontos;
                             }
 
-                            if (atributoEscolhido >= 1 && atributoEscolhido <= 6) {
-                                ficha.adicionarAtributo(atributoEscolhido, gastoDePontos);
-                                totalDePontos -= gastoDePontos;
-                            } else {
-                                Interface.ExibirErro("Opção inválida!");
-                            }
+                            ficha.adicionarAtributo(atributoEscolhido, gastoDePontos);
+                            totalDePontos -= gastoDePontos;
                         }
                         ficha.aplicarBonus();
                         break;
@@ -57,9 +62,10 @@ public class Main {
                     case 3:
                         int escolhaClasse = Interface.MenuEscolherClasse();
                         switch (escolhaClasse) {
+                            case 0: break;
                             case 1: 
                                 String elemento = Interface.EscolherElementoMago();
-                                ficha.setClasse(new Mago(elemento)); 
+                                if (elemento != null) ficha.setClasse(new Mago(elemento)); 
                                 break;
                             case 2: 
                                 ficha.setClasse(new Guerreiro()); 
@@ -108,6 +114,7 @@ public class Main {
             boolean personagemFaleceu = false;
 
             while (jogando) {
+                Interface.limparTela();
                 int escolhaAventura = Interface.MenuPrincipalAventura();
 
                 switch (escolhaAventura) {
@@ -115,6 +122,7 @@ public class Main {
                         Interface.MostrarFicha(ficha);
                         boolean naFicha = true;
                         while (naFicha) {
+                            Interface.limparTela();
                             int acaoFicha = Interface.MenuFicha();
                             switch (acaoFicha) {
                                 case 1:
@@ -140,12 +148,13 @@ public class Main {
                         
                         boolean explorando = true;
                         while (explorando) {
+                            Interface.limparTela();
                             System.out.println("\n--- MAPA DE FREIJORD ---");
                             System.out.println("1. Explorar a Floresta");
                             System.out.println("2. Ver Ficha");
                             System.out.println("3. Voltar ao Acampamento Seguro (Menu Principal)");
-                            int escMapa = Interface.scanner.nextInt();
-                            Interface.scanner.nextLine();
+                            int escMapa = Interface.lerInteiro();
+
                             
                             if (escMapa == 1) {
                                 eventos.Floresta.Explorar(ficha);

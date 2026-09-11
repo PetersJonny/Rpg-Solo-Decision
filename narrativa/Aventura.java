@@ -12,8 +12,8 @@ public class Aventura {
         System.out.println("Deseja assistir ao prólogo?");
         System.out.println("1. Assistir ao prólogo");
         System.out.println("2. Pular o prólogo");
-        int escolha = Interface.scanner.nextInt();
-        Interface.scanner.nextLine();
+        int escolha = Interface.lerInteiro();
+
 
         if (escolha == 2) {
             Interface.MostrarMensagem("\nPrólogo pulado. Sua jornada em Freijord começa agora!");

@@ -1,5 +1,6 @@
 package classes;
 
+import fichas.FichaRpg;
 import itens.Arma;
 import itens.ItemRpg;
 import java.util.ArrayList;
@@ -29,6 +30,9 @@ public abstract class ClasseRpg {
     // Status Base
     public abstract int calcularVidaBase(int constituicaoBase);
     public abstract int calcularManaBase(int presencaBase);
+
+    // Recompensa ao subir de nível (aplicada sobre max e atual)
+    public abstract void aplicarBonusNivel(FichaRpg ficha);
 
     // Modificadores de Status
     public int getBonusConstituicao() { return 0; }

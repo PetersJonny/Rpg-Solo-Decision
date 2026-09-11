@@ -1,5 +1,6 @@
 package classes;
 
+import fichas.FichaRpg;
 import itens.Arma;
 import itens.Consumivel;
 
@@ -20,6 +21,16 @@ public class Mago extends ClasseRpg {
 
     @Override
     public int calcularManaBase(int presencaBase) { return 8 + presencaBase; }
+
+    @Override
+    public void aplicarBonusNivel(FichaRpg ficha) {
+        int ganhoVida = 2 + ficha.getConstituicao();
+        ficha.setVidaMaxima(ficha.getVidaMaxima() + ganhoVida);
+        ficha.setVidaPersonagem(ficha.getVidaPersonagem() + ganhoVida);
+        int ganhoMana = 3 + ficha.getPresenca();
+        ficha.setManaMaxima(ficha.getManaMaxima() + ganhoMana);
+        ficha.setManaPersonagem(ficha.getManaPersonagem() + ganhoMana);
+    }
 
     @Override
     public int getBonusConstituicao() { return -2; }
