@@ -84,13 +84,23 @@ public class Interface {
 
     public static String PedirNomeJogador() {
         System.out.print("Qual seu nome?\n");
-        return scanner.nextLine();
+        return lerNome();
     }
 
     public static String PedirNomePersonagem() {
         barraDivisoria();
         System.out.println("\nQual o nome do seu personagem?");
-        return scanner.nextLine();
+        return lerNome();
+    }
+
+    // Lê um nome com limite de 20 caracteres
+    private static String lerNome() {
+        String nome = scanner.nextLine().trim();
+        if (nome.length() > 20) {
+            nome = nome.substring(0, 20);
+            ExibirErro("Nome muito longo! Aplicado apenas os 20 primeiros caracteres.");
+        }
+        return nome;
     }
 
     public static int MenuCriacaoFicha() {
