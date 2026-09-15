@@ -1175,7 +1175,7 @@ public class Floresta {
                     extra = " - Dano: " + magia.getQuantidadeDano() + "d" + magia.getDadoDano();
                 }
             }
-            System.out.println((i + 1) + ". " + hab.getNome() + " (Custo: " + hab.getCustoMana() + " Mana)" + extra);
+            System.out.println((i + 1) + ". " + hab.getNome() + " (Custo: " + custoEfetivoMagia(ficha, hab) + " Mana)" + extra);
         }
         System.out.println("0. Voltar");
 
@@ -1201,12 +1201,20 @@ public class Floresta {
         return ficha.getHabilidades().indexOf(habEscolhida);
     }
 
+    // Custo de mana efetivo de uma habilidade (Pequeno Grimório reduz 1 no custo das magias)
+    private static int custoEfetivoMagia(FichaRpg ficha, habilidades.Habilidade hab) {
+        if (hab instanceof habilidades.Magia && ficha.temItem("Pequeno Grimório")) {
+            return Math.max(1, hab.getCustoMana() - 1);
+        }
+        return hab.getCustoMana();
+    }
+
     private static boolean executarHabilidadeEscolhida(FichaRpg ficha, List<Criatura> inimigos, int alvoIndex, int habilidadeIndex) {
         if (habilidadeIndex < 0 || habilidadeIndex >= ficha.getHabilidades().size()) return true;
 
         habilidades.Habilidade hab = ficha.getHabilidades().get(habilidadeIndex);
 
-        if (ficha.getManaPersonagem() < hab.getCustoMana()) {
+        if (ficha.getManaPersonagem() < custoEfetivoMagia(ficha, hab)) {
             Interface.ExibirErro("Mana insuficiente!");
             Interface.Pausa(1500);
             return true;
@@ -1256,7 +1264,12 @@ public class Floresta {
         if (alvoIndex < 0 || alvoIndex >= inimigos.size()) return true;
         Criatura inimigo = inimigos.get(alvoIndex);
 
-        ficha.setManaPersonagem(ficha.getManaPersonagem() - hab.getCustoMana());
+        int custoPago = custoEfetivoMagia(ficha, hab);
+        ficha.setManaPersonagem(ficha.getManaPersonagem() - custoPago);
+        if (custoPago < hab.getCustoMana()) {
+            Interface.MostrarMensagem("(Pequeno Grimório reduziu o custo da magia em 1!)");
+            Interface.Pausa(1000);
+        }
         Interface.MostrarMensagem("\nVocê usa " + hab.getNome() + "!");
         Interface.Pausa(1500);
 
@@ -1279,6 +1292,12 @@ public class Floresta {
             }
             Interface.MostrarMensagem("-> Dados Rolados: " + roladas + " = " + dano + " (Dano Mágico: " + quantidadeDano + "d" + magia.getDadoDano() + ")");
             Interface.Pausa(2000);
+
+            if (ficha.temItem("Chapéu Mágico")) {
+                dano += 3;
+                Interface.MostrarMensagem("(Chapéu Mágico aumentou o dano em +3!)");
+                Interface.Pausa(1000);
+            }
 
             List<Criatura> afetados = new ArrayList<>();
             afetados.add(inimigo);
@@ -1666,12 +1685,19 @@ public class Floresta {
                     descExibida = "Pode ser usado para curar 1d4 de vida. Usos restantes: " + itemEscolhido.getQuantidade();
                 } else if (itemEscolhido.getNome().equals("Poção de Mana")) {
                     descExibida = "Restaura 5 pontos de mana. Usos restantes: " + itemEscolhido.getQuantidade();
+                } else if (itemEscolhido.getNome().equals("Poção Grande de Mana")) {
+                    descExibida = "Restaura 7 pontos de mana. Usos restantes: " + itemEscolhido.getQuantidade();
                 }
                 System.out.println("\n" + itemEscolhido.getNome() + ": " + descExibida);
                 Interface.Pausa(1000);
 
                 if (ehItemConsumivel(itemEscolhido)) {
                     if (itemEscolhido.getNome().equals("Poção de Mana") && ficha.getManaPersonagem() >= ficha.getManaMaxima()) {
+                        Interface.MostrarMensagem("Sua mana já está no máximo!");
+                        Interface.Pausa(1500);
+                        continue;
+                    }
+                    if (itemEscolhido.getNome().equals("Poção Grande de Mana") && ficha.getManaPersonagem() >= ficha.getManaMaxima()) {
                         Interface.MostrarMensagem("Sua mana já está no máximo!");
                         Interface.Pausa(1500);
                         continue;
@@ -1721,6 +1747,9 @@ public class Floresta {
         if (itemEscolhido.getNome().equals("Poção de Mana")) {
             ficha.setManaPersonagem(ficha.getManaPersonagem() + 5);
             Interface.MostrarMensagem("Você recuperou 5 de mana! Mana atual: " + ficha.getManaPersonagem() + "/" + ficha.getManaMaxima());
+        } else if (itemEscolhido.getNome().equals("Poção Grande de Mana")) {
+            ficha.setManaPersonagem(ficha.getManaPersonagem() + 7);
+            Interface.MostrarMensagem("Você recuperou 7 de mana! Mana atual: " + ficha.getManaPersonagem() + "/" + ficha.getManaMaxima());
         } else if (itemEscolhido.getNome().equals("Kit Médico")) {
             int cura = MecanicasRpg.rolarDado(4);
             ficha.setVidaPersonagem(ficha.getVidaPersonagem() + cura);

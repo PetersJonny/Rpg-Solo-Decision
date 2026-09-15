@@ -37,6 +37,7 @@ public class FichaRpg {
 
     // Equipamento e Inventário
     private Arma armaEquipada;
+    private itens.Armadura armaduraEquipada;
     private List<ItemRpg> inventario = new ArrayList<>();
     
     // Habilidades
@@ -143,12 +144,12 @@ public class FichaRpg {
         // Ficha ganha as habilidades da classe
         this.habilidades = new ArrayList<>(classeDoPersonagem.getHabilidadesIniciais());
 
-        // Calcula a defesa extra provida pelas Armaduras na mochila
-        for (ItemRpg item : this.inventario) {
-            if (item instanceof itens.Armadura) {
-                this.defesa += ((itens.Armadura) item).getBonusDefesa();
-            }
+        // Equipa a melhor armadura do inventário (as demais ficam na mochila)
+        if (armaduraEquipada != null) {
+            inventario.add(armaduraEquipada);
+            armaduraEquipada = null;
         }
+        equiparMelhorArmadura();
     }
 
     // Validador de Ficha
@@ -179,7 +180,8 @@ public class FichaRpg {
     public int getSabedoria() { return sabedoria; }
     public int getIntelecto() { return intelecto; }
     public int getPresenca() { return presenca; }
-    public int getDefesa() { return defesa + bonusDefesaTemporario + (defesaAbsolutaAtiva ? 5 : 0); }
+    public int getDefesa() { return defesa + (armaduraEquipada != null ? armaduraEquipada.getBonusDefesa() : 0) + bonusDefesaTemporario + (defesaAbsolutaAtiva ? 5 : 0); }
+    public itens.Armadura getArmaduraEquipada() { return armaduraEquipada; }
     public ClasseRpg getClasseDoPersonagem() { return classeDoPersonagem; }
     public Arma getArmaEquipada() { return armaEquipada; }
     public List<ItemRpg> getInventario() { return inventario; }
@@ -274,9 +276,44 @@ public class FichaRpg {
                     if (armaEquipada != null && armaEquipada.getNome().equals(nome)) {
                         armaEquipada = null;
                     }
+                    if (armaduraEquipada != null && armaduraEquipada.getNome().equals(nome)) {
+                        armaduraEquipada = null;
+                        equiparMelhorArmadura();
+                    }
                 } else {
                     item.setQuantidade(atual - remover);
                 }
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Equipa a armadura de maior bônus do inventário; a que estava equipada volta para a mochila
+    public void equiparMelhorArmadura() {
+        itens.Armadura melhor = null;
+        for (ItemRpg item : new ArrayList<>(inventario)) {
+            if (item instanceof itens.Armadura) {
+                itens.Armadura arm = (itens.Armadura) item;
+                if (melhor == null || arm.getBonusDefesa() > melhor.getBonusDefesa()) {
+                    melhor = arm;
+                }
+            }
+        }
+        if (melhor != null) {
+            if (armaduraEquipada != null) {
+                inventario.add(armaduraEquipada);
+            }
+            inventario.remove(melhor);
+            armaduraEquipada = melhor;
+        }
+    }
+
+    // Verifica se o jogador possui um item (com quantidade) no inventário
+    public boolean temItem(String nome) {
+        if (inventario == null) return false;
+        for (ItemRpg item : inventario) {
+            if (item.getNome().equals(nome) && item.getQuantidade() > 0) {
                 return true;
             }
         }
