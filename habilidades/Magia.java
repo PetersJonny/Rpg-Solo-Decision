@@ -3,6 +3,7 @@ package habilidades;
 public class Magia extends Habilidade {
     private int quantidadeDano;
     private int dadoDano;
+    private boolean ataqueArea;
 
     public Magia(String nome, String descricao, int custoMana) {
         this(nome, descricao, custoMana, 0, 0);
@@ -16,4 +17,6 @@ public class Magia extends Habilidade {
 
     public int getQuantidadeDano() { return quantidadeDano; }
     public int getDadoDano() { return dadoDano; }
+    public boolean isAtaqueArea() { return ataqueArea; }
+    public void setAtaqueArea(boolean ataqueArea) { this.ataqueArea = ataqueArea; }
 }

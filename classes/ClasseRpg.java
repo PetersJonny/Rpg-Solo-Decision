@@ -4,7 +4,9 @@ import fichas.FichaRpg;
 import itens.Arma;
 import itens.ItemRpg;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public abstract class ClasseRpg {
     // Identificação
@@ -16,6 +18,12 @@ public abstract class ClasseRpg {
     
     // Habilidades
     protected List<habilidades.Habilidade> habilidadesIniciais = new ArrayList<>();
+    
+    // Habilidades ganhas ao subir de nível (nível -> habilidades)
+    protected Map<Integer, List<habilidades.Habilidade>> habilidadesPorNivel = new HashMap<>();
+
+    // Opções de habilidade para escolher ao subir de nível (nível -> lista de opções)
+    protected Map<Integer, List<habilidades.Habilidade>> escolhasNivel = new HashMap<>();
     
     // Ataque Básico Universal
     protected Arma ataqueDesarmado = new Arma("Soco", "Um ataque corpo a corpo simples e direto que causa 1d3 de dano.", "CaC", 3, 1, 0);
@@ -41,4 +49,19 @@ public abstract class ClasseRpg {
     public int getBonusIntelecto() { return 0; }
     public int getBonusPresenca() { return 0; }
     public int getBonusSabedoria() { return 0; }
+
+    // Aplica as habilidades ganhas ao chegar em um novo nível
+    public void aplicarHabilidadesNivel(FichaRpg ficha, int novoNivel) {
+        List<habilidades.Habilidade> paraNivel = habilidadesPorNivel.get(novoNivel);
+        if (paraNivel != null) {
+            for (habilidades.Habilidade hab : paraNivel) {
+                ficha.getHabilidades().add(hab);
+            }
+        }
+    }
+
+    // Retorna as opções de habilidade para escolher ao chegar em um novo nível
+    public List<habilidades.Habilidade> getEscolhasNivel(int nivel) {
+        return escolhasNivel.get(nivel);
+    }
 }

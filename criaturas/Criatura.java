@@ -89,6 +89,9 @@ public class Criatura {
             }
             ficha.setVidaPersonagem(ficha.getVidaPersonagem() - dano);
             Interface.MostrarMensagem("-> Ataque do " + nome + " [" + ataqueEscolhido.nome + "] acerta automaticamente! Dano: " + dano + danoTipo + ".");
+            if (ficha.isProtecaoAbsolutaAtiva()) {
+                refletirProtecaoAbsoluta();
+            }
             Interface.Pausa(2000);
             return ataqueEscolhido;
         }
@@ -110,6 +113,9 @@ public class Criatura {
             }
             ficha.setVidaPersonagem(ficha.getVidaPersonagem() - dano);
             Interface.MostrarMensagem("-> Acertou! Dano: " + dano + danoTipo + " (defesa do jogador: " + ficha.getDefesa() + ")");
+            if (ficha.isProtecaoAbsolutaAtiva()) {
+                refletirProtecaoAbsoluta();
+            }
         } else {
             int danoQueCausaria = rolarDanoDoAtaque(ataqueEscolhido, false);
             Interface.MostrarMensagem("-> Errou! Dano que causaria: " + danoQueCausaria + danoTipo + " (defesa do jogador: " + ficha.getDefesa() + ")");
@@ -127,6 +133,14 @@ public class Criatura {
             dano += MecanicasRpg.rolarDado(ataque.ladosDado);
         }
         return dano;
+    }
+
+    // Proteção Absoluta: reflete dano do elemento no atacante quando ele acerta
+    private void refletirProtecaoAbsoluta() {
+        int reflexo = MecanicasRpg.rolarDado(8) + MecanicasRpg.rolarDado(8);
+        this.setVida(this.getVida() - reflexo);
+        Interface.MostrarMensagem("(Proteção Absoluta! Reflete " + reflexo + " de dano do elemento no " + nome + ")");
+        Interface.Pausa(1500);
     }
 
     // Processa drops de ouro e itens após a morte

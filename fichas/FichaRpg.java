@@ -41,6 +41,15 @@ public class FichaRpg {
     // Habilidades
     private List<habilidades.Habilidade> habilidades = new ArrayList<>();
 
+    // Efeitos temporários de combate
+    private boolean espadaAfiadaAtiva;
+    private boolean protecaoAbsolutaAtiva;
+    private int bonusDefesaTemporario;
+    private boolean curaParaMortePreparado;
+    private boolean curaParaMorteAtivo;
+    private criaturas.Criatura alvoCuraParaMorte;
+    private boolean curaTotalUsada;
+
     // Construtor
     public FichaRpg(String nomePessoa) {
         this.nomePessoa = nomePessoa;
@@ -150,7 +159,7 @@ public class FichaRpg {
     public int getSabedoria() { return sabedoria; }
     public int getIntelecto() { return intelecto; }
     public int getPresenca() { return presenca; }
-    public int getDefesa() { return defesa; }
+    public int getDefesa() { return defesa + bonusDefesaTemporario; }
     public ClasseRpg getClasseDoPersonagem() { return classeDoPersonagem; }
     public Arma getArmaEquipada() { return armaEquipada; }
     public List<ItemRpg> getInventario() { return inventario; }
@@ -202,6 +211,8 @@ public class FichaRpg {
                 // Aplica bônus de vida e mana da classe
                 if (classeDoPersonagem != null) {
                     classeDoPersonagem.aplicarBonusNivel(this);
+                    // Ganha as habilidades do nível alcançado
+                    classeDoPersonagem.aplicarHabilidadesNivel(this, nivel);
                 }
             } else {
                 break;
@@ -235,4 +246,48 @@ public class FichaRpg {
             default -> { presenca++; return "Presença"; }
         }
     }
+
+    // Aumenta o atributo escolhido (ponto de atributo ganho no level up)
+    public String aumentarAtributo(int opcao) {
+        switch (opcao) {
+            case 1 -> { constituicao++; return "Constituição"; }
+            case 2 -> { destreza++; return "Destreza"; }
+            case 3 -> { forca++; return "Força"; }
+            case 4 -> { sabedoria++; return "Sabedoria"; }
+            case 5 -> { intelecto++; return "Intelecto"; }
+            default -> { presenca++; return "Presença"; }
+        }
+    }
+
+    // Reseta os efeitos temporários antes de um novo combate
+    public void resetarEfeitosCombate() {
+        this.espadaAfiadaAtiva = false;
+        this.protecaoAbsolutaAtiva = false;
+        this.bonusDefesaTemporario = 0;
+        this.curaParaMortePreparado = false;
+        this.curaParaMorteAtivo = false;
+        this.alvoCuraParaMorte = null;
+        this.curaTotalUsada = false;
+    }
+
+    public boolean isEspadaAfiadaAtiva() { return espadaAfiadaAtiva; }
+    public void setEspadaAfiadaAtiva(boolean espadaAfiadaAtiva) { this.espadaAfiadaAtiva = espadaAfiadaAtiva; }
+
+    public boolean isProtecaoAbsolutaAtiva() { return protecaoAbsolutaAtiva; }
+    public void setProtecaoAbsolutaAtiva(boolean protecaoAbsolutaAtiva) { this.protecaoAbsolutaAtiva = protecaoAbsolutaAtiva; }
+
+    public int getBonusDefesaTemporario() { return bonusDefesaTemporario; }
+    public void setBonusDefesaTemporario(int bonusDefesaTemporario) { this.bonusDefesaTemporario = bonusDefesaTemporario; }
+
+    public boolean isCuraParaMortePreparado() { return curaParaMortePreparado; }
+    public void setCuraParaMortePreparado(boolean curaParaMortePreparado) { this.curaParaMortePreparado = curaParaMortePreparado; }
+
+    public boolean isCuraParaMorteAtivo() { return curaParaMorteAtivo; }
+    public void setCuraParaMorteAtivo(boolean curaParaMorteAtivo) { this.curaParaMorteAtivo = curaParaMorteAtivo; }
+
+    public criaturas.Criatura getAlvoCuraParaMorte() { return alvoCuraParaMorte; }
+    public void setAlvoCuraParaMorte(criaturas.Criatura alvoCuraParaMorte) { this.alvoCuraParaMorte = alvoCuraParaMorte; }
+
+    public boolean isCuraTotalUsada() { return curaTotalUsada; }
+    public void setCuraTotalUsada(boolean curaTotalUsada) { this.curaTotalUsada = curaTotalUsada; }
 }

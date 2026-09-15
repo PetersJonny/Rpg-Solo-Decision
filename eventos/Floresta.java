@@ -261,6 +261,7 @@ public class Floresta {
         boolean[] cascaGrossaAtiva = {false};
         int[] tentativasFuga = {0};
         List<Criatura> mortesProcessadas = new ArrayList<>();
+        ficha.resetarEfeitosCombate();
 
         while (ficha.getVidaPersonagem() > 0 && !inimigosVivos(inimigos).isEmpty()) {
             Interface.barraDivisoria();
@@ -279,7 +280,16 @@ public class Floresta {
 
             cascaGrossaAtiva[0] = false;
 
-            if (ficha.getVidaPersonagem() <= 0 || inimigosVivos(inimigos).isEmpty()) break;
+            // O líquido mortal de Cura para a Morte começa a agir a partir do próximo turno
+            if (ficha.isCuraParaMortePreparado()) {
+                ficha.setCuraParaMortePreparado(false);
+                ficha.setCuraParaMorteAtivo(true);
+                Interface.MostrarMensagem("\nO líquido mortal injetado começa a agir!");
+                Interface.Pausa(1500);
+            }
+
+            if (ficha.getVidaPersonagem() <= 0 && !tentarReviver(ficha)) break;
+            if (inimigosVivos(inimigos).isEmpty()) break;
 
             // O jogador escolhe a ação da rodada ANTES de qualquer ataque acontecer
             int[] acaoDeclarada = declararAcao(ficha, inimigos, cascaGrossaAtiva);
@@ -287,12 +297,33 @@ public class Floresta {
             // Registra inimigos que já atacaram nesta rodada (ex.: reação à fuga)
             Set<Criatura> jaAtacouNaRodada = new HashSet<>();
 
+            // A FUGA é a única ação fora da ordem de iniciativa:
+            // o jogador tenta fugir primeiro; se passar, ninguém ataca; se falhar, os inimigos atacam
+            boolean acaoResolvida = false;
+            if (acaoDeclarada[0] == 4) {
+                int resultadoFuga = executarAcaoDeclarada(ficha, inimigos, cascaGrossaAtiva, tentativasFuga, jaAtacouNaRodada, acaoDeclarada);
+                if (resultadoFuga == 0) {
+                    Interface.MostrarMensagem("\nVocê conseguiu escapar da floresta!");
+                    Interface.Pausa(2500);
+                    return;
+                }
+                if (resultadoFuga == 1) {
+                    // Passou na fuga (precisa de 3 para escapar): ninguém ataca nesta rodada
+                    continue;
+                }
+                // Falhou (ou perdeu a oportunidade): sofre os ataques na sequência da iniciativa
+                acaoResolvida = true;
+                processarMortes(inimigos, mortesProcessadas, ficha);
+            }
+
             // As ações são resolvidas na ORDEM REAL da iniciativa:
             // se um inimigo tem iniciativa maior que a sua, ele age antes de você executar
             for (int[] token : ordem) {
-                if (ficha.getVidaPersonagem() <= 0 || inimigosVivos(inimigos).isEmpty()) break;
+                if (ficha.getVidaPersonagem() <= 0 && !tentarReviver(ficha)) break;
+                if (inimigosVivos(inimigos).isEmpty()) break;
 
                 if (token[1] == 0) {
+                    if (acaoResolvida) continue;
                     int resultado = executarAcaoDeclarada(ficha, inimigos, cascaGrossaAtiva, tentativasFuga, jaAtacouNaRodada, acaoDeclarada);
                     if (resultado == 0) {
                         Interface.MostrarMensagem("\nVocê conseguiu escapar da floresta!");
@@ -307,6 +338,8 @@ public class Floresta {
                         Interface.MostrarMensagem("\n" + rotuloCriatura(inimigos, c) + " avança para atacar!");
                         Interface.Pausa(1500);
                         c.atacarJogador(ficha, cascaGrossaAtiva[0]);
+                        // Inimigos podem morrer pelo reflexo da Proteção Absoluta
+                        processarMortes(inimigos, mortesProcessadas, ficha);
                     }
                 }
             }
@@ -337,6 +370,11 @@ public class Floresta {
                     Interface.Pausa(1500);
                     int vidasAntes = ficha.getVidaMaxima();
                     int manaAntes = ficha.getManaMaxima();
+                    int nivelAntes = ficha.getNivel();
+                    List<String> habilidadesAntes = new ArrayList<>();
+                    for (habilidades.Habilidade hh : ficha.getHabilidades()) {
+                        habilidadesAntes.add(hh.getNome());
+                    }
                     int niveisGanhos = ficha.adicionarXp(c.getXpGanho());
                     if (niveisGanhos > 0) {
                         Interface.MostrarMensagem("\n*** SUBIU PARA O NÍVEL " + ficha.getNivel() + "! ***");
@@ -350,6 +388,33 @@ public class Floresta {
                             Interface.MostrarMensagem("Você atingiu o nível máximo!");
                         }
                         Interface.Pausa(2000);
+
+                        for (habilidades.Habilidade hh : ficha.getHabilidades()) {
+                            if (!habilidadesAntes.contains(hh.getNome())) {
+                                Interface.MostrarMensagem("\nVocê aprendeu a habilidade: " + hh.getNome() + "!");
+                                Interface.MostrarMensagem(hh.getDescricao());
+                                Interface.Pausa(2000);
+                            }
+                        }
+
+                        if (ficha.getClasseDoPersonagem() instanceof classes.Mago) {
+                            for (habilidades.Habilidade hh : ficha.getHabilidades()) {
+                                if (hh instanceof habilidades.Magia && ((habilidades.Magia) hh).isAtaqueArea()) {
+                                    Interface.MostrarMensagem("\nSua " + hh.getNome() + " agora ataca em área!");
+                                    Interface.Pausa(2000);
+                                }
+                            }
+                        }
+
+                        for (int nivelGanho = nivelAntes + 1; nivelGanho <= ficha.getNivel(); nivelGanho++) {
+                            List<habilidades.Habilidade> opcoes = ficha.getClasseDoPersonagem().getEscolhasNivel(nivelGanho);
+                            if (opcoes != null && !opcoes.isEmpty()) {
+                                escolherHabilidadeNivel(ficha, nivelGanho, opcoes);
+                            }
+                            if (nivelGanho == 2 || nivelGanho == 4 || nivelGanho == 6 || nivelGanho == 8) {
+                                escolherPontoAtributo(ficha);
+                            }
+                        }
                     }
                 }
             }
@@ -377,12 +442,11 @@ public class Floresta {
             }
 
             if (escolha == 1) {
-                int[] resultado = MenuLutarComEscolha(ficha, inimigos, cascaGrossaAtiva[0]);
+                int[] resultado = MenuLutarComEscolha(ficha, inimigos, cascaGrossaAtiva);
                 if (resultado == null) continue;
 
                 if (resultado[0] == 5) {
-                    cascaGrossaAtiva[0] = true;
-                    resultado = MenuLutarComEscolha(ficha, inimigos, true);
+                    resultado = MenuLutarComEscolha(ficha, inimigos, cascaGrossaAtiva);
                     if (resultado == null || resultado[0] == 5) {
                         return new int[]{6, -1, -1, -1};
                     }
@@ -421,9 +485,17 @@ public class Floresta {
         }
     }
 
-    // Tenta fugir gastando o turno; retorna 0 se escapou do combate ou 1 se o turno foi gasto
+    // Tenta fugir gastando o turno; retorna 0 se escapou, 1 se passou (sem chegar nas 3) ou -1 se falhou
     private static int TentarFugirNaVez(FichaRpg ficha, List<Criatura> inimigos, boolean[] cascaGrossaAtiva, int[] tentativasFuga, Set<Criatura> jaAtacouNaRodada) {
         int resultadoFuga = TentarFugir(ficha, inimigos, tentativasFuga[0]);
+
+        // Desistiu de fugir na confirmação: a ação é perdida e os inimigos atacam
+        if (resultadoFuga == tentativasFuga[0] && resultadoFuga != -1) {
+            Interface.MostrarMensagem("\nVocê hesita e perde a oportunidade!");
+            Interface.Pausa(1500);
+            return -1;
+        }
+
         if (resultadoFuga == -1) {
             Interface.MostrarMensagem("\nA ameaça te alcança e aproveita a abertura!");
             Interface.Pausa(1500);
@@ -432,12 +504,13 @@ public class Floresta {
                 jaAtacouNaRodada.add(maisRapido);
                 maisRapido.atacarJogador(ficha, cascaGrossaAtiva[0]);
             }
+            return -1;
         } else if (resultadoFuga == 3) {
             return 0;
         } else {
             tentativasFuga[0] = resultadoFuga;
+            return 1;
         }
-        return 1;
     }
 
     // Retorna a criatura viva com maior iniciativa base
@@ -450,6 +523,72 @@ public class Floresta {
             }
         }
         return maisRapido;
+    }
+
+    // Verifica se a habilidade passiva ainda pode ser ativada nesta rodada
+    private static boolean podeAtivarPassiva(FichaRpg ficha, habilidades.Habilidade hab, boolean cascaGrossaAtiva) {
+        if (!hab.isPassiva()) return false;
+        switch (hab.getNome()) {
+            case "Casca Grossa" -> { return !cascaGrossaAtiva; }
+            case "Espada Afiada" -> { return !ficha.isEspadaAfiadaAtiva(); }
+            default -> { return true; }
+        }
+    }
+
+    // Aplica o efeito da habilidade passiva ativada
+    private static void aplicaPassiva(FichaRpg ficha, habilidades.Habilidade hab, boolean[] cascaGrossaAtiva) {
+        switch (hab.getNome()) {
+            case "Casca Grossa" -> cascaGrossaAtiva[0] = true;
+            case "Espada Afiada" -> ficha.setEspadaAfiadaAtiva(true);
+        }
+    }
+
+    // Apresenta as opções de habilidade ao atingir um novo nível com escolha
+    private static void escolherHabilidadeNivel(FichaRpg ficha, int nivel, List<habilidades.Habilidade> opcoes) {
+        System.out.println("\n--- ESCOLHA UMA HABILIDADE DE NÍVEL " + nivel + " ---");
+        for (int i = 0; i < opcoes.size(); i++) {
+            habilidades.Habilidade h = opcoes.get(i);
+            System.out.println((i + 1) + ". " + h.getNome() + " (Custo: " + h.getCustoMana() + " Mana)");
+            System.out.println("   " + h.getDescricao());
+        }
+
+        int escolha = Interface.lerInteiro();
+
+        if (escolha < 1 || escolha > opcoes.size()) {
+            Interface.ExibirErro("Escolha inválida!");
+            Interface.Pausa(1500);
+            escolha = 1;
+        }
+
+        habilidades.Habilidade aprendida = opcoes.get(escolha - 1);
+        ficha.getHabilidades().add(aprendida);
+        Interface.MostrarMensagem("\nVocê aprendeu a habilidade: " + aprendida.getNome() + "!");
+        Interface.MostrarMensagem(aprendida.getDescricao());
+        Interface.Pausa(2000);
+    }
+
+    private static void escolherPontoAtributo(FichaRpg ficha) {
+        while (true) {
+            Interface.barraDivisoria();
+            System.out.println("\nVocê ganhou um ponto de atributo! Escolha onde gastar:");
+            System.out.println("1. Constituição");
+            System.out.println("2. Destreza");
+            System.out.println("3. Força");
+            System.out.println("4. Sabedoria");
+            System.out.println("5. Intelecto");
+            System.out.println("6. Presença");
+
+            int escolha = Interface.lerInteiro();
+
+            if (escolha >= 1 && escolha <= 6) {
+                String atributo = ficha.aumentarAtributo(escolha);
+                Interface.MostrarMensagem("\n+1 de " + atributo + "!");
+                Interface.Pausa(1500);
+                return;
+            }
+
+            Interface.ExibirErro("Opção inválida!");
+        }
     }
 
     private static void executarAcaoJogador(FichaRpg ficha, List<Criatura> inimigos, int tipoAcao, int alvoIndex, int armaIndex, int habIndex) {
@@ -500,7 +639,7 @@ public class Floresta {
 
     // ==================== MENU LUTAR ====================
 
-    private static int[] MenuLutarComEscolha(FichaRpg ficha, List<Criatura> inimigos, boolean cascaGrossaAtiva) {
+    private static int[] MenuLutarComEscolha(FichaRpg ficha, List<Criatura> inimigos, boolean[] cascaGrossaAtiva) {
         Interface.barraDivisoria();
         System.out.println("\n--- COMO DESEJA LUTAR? ---");
         System.out.println("1. Atacar com Arma");
@@ -508,7 +647,7 @@ public class Floresta {
 
         for (int i = 0; i < ficha.getHabilidades().size(); i++) {
             habilidades.Habilidade hab = ficha.getHabilidades().get(i);
-            if (hab.isPassiva() && !cascaGrossaAtiva && ficha.getManaPersonagem() >= hab.getCustoMana()) {
+            if (hab.isPassiva() && podeAtivarPassiva(ficha, hab, cascaGrossaAtiva[0]) && ficha.getManaPersonagem() >= hab.getCustoMana()) {
                 System.out.println("3. " + hab.getNome() + " (Custo: " + hab.getCustoMana() + " Mana) - Ainda pode atacar após usar");
             }
         }
@@ -527,14 +666,19 @@ public class Floresta {
         } else if (escolha == 2) {
             int habIdx = EscolherHabilidadeAtiva(ficha);
             if (habIdx == -1) return null;
-            int alvo = escolherAlvo(inimigos);
-            if (alvo == -1) return null;
+            habilidades.Habilidade habEscolhida = ficha.getHabilidades().get(habIdx);
+            int alvo = -1;
+            if (habEscolhida instanceof habilidades.Magia) {
+                alvo = escolherAlvo(inimigos);
+                if (alvo == -1) return null;
+            }
             return new int[]{2, alvo, -1, habIdx};
         } else if (escolha == 3) {
             for (int i = 0; i < ficha.getHabilidades().size(); i++) {
                 habilidades.Habilidade hab = ficha.getHabilidades().get(i);
-                if (hab.isPassiva() && !cascaGrossaAtiva && ficha.getManaPersonagem() >= hab.getCustoMana()) {
+                if (hab.isPassiva() && podeAtivarPassiva(ficha, hab, cascaGrossaAtiva[0]) && ficha.getManaPersonagem() >= hab.getCustoMana()) {
                     ficha.setManaPersonagem(ficha.getManaPersonagem() - hab.getCustoMana());
+                    aplicaPassiva(ficha, hab, cascaGrossaAtiva);
                     Interface.MostrarMensagem("\nVocê ativa " + hab.getNome() + "!");
                     Interface.MostrarMensagem(hab.getDescricao());
                     Interface.Pausa(2000);
@@ -642,7 +786,8 @@ public class Floresta {
         for (int i = 0; i < armas.size(); i++) {
             Arma arma = armas.get(i);
             String extra = ehFlecha.get(i) ? " (Flechas: " + getQtdFlechas(ficha) + ")" : "";
-            System.out.println((i + 1) + ". " + arma.getNome() + " (" + arma.getQuantidadeDanoArma() + "d" + arma.getDadoDanoArma() + " - " + arma.getTipoArma() + " - " + arma.getAtributoAtaque() + ")" + extra);
+            String atributoMostrado = arma.isAgil() ? "Ágil (Força/Destreza)" : arma.getAtributoAtaque();
+            System.out.println((i + 1) + ". " + arma.getNome() + " (" + arma.getQuantidadeDanoArma() + "d" + arma.getDadoDanoArma() + " - " + arma.getTipoArma() + " - " + atributoMostrado + ")" + extra);
         }
         System.out.println((armas.size() + 1) + ". " + socoNome + " (" + socoQtd + "d" + socoDado + " - CaC - Força)");
         System.out.println("0. Voltar");
@@ -753,8 +898,18 @@ public class Floresta {
         } else if (armaIndex >= 0 && armaIndex < ficha.getInventario().size()) {
             Arma armaEscolhida = (Arma) ficha.getInventario().get(armaIndex);
             String atributo = armaEscolhida.getAtributoAtaque();
-            atributoBonus = atributo.equals("Destreza") ? ficha.getDestreza() : ficha.getForca();
-            nomeAtributo = atributo;
+            if (armaEscolhida.isAgil()) {
+                if (ficha.getForca() >= ficha.getDestreza()) {
+                    atributoBonus = ficha.getForca();
+                    nomeAtributo = "Força";
+                } else {
+                    atributoBonus = ficha.getDestreza();
+                    nomeAtributo = "Destreza";
+                }
+            } else {
+                atributoBonus = atributo.equals("Destreza") ? ficha.getDestreza() : ficha.getForca();
+                nomeAtributo = atributo;
+            }
 
             Interface.pressionarParaRolar();
             dadoAtaque = MecanicasRpg.rolarDado(20);
@@ -795,13 +950,19 @@ public class Floresta {
         }
 
         if (dano > 0) {
+            if (ficha.isEspadaAfiadaAtiva() && armaIndex >= 0) {
+                int bonusAfiada = MecanicasRpg.rolarDado(8) + MecanicasRpg.rolarDado(8);
+                dano += bonusAfiada;
+                Interface.MostrarMensagem("(Espada Afiada! +" + bonusAfiada + " de dano)");
+                Interface.Pausa(1500);
+            }
             inimigo.setVida(inimigo.getVida() - dano);
             Interface.MostrarMensagem(rotuloCriatura(inimigos, inimigo) + " agora tem " + Math.max(0, inimigo.getVida()) + " de vida.");
             Interface.Pausa(2000);
-            return true;
-        } else {
-            return false;
         }
+
+        aplicarVenenoCuraParaMorte(ficha, inimigos, alvoIndex);
+        return dano > 0;
     }
 
     // ==================== HABILIDADES ====================
@@ -809,7 +970,7 @@ public class Floresta {
     private static int EscolherHabilidadeAtiva(FichaRpg ficha) {
         List<habilidades.Habilidade> ativas = new ArrayList<>();
         for (habilidades.Habilidade hab : ficha.getHabilidades()) {
-            if (!hab.isPassiva()) {
+            if (!hab.isPassiva() && !hab.getNome().equals("Cura Reforçada")) {
                 ativas.add(hab);
             }
         }
@@ -858,9 +1019,7 @@ public class Floresta {
     }
 
     private static boolean executarHabilidadeEscolhida(FichaRpg ficha, List<Criatura> inimigos, int alvoIndex, int habilidadeIndex) {
-        if (alvoIndex < 0 || alvoIndex >= inimigos.size()) return true;
         if (habilidadeIndex < 0 || habilidadeIndex >= ficha.getHabilidades().size()) return true;
-        Criatura inimigo = inimigos.get(alvoIndex);
 
         habilidades.Habilidade hab = ficha.getHabilidades().get(habilidadeIndex);
 
@@ -870,8 +1029,28 @@ public class Floresta {
             return true;
         }
 
+        String nomeHab = hab.getNome();
+
+        if (nomeHab.equals("Giro")) {
+            return executarGiro(ficha, inimigos);
+        }
+        if (nomeHab.equals("Proteção Absoluta")) {
+            return usarProtecaoAbsoluta(ficha, hab);
+        }
+        if (nomeHab.equals("Cura Total")) {
+            Interface.MostrarMensagem("Cura Total só pode ser usada para reviver quem morreu em combate.");
+            Interface.Pausa(1500);
+            return true;
+        }
+        if (nomeHab.equals("Cura para a Morte")) {
+            return usarCuraParaMorte(ficha, inimigos, hab);
+        }
+
+        if (alvoIndex < 0 || alvoIndex >= inimigos.size()) return true;
+        Criatura inimigo = inimigos.get(alvoIndex);
+
         ficha.setManaPersonagem(ficha.getManaPersonagem() - hab.getCustoMana());
-        Interface.MostrarMensagem("\nVocê conjura " + hab.getNome() + "!");
+        Interface.MostrarMensagem("\nVocê usa " + hab.getNome() + "!");
         Interface.Pausa(1500);
 
         if (hab instanceof habilidades.Magia) {
@@ -887,15 +1066,146 @@ public class Floresta {
             }
             Interface.MostrarMensagem("-> Dados Rolados: " + roladas + " = " + dano + " (Dano Mágico: " + magia.getQuantidadeDano() + "d" + magia.getDadoDano() + ")");
             Interface.Pausa(2000);
-            inimigo.setVida(inimigo.getVida() - dano);
-            Interface.MostrarMensagem(rotuloCriatura(inimigos, inimigo) + " agora tem " + Math.max(0, inimigo.getVida()) + " de vida.");
-            Interface.Pausa(2000);
+
+            List<Criatura> afetados = new ArrayList<>();
+            afetados.add(inimigo);
+            if (magia.isAtaqueArea()) {
+                if (alvoIndex - 1 >= 0) afetados.add(inimigos.get(alvoIndex - 1));
+                if (alvoIndex + 1 < inimigos.size()) afetados.add(inimigos.get(alvoIndex + 1));
+                StringBuilder nomes = new StringBuilder();
+                for (Criatura afetado : afetados) {
+                    if (afetado.getVida() > 0) {
+                        if (nomes.length() > 0) nomes.append(", ");
+                        nomes.append(rotuloCriatura(inimigos, afetado));
+                    }
+                }
+                Interface.MostrarMensagem("-> Ataque em área! Atinge: " + nomes);
+                Interface.Pausa(2000);
+            }
+
+            for (Criatura afetado : afetados) {
+                if (afetado.getVida() <= 0) continue;
+                afetado.setVida(afetado.getVida() - dano);
+                Interface.MostrarMensagem(rotuloCriatura(inimigos, afetado) + " agora tem " + Math.max(0, afetado.getVida()) + " de vida.");
+                Interface.Pausa(1500);
+            }
+
+            aplicarVenenoCuraParaMorte(ficha, inimigos, alvoIndex);
             return true;
         } else {
             Interface.MostrarMensagem(hab.getDescricao());
             Interface.Pausa(2000);
             return false;
         }
+    }
+
+    // ==================== NOVAS HABILIDADES ====================
+
+    // Giro do Guerreiro: gasta 1 de mana por giro (máx. = Destreza), 1d10 de dano em área por giro
+    private static boolean executarGiro(FichaRpg ficha, List<Criatura> inimigos) {
+        int maxGiros = Math.max(1, ficha.getDestreza());
+        System.out.println("\nVocê usa Giro! Quantos giros quer dar? (Custo: 1 de mana por giro)");
+        System.out.println("Máximo de giros: " + maxGiros + " (sua Destreza)");
+
+        int giros = Interface.lerInteiro();
+
+        if (giros < 1 || giros > maxGiros) {
+            Interface.ExibirErro("Número de giros inválido!");
+            Interface.Pausa(1500);
+            return true;
+        }
+        if (ficha.getManaPersonagem() < giros) {
+            Interface.ExibirErro("Mana insuficiente para " + giros + " giros!");
+            Interface.Pausa(1500);
+            return true;
+        }
+
+        ficha.setManaPersonagem(ficha.getManaPersonagem() - giros);
+        Interface.MostrarMensagem("\nVocê gira " + giros + "x com sua espada!");
+        Interface.Pausa(1500);
+
+        List<Criatura> vivos = inimigosVivos(inimigos);
+        if (vivos.isEmpty()) return true;
+
+        for (int g = 1; g <= giros; g++) {
+            int danoGiro = MecanicasRpg.rolarDado(10);
+            Interface.MostrarMensagem("-> Giro " + g + ": " + danoGiro + " (1d10) de dano em área!");
+            Interface.Pausa(1500);
+            for (Criatura alvo : vivos) {
+                if (alvo.getVida() <= 0) continue;
+                alvo.setVida(alvo.getVida() - danoGiro);
+                Interface.MostrarMensagem(rotuloCriatura(inimigos, alvo) + " agora tem " + Math.max(0, alvo.getVida()) + " de vida.");
+            }
+            Interface.Pausa(1500);
+        }
+        return true;
+    }
+
+    // Proteção Absoluta do Mago: +3 de defesa e reflexo de 2d8 do elemento enquanto acertado
+    private static boolean usarProtecaoAbsoluta(FichaRpg ficha, habilidades.Habilidade hab) {
+        if (ficha.isProtecaoAbsolutaAtiva()) {
+            Interface.MostrarMensagem("A Proteção Absoluta já está ativa!");
+            Interface.Pausa(1500);
+            return true;
+        }
+        ficha.setManaPersonagem(ficha.getManaPersonagem() - hab.getCustoMana());
+        ficha.setProtecaoAbsolutaAtiva(true);
+        ficha.setBonusDefesaTemporario(ficha.getBonusDefesaTemporario() + 3);
+        Interface.MostrarMensagem("\nVocê se envolve no seu elemento! +3 de defesa e reflete 2d8 de dano a quem te acertar.");
+        Interface.Pausa(2000);
+        return true;
+    }
+
+    // Cura para a Morte do Healer: injeta líquido mortal (ativa a partir do próximo turno)
+    private static boolean usarCuraParaMorte(FichaRpg ficha, List<Criatura> inimigos, habilidades.Habilidade hab) {
+        int alvoVeneno = escolherAlvo(inimigos);
+        if (alvoVeneno < 0) {
+            Interface.MostrarMensagem("Nenhum alvo escolhido.");
+            Interface.Pausa(1500);
+            return true;
+        }
+        ficha.setManaPersonagem(ficha.getManaPersonagem() - hab.getCustoMana());
+        Criatura alvo = inimigos.get(alvoVeneno);
+        ficha.setAlvoCuraParaMorte(alvo);
+        ficha.setCuraParaMortePreparado(true);
+        Interface.MostrarMensagem("\nVocê injeta o líquido mortal em " + rotuloCriatura(inimigos, alvo) + "! Ele age a partir do próximo turno.");
+        Interface.Pausa(2000);
+        return true;
+    }
+
+    // Aplica o dano do líquido mortal ao final de cada ataque contra o alvo envenenado
+    private static void aplicarVenenoCuraParaMorte(FichaRpg ficha, List<Criatura> inimigos, int alvoIndex) {
+        if (!ficha.isCuraParaMorteAtivo() || ficha.getAlvoCuraParaMorte() == null) return;
+        if (alvoIndex < 0 || alvoIndex >= inimigos.size()) return;
+
+        Criatura alvo = inimigos.get(alvoIndex);
+        if (alvo.getVida() <= 0 || alvo != ficha.getAlvoCuraParaMorte()) return;
+
+        int veneno = MecanicasRpg.rolarDado(8) + MecanicasRpg.rolarDado(8) + MecanicasRpg.rolarDado(8);
+        alvo.setVida(alvo.getVida() - veneno);
+        Interface.MostrarMensagem("(Cura para a Morte! O líquido mortal causa " + veneno + " de dano)");
+        Interface.Pausa(1500);
+    }
+
+    // Tenta reviver o personagem com Cura Total (uma vez por combate)
+    private static boolean tentarReviver(FichaRpg ficha) {
+        if (ficha.getVidaPersonagem() > 0) return true;
+        if (ficha.isCuraTotalUsada() || ficha.getManaPersonagem() < 10) return false;
+        if (!temHabilidade(ficha, "Cura Total")) return false;
+
+        System.out.println("\nVocê foi derrubado! Deseja usar Cura Total (10 de mana) para reviver com a vida cheia?");
+        System.out.println("1. Sim");
+        System.out.println("2. Não");
+        int escolha = Interface.lerInteiro();
+
+        if (escolha != 1) return false;
+
+        ficha.setManaPersonagem(ficha.getManaPersonagem() - 10);
+        ficha.setVidaPersonagem(ficha.getVidaMaxima());
+        ficha.setCuraTotalUsada(true);
+        Interface.MostrarMensagem("\nCura Total! Você renasce com a vida cheia!");
+        Interface.Pausa(2500);
+        return true;
     }
 
     // ==================== MOCHILA ====================
@@ -978,6 +1288,15 @@ public class Floresta {
         }
     }
 
+    private static boolean temHabilidade(FichaRpg ficha, String nome) {
+        for (habilidades.Habilidade hab : ficha.getHabilidades()) {
+            if (hab.getNome().equals(nome)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     // Fase de resolução: aplica o item escolhido quando chega a vez do jogador na iniciativa
     private static void usarItemNaVez(FichaRpg ficha, int itemIndex) {
         if (itemIndex < 0 || itemIndex >= ficha.getInventario().size()) return;
@@ -996,6 +1315,21 @@ public class Floresta {
             int cura = MecanicasRpg.rolarDado(4);
             ficha.setVidaPersonagem(ficha.getVidaPersonagem() + cura);
             Interface.MostrarMensagem("Você recuperou " + cura + " de vida! Vida atual: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima());
+
+            if (temHabilidade(ficha, "Cura Reforçada") && ficha.getManaPersonagem() >= 1) {
+                System.out.println("\nDeseja gastar 1 de mana para curar 2d4 extras com Cura Reforçada?");
+                System.out.println("1. Sim");
+                System.out.println("2. Não");
+                int usarCura = Interface.lerInteiro();
+
+                if (usarCura == 1) {
+                    ficha.setManaPersonagem(ficha.getManaPersonagem() - 1);
+                    int curaExtra = MecanicasRpg.rolarDado(4) + MecanicasRpg.rolarDado(4);
+                    ficha.setVidaPersonagem(ficha.getVidaPersonagem() + curaExtra);
+                    Interface.MostrarMensagem("Cura Reforçada: você recuperou +" + curaExtra + " de vida! Vida atual: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima());
+                    Interface.Pausa(1500);
+                }
+            }
         }
 
         itemEscolhido.setQuantidade(itemEscolhido.getQuantidade() - 1);

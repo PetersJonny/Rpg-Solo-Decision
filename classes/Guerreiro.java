@@ -14,6 +14,16 @@ public class Guerreiro extends ClasseRpg {
         
         // Habilidade Base
         this.habilidadesIniciais.add(new habilidades.Habilidade("Casca Grossa", "Endurece a pele, diminuindo 5 de dano recebido de um ataque.", 1, true));
+        
+        // Habilidades por nível
+        this.habilidadesPorNivel.put(3, java.util.List.of(
+            new habilidades.Magia("Peso da Espada", "Usa o peso de sua própria espada para abater o inimigo, causando 3d8 de dano.", 3, 3, 8)
+        ));
+
+        this.escolhasNivel.put(5, java.util.List.of(
+            new habilidades.Habilidade("Giro", "Usa sua destreza para girar e atacar em área. Gasta 1 de mana por giro (máximo igual à sua Destreza), causando 1d10 de dano em área por giro.", 1),
+            new habilidades.Habilidade("Espada Afiada", "Sua espada ganha +2d8 de dano em todos os ataques durante o combate.", 3, true)
+        ));
     }
 
     @Override

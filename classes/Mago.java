@@ -14,6 +14,12 @@ public class Mago extends ClasseRpg {
         
         // Magia Base
         this.habilidadesIniciais.add(new habilidades.Magia("Bola Elementar (" + elemento + ")", "Lança uma esfera de " + elemento.toLowerCase() + " que causa 2d8 de dano do elemento escolhido.", 3, 2, 8));
+
+        // Escolhas de habilidade por nível
+        this.escolhasNivel.put(5, java.util.List.of(
+            new habilidades.Magia("Magia Desperta", "Cria uma grande massa do seu elemento, causando 6d12 de dano massante.", 6, 6, 12),
+            new habilidades.Habilidade("Proteção Absoluta", "Envolve-se do seu elemento: +3 de defesa e reflete 2d8 de dano do elemento a quem te acertar. Dura até o fim do combate.", 5)
+        ));
     }
 
     @Override
@@ -30,6 +36,18 @@ public class Mago extends ClasseRpg {
         int ganhoMana = 3 + ficha.getPresenca();
         ficha.setManaMaxima(ficha.getManaMaxima() + ganhoMana);
         ficha.setManaPersonagem(ficha.getManaPersonagem() + ganhoMana);
+    }
+
+    @Override
+    public void aplicarHabilidadesNivel(FichaRpg ficha, int novoNivel) {
+        super.aplicarHabilidadesNivel(ficha, novoNivel);
+        if (novoNivel == 3) {
+            for (habilidades.Habilidade hab : ficha.getHabilidades()) {
+                if (hab instanceof habilidades.Magia && hab.getNome().startsWith("Bola Elementar")) {
+                    ((habilidades.Magia) hab).setAtaqueArea(true);
+                }
+            }
+        }
     }
 
     @Override
