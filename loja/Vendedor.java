@@ -7,7 +7,10 @@ import itens.Consumivel;
 import itens.ItemRpg;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import mecanicas.MecanicasRpg;
 import telas.Interface;
 
 public class Vendedor {
@@ -15,7 +18,8 @@ public class Vendedor {
     // Categorias (usadas só pela loja; não aparecem no jogo)
     private static final List<String> GERAL = List.of(
             "Faca", "Machado", "Machadinha", "Martelo", "Mangual", "Arco", "Flechas", "Lança",
-            "Armadura Leve", "Poção de Mana", "Kit Médico"
+            "Armadura Leve", "Poção de Mana", "Kit Médico",
+            "Madeira", "Folha", "Pedra", "Frutas"
     );
     private static final List<String> PESADO = List.of(
             "Espada", "Espada Pesada", "Machado de Guerra", "Martelo de Guerra", "Armadura Pesada"
@@ -58,8 +62,28 @@ public class Vendedor {
         }
     }
 
-    // Estoque: 5 itens aleatórios entre os gerais + os da categoria da classe do jogador
-    private static List<String> montarEstoque(FichaRpg ficha) {
+    // Quantidade em estoque de cada item (sorteada a cada visita):
+    // Flechas 6-24, poções/consumíveis (e materiais) 1-7, armas e armaduras apenas 1.
+    private static int quantidadeEmEstoque(String nome) {
+        switch (nome) {
+            case "Flechas":
+                return MecanicasRpg.rolarEntre(6, 24);
+            case "Poção de Mana":
+            case "Poção Grande de Mana":
+            case "Kit Médico":
+            case "Frutas":
+            case "Madeira":
+            case "Folha":
+            case "Pedra":
+                return MecanicasRpg.rolarEntre(1, 7);
+            default:
+                return 1; // armas e armaduras
+        }
+    }
+
+    // Estoque: 5 itens aleatórios entre os gerais + os da categoria da classe do jogador,
+    // cada um com uma quantidade aleatória.
+    private static Map<String, Integer> montarEstoque(FichaRpg ficha) {
         List<String> pool = new ArrayList<>(GERAL);
         if (ficha.getClasseDoPersonagem() instanceof classes.Guerreiro) {
             pool.addAll(PESADO);
@@ -69,54 +93,78 @@ public class Vendedor {
             pool.addAll(MAGICO);
         }
         Collections.shuffle(pool);
-        return pool.subList(0, Math.min(TAMANHO_ESTOQUE, pool.size()));
+
+        Map<String, Integer> estoque = new LinkedHashMap<>();
+        int limite = Math.min(TAMANHO_ESTOQUE, pool.size());
+        for (int i = 0; i < limite; i++) {
+            String nome = pool.get(i);
+            estoque.put(nome, quantidadeEmEstoque(nome));
+        }
+        return estoque;
     }
 
     private static void Comprar(FichaRpg ficha) {
-        List<String> estoque = montarEstoque(ficha);
+        Map<String, Integer> estoque = montarEstoque(ficha);
 
         while (true) {
+            if (estoque.isEmpty()) {
+                Interface.MostrarMensagem("\nO vendedor não tem mais nada à venda.");
+                Interface.Pausa(1500);
+                return;
+            }
+
             Interface.barraDivisoria();
             Interface.MostrarMensagem("\n--- COMPRAR --- (Seu ouro: " + ficha.getOuro() + ")");
-            for (int i = 0; i < estoque.size(); i++) {
-                String nome = estoque.get(i);
+            List<String> nomes = new ArrayList<>(estoque.keySet());
+            for (int i = 0; i < nomes.size(); i++) {
+                String nome = nomes.get(i);
+                int qtd = estoque.get(nome);
                 String preco = nome.equals("Flechas") ? "3 ouro/un." : precoDeVenda(nome) + " ouro";
-                System.out.println((i + 1) + ". " + nome + " - " + preco);
+                System.out.println((i + 1) + ". " + nome + " - " + preco + " (estoque: " + qtd + ")");
             }
             System.out.println("0. Voltar");
 
             int escolha = Interface.lerInteiro();
             if (escolha == 0) return;
-            if (escolha < 1 || escolha > estoque.size()) {
+            if (escolha < 1 || escolha > nomes.size()) {
                 Interface.ExibirErro("Opção inválida!");
                 continue;
             }
 
-            String nome = estoque.get(escolha - 1);
-
-            if (nome.equals("Flechas")) {
-                comprarFlechas(ficha);
-                continue;
-            }
-
-            int preco = precoDeVenda(nome);
+            String nome = nomes.get(escolha - 1);
+            int qtdEstoque = estoque.get(nome);
+            int preco = nome.equals("Flechas") ? 3 : precoDeVenda(nome);
             if (preco < 0) {
                 Interface.ExibirErro("Esse item não está disponível!");
                 continue;
             }
-            if (!ficha.gastarOuro(preco)) {
-                Interface.ExibirErro("Ouro insuficiente!");
+
+            int qtdComprar = 1;
+            if (podeComprarEmQuantidade(nome)) {
+                System.out.println("Quantidade para comprar (1 a " + qtdEstoque + "): ");
+                int qtd = Interface.lerInteiro();
+                if (qtd < 1) {
+                    Interface.ExibirErro("Quantidade inválida!");
+                    continue;
+                }
+                qtdComprar = Math.min(qtd, qtdEstoque);
+            }
+
+            int custo = preco * qtdComprar;
+            if (!ficha.gastarOuro(custo)) {
+                Interface.ExibirErro("Ouro insuficiente! (Precisa de " + custo + ")");
                 Interface.Pausa(1500);
                 continue;
             }
 
             ItemRpg item = criarItem(nome);
+            item.setQuantidade(qtdComprar);
             if (item instanceof Armadura) {
                 int bonusAtual = ficha.getArmaduraEquipada() != null ? ficha.getArmaduraEquipada().getBonusDefesa() : 0;
                 ficha.adicionarItem(item);
                 ficha.equiparMelhorArmadura();
                 int bonusNovo = ficha.getArmaduraEquipada() != null ? ficha.getArmaduraEquipada().getBonusDefesa() : 0;
-                Interface.MostrarMensagem("\nVocê comprou: " + nome + " por " + preco + " ouro.");
+                Interface.MostrarMensagem("\nVocê comprou: " + nome + " por " + custo + " ouro.");
                 Interface.Pausa(1500);
                 if (bonusNovo > bonusAtual) {
                     Interface.MostrarMensagem("(Sua melhor armadura foi equipada automaticamente! Defesa: " + ficha.getDefesa() + ")");
@@ -125,38 +173,44 @@ public class Vendedor {
                 }
             } else {
                 ficha.adicionarItem(item);
-                Interface.MostrarMensagem("\nVocê comprou: " + nome + " por " + preco + " ouro.");
+                Interface.MostrarMensagem("\nVocê comprou " + qtdComprar + "x " + nome + " por " + custo + " ouro.");
             }
             Interface.Pausa(1500);
+
+            // Atualiza o estoque do vendedor
+            int restante = qtdEstoque - qtdComprar;
+            if (restante <= 0) {
+                estoque.remove(nome);
+            } else {
+                estoque.put(nome, restante);
+            }
         }
     }
 
-    // Compra de flechas: venda pela quantidade
-    private static void comprarFlechas(FichaRpg ficha) {
-        System.out.println("Quantas flechas quer comprar? (3 ouro cada)");
-        int qtd = Interface.lerInteiro();
-        if (qtd < 1) {
-            Interface.ExibirErro("Quantidade inválida!");
-            return;
+    // Itens que podem ser comprados em quantidade (consumíveis, munição e materiais)
+    private static boolean podeComprarEmQuantidade(String nome) {
+        switch (nome) {
+            case "Flechas":
+            case "Poção de Mana":
+            case "Poção Grande de Mana":
+            case "Kit Médico":
+            case "Frutas":
+            case "Madeira":
+            case "Folha":
+            case "Pedra":
+                return true;
+            default:
+                return false;
         }
-        int custo = qtd * 3;
-        if (!ficha.gastarOuro(custo)) {
-            Interface.ExibirErro("Ouro insuficiente!");
-            Interface.Pausa(1500);
-            return;
-        }
-        ficha.adicionarItem(new Consumivel("Flechas", "Munição para armas à distância. Consumida a cada disparo.", qtd));
-        Interface.MostrarMensagem("\nVocê comprou " + qtd + "x Flechas por " + custo + " ouro.");
-        Interface.Pausa(1500);
     }
 
-    // O vendedor compra QUALQUER item do jogador (inclusive materiais) por 50% do preço de venda;
-    // materiais sem utilidade são comprados a preço CHEIO
+    // O vendedor compra QUALQUER item do jogador por 50% do preço de venda;
+    // materiais especiais (Couro, Dente de Urso, Brilho Mágico) são comprados a preço cheio
     private static void Vender(FichaRpg ficha) {
         while (true) {
             Interface.barraDivisoria();
             Interface.MostrarMensagem("\n--- VENDER --- (Seu ouro: " + ficha.getOuro() + ")");
-            Interface.MostrarMensagem("O vendedor paga 50% do preço (materiais a preço cheio).");
+            Interface.MostrarMensagem("O vendedor paga 50% do preço (Couro, Dente de Urso e Brilho Mágico a preço cheio).");
 
             List<ItemRpg> vendaveis = new ArrayList<>();
             for (ItemRpg item : ficha.getInventario()) {
@@ -231,24 +285,25 @@ public class Vendedor {
             case "Chapéu Mágico": return 50;
             case "Poção Grande de Mana": return 25;
             case "Pequeno Grimório": return 60;
+            // Materiais coletáveis da floresta
+            case "Madeira": return 6;
+            case "Folha": return 4;
+            case "Pedra": return 5;
+            case "Frutas": return 5;
             default: return -1;
         }
     }
 
     // Preço que o vendedor paga (jogador VENDE por 50% do preço dele);
-    // materiais sem utilidade são comprados a preço CHEIO
+    // materiais especiais (drops de monstros) são comprados a preço CHEIO
     private static int precoDeCompra(String nome) {
         switch (nome) {
             case "Couro": return 6;
             case "Dente de Urso": return 14;
             case "Brilho Mágico": return 75;
-            case "Madeira": return 2;
-            case "Folha": return 1;
-            case "Pedra": return 3;
-            case "Frutas": return 2;
             default:
                 int preco = precoDeVenda(nome);
-                return preco < 0 ? 5 : preco / 2;
+                return preco < 0 ? 1 : preco / 2;
         }
     }
 
@@ -301,6 +356,14 @@ public class Vendedor {
                 return new ItemRpg("Chapéu Mágico", "Um chapéu encantado que aumenta o dano das suas magias em +3.", 1);
             case "Pequeno Grimório":
                 return new ItemRpg("Pequeno Grimório", "Faz as suas magias custarem 1 de mana a menos.", 1);
+            case "Madeira":
+                return new ItemRpg("Madeira", "Troncos e galhos fortes para construção.", 1);
+            case "Folha":
+                return new ItemRpg("Folha", "Folhas secas e verdes, úteis como cobertura.", 1);
+            case "Pedra":
+                return new ItemRpg("Pedra", "Pedras arredondadas de rio, boas para construir.", 1);
+            case "Frutas":
+                return new Consumivel("Frutas", "Frutas silvestres comestíveis. Cada uma cura 1d2 de vida.", 1);
             default:
                 return null;
         }
