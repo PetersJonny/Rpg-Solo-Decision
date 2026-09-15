@@ -242,6 +242,10 @@ public class Vendedor {
             case "Couro": return 6;
             case "Dente de Urso": return 14;
             case "Brilho Mágico": return 75;
+            case "Madeira": return 2;
+            case "Folha": return 1;
+            case "Pedra": return 3;
+            case "Frutas": return 2;
             default:
                 int preco = precoDeVenda(nome);
                 return preco < 0 ? 5 : preco / 2;

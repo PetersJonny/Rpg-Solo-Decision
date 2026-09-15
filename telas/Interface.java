@@ -161,13 +161,21 @@ public class Interface {
         }
     }
 
-    public static int MenuPrincipalAventura() {
+    public static int MenuPrincipalAventura(FichaRpg ficha) {
         System.out.println("\n");
         barraDivisoria();
-        System.out.println("O que você deseja fazer?");
+        String periodo = ficha.isEhNoite() ? "NOITE" : "DIA";
+        String status = "[ " + periodo + " - " + (3 - ficha.getProgressoPeriodo()) + "/3 para virar ]";
+        if (ficha.isCansado()) {
+            status += " - CANÇADO (-1 em testes até dormir)";
+        }
+        System.out.println(status);
+        System.out.println("\nO que você deseja fazer?");
         System.out.println("\n1. Ver ficha");
-        System.out.println("2. Começar a aventura");
-        System.out.println("3. Encerrar jogo");
+        System.out.println("2. Explorar a Floresta");
+        System.out.println("3. Buscar Recursos na Floresta");
+        System.out.println("4. Construção (Barraca / Dormir)");
+        System.out.println("5. Encerrar jogo");
         int escolha = lerInteiro();
         return escolha;
     }
@@ -185,28 +193,63 @@ public class Interface {
     }
 
     public static void InspecionarInventario(FichaRpg ficha) {
-        if (ficha.getInventario().isEmpty()) {
-            System.out.println(AMARELO + "Seu inventário está vazio." + RESET);
-            return;
-        }
+        while (true) {
+            if (ficha.getInventario().isEmpty()) {
+                System.out.println(AMARELO + "Seu inventário está vazio." + RESET);
+                return;
+            }
 
-        System.out.println("\n--- SEU INVENTÁRIO ---");
-        for (int i = 0; i < ficha.getInventario().size(); i++) {
-            ItemRpg item = ficha.getInventario().get(i);
-            System.out.println((i + 1) + ". " + item.getNome() + " (x" + item.getQuantidade() + ")");
-        }
-        System.out.println("0. Voltar");
+            System.out.println("\n--- SEU INVENTÁRIO ---");
+            for (int i = 0; i < ficha.getInventario().size(); i++) {
+                ItemRpg item = ficha.getInventario().get(i);
+                String tipo = eventos.Floresta.ehItemConsumivel(item) ? " [Consumível]" : "";
+                System.out.println((i + 1) + ". " + item.getNome() + " (x" + item.getQuantidade() + ")" + tipo);
+            }
+            System.out.println("0. Voltar");
 
-        System.out.println("\nDigite o número do item que deseja ler a descrição:");
-        int escolha = lerInteiro();
+            System.out.println("\nDigite o número do item que deseja ver a descrição:");
+            int escolha = lerInteiro();
 
-        if (escolha > 0 && escolha <= ficha.getInventario().size()) {
+            if (escolha == 0) return;
+            if (escolha < 1 || escolha > ficha.getInventario().size()) {
+                ExibirErro("Opção inválida!");
+                continue;
+            }
+
             ItemRpg itemEscolhido = ficha.getInventario().get(escolha - 1);
             System.out.println("\n" + CIANO + "-- " + itemEscolhido.getNome().toUpperCase() + " --" + RESET);
             System.out.println("Descrição: " + itemEscolhido.getDescricao());
             System.out.println(CIANO + "-----------------------" + RESET);
-        } else if (escolha != 0) {
-            ExibirErro("Opção inválida!");
+
+            if (eventos.Floresta.ehItemConsumivel(itemEscolhido)) {
+                System.out.println("\nDeseja usar este item?");
+                System.out.println("1. Sim");
+                System.out.println("2. Não voltar");
+                int usar = lerInteiro();
+
+                if (usar == 1) {
+                    String nomeItem = itemEscolhido.getNome();
+                    boolean cheio = false;
+                    if ((nomeItem.equals("Frutas") || nomeItem.equals("Kit Médico")) && ficha.getVidaPersonagem() >= ficha.getVidaMaxima()) {
+                        ExibirErro("Sua vida já está no máximo!");
+                        cheio = true;
+                    } else if ((nomeItem.equals("Poção de Mana") || nomeItem.equals("Poção Grande de Mana")) && ficha.getManaPersonagem() >= ficha.getManaMaxima()) {
+                        ExibirErro("Sua mana já está no máximo!");
+                        cheio = true;
+                    }
+                    if (!cheio) {
+                        int quantidade = 1;
+                        if (itemEscolhido.getQuantidade() > 1) {
+                            System.out.println("Quantidade para usar (1 a " + itemEscolhido.getQuantidade() + "): ");
+                            int qtd = lerInteiro();
+                            if (qtd > 0 && qtd <= itemEscolhido.getQuantidade()) {
+                                quantidade = qtd;
+                            }
+                        }
+                        eventos.Floresta.usarItemForaDeCombate(ficha, itemEscolhido, quantidade);
+                    }
+                }
+            }
         }
     }
 
@@ -279,6 +322,9 @@ public class Interface {
             .append(", Tipo: ").append(socoTipo).append(")");
 
         System.out.println("\n --------FICHA-------- \n\nNome: " + ficha.getNomePersonagem() + "\t\tNível: " + ficha.getNivel() + (ficha.getNivel() < 10 ? " (XP: " + ficha.getXp() + "/" + fichas.FichaRpg.getXpNecessaria(ficha.getNivel()) + ")" : " (XP: " + ficha.getXp() + " - Nível máximo)") + "\nDono da ficha: " + ficha.getNomePessoa() + "\t\tClasse: " + nomeDaClasse + "\nVida: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima() + "\t\tMana: " + ficha.getManaPersonagem() + "/" + ficha.getManaMaxima() + "\nOuro: " + ficha.getOuro() + "\n\nAtributos: \nConstituição: " + ficha.getConstituicao() + "\nDestreza: " + ficha.getDestreza() + "\nForça: " + ficha.getForca() + "\nSabedoria: " + ficha.getSabedoria() + "\nIntelecto: " + ficha.getIntelecto() + "\nPresença: " + ficha.getPresenca() + "\n\nCombate: " + combate + "\n\nDefesa: " + ficha.getDefesa());
+
+        System.out.println("\nPeríodo: " + (ficha.isEhNoite() ? "Noite" : "Dia") + " (" + (3 - ficha.getProgressoPeriodo()) + "/3 para virar)");
+        System.out.println("Barraca: " + (ficha.isTemBarraca() ? "Montada" : "Não") + " | Cabana: " + (ficha.isTemCabana() ? "Construída" : "Não") + " | Dias sem dormir: " + ficha.getDiasSemDormir() + (ficha.isCansado() ? " (CANÇADO: -1 em testes)" : ""));
         
         System.out.println("\nInventário:");
         if (ficha.getInventario().isEmpty()) {

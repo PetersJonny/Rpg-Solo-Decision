@@ -119,7 +119,7 @@ public class Main {
             boolean personagemFaleceu = false;
 
             while (jogando) {
-                int escolhaAventura = Interface.MenuPrincipalAventura();
+                int escolhaAventura = Interface.MenuPrincipalAventura(ficha);
 
                 switch (escolhaAventura) {
                     case 1:
@@ -148,36 +148,19 @@ public class Main {
                             narrativa.Aventura.IniciarPrologo(ficha);
                             prologoFeito = true;
                         }
-                        
-                        boolean explorando = true;
-                        while (explorando) {
-                            System.out.println("\n--- MAPA DE FREIJORD ---");
-                            System.out.println("1. Explorar a Floresta");
-                            System.out.println("2. Ver Ficha");
-                            System.out.println("3. Voltar ao Acampamento Seguro (Menu Principal)");
-                            int escMapa = Interface.lerInteiro();
 
-                            
-                            if (escMapa == 1) {
-                                eventos.Floresta.Explorar(ficha);
-                                if (ficha.getVidaPersonagem() <= 0) {
-                                    personagemFaleceu = true;
-                                    explorando = false;
-                                }
-                            } else if (escMapa == 2) {
-                                Interface.MostrarFicha(ficha);
-                            } else if (escMapa == 3) {
-                                explorando = false;
-                            } else {
-                                Interface.ExibirErro("Opção inválida!");
-                            }
-                        }
-                        
-                        if (personagemFaleceu) {
-                            jogando = false;
+                        eventos.Floresta.Explorar(ficha);
+                        if (ficha.getVidaPersonagem() <= 0) {
+                            personagemFaleceu = true;
                         }
                         break;
                     case 3:
+                        eventos.Floresta.BuscarRecursos(ficha);
+                        break;
+                    case 4:
+                        eventos.Floresta.MenuConstrucao(ficha);
+                        break;
+                    case 5:
                         Interface.MostrarMensagem("\nEncerrando o jogo... Até a próxima aventura!");
                         jogando = false;
                         jogoAberto = false;
@@ -185,6 +168,10 @@ public class Main {
                     default:
                         Interface.ExibirErro("Opção inválida!");
                         break;
+                }
+
+                if (personagemFaleceu) {
+                    jogando = false;
                 }
             }
 

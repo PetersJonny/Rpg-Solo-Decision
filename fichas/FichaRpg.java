@@ -71,6 +71,14 @@ public class FichaRpg {
     private boolean curaIncessanteUsada;
     private boolean conhecimentoAbsolutoAplicado;
 
+    // Efeitos de tempo (dia/noite) e abrigo
+    private boolean ehNoite = false;
+    private int progressoPeriodo = 0;
+    private int diasSemDormir = 0;
+    private boolean cansado = false;
+    private boolean temBarraca = false;
+    private boolean temCabana = false;
+
     // Construtor
     public FichaRpg(String nomePessoa) {
         this.nomePessoa = nomePessoa;
@@ -366,6 +374,86 @@ public class FichaRpg {
         defesa += quantidade;
         aumentarConstituicao(quantidade);
     }
+
+    // ==================== TEMPO (DIA/NOITE) E ABRIGO ====================
+
+    public boolean isEhNoite() { return ehNoite; }
+    public int getProgressoPeriodo() { return progressoPeriodo; }
+    public int getDiasSemDormir() { return diasSemDormir; }
+    public boolean isCansado() { return cansado; }
+    public boolean isTemBarraca() { return temBarraca; }
+    public boolean isTemCabana() { return temCabana; }
+
+    // Avança o tempo do período (dia ou noite); a cada 3 unidades o período vira.
+    // Explorar e buscar recursos consomem 1/3; montar uma barraca consome 2/3.
+    public boolean avancarTempo(int unidades) {
+        progressoPeriodo += Math.max(0, unidades);
+        boolean virou = false;
+        while (progressoPeriodo >= 3) {
+            progressoPeriodo -= 3;
+            ehNoite = !ehNoite;
+            if (ehNoite) {
+                diasSemDormir++;
+            }
+            virou = true;
+        }
+        cansado = diasSemDormir > 2;
+        return virou;
+    }
+
+    // Dormir: só de noite com barraca ou cabana.
+    // Recupera metade da vida máxima e metade da mana máxima e faz amanhecer.
+    public boolean dormir() {
+        if (!ehNoite) return false;
+        if (!temBarraca && !temCabana) return false;
+        int curaVida = vidaMaxima / 2;
+        int curaMana = manaMaxima / 2;
+        vidaPersonagem = Math.min(vidaPersonagem + curaVida, vidaMaxima);
+        manaPersonagem = Math.min(manaPersonagem + curaMana, manaMaxima);
+        ehNoite = false;
+        progressoPeriodo = 0;
+        diasSemDormir = 0;
+        cansado = false;
+        return true;
+    }
+
+    public void construirBarraca() {
+        temBarraca = true;
+    }
+
+    // Cabana automática: gasta 7 madeiras, 10 folhas e 4 pedras (só a primeira vez)
+    public boolean verificarCabanaAutomatica() {
+        if (temCabana) return false;
+        if (getQuantidadeDe("Madeira") >= 7 && getQuantidadeDe("Folha") >= 10 && getQuantidadeDe("Pedra") >= 4) {
+            removerItem("Madeira", 7);
+            removerItem("Folha", 10);
+            removerItem("Pedra", 4);
+            temCabana = true;
+            return true;
+        }
+        return false;
+    }
+
+    // Total de um item no inventário (somando as pilhas)
+    public int getQuantidadeDe(String nome) {
+        int total = 0;
+        if (inventario == null) return 0;
+        for (ItemRpg item : inventario) {
+            if (item.getNome().equals(nome)) {
+                total += item.getQuantidade();
+            }
+        }
+        return total;
+    }
+
+    // Getters usados em TESTES de atributo: quando cansado, -1 em testes.
+    // Não afeta vida, mana, defesa nem dano.
+    public int getDestrezaTeste() { return destreza - (cansado ? 1 : 0); }
+    public int getPresencaTeste() { return presenca - (cansado ? 1 : 0); }
+    public int getSabedoriaTeste() { return sabedoria - (cansado ? 1 : 0); }
+    public int getForcaTeste() { return forca - (cansado ? 1 : 0); }
+    public int getIntelectoTeste() { return intelecto - (cansado ? 1 : 0); }
+    public int getConstituicaoTeste() { return constituicao - (cansado ? 1 : 0); }
 
     // Reseta os efeitos temporários antes de um novo combate
     public void resetarEfeitosCombate() {

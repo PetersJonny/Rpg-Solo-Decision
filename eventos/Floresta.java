@@ -14,11 +14,141 @@ import telas.Interface;
 
 public class Floresta {
 
+    // Avança o tempo e mostra o que aconteceu com o período (dia/noite) e o cansaço
+    private static void avancarTempoComMensagens(FichaRpg ficha, int unidades) {
+        boolean virou = ficha.avancarTempo(unidades);
+        if (!virou) {
+            if (ficha.getProgressoPeriodo() >= 2) {
+                String proximo = ficha.isEhNoite() ? "dia" : "noite";
+                Interface.MostrarMensagem("\n(Falta pouco para " + proximo + " chegar: " + (3 - ficha.getProgressoPeriodo()) + "/3 restantes.)");
+                Interface.Pausa(1000);
+            }
+            return;
+        }
+        Interface.Pausa(1000);
+        if (ficha.isEhNoite()) {
+            Interface.MostrarMensagem("\nO sol se põe no horizonte e a noite cai sobre Freijord...");
+            Interface.Pausa(2000);
+            if (ficha.isCansado()) {
+                Interface.MostrarMensagem("\n(Você está há mais de 2 dias sem dormir! Está cansado: -1 em todos os atributos em testes até dormir.)");
+                Interface.Pausa(2000);
+            }
+        } else {
+            Interface.MostrarMensagem("\nOs primeiros raios de sol anunciam o amanhecer... é dia novamente em Freijord.");
+            Interface.Pausa(2000);
+        }
+    }
+
     public static void Explorar(FichaRpg ficha) {
         Interface.barraDivisoria();
         Interface.MostrarMensagem("\nVocê adentra as matas geladas da floresta de Freijord...");
-        Interface.Pausa(2500);
-        EventoAnimal(ficha);
+        Interface.Pausa(2000);
+        Interface.MostrarMensagem("O vento frio corta entre as árvores e você observa o ambiente ao redor...");
+        Interface.Pausa(2000);
+
+        // 40% de chance de haver um encontro
+        if (MecanicasRpg.rolarDado(100) <= 40) {
+            EventoAnimal(ficha);
+        } else {
+            Interface.MostrarMensagem("\nDesta vez a floresta parece tranquila. Você não cruza com nenhuma ameaça.");
+            Interface.Pausa(2000);
+        }
+
+        avancarTempoComMensagens(ficha, 1);
+    }
+
+    // ==================== BUSCAR RECURSOS ====================
+
+    public static void BuscarRecursos(FichaRpg ficha) {
+        Interface.barraDivisoria();
+        Interface.MostrarMensagem("\nVocê percorre a floresta em busca de materiais úteis...");
+        Interface.Pausa(2000);
+
+        boolean achouAlgo = false;
+        achouAlgo |= coletarRecurso(ficha, "Madeira", 40, "Troncos e galhos fortes para construção.");
+        achouAlgo |= coletarRecurso(ficha, "Folha", 55, "Folhas secas e verdes, úteis como cobertura.");
+        achouAlgo |= coletarRecurso(ficha, "Pedra", 20, "Pedras arredondadas de rio, boas para construir.");
+        achouAlgo |= coletarRecurso(ficha, "Frutas", 15, "Frutas silvestres comestíveis. Cada uma cura 1d2 de vida.");
+
+        if (!achouAlgo) {
+            Interface.MostrarMensagem("\nVocê vasculhou os arredores, mas não encontrou nada aproveitável desta vez.");
+            Interface.Pausa(2000);
+        }
+
+        // Cabana automática: 7 madeiras + 10 folhas + 4 pedras
+        if (ficha.verificarCabanaAutomatica()) {
+            Interface.MostrarMensagem("\nCom 7 madeiras, 10 folhas e 4 pedras, você constrói uma CABANA!");
+            Interface.MostrarMensagem("Agora você tem um abrigo para dormir à noite.");
+            Interface.Pausa(2500);
+        }
+
+        avancarTempoComMensagens(ficha, 1);
+    }
+
+    private static boolean coletarRecurso(FichaRpg ficha, String nome, int chance, String descricao) {
+        if (MecanicasRpg.rolarDado(100) > chance) return false;
+        int quantidade = MecanicasRpg.rolarEntre(1, 3);
+        ItemRpg item = nome.equals("Frutas")
+                ? new Consumivel(nome, descricao, quantidade)
+                : new ItemRpg(nome, descricao, quantidade);
+        ficha.adicionarItem(item);
+        Interface.MostrarMensagem("Você encontrou " + quantidade + "x " + nome + "!");
+        Interface.Pausa(1200);
+        return true;
+    }
+
+    // ==================== CONSTRUÇÃO ====================
+
+    public static void MenuConstrucao(FichaRpg ficha) {
+        while (true) {
+            Interface.barraDivisoria();
+            System.out.println("\n--- CONSTRUÇÃO ---");
+            Interface.MostrarMensagem("Período: " + (ficha.isEhNoite() ? "Noite" : "Dia"));
+            Interface.MostrarMensagem("Barraca: " + (ficha.isTemBarraca() ? "Montada" : "Não montada") + " | Cabana: " + (ficha.isTemCabana() ? "Construída" : "Não construída"));
+            Interface.MostrarMensagem("Materiais: Madeira x" + ficha.getQuantidadeDe("Madeira") + " | Folha x" + ficha.getQuantidadeDe("Folha") + " | Pedra x" + ficha.getQuantidadeDe("Pedra"));
+            System.out.println("\n1. Montar Barraca (consome 2/3 do dia ou da noite)");
+            System.out.println("2. Dormir (só à noite, com barraca ou cabana montada; cura metade da vida e mana)");
+            System.out.println("0. Voltar");
+
+            int escolha = Interface.lerInteiro();
+
+            if (escolha == 0) return;
+
+            if (escolha == 1) {
+                if (ficha.isTemBarraca()) {
+                    Interface.ExibirErro("Você já tem uma barraca montada!");
+                    Interface.Pausa(1500);
+                    continue;
+                }
+                ficha.construirBarraca();
+                Interface.MostrarMensagem("\nVocê monta uma barraca improvisada entre as árvores. Agora pode dormir à noite.");
+                Interface.Pausa(2000);
+                avancarTempoComMensagens(ficha, 2);
+            } else if (escolha == 2) {
+                if (!ficha.isEhNoite()) {
+                    Interface.ExibirErro("Você só consegue dormir quando está de noite. (barraca/cabana vão te proteger)");
+                    Interface.Pausa(1500);
+                    continue;
+                }
+                if (!ficha.isTemBarraca() && !ficha.isTemCabana()) {
+                    Interface.ExibirErro("Você precisa de uma barraca ou cabana para dormir à noite!");
+                    Interface.Pausa(1500);
+                    continue;
+                }
+                int vidaAntes = ficha.getVidaPersonagem();
+                int manaAntes = ficha.getManaPersonagem();
+                ficha.dormir();
+                int curaVida = ficha.getVidaPersonagem() - vidaAntes;
+                int curaMana = ficha.getManaPersonagem() - manaAntes;
+                Interface.MostrarMensagem("\nVocê dorme profundamente em sua "
+                        + (ficha.isTemCabana() ? "cabana" : "barraca") + "...");
+                Interface.MostrarMensagem("Recuperou " + curaVida + " de vida e " + curaMana + " de mana! Vida: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima() + " | Mana: " + ficha.getManaPersonagem() + "/" + ficha.getManaMaxima());
+                Interface.MostrarMensagem("O sol nasce! Você acorda descansado e sem cansaço.");
+                Interface.Pausa(2500);
+            } else {
+                Interface.ExibirErro("Opção inválida!");
+            }
+        }
     }
 
     // ==================== SORTEIO DE ENCONTRO ====================
@@ -42,15 +172,15 @@ public class Floresta {
 
         // Sorteia o tipo de criatura (1 = Lobo, 2 = Urso, 3 = Bandido)
         int tipo = MecanicasRpg.rolarDado(3);
-        List<Criatura> inimigos = criarGrupoMonstros(tipo);
+        List<Criatura> inimigos = criarGrupoMonstros(tipo, ficha.isEhNoite());
         Criatura referencia = inimigos.get(0);
 
         int dadoPresenca = 0;
         int totalPresenca = 0;
         Interface.pressionarParaTeste("Presença");
         dadoPresenca = MecanicasRpg.rolarDado(20);
-        totalPresenca = dadoPresenca + ficha.getPresenca();
-        Interface.MostrarMensagem("-> Teste de Presença: " + dadoPresenca + " (Dado) + " + ficha.getPresenca() + " (Atributo) = " + totalPresenca + " (Dificuldade: " + referencia.getTestePresenca() + ")");
+        totalPresenca = dadoPresenca + ficha.getPresencaTeste();
+        Interface.MostrarMensagem("-> Teste de Presença: " + dadoPresenca + " (Dado) + " + ficha.getPresencaTeste() + " (Atributo) = " + totalPresenca + " (Dificuldade: " + referencia.getTestePresenca() + ")");
         Interface.Pausa(2500);
 
         if (totalPresenca >= referencia.getTestePresenca()) {
@@ -70,8 +200,8 @@ public class Floresta {
             } else if (escolha == 2) {
                 Interface.pressionarParaTeste("Destreza (Fuga)");
                 int dadoDestreza = MecanicasRpg.rolarDado(20);
-                int totalDestreza = dadoDestreza + ficha.getDestreza();
-                Interface.MostrarMensagem("-> Teste de Destreza (Fuga): " + dadoDestreza + " (Dado) + " + ficha.getDestreza() + " (Atributo) = " + totalDestreza);
+                int totalDestreza = dadoDestreza + ficha.getDestrezaTeste();
+                Interface.MostrarMensagem("-> Teste de Destreza (Fuga): " + dadoDestreza + " (Dado) + " + ficha.getDestrezaTeste() + " (Atributo) = " + totalDestreza);
                 Interface.Pausa(2500);
                 if (totalDestreza >= 12) {
                     Interface.MostrarMensagem("\nVocê recua lentamente pelas sombras e foge com sucesso, sem ser notado.");
@@ -93,14 +223,14 @@ public class Floresta {
         }
     }
 
-    // Cria o grupo de monstros conforme o tipo
-    private static List<Criatura> criarGrupoMonstros(int tipo) {
+    // Cria o grupo de monstros conforme o tipo (dia: grupos menores, noite: grupos maiores)
+    private static List<Criatura> criarGrupoMonstros(int tipo, boolean deNoite) {
         List<Criatura> grupo = new ArrayList<>();
         int quantidade;
 
         switch (tipo) {
-            case 1: { // Lobo Selvagem: 1-3
-                quantidade = MecanicasRpg.rolarEntre(1, 3);
+            case 1: { // Lobo Selvagem: de dia 1-2, de noite 1-4
+                quantidade = deNoite ? MecanicasRpg.rolarEntre(1, 4) : MecanicasRpg.rolarEntre(1, 2);
                 for (int i = 0; i < quantidade; i++) {
                     grupo.add(criarLobo());
                 }
@@ -110,8 +240,8 @@ public class Floresta {
                 grupo.add(criarUrso());
                 break;
             }
-            default: { // Bandido: 1-5
-                quantidade = MecanicasRpg.rolarEntre(1, 5);
+            default: { // Bandido: de dia 1-3, de noite 1-7
+                quantidade = deNoite ? MecanicasRpg.rolarEntre(1, 7) : MecanicasRpg.rolarEntre(1, 3);
                 for (int i = 0; i < quantidade; i++) {
                     grupo.add(criarBandido());
                 }
@@ -173,8 +303,8 @@ public class Floresta {
     private static void EncontrarFada(FichaRpg ficha) {
         Interface.pressionarParaTeste("Presença");
         int dadoPresenca = MecanicasRpg.rolarDado(20);
-        int totalPresenca = dadoPresenca + ficha.getPresenca();
-        Interface.MostrarMensagem("-> Teste de Presença: " + dadoPresenca + " (Dado) + " + ficha.getPresenca() + " (Atributo) = " + totalPresenca + " (Dificuldade: 18)");
+        int totalPresenca = dadoPresenca + ficha.getPresencaTeste();
+        Interface.MostrarMensagem("-> Teste de Presença: " + dadoPresenca + " (Dado) + " + ficha.getPresencaTeste() + " (Atributo) = " + totalPresenca + " (Dificuldade: 18)");
         Interface.Pausa(2500);
 
         boolean avistou = totalPresenca >= 18;
@@ -196,8 +326,8 @@ public class Floresta {
         if (escolha == 1) {
             Interface.pressionarParaTeste("Sabedoria");
             int dadoSabedoria = MecanicasRpg.rolarDado(20);
-            int totalSabedoria = dadoSabedoria + ficha.getSabedoria();
-            Interface.MostrarMensagem("-> Teste de Sabedoria (Conversa): " + dadoSabedoria + " (Dado) + " + ficha.getSabedoria() + " (Atributo) = " + totalSabedoria + " (Dificuldade: 14)");
+            int totalSabedoria = dadoSabedoria + ficha.getSabedoriaTeste();
+            Interface.MostrarMensagem("-> Teste de Sabedoria (Conversa): " + dadoSabedoria + " (Dado) + " + ficha.getSabedoriaTeste() + " (Atributo) = " + totalSabedoria + " (Dificuldade: 14)");
             Interface.Pausa(2500);
 
             if (totalSabedoria >= 14) {
@@ -229,9 +359,9 @@ public class Floresta {
         int bonusIniciativaJogador = jogadorSurpreendeu ? 2 : 0;
         Interface.pressionarParaTeste("Destreza");
         int dadoJogador = MecanicasRpg.rolarDado(20);
-        int iniciativaJogador = dadoJogador + ficha.getDestreza() + bonusIniciativaJogador;
+        int iniciativaJogador = dadoJogador + ficha.getDestrezaTeste() + bonusIniciativaJogador;
 
-        Interface.MostrarMensagem("-> Iniciativa [" + ficha.getNomePersonagem() + "]: " + dadoJogador + " (Dado) + " + ficha.getDestreza() + " (Destreza) + " + bonusIniciativaJogador + " (Bônus) = " + iniciativaJogador);
+        Interface.MostrarMensagem("-> Iniciativa [" + ficha.getNomePersonagem() + "]: " + dadoJogador + " (Dado) + " + ficha.getDestrezaTeste() + " (Destreza) + " + bonusIniciativaJogador + " (Bônus) = " + iniciativaJogador);
         Interface.Pausa(2500);
 
         List<int[]> ordem = new ArrayList<>();
@@ -1546,8 +1676,8 @@ public class Floresta {
 
         Interface.pressionarParaTeste("Intelecto");
         int dado = MecanicasRpg.rolarDado(20);
-        int total = dado + ficha.getIntelecto();
-        Interface.MostrarMensagem("-> Teste de Intelecto: " + dado + " (Dado) + " + ficha.getIntelecto() + " (Intelecto) = " + total + " (Dificuldade: 15)");
+        int total = dado + ficha.getIntelectoTeste();
+        Interface.MostrarMensagem("-> Teste de Intelecto: " + dado + " (Dado) + " + ficha.getIntelectoTeste() + " (Intelecto) = " + total + " (Dificuldade: 15)");
         Interface.Pausa(1500);
 
         if (total < 15) {
@@ -1639,9 +1769,64 @@ public class Floresta {
 
     // ==================== MOCHILA ====================
 
-    private static boolean ehItemConsumivel(ItemRpg item) {
+    public static boolean ehItemConsumivel(ItemRpg item) {
         if (!(item instanceof Consumivel)) return false;
         return !item.getNome().equals("Flechas");
+    }
+
+    // Uso de consumíveis fora de combate (pela ficha/inventário).
+    // Retorna verdadeiro se o item foi usado (consome a quantidade escolhida).
+    public static boolean usarItemForaDeCombate(FichaRpg ficha, ItemRpg item, int quantidade) {
+        if (item == null || !ehItemConsumivel(item)) return false;
+        int qtd = Math.min(Math.max(1, quantidade), item.getQuantidade());
+        String nome = item.getNome();
+
+        switch (nome) {
+            case "Frutas": {
+                int cura = 0;
+                for (int i = 0; i < qtd; i++) cura += MecanicasRpg.rolarDado(2);
+                int antes = ficha.getVidaPersonagem();
+                ficha.setVidaPersonagem(Math.min(ficha.getVidaPersonagem() + cura, ficha.getVidaMaxima()));
+                int curaReal = ficha.getVidaPersonagem() - antes;
+                Interface.MostrarMensagem("Você comeu " + qtd + "x Frutas e recuperou " + curaReal + " de vida! Vida: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima());
+                break;
+            }
+            case "Poção de Mana": {
+                int antes = ficha.getManaPersonagem();
+                ficha.setManaPersonagem(Math.min(ficha.getManaPersonagem() + 5 * qtd, ficha.getManaMaxima()));
+                int curaMana = ficha.getManaPersonagem() - antes;
+                Interface.MostrarMensagem("Você bebeu " + qtd + "x Poção de Mana e recuperou " + curaMana + " de mana! Mana: " + ficha.getManaPersonagem() + "/" + ficha.getManaMaxima());
+                break;
+            }
+            case "Poção Grande de Mana": {
+                int antes = ficha.getManaPersonagem();
+                ficha.setManaPersonagem(Math.min(ficha.getManaPersonagem() + 7 * qtd, ficha.getManaMaxima()));
+                int curaMana = ficha.getManaPersonagem() - antes;
+                Interface.MostrarMensagem("Você bebeu " + qtd + "x Poção Grande de Mana e recuperou " + curaMana + " de mana! Mana: " + ficha.getManaPersonagem() + "/" + ficha.getManaMaxima());
+                break;
+            }
+            case "Kit Médico": {
+                int cura = 0;
+                for (int i = 0; i < qtd; i++) cura += MecanicasRpg.rolarDado(4);
+                int antes = ficha.getVidaPersonagem();
+                ficha.setVidaPersonagem(Math.min(ficha.getVidaPersonagem() + cura, ficha.getVidaMaxima()));
+                int curaReal = ficha.getVidaPersonagem() - antes;
+                Interface.MostrarMensagem("Você usou o Kit Médico e recuperou " + curaReal + " de vida! Vida: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima());
+                break;
+            }
+            default:
+                return false;
+        }
+
+        item.setQuantidade(item.getQuantidade() - qtd);
+        if (item.getQuantidade() <= 0) {
+            ficha.getInventario().remove(item);
+            Interface.MostrarMensagem("O item foi consumido e removido do inventário.");
+        } else {
+            Interface.MostrarMensagem("Restam " + item.getQuantidade() + "x " + item.getNome() + ".");
+        }
+        Interface.Pausa(1500);
+        return true;
     }
 
     // Fase de declaração da mochila: escolhe e confirma o item (sem aplicar ainda).
@@ -1687,6 +1872,8 @@ public class Floresta {
                     descExibida = "Restaura 5 pontos de mana. Usos restantes: " + itemEscolhido.getQuantidade();
                 } else if (itemEscolhido.getNome().equals("Poção Grande de Mana")) {
                     descExibida = "Restaura 7 pontos de mana. Usos restantes: " + itemEscolhido.getQuantidade();
+                } else if (itemEscolhido.getNome().equals("Frutas")) {
+                    descExibida = "Cada fruta cura 1d2 de vida. Frutas restantes: " + itemEscolhido.getQuantidade();
                 }
                 System.out.println("\n" + itemEscolhido.getNome() + ": " + descExibida);
                 Interface.Pausa(1000);
@@ -1702,7 +1889,7 @@ public class Floresta {
                         Interface.Pausa(1500);
                         continue;
                     }
-                    if (itemEscolhido.getNome().equals("Kit Médico") && ficha.getVidaPersonagem() >= ficha.getVidaMaxima()) {
+                    if ((itemEscolhido.getNome().equals("Kit Médico") || itemEscolhido.getNome().equals("Frutas")) && ficha.getVidaPersonagem() >= ficha.getVidaMaxima()) {
                         Interface.MostrarMensagem("Sua vida já está no máximo!");
                         Interface.Pausa(1500);
                         continue;
@@ -1750,6 +1937,10 @@ public class Floresta {
         } else if (itemEscolhido.getNome().equals("Poção Grande de Mana")) {
             ficha.setManaPersonagem(ficha.getManaPersonagem() + 7);
             Interface.MostrarMensagem("Você recuperou 7 de mana! Mana atual: " + ficha.getManaPersonagem() + "/" + ficha.getManaMaxima());
+        } else if (itemEscolhido.getNome().equals("Frutas")) {
+            int cura = MecanicasRpg.rolarDado(2);
+            ficha.setVidaPersonagem(Math.min(ficha.getVidaPersonagem() + cura, ficha.getVidaMaxima()));
+            Interface.MostrarMensagem("Você comeu uma fruta e recuperou " + cura + " de vida! Vida atual: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima());
         } else if (itemEscolhido.getNome().equals("Kit Médico")) {
             int cura = MecanicasRpg.rolarDado(4);
             ficha.setVidaPersonagem(ficha.getVidaPersonagem() + cura);
@@ -1810,8 +2001,8 @@ public class Floresta {
 
         Interface.pressionarParaTeste("Destreza");
         int dadoJogador = MecanicasRpg.rolarDado(20);
-        int totalJogador = dadoJogador + ficha.getDestreza();
-        Interface.MostrarMensagem("-> Sua Tentativa de Fuga: " + dadoJogador + " (Dado) + " + ficha.getDestreza() + " (Destreza) = " + totalJogador + " (Dificuldade: " + dificuldadeFuga + ")");
+        int totalJogador = dadoJogador + ficha.getDestrezaTeste();
+        Interface.MostrarMensagem("-> Sua Tentativa de Fuga: " + dadoJogador + " (Dado) + " + ficha.getDestrezaTeste() + " (Destreza) = " + totalJogador + " (Dificuldade: " + dificuldadeFuga + ")");
         Interface.Pausa(2000);
 
         if (totalJogador < dificuldadeFuga) {
