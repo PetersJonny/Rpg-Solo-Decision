@@ -112,10 +112,12 @@ public class Main {
             }
             
             Interface.MostrarMensagem("\nA criação da ficha foi finalizada com sucesso!");
-            
+
+            // O prólogo começa assim que a ficha é finalizada
+            narrativa.Aventura.IniciarPrologo(ficha);
+
             // Fase da Aventura
             boolean jogando = true;
-            boolean prologoFeito = false;
             boolean personagemFaleceu = false;
 
             while (jogando) {
@@ -144,11 +146,6 @@ public class Main {
                         }
                         break;
                     case 2:
-                        if (!prologoFeito) {
-                            narrativa.Aventura.IniciarPrologo(ficha);
-                            prologoFeito = true;
-                        }
-
                         eventos.Floresta.Explorar(ficha);
                         if (ficha.getVidaPersonagem() <= 0) {
                             personagemFaleceu = true;
