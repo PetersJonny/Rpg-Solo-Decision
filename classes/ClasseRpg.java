@@ -64,4 +64,27 @@ public abstract class ClasseRpg {
     public List<habilidades.Habilidade> getEscolhasNivel(int nivel) {
         return escolhasNivel.get(nivel);
     }
+
+    // Retorna TODAS as habilidades de escolha ainda não aprendidas, dos níveis de escolha
+    // anteriores e do nível atual (a que ficou para trás volta a aparecer)
+    public List<habilidades.Habilidade> getEscolhasDisponiveis(FichaRpg ficha, int nivel) {
+        List<habilidades.Habilidade> opcoes = new ArrayList<>();
+        for (int lvl = 5; lvl <= nivel; lvl++) {
+            List<habilidades.Habilidade> dupla = escolhasNivel.get(lvl);
+            if (dupla == null) continue;
+            for (habilidades.Habilidade hab : dupla) {
+                boolean jaTem = false;
+                for (habilidades.Habilidade conhecida : ficha.getHabilidades()) {
+                    if (conhecida.getNome().equals(hab.getNome())) {
+                        jaTem = true;
+                        break;
+                    }
+                }
+                if (!jaTem) {
+                    opcoes.add(hab);
+                }
+            }
+        }
+        return opcoes;
+    }
 }

@@ -20,6 +20,19 @@ public class Mago extends ClasseRpg {
             new habilidades.Magia("Magia Desperta", "Cria uma grande massa do seu elemento, causando 6d12 de dano massante.", 6, 6, 12),
             new habilidades.Habilidade("Proteção Absoluta", "Envolve-se do seu elemento: +3 de defesa e reflete 2d8 de dano do elemento a quem te acertar. Dura até o fim do combate.", 5)
         ));
+
+        this.escolhasNivel.put(7, java.util.List.of(
+            new habilidades.Habilidade("Prisão", "Prende um inimigo em uma prisão de energia. Na vez dele, ele precisa passar em um teste de d20 (15 ou mais) para se libertar; enquanto preso, ele não consegue agir. Custa 5 de mana.", 5),
+            new habilidades.Habilidade("Magia Proibida", "Uma vez por combate, gasta 5 de mana para fazer todos os testes dos inimigos desta rodada falharem. Não gasta sua ação.", 5)
+        ));
+
+        this.escolhasNivel.put(9, java.util.List.of(
+            new habilidades.Habilidade("Poder Absoluto", "Se envolve em energia do seu elemento por 15 de mana. Durante todo o combate, todas as suas magias dobram a quantidade de dados de dano.", 15)
+        ));
+
+        this.escolhasNivel.put(10, java.util.List.of(
+            new habilidades.Habilidade("Explosão de Poder", "Você escolhe quanto de mana quer gastar: cada 2 de mana causa 2d12 de dano do seu elemento em TODOS os inimigos.", 0)
+        ));
     }
 
     @Override

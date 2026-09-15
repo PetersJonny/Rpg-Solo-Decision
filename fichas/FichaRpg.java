@@ -3,6 +3,7 @@ package fichas;
 import classes.ClasseRpg;
 import itens.Arma;
 import itens.ItemRpg;
+import telas.Interface;
 import java.util.ArrayList;
 import java.util.List;
 import mecanicas.MecanicasRpg;
@@ -49,6 +50,25 @@ public class FichaRpg {
     private boolean curaParaMorteAtivo;
     private criaturas.Criatura alvoCuraParaMorte;
     private boolean curaTotalUsada;
+
+    // Efeitos lvl 7
+    private boolean defesaAbsolutaAtiva;
+    private int rodadasSemHabilidade;
+    private boolean magiaProibidaUsada;
+    private boolean magiaProibidaAtiva;
+    private criaturas.Criatura prisaoAtiva;
+
+    // Efeitos lvl 9
+    private boolean semiDeusAtivo;
+    private int semiDeusVidaOriginalMax;
+    private boolean poderAbsolutoAtivo;
+    private int curaAbsolutaBonus;
+    private int curaAbsolutaVidaOriginalMax;
+
+    // Efeitos lvl 10
+    private boolean deusAtivo;
+    private boolean curaIncessanteUsada;
+    private boolean conhecimentoAbsolutoAplicado;
 
     // Construtor
     public FichaRpg(String nomePessoa) {
@@ -159,7 +179,7 @@ public class FichaRpg {
     public int getSabedoria() { return sabedoria; }
     public int getIntelecto() { return intelecto; }
     public int getPresenca() { return presenca; }
-    public int getDefesa() { return defesa + bonusDefesaTemporario; }
+    public int getDefesa() { return defesa + bonusDefesaTemporario + (defesaAbsolutaAtiva ? 5 : 0); }
     public ClasseRpg getClasseDoPersonagem() { return classeDoPersonagem; }
     public Arma getArmaEquipada() { return armaEquipada; }
     public List<ItemRpg> getInventario() { return inventario; }
@@ -181,6 +201,15 @@ public class FichaRpg {
 
     // Dinheiro
     public void adicionarOuro(int quantidade) { this.ouro += Math.max(0, quantidade); }
+
+    // Tenta gastar ouro; retorna false se não tiver o suficiente
+    public boolean gastarOuro(int quantidade) {
+        if (quantidade < 0 || this.ouro < quantidade) {
+            return false;
+        }
+        this.ouro -= quantidade;
+        return true;
+    }
 
     // XP necessária para subir do nível atual para o próximo
     public static int getXpNecessaria(int nivel) {
@@ -234,11 +263,31 @@ public class FichaRpg {
         inventario.add(novoItem);
     }
 
+    // Remove itens do inventário; se a arma equipada for vendida, ela é desequipada
+    public boolean removerItem(String nome, int quantidade) {
+        for (ItemRpg item : inventario) {
+            if (item.getNome().equals(nome)) {
+                int atual = item.getQuantidade();
+                int remover = Math.min(atual, quantidade);
+                if (atual - remover <= 0) {
+                    inventario.remove(item);
+                    if (armaEquipada != null && armaEquipada.getNome().equals(nome)) {
+                        armaEquipada = null;
+                    }
+                } else {
+                    item.setQuantidade(atual - remover);
+                }
+                return true;
+            }
+        }
+        return false;
+    }
+
     // Bônus aleatório de atributo (concedido pela Fada)
     public String aumentarAtributoAleatorio() {
         int sorteado = MecanicasRpg.rolarDado(6);
         switch (sorteado) {
-            case 1 -> { constituicao++; return "Constituição"; }
+            case 1 -> { aumentarConstituicao(1); return "Constituição"; }
             case 2 -> { destreza++; return "Destreza"; }
             case 3 -> { forca++; return "Força"; }
             case 4 -> { sabedoria++; return "Sabedoria"; }
@@ -250,13 +299,35 @@ public class FichaRpg {
     // Aumenta o atributo escolhido (ponto de atributo ganho no level up)
     public String aumentarAtributo(int opcao) {
         switch (opcao) {
-            case 1 -> { constituicao++; return "Constituição"; }
+            case 1 -> { aumentarConstituicao(1); return "Constituição"; }
             case 2 -> { destreza++; return "Destreza"; }
             case 3 -> { forca++; return "Força"; }
             case 4 -> { sabedoria++; return "Sabedoria"; }
             case 5 -> { intelecto++; return "Intelecto"; }
             default -> { presenca++; return "Presença"; }
         }
+    }
+
+    // Aumenta a Constituição aplicando retroativo de vida para TODOS os níveis já ganhos:
+    // cada ponto extra de Constituição deveria ter dado +1 de vida em cada level up passado.
+    public void aumentarConstituicao(int quantidade) {
+        constituicao += quantidade;
+        if (quantidade > 0 && nivel > 1) {
+            int vidaRetroativa = quantidade * (nivel - 1);
+            vidaMaxima += vidaRetroativa;
+            vidaPersonagem = Math.min(vidaPersonagem + vidaRetroativa, vidaMaxima);
+        }
+    }
+
+    // Conhecimento Absoluto (Healer lvl 10): +quantidade em TODOS os atributos
+    public void aumentarTodosAtributos(int quantidade) {
+        destreza += quantidade;
+        forca += quantidade;
+        sabedoria += quantidade;
+        intelecto += quantidade;
+        presenca += quantidade;
+        defesa += quantidade;
+        aumentarConstituicao(quantidade);
     }
 
     // Reseta os efeitos temporários antes de um novo combate
@@ -268,6 +339,24 @@ public class FichaRpg {
         this.curaParaMorteAtivo = false;
         this.alvoCuraParaMorte = null;
         this.curaTotalUsada = false;
+        this.defesaAbsolutaAtiva = false;
+        this.rodadasSemHabilidade = 0;
+        this.magiaProibidaUsada = false;
+        this.magiaProibidaAtiva = false;
+        this.prisaoAtiva = null;
+        if (this.semiDeusAtivo && !this.deusAtivo) {
+            this.vidaMaxima = this.semiDeusVidaOriginalMax;
+            this.vidaPersonagem = Math.min(this.vidaPersonagem, this.vidaMaxima);
+            this.semiDeusAtivo = false;
+        }
+        this.semiDeusVidaOriginalMax = 0;
+        if (this.deusAtivo) {
+            this.semiDeusAtivo = true;
+        }
+        this.poderAbsolutoAtivo = false;
+        this.curaAbsolutaBonus = 0;
+        this.curaAbsolutaVidaOriginalMax = 0;
+        this.curaIncessanteUsada = false;
     }
 
     public boolean isEspadaAfiadaAtiva() { return espadaAfiadaAtiva; }
@@ -290,4 +379,63 @@ public class FichaRpg {
 
     public boolean isCuraTotalUsada() { return curaTotalUsada; }
     public void setCuraTotalUsada(boolean curaTotalUsada) { this.curaTotalUsada = curaTotalUsada; }
+
+    public boolean isDefesaAbsolutaAtiva() { return defesaAbsolutaAtiva; }
+    public void setDefesaAbsolutaAtiva(boolean defesaAbsolutaAtiva) { this.defesaAbsolutaAtiva = defesaAbsolutaAtiva; }
+
+    public int getRodadasSemHabilidade() { return rodadasSemHabilidade; }
+    public void setRodadasSemHabilidade(int rodadasSemHabilidade) { this.rodadasSemHabilidade = rodadasSemHabilidade; }
+
+    public boolean isMagiaProibidaUsada() { return magiaProibidaUsada; }
+    public void setMagiaProibidaUsada(boolean magiaProibidaUsada) { this.magiaProibidaUsada = magiaProibidaUsada; }
+
+    public boolean isMagiaProibidaAtiva() { return magiaProibidaAtiva; }
+    public void setMagiaProibidaAtiva(boolean magiaProibidaAtiva) { this.magiaProibidaAtiva = magiaProibidaAtiva; }
+
+    public criaturas.Criatura getPrisaoAtiva() { return prisaoAtiva; }
+    public void setPrisaoAtiva(criaturas.Criatura prisaoAtiva) { this.prisaoAtiva = prisaoAtiva; }
+
+    public boolean isSemiDeusAtivo() { return semiDeusAtivo; }
+    public void setSemiDeusAtivo(boolean semiDeusAtivo) { this.semiDeusAtivo = semiDeusAtivo; }
+
+    public int getSemiDeusVidaOriginalMax() { return semiDeusVidaOriginalMax; }
+    public void setSemiDeusVidaOriginalMax(int semiDeusVidaOriginalMax) { this.semiDeusVidaOriginalMax = semiDeusVidaOriginalMax; }
+
+    public boolean isPoderAbsolutoAtivo() { return poderAbsolutoAtivo; }
+    public void setPoderAbsolutoAtivo(boolean poderAbsolutoAtivo) { this.poderAbsolutoAtivo = poderAbsolutoAtivo; }
+
+    public int getCuraAbsolutaBonus() { return curaAbsolutaBonus; }
+    public void setCuraAbsolutaBonus(int curaAbsolutaBonus) { this.curaAbsolutaBonus = curaAbsolutaBonus; }
+
+    public int getCuraAbsolutaVidaOriginalMax() { return curaAbsolutaVidaOriginalMax; }
+    public void setCuraAbsolutaVidaOriginalMax(int curaAbsolutaVidaOriginalMax) { this.curaAbsolutaVidaOriginalMax = curaAbsolutaVidaOriginalMax; }
+
+    public boolean isDeusAtivo() { return deusAtivo; }
+    public void setDeusAtivo(boolean deusAtivo) { this.deusAtivo = deusAtivo; }
+
+    public boolean isCuraIncessanteUsada() { return curaIncessanteUsada; }
+    public void setCuraIncessanteUsada(boolean curaIncessanteUsada) { this.curaIncessanteUsada = curaIncessanteUsada; }
+
+    public boolean isConhecimentoAbsolutoAplicado() { return conhecimentoAbsolutoAplicado; }
+    public void setConhecimentoAbsolutoAplicado(boolean conhecimentoAbsolutoAplicado) { this.conhecimentoAbsolutoAplicado = conhecimentoAbsolutoAplicado; }
+
+    // Recebe dano considerando a proteção da Cura Absoluta (absorve dano primeiro)
+    public void receberDano(int dano) {
+        if (curaAbsolutaBonus > 0) {
+            if (dano <= curaAbsolutaBonus) {
+                curaAbsolutaBonus -= dano;
+                telas.Interface.MostrarMensagem("(Proteção da Cura Absoluta absorve " + dano + " de dano! Restante: " + curaAbsolutaBonus + ")");
+                telas.Interface.Pausa(1500);
+            } else {
+                int restante = dano - curaAbsolutaBonus;
+                curaAbsolutaBonus = 0;
+                vidaMaxima = curaAbsolutaVidaOriginalMax;
+                vidaPersonagem = Math.max(0, vidaPersonagem - restante);
+                telas.Interface.MostrarMensagem("(A proteção da Cura Absoluta se esgotou!)");
+                telas.Interface.Pausa(1500);
+            }
+        } else {
+            vidaPersonagem = Math.max(0, vidaPersonagem - dano);
+        }
+    }
 }

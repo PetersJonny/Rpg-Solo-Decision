@@ -29,4 +29,7 @@ public class Arma extends ItemRpg {
     public int getQuantidadeDanoArma() { return quantidadeDanoArma; }
     public String getAtributoAtaque() { return atributoAtaque; }
     public boolean isAgil() { return agil; }
+
+    public void setDadoDanoArma(int dadoDanoArma) { this.dadoDanoArma = dadoDanoArma; }
+    public void setQuantidadeDanoArma(int quantidadeDanoArma) { this.quantidadeDanoArma = quantidadeDanoArma; }
 }

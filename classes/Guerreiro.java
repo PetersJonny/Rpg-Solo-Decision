@@ -24,6 +24,19 @@ public class Guerreiro extends ClasseRpg {
             new habilidades.Habilidade("Giro", "Usa sua destreza para girar e atacar em área. Gasta 1 de mana por giro (máximo igual à sua Destreza), causando 1d10 de dano em área por giro.", 1),
             new habilidades.Habilidade("Espada Afiada", "Sua espada ganha +2d8 de dano em todos os ataques durante o combate.", 3, true)
         ));
+
+        this.escolhasNivel.put(7, java.util.List.of(
+            new habilidades.Habilidade("Defesa Absoluta", "Passiva sempre ativa: você ganha +5 de defesa até atacar. Quando atacar, o efeito desaparece.", 0, true),
+            new habilidades.Habilidade("Estrondo", "Gasta 5 de mana para golpear o chão com a arma, levantando terra e acertando todos os inimigos com 7d10 de dano. Você não pode usar nenhuma habilidade no próximo turno.", 5)
+        ));
+
+        this.escolhasNivel.put(9, java.util.List.of(
+            new habilidades.Habilidade("Semi Deus", "Gasta TODA a sua mana para se transformar em um semi-deus: sua vida máxima aumenta em 50%, você recupera toda a vida e seus ataques corpo a corpo ganham +4 dados de dano. Dura até o fim do combate.", 0)
+        ));
+
+        this.escolhasNivel.put(10, java.util.List.of(
+            new habilidades.Habilidade("Deus", "Você se torna naturalmente poderoso, sem gastar nada: a forma de Semi Deus fica sempre ativa (+50% de vida máxima e +4 dados de dano corpo a corpo) e você ganha a habilidade Cura Incessante, que cura toda a sua vida (uma vez por combate).", 0, true)
+        ));
     }
 
     @Override

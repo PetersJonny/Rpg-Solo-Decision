@@ -87,7 +87,7 @@ public class Criatura {
                 dano = Math.max(0, dano - 5);
                 Interface.MostrarMensagem("(Casca Grossa ativa! Dano reduzido em 5)");
             }
-            ficha.setVidaPersonagem(ficha.getVidaPersonagem() - dano);
+            ficha.receberDano(dano);
             Interface.MostrarMensagem("-> Ataque do " + nome + " [" + ataqueEscolhido.nome + "] acerta automaticamente! Dano: " + dano + danoTipo + ".");
             if (ficha.isProtecaoAbsolutaAtiva()) {
                 refletirProtecaoAbsoluta();
@@ -111,7 +111,7 @@ public class Criatura {
                 dano = Math.max(0, dano - 5);
                 Interface.MostrarMensagem("(Casca Grossa ativa! Dano reduzido em 5)");
             }
-            ficha.setVidaPersonagem(ficha.getVidaPersonagem() - dano);
+            ficha.receberDano(dano);
             Interface.MostrarMensagem("-> Acertou! Dano: " + dano + danoTipo + " (defesa do jogador: " + ficha.getDefesa() + ")");
             if (ficha.isProtecaoAbsolutaAtiva()) {
                 refletirProtecaoAbsoluta();

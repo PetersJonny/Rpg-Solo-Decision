@@ -23,6 +23,19 @@ public class Healer extends ClasseRpg {
             new habilidades.Habilidade("Cura para a Morte", "Injeta um líquido mortal que causa 3d8 de dano ao final de cada ataque contra o alvo, a partir do próximo turno. Dura até o fim do combate.", 3),
             new habilidades.Habilidade("Cura Total", "Se o personagem morrer, você pode gastar 10 de mana para revivê-lo com a vida cheia. Pode ser usada apenas uma vez por combate.", 10)
         ));
+
+        this.escolhasNivel.put(7, java.util.List.of(
+            new habilidades.Habilidade("Conhecimento Avassalador", "Gasta sua ação para fazer um teste de Intelecto (dificuldade 15). Se passar, você descobre tudo sobre os monstros do combate.", 0),
+            new habilidades.Habilidade("Arma Mental", "Você entende sua arma como ninguém: o Bisturi passa a causar 3d8 de dano no lugar de 1d4.", 0, true)
+        ));
+
+        this.escolhasNivel.put(9, java.util.List.of(
+            new habilidades.Habilidade("Cura Absoluta", "Gasta 10 de mana para injetar um líquido que cura toda a sua vida e cria uma proteção extra na pele, dobrando sua vida. A vida extra é gasta primeiro, antes da vida real.", 10)
+        ));
+
+        this.escolhasNivel.put(10, java.util.List.of(
+            new habilidades.Habilidade("Conhecimento Absoluto", "Seu conhecimento atinge o ápice: você ganha +2 em TODOS os atributos.", 0, true)
+        ));
     }
 
     @Override
