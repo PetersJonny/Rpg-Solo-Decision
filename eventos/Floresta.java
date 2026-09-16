@@ -111,27 +111,71 @@ public class Floresta {
         while (true) {
             Interface.barraDivisoria();
             System.out.println("\n--- CONSTRUÇÃO ---");
-            Interface.MostrarMensagem("Período: " + (ficha.isEhNoite() ? "Noite" : "Dia"));
-            if (ficha.isTemCabana()) {
-                Interface.MostrarMensagem("Você está: " + (ficha.isNaCabana() ? "NA CABANA" : "LONGE da cabana (na floresta)"));
+            Interface.MostrarMensagem("Período: " + (ficha.isEhNoite() ? "Noite" : "Dia") + " (" + (3 - ficha.getProgressoPeriodo()) + "/3 restantes)");
+
+            // Localização atual
+            if (ficha.isNaSalaTreino()) {
+                String tipoSala = ficha.isSalaJuntoCabana() ? "junto à cabana" : "longe da cabana";
+                Interface.MostrarMensagem("Você está: NA SALA DE TREINO (" + tipoSala + ")");
+            } else if (ficha.isNaCabana() && ficha.isTemCabana()) {
+                Interface.MostrarMensagem("Você está: NA CABANA");
+            } else if (ficha.isTemCabana()) {
+                Interface.MostrarMensagem("Você está: LONGE da cabana (na floresta)");
             } else {
-                Interface.MostrarMensagem("Cabana: Não construída.");
-                Interface.MostrarMensagem("Para montar, gaste: 7 Madeiras | 10 Folhas | 4 Pedras (você tem: Madeira x" + ficha.getQuantidadeDe("Madeira") + " | Folha x" + ficha.getQuantidadeDe("Folha") + " | Pedra x" + ficha.getQuantidadeDe("Pedra") + ")");
+                Interface.MostrarMensagem("Você está: na floresta (sem cabana)");
             }
+
+            // Status do bônus de treino
+            if (ficha.getTreinoBonusPeriodosRestantes() > 0) {
+                Interface.MostrarMensagem("Bônus de treino ativo: +3 em " + ficha.getTreinoBonusAtributo() + " (restam " + ficha.getTreinoBonusPeriodosRestantes() + " períodos)");
+            }
+
+            // Status de cada construção
+            if (!ficha.isTemCabana()) {
+                Interface.MostrarMensagem("Cabana: não construída — Custo: 7 Madeiras, 10 Folhas, 4 Pedras (você tem: Madeira x" + ficha.getQuantidadeDe("Madeira") + " | Folha x" + ficha.getQuantidadeDe("Folha") + " | Pedra x" + ficha.getQuantidadeDe("Pedra") + ")");
+            } else {
+                Interface.MostrarMensagem("Cabana: construída.");
+            }
+
+            if (ficha.isTemSalaTreino()) {
+                String tipoSala = ficha.isSalaJuntoCabana() ? "junto à cabana" : "longe da cabana";
+                Interface.MostrarMensagem("Sala de Treino: construída (" + tipoSala + ")");
+            } else {
+                Interface.MostrarMensagem("Sala de Treino: não construída — Custo: 10 Madeiras, 15 Folhas, 5 Pedras, 4 Couros (você tem: Madeira x" + ficha.getQuantidadeDe("Madeira") + " | Folha x" + ficha.getQuantidadeDe("Folha") + " | Pedra x" + ficha.getQuantidadeDe("Pedra") + " | Couro x" + ficha.getQuantidadeDe("Couro") + ")");
+            }
+
+            // Menu dinâmico com numeração sequencial
+            int opCabana = 0, opSala = 0, opDormir = 0;
+            int num = 1;
 
             if (!ficha.isTemCabana()) {
-                System.out.println("1. Montar Cabana (gasta 7 Madeiras, 10 Folhas e 4 Pedras; consome 2/3 do período)");
+                System.out.println(num + ". Montar Cabana (gasta 7 Madeiras, 10 Folhas, 4 Pedras; consome 2/3 do período)");
+                opCabana = num++;
             } else if (!ficha.isNaCabana()) {
-                System.out.println("1. Voltar para a Cabana (consome 1/3 do período)");
+                System.out.println(num + ". Voltar para a Cabana (consome 1/3 do período)");
+                opCabana = num++;
             }
-            System.out.println("2. Dormir (só à noite, estando na cabana; recupera metade da vida e mana)");
-            System.out.println("0. Voltar");
 
+            if (!ficha.isTemSalaTreino()) {
+                System.out.println(num + ". Montar Sala de Treino (gasta 10 Madeiras, 15 Folhas, 5 Pedras, 4 Couros; consome 2/3 do período)");
+                opSala = num++;
+            } else {
+                System.out.println(num + ". Treinar na Sala de Treino (passa o período inteiro; +3 em Força ou Destreza por 2 períodos)");
+                opSala = num++;
+            }
+
+            if (ficha.isTemCabana()) {
+                System.out.println(num + ". Dormir (só à noite, estando na cabana; recupera metade da vida e mana)");
+                opDormir = num++;
+            }
+
+            System.out.println("0. Voltar");
             int escolha = Interface.lerInteiro();
 
             if (escolha == 0) return;
 
-            if (escolha == 1) {
+            // =================== CABANA ===================
+            if (escolha == opCabana) {
                 if (!ficha.isTemCabana()) {
                     if (ficha.montarCabana()) {
                         Interface.MostrarMensagem("\nVocê constrói sua CABANA, gastando 7 madeiras, 10 folhas e 4 pedras!");
@@ -145,38 +189,85 @@ public class Floresta {
                 } else if (!ficha.isNaCabana()) {
                     Interface.MostrarMensagem("\nVocê segue pelo caminho de volta para sua cabana...");
                     Interface.Pausa(1500);
-
-                    // Durante a volta há chance de encontro (como ao buscar recursos)
                     int chanceEncontro = ficha.isEhNoite() ? 50 : 30;
                     if (MecanicasRpg.rolarDado(100) <= chanceEncontro) {
                         Interface.MostrarMensagem("\nDurante o trajeto, algo se agita entre as árvores...");
                         Interface.Pausa(1500);
                         EventoAnimal(ficha);
-                        if (ficha.getVidaPersonagem() <= 0) {
-                            return;
-                        }
+                        if (ficha.getVidaPersonagem() <= 0) return;
                     }
-
                     ficha.voltarParaCabana();
                     Interface.MostrarMensagem("\nVocê chega em sua cabana, levando 1/3 do período.");
                     Interface.Pausa(2000);
                     avancarTempoComMensagens(ficha, 1);
-                } else {
-                    Interface.ExibirErro("Opção inválida!");
                 }
-            } else if (escolha == 2) {
+                continue;
+            }
+
+            // =================== SALA DE TREINO ===================
+            if (escolha == opSala) {
+                if (!ficha.isTemSalaTreino()) {
+                    // Montar Sala de Treino
+                    if (ficha.construirSalaTreino()) {
+                        Interface.MostrarMensagem("\nVocê constrói sua SALA DE TREINO, gastando 10 madeiras, 15 folhas, 5 pedras e 4 couros!");
+                        if (ficha.isSalaJuntoCabana()) {
+                            Interface.MostrarMensagem("A sala ficou junto à sua cabana — estar nela não conta como ter saído.");
+                        } else {
+                            Interface.MostrarMensagem("A sala ficou em um local separado da cabana.");
+                        }
+                        Interface.Pausa(2500);
+                        avancarTempoComMensagens(ficha, 2);
+                    } else {
+                        Interface.ExibirErro("Faltam materiais! Você precisa de 10 Madeiras, 15 Folhas, 5 Pedras e 4 Couros.");
+                        Interface.Pausa(1500);
+                    }
+                } else {
+                    // Treinar na Sala de Treino
+                    Interface.MostrarMensagem("\nVocê entra na sua sala de treino e se prepara para treinar durante todo o período...");
+                    Interface.Pausa(1500);
+                    ficha.entrarSalaTreino();
+
+                    int unidadesFaltando = 3 - ficha.getProgressoPeriodo();
+                    avancarTempoComMensagens(ficha, unidadesFaltando);
+                    Interface.MostrarMensagem("\nVocê treina intensamente durante o período inteiro...");
+                    Interface.Pausa(2000);
+
+                    System.out.println("\nQue atributo você deseja treinar? (+3 em um atributo por 2 períodos)");
+                    System.out.println("1. Força");
+                    System.out.println("2. Destreza");
+                    System.out.println("0. Não treinar");
+                    int escolhaAtributo = Interface.lerInteiro();
+                    if (escolhaAtributo == 1) {
+                        ficha.treinarAtributo("Força");
+                        Interface.MostrarMensagem("\nVocê treinou sua força! +3 em Força por 2 períodos.");
+                        Interface.MostrarMensagem("Bônus aplicado: Força, dano, defesa, testes de força — tudo contará o extra.");
+                    } else if (escolhaAtributo == 2) {
+                        ficha.treinarAtributo("Destreza");
+                        Interface.MostrarMensagem("\nVocê treinou sua destreza! +3 em Destreza por 2 períodos.");
+                        Interface.MostrarMensagem("Bônus aplicado: Destreza, defesa, testes de destreza — tudo contará o extra.");
+                    } else {
+                        Interface.MostrarMensagem("\nVocê decide não aplicar nenhum bônus de treino agora.");
+                    }
+                    Interface.Pausa(2000);
+                    ficha.terminarTreino();
+                }
+                continue;
+            }
+
+            // =================== DORMIR ===================
+            if (escolha == opDormir) {
                 if (!ficha.isEhNoite()) {
                     Interface.ExibirErro("Você só consegue dormir quando está de noite.");
                     Interface.Pausa(1500);
                     continue;
                 }
                 if (!ficha.isTemCabana()) {
-                    Interface.ExibirErro("Você ainda não tem uma cabana para dormir! Monte uma no menu de construção (opção 1).");
+                    Interface.ExibirErro("Você ainda não tem uma cabana para dormir! Monte uma no menu de construção.");
                     Interface.Pausa(1500);
                     continue;
                 }
                 if (!ficha.isNaCabana()) {
-                    Interface.ExibirErro("Você está longe da cabana! Volte para ela primeiro (opção 1, custa 1/3 do período).");
+                    Interface.ExibirErro("Você está longe da cabana! Volte para ela primeiro.");
                     Interface.Pausa(1500);
                     continue;
                 }
@@ -189,9 +280,10 @@ public class Floresta {
                 Interface.MostrarMensagem("Recuperou " + curaVida + " de vida e " + curaMana + " de mana! Vida: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima() + " | Mana: " + ficha.getManaPersonagem() + "/" + ficha.getManaMaxima());
                 Interface.MostrarMensagem("O sol nasce! Você acorda descansado e sem cansaço.");
                 Interface.Pausa(2500);
-            } else {
-                Interface.ExibirErro("Opção inválida!");
+                continue;
             }
+
+            Interface.ExibirErro("Opção inválida!");
         }
     }
 

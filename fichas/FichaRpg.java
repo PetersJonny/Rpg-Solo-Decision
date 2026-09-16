@@ -79,6 +79,13 @@ public class FichaRpg {
     private boolean temCabana = false;
     private boolean naCabana = false;
 
+    // Sala de Treino
+    private boolean temSalaTreino = false;
+    private boolean naSalaTreino = false;
+    private boolean salaJuntoCabana = false; // se a sala foi construída enquanto se estava na cabana
+    private String treinoBonusAtributo = null; // "Força" ou "Destreza"
+    private int treinoBonusPeriodosRestantes = 0;
+
     // Construtor
     public FichaRpg(String nomePessoa) {
         this.nomePessoa = nomePessoa;
@@ -183,12 +190,12 @@ public class FichaRpg {
     public int getVidaPersonagem() { return vidaPersonagem; }
     public int getManaPersonagem() { return manaPersonagem; }
     public int getConstituicao() { return constituicao; }
-    public int getDestreza() { return destreza; }
-    public int getForca() { return forca; }
+    public int getDestreza() { return destreza + ("Destreza".equals(treinoBonusAtributo) ? 3 : 0); }
+    public int getForca() { return forca + ("Força".equals(treinoBonusAtributo) ? 3 : 0); }
     public int getSabedoria() { return sabedoria; }
     public int getIntelecto() { return intelecto; }
     public int getPresenca() { return presenca; }
-    public int getDefesa() { return defesa + (armaduraEquipada != null ? armaduraEquipada.getBonusDefesa() : 0) + bonusDefesaTemporario + (defesaAbsolutaAtiva ? 5 : 0); }
+    public int getDefesa() { return defesa + ("Destreza".equals(treinoBonusAtributo) ? 3 : 0) + (armaduraEquipada != null ? armaduraEquipada.getBonusDefesa() : 0) + bonusDefesaTemporario + (defesaAbsolutaAtiva ? 5 : 0); }
     public itens.Armadura getArmaduraEquipada() { return armaduraEquipada; }
     public ClasseRpg getClasseDoPersonagem() { return classeDoPersonagem; }
     public Arma getArmaEquipada() { return armaEquipada; }
@@ -383,12 +390,18 @@ public class FichaRpg {
     public boolean isCansado() { return cansado; }
     public boolean isTemCabana() { return temCabana; }
     public boolean isNaCabana() { return naCabana; }
+    public boolean isTemSalaTreino() { return temSalaTreino; }
+    public boolean isNaSalaTreino() { return naSalaTreino; }
+    public boolean isSalaJuntoCabana() { return salaJuntoCabana; }
+    public String getTreinoBonusAtributo() { return treinoBonusAtributo; }
+    public int getTreinoBonusPeriodosRestantes() { return treinoBonusPeriodosRestantes; }
 
-    // Sair da cabana para explorar/colher recursos
+    // Sair da cabana para explorar/colher recursos (também sai da sala de treino)
     public void sairDaCabana() {
         if (temCabana) {
             naCabana = false;
         }
+        naSalaTreino = false;
     }
 
     // Voltar para a cabana (custa 1/3 do período)
@@ -396,6 +409,7 @@ public class FichaRpg {
         if (temCabana) {
             naCabana = true;
         }
+        naSalaTreino = false;
     }
 
     // Avança o tempo do período (dia ou noite); a cada 3 unidades o período vira.
@@ -408,6 +422,13 @@ public class FichaRpg {
             ehNoite = !ehNoite;
             if (ehNoite) {
                 diasSemDormir++;
+            }
+            // Decrementa bônus de treino a cada período que se inicia
+            if (treinoBonusPeriodosRestantes > 0) {
+                treinoBonusPeriodosRestantes--;
+                if (treinoBonusPeriodosRestantes <= 0) {
+                    treinoBonusAtributo = null;
+                }
             }
             virou = true;
         }
@@ -443,7 +464,55 @@ public class FichaRpg {
         removerItem("Pedra", 4);
         temCabana = true;
         naCabana = true;
+        naSalaTreino = false;
         return true;
+    }
+
+    // Montar a sala de treino: gasta 10 madeiras, 15 folhas, 5 pedras e 4 couros.
+    // Se for construída enquanto o jogador estiver na cabana, ela fica JUNTO da cabana
+    // (estar nela não conta como ter saído). Se construída fora, são lugares separados.
+    public boolean construirSalaTreino() {
+        if (temSalaTreino) return false;
+        if (getQuantidadeDe("Madeira") < 10 || getQuantidadeDe("Folha") < 15 || getQuantidadeDe("Pedra") < 5 || getQuantidadeDe("Couro") < 4) {
+            return false;
+        }
+        removerItem("Madeira", 10);
+        removerItem("Folha", 15);
+        removerItem("Pedra", 5);
+        removerItem("Couro", 4);
+        temSalaTreino = true;
+        salaJuntoCabana = naCabana;
+        naSalaTreino = true;
+        return true;
+    }
+
+    // Entrar na sala de treino para treinar. Se a sala for junto da cabana,
+    // o jogador continua considerado "na cabana"; caso contrário, ela fica longe.
+    public void entrarSalaTreino() {
+        naSalaTreino = true;
+        if (salaJuntoCabana) {
+            naCabana = true;
+        } else {
+            naCabana = false;
+        }
+    }
+
+    // Aplica o bônus de treino (+3 em Força ou Destreza) que dura os 2 períodos seguintes
+    public void treinarAtributo(String atributo) {
+        this.treinoBonusAtributo = atributo;
+        this.treinoBonusPeriodosRestantes = 2;
+    }
+
+    // Depois de treinar o período inteiro: se a sala for junto da cabana,
+    // o jogador permanece na cabana; caso contrário, continua na sala.
+    public void terminarTreino() {
+        if (salaJuntoCabana) {
+            naCabana = true;
+            naSalaTreino = false;
+        } else {
+            naCabana = false;
+            naSalaTreino = true;
+        }
     }
 
     // Total de um item no inventário (somando as pilhas)
@@ -460,10 +529,10 @@ public class FichaRpg {
 
     // Getters usados em TESTES de atributo: quando cansado, -1 em testes.
     // Não afeta vida, mana, defesa nem dano.
-    public int getDestrezaTeste() { return destreza - (cansado ? 1 : 0); }
+    public int getDestrezaTeste() { return getDestreza() - (cansado ? 1 : 0); }
     public int getPresencaTeste() { return presenca - (cansado ? 1 : 0); }
     public int getSabedoriaTeste() { return sabedoria - (cansado ? 1 : 0); }
-    public int getForcaTeste() { return forca - (cansado ? 1 : 0); }
+    public int getForcaTeste() { return getForca() - (cansado ? 1 : 0); }
     public int getIntelectoTeste() { return intelecto - (cansado ? 1 : 0); }
     public int getConstituicaoTeste() { return constituicao - (cansado ? 1 : 0); }
 

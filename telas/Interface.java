@@ -328,6 +328,10 @@ public class Interface {
                 ? "Não construída"
                 : (ficha.isNaCabana() ? "Construída (você está nela)" : "Construída (você está longe dela)");
         System.out.println("Cabana: " + cabanaStatus + " | Dias sem dormir: " + ficha.getDiasSemDormir() + (ficha.isCansado() ? " (CANSADO: -1 em testes)" : ""));
+        String salaStatus = !ficha.isTemSalaTreino()
+                ? "Não construída"
+                : (ficha.isSalaJuntoCabana() ? "Construída (junto à cabana)" : "Construída (longe da cabana)");
+        System.out.println("Sala de Treino: " + salaStatus + (ficha.isNaSalaTreino() ? " (você está nela)" : "") + (ficha.getTreinoBonusPeriodosRestantes() > 0 ? " | Bônus de treino: +3 em " + ficha.getTreinoBonusAtributo() + " (restam " + ficha.getTreinoBonusPeriodosRestantes() + " períodos)" : ""));
         
         System.out.println("\nInventário:");
         if (ficha.getInventario().isEmpty()) {
