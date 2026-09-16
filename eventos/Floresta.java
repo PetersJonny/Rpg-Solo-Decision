@@ -800,11 +800,11 @@ public class Floresta {
                         Interface.MostrarMensagem("\n" + rotuloCriatura(inimigos, c) + " avança para atacar!");
                         Interface.Pausa(1500);
 
-                        // O inimigo pode atacar você ou o companheiro
+                        // O inimigo escolhe aleatoriamente entre atacar você ou o companheiro
                         companheiros.Companheiro comp2 = ficha.getCompanheiro();
                         boolean atacarCompanheiro = comp2 != null
                                 && comp2.getFicha().getVidaPersonagem() > 0
-                                && MecanicasRpg.rolarDado(100) <= 35;
+                                && MecanicasRpg.rolarDado(2) == 1;
                         if (atacarCompanheiro) {
                             Interface.MostrarMensagem(rotuloCriatura(inimigos, c) + " mira em " + comp2.getNomeCompleto() + "!");
                             Interface.Pausa(1500);
