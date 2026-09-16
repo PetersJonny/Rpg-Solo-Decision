@@ -1,5 +1,6 @@
 package eventos;
 
+import classes.*;
 import criaturas.Criatura;
 import fichas.FichaRpg;
 import itens.Arma;
@@ -29,6 +30,15 @@ public class Floresta {
         if (ficha.isEhNoite()) {
             Interface.MostrarMensagem("\nO sol se põe no horizonte e a noite cai sobre Freijord...");
             Interface.Pausa(2000);
+            if (ficha.temCompanheiro()) {
+                companheiros.Companheiro comp = ficha.getCompanheiro();
+                if (!comp.isDormiuPrimeiraVez()) {
+                    Interface.MostrarMensagem("\nPela primeira vez, " + comp.getNomeCompleto() + " se acomoda na cabana para dormir. De manhã, volta a te seguir.");
+                } else {
+                    Interface.MostrarMensagem("\n" + comp.getNomeCompleto() + " continua contigo por mais uma noite.");
+                }
+                Interface.Pausa(2000);
+            }
             if (ficha.isCansado()) {
                 Interface.MostrarMensagem("\n(Você está há mais de 2 dias sem dormir! Está cansado: -1 em todos os atributos em testes até dormir.)");
                 Interface.Pausa(2000);
@@ -36,7 +46,23 @@ public class Floresta {
         } else {
             Interface.MostrarMensagem("\nOs primeiros raios de sol anunciam o amanhecer... é dia novamente em Freijord.");
             Interface.Pausa(2000);
+            verificarCompanheiroPosDormir(ficha);
         }
+
+        // Ao ter uma cabana, pode aparecer alguém perdido (20% por período, no dia ou na noite)
+        if (ficha.isTemCabana() && !ficha.temCompanheiro() && MecanicasRpg.rolarDado(100) <= 20) {
+            EventoPerdido(ficha);
+        }
+    }
+
+    // Verifica se o companheiro decidiu partir após dormir
+    private static void verificarCompanheiroPosDormir(FichaRpg ficha) {
+        if (!ficha.companheiroQuerPartir()) return;
+        String nomePartiu = ficha.getCompanheiro().getNomeCompleto();
+        ficha.removerCompanheiro();
+        Interface.MostrarMensagem("\nApós passar a noite e decidir seu futuro, " + nomePartiu + " percebe que é hora de seguir o próprio caminho.");
+        Interface.MostrarMensagem("Vocês se despedem com gratidão e ela/e segue a própria jornada!");
+        Interface.Pausa(2500);
     }
 
     public static void Explorar(FichaRpg ficha) {
@@ -230,6 +256,9 @@ public class Floresta {
                     int unidadesFaltando = 3 - ficha.getProgressoPeriodo();
                     avancarTempoComMensagens(ficha, unidadesFaltando);
                     Interface.MostrarMensagem("\nVocê treina intensamente durante o período inteiro...");
+                    if (ficha.temCompanheiro()) {
+                        Interface.MostrarMensagem("Enquanto isso, " + ficha.getCompanheiro().getNome() + " aproveita para treinar junto com você.");
+                    }
                     Interface.Pausa(2000);
 
                     System.out.println("\nQue atributo você deseja treinar? (+3 em um atributo por 2 períodos)");
@@ -277,14 +306,116 @@ public class Floresta {
                 int curaVida = ficha.getVidaPersonagem() - vidaAntes;
                 int curaMana = ficha.getManaPersonagem() - manaAntes;
                 Interface.MostrarMensagem("\nVocê dorme profundamente em sua cabana...");
+                if (ficha.temCompanheiro()) {
+                    Interface.MostrarMensagem(ficha.getCompanheiro().getNome() + " também descansa na cabana ao seu lado.");
+                }
                 Interface.MostrarMensagem("Recuperou " + curaVida + " de vida e " + curaMana + " de mana! Vida: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima() + " | Mana: " + ficha.getManaPersonagem() + "/" + ficha.getManaMaxima());
                 Interface.MostrarMensagem("O sol nasce! Você acorda descansado e sem cansaço.");
                 Interface.Pausa(2500);
+                verificarCompanheiroPosDormir(ficha);
                 continue;
             }
 
             Interface.ExibirErro("Opção inválida!");
         }
+    }
+
+    // ==================== PESSOA PERDIDA (SISTEMA DE AJUDA) ====================
+
+    // Uma pessoa perdida na floresta pode ser encontrada quando o jogador tem uma cabana
+    private static void EventoPerdido(FichaRpg ficha) {
+        companheiros.Companheiro perdido = new companheiros.Companheiro();
+
+        Interface.MostrarMensagem("\nUm vulto surge entre as árvores, com olhar cansado e roupas surradas...");
+        Interface.Pausa(2000);
+        Interface.MostrarMensagem("\n" + perdido.getNomeCompleto() + " se aproxima, aliviado(a) por encontrar alguém.");
+        Interface.Pausa(2000);
+        Interface.MostrarMensagem("\"Por favor! Estou perdido(a) nesta floresta há dias. Ouvi dizer que você tem uma cabana... posso ficar um tempo?\"");
+        Interface.Pausa(2000);
+
+        System.out.println("\nO que você faz?");
+        System.out.println("1. Acolhê-lo(a) por um tempo");
+        System.out.println("2. Recusar e seguir seu caminho");
+        int escolha = Interface.lerInteiro();
+
+        if (escolha == 1) {
+            if (ficha.temCompanheiro()) {
+                Interface.MostrarMensagem("\nVocê já tem alguém sob sua proteção. " + perdido.getNome() + " compreende e segue adiante.");
+                Interface.Pausa(2000);
+                return;
+            }
+            ficha.setCompanheiro(perdido);
+            Interface.MostrarMensagem("\nA partir de agora, " + perdido.getNomeCompleto() + " te acompanha em tudo: lutar, dormir, treinar e explorar!");
+            Interface.MostrarMensagem("Fale com " + perdido.getNome() + " pelo menu principal para conhecer melhor essa pessoa.");
+            Interface.Pausa(2500);
+        } else {
+            Interface.MostrarMensagem("\n\"Sinto muito, mas não posso ajudar agora.\" " + perdido.getNome() + ", desapontado(a), se afasta para dentro da floresta.");
+            Interface.Pausa(2000);
+        }
+    }
+
+    // Conversa com a pessoa que acompanha o jogador (sem mostrar a ficha completa)
+    public static void ConversarComCompanheiro(FichaRpg ficha) {
+        companheiros.Companheiro comp = ficha.getCompanheiro();
+        if (comp == null) return;
+
+        while (true) {
+            Interface.barraDivisoria();
+            Interface.MostrarMensagem("\n--- CONVERSAR COM " + comp.getNome().toUpperCase() + " ---");
+            comp.mostrarResumo();
+
+            System.out.println("\n1. Ouvir o que ela(e) tem a dizer");
+            System.out.println("2. Ver os itens que ela(e) carrega");
+
+            boolean podeCurar = ficha.temItem("Kit Médico")
+                    && comp.getFicha().getVidaPersonagem() < comp.getFicha().getVidaMaxima();
+            if (podeCurar) {
+                System.out.println("3. Curar " + comp.getNome() + " com um Kit Médico");
+            }
+            System.out.println("0. Voltar");
+
+            int escolha = Interface.lerInteiro();
+            if (escolha == 0) return;
+            if (escolha == 1) {
+                comp.falarSobreClasse();
+            } else if (escolha == 2) {
+                comp.mostrarItens();
+                Interface.Pausa(1500);
+            } else if (escolha == 3 && podeCurar) {
+                curarCompanheiroComKit(ficha);
+            } else {
+                Interface.ExibirErro("Opção inválida!");
+            }
+        }
+    }
+
+    // Usa um Kit Médico do inventário do jogador para curar o companheiro
+    private static void curarCompanheiroComKit(FichaRpg ficha) {
+        companheiros.Companheiro comp = ficha.getCompanheiro();
+        if (comp == null || !ficha.temItem("Kit Médico")) return;
+
+        FichaRpg cf = comp.getFicha();
+        int cura = MecanicasRpg.rolarDado(4);
+        int antes = cf.getVidaPersonagem();
+        cf.setVidaPersonagem(Math.min(antes + cura, cf.getVidaMaxima()));
+        int curaReal = cf.getVidaPersonagem() - antes;
+        Interface.MostrarMensagem("\nVocê usa um Kit Médico em " + comp.getNome() + " e ela(e) recupera " + curaReal + " de vida! Vida: " + cf.getVidaPersonagem() + "/" + cf.getVidaMaxima());
+
+        // Consome o kit do inventário do jogador
+        for (int i = 0; i < ficha.getInventario().size(); i++) {
+            ItemRpg item = ficha.getInventario().get(i);
+            if (item.getNome().equals("Kit Médico")) {
+                item.setQuantidade(item.getQuantidade() - 1);
+                if (item.getQuantidade() <= 0) {
+                    ficha.getInventario().remove(i);
+                    Interface.MostrarMensagem("Seu Kit Médico acabou.");
+                } else {
+                    Interface.MostrarMensagem("Restam " + item.getQuantidade() + "x Kit Médico.");
+                }
+                break;
+            }
+        }
+        Interface.Pausa(2000);
     }
 
     // ==================== SORTEIO DE ENCONTRO ====================
@@ -503,6 +634,16 @@ public class Floresta {
         List<int[]> ordem = new ArrayList<>();
         ordem.add(new int[]{iniciativaJogador, 0});
 
+        // Companheiro (se presente e consciente) também entra na iniciativa
+        companheiros.Companheiro comp = ficha.getCompanheiro();
+        if (comp != null && comp.getFicha().getVidaPersonagem() > 0) {
+            int dadoComp = MecanicasRpg.rolarDado(20);
+            int iniciativaComp = dadoComp + comp.getFicha().getDestrezaTeste();
+            Interface.MostrarMensagem("-> Iniciativa [" + comp.getNomeCompleto() + "]: " + dadoComp + " (Dado) + " + comp.getFicha().getDestrezaTeste() + " (Destreza) = " + iniciativaComp);
+            Interface.Pausa(1500);
+            ordem.add(new int[]{iniciativaComp, -1});
+        }
+
         for (int i = 0; i < inimigos.size(); i++) {
             Criatura c = inimigos.get(i);
             int dadoInimigo = MecanicasRpg.rolarDado(20);
@@ -517,7 +658,14 @@ public class Floresta {
 
         StringBuilder ordemTexto = new StringBuilder();
         for (int[] token : ordem) {
-            String nomeOrdem = (token[1] == 0) ? ficha.getNomePersonagem() : rotuloCriatura(inimigos, inimigos.get(token[1] - 1));
+            String nomeOrdem;
+            if (token[1] == 0) {
+                nomeOrdem = ficha.getNomePersonagem();
+            } else if (token[1] == -1) {
+                nomeOrdem = comp != null ? comp.getNomeCompleto() : "Companheiro";
+            } else {
+                nomeOrdem = rotuloCriatura(inimigos, inimigos.get(token[1] - 1));
+            }
             if (ordemTexto.length() > 0) ordemTexto.append(" > ");
             ordemTexto.append(nomeOrdem);
         }
@@ -617,6 +765,13 @@ public class Floresta {
                     }
                     // Processa XP/drops dos inimigos que acabaram de morrer
                     processarMortes(inimigos, mortesProcessadas, ficha);
+                } else if (token[1] == -1) {
+                    // Turno do companheiro: ele age sozinho (você não controla)
+                    companheiros.Companheiro comp = ficha.getCompanheiro();
+                    if (comp != null && comp.getFicha().getVidaPersonagem() > 0) {
+                        acaoDoCompanheiro(ficha, comp, inimigos);
+                        processarMortes(inimigos, mortesProcessadas, ficha);
+                    }
                 } else {
                     Criatura c = inimigos.get(token[1] - 1);
                     if (c.getVida() > 0 && !jaAtacouNaRodada.contains(c)) {
@@ -644,7 +799,23 @@ public class Floresta {
 
                         Interface.MostrarMensagem("\n" + rotuloCriatura(inimigos, c) + " avança para atacar!");
                         Interface.Pausa(1500);
-                        c.atacarJogador(ficha, cascaGrossaAtiva[0]);
+
+                        // O inimigo pode atacar você ou o companheiro
+                        companheiros.Companheiro comp2 = ficha.getCompanheiro();
+                        boolean atacarCompanheiro = comp2 != null
+                                && comp2.getFicha().getVidaPersonagem() > 0
+                                && MecanicasRpg.rolarDado(100) <= 35;
+                        if (atacarCompanheiro) {
+                            Interface.MostrarMensagem(rotuloCriatura(inimigos, c) + " mira em " + comp2.getNomeCompleto() + "!");
+                            Interface.Pausa(1500);
+                            c.atacarJogador(comp2.getFicha(), false);
+                            if (comp2.getFicha().getVidaPersonagem() <= 0) {
+                                Interface.MostrarMensagem("\n" + comp2.getNomeCompleto() + " cai em combate!");
+                                Interface.Pausa(1500);
+                            }
+                        } else {
+                            c.atacarJogador(ficha, cascaGrossaAtiva[0]);
+                        }
                         // Inimigos podem morrer pelo reflexo da Proteção Absoluta
                         processarMortes(inimigos, mortesProcessadas, ficha);
                     }
@@ -654,6 +825,21 @@ public class Floresta {
             // Fim da rodada: o Guerreiro se recupera do Estrondo
             if (ficha.getRodadasSemHabilidade() > 0) {
                 ficha.setRodadasSemHabilidade(ficha.getRodadasSemHabilidade() - 1);
+            }
+        }
+
+        // Após o combate, o companheiro se recupera (sem morte permanente)
+        companheiros.Companheiro comp = ficha.getCompanheiro();
+        if (comp != null) {
+            FichaRpg cf = comp.getFicha();
+            if (cf.getVidaPersonagem() <= 0) {
+                Interface.MostrarMensagem("\n" + comp.getNomeCompleto() + " acorda ferido, mas não rende. Recupera parte da energia.");
+                cf.setVidaPersonagem(Math.max((int) (cf.getVidaMaxima() * 0.6), 1));
+                Interface.Pausa(2000);
+            } else if (cf.getVidaPersonagem() < cf.getVidaMaxima() * 0.3) {
+                Interface.MostrarMensagem("\n" + comp.getNomeCompleto() + " respira fundo e se recupera um pouco após o combate.");
+                cf.setVidaPersonagem(Math.max((int) (cf.getVidaMaxima() * 0.5), 1));
+                Interface.Pausa(2000);
             }
         }
 
@@ -840,6 +1026,152 @@ public class Floresta {
             }
         }
         return maisRapido;
+    }
+
+    // ==================== VEZ DO COMPANHEIRO (AUTO) ====================
+
+    // Retorna um inimigo vivo sorteado aleatoriamente
+    private static Criatura escolherAlvoAleatorio(List<Criatura> inimigos) {
+        List<Criatura> vivos = inimigosVivos(inimigos);
+        if (vivos.isEmpty()) return null;
+        return vivos.get(MecanicasRpg.rolarDado(vivos.size()) - 1);
+    }
+
+    // O companheiro age sozinho na sua vez (o jogador não controla)
+    private static void acaoDoCompanheiro(FichaRpg ficha, companheiros.Companheiro comp, List<Criatura> inimigos) {
+        FichaRpg cf = comp.getFicha();
+        if (cf.getVidaPersonagem() <= 0) return;
+
+        Criatura alvo = escolherAlvoAleatorio(inimigos);
+        if (alvo == null) return;
+
+        Interface.MostrarMensagem("\n" + comp.getNomeCompleto() + " age!");
+        Interface.Pausa(1200);
+
+        // Healer: prioriza curar o jogador quando ele está ferido; se não, cura a si mesmo
+        if (cf.getClasseDoPersonagem() instanceof classes.Healer
+                && cf.temItem("Kit Médico")
+                && cf.getManaPersonagem() >= 1) {
+            boolean jogadorFerido = ficha.getVidaPersonagem() <= (int) (ficha.getVidaMaxima() * 0.6);
+            boolean siFerido = cf.getVidaPersonagem() <= (int) (cf.getVidaMaxima() * 0.6);
+
+            if (jogadorFerido) {
+                cf.setManaPersonagem(cf.getManaPersonagem() - 1);
+                int cura = MecanicasRpg.rolarDado(4) + MecanicasRpg.rolarDado(4);
+                ficha.setVidaPersonagem(Math.min(ficha.getVidaPersonagem() + cura, ficha.getVidaMaxima()));
+                Interface.MostrarMensagem(comp.getNome() + " grita: \"Aguenta! Vou te curar!\" e usa a Medicina Reforçada!");
+                Interface.MostrarMensagem("Você recuperou " + cura + " de vida! Vida: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima());
+                Interface.Pausa(1800);
+                return;
+            }
+
+            if (siFerido) {
+                cf.setManaPersonagem(cf.getManaPersonagem() - 1);
+                int cura = MecanicasRpg.rolarDado(4);
+                cf.setVidaPersonagem(Math.min(cf.getVidaPersonagem() + cura, cf.getVidaMaxima()));
+                Interface.MostrarMensagem(comp.getNome() + " usa o Kit Médico em si mesmo(a) e restaura " + cura + " de vida.");
+                Interface.Pausa(1500);
+                return;
+            }
+        }
+
+        // Mago: tenta lançar magia quando tem mana disponível
+        if (cf.getClasseDoPersonagem() instanceof classes.Mago) {
+            habilidades.Magia bola = null;
+            habilidades.Magia pequena = null;
+            for (habilidades.Habilidade hab : cf.getHabilidades()) {
+                if (hab instanceof habilidades.Magia) {
+                    habilidades.Magia mag = (habilidades.Magia) hab;
+                    if (mag.getCustoMana() > 0 && bola == null) bola = mag;
+                    if (mag.getCustoMana() == 0 && pequena == null) pequena = mag;
+                }
+            }
+
+            int aleatorio = MecanicasRpg.rolarDado(100);
+            habilidades.Magia magiaUsar = null;
+            if (bola != null && cf.getManaPersonagem() >= bola.getCustoMana() && aleatorio <= 60) {
+                magiaUsar = bola;
+            } else if (pequena != null && aleatorio <= 30) {
+                magiaUsar = pequena;
+            }
+
+            if (magiaUsar != null) {
+                cf.setManaPersonagem(cf.getManaPersonagem() - magiaUsar.getCustoMana());
+                Interface.MostrarMensagem(comp.getNomeCompleto() + " conjura " + magiaUsar.getNome() + "!");
+                Interface.Pausa(1500);
+                int dano = 0;
+                for (int i = 0; i < magiaUsar.getQuantidadeDano(); i++) {
+                    dano += MecanicasRpg.rolarDado(magiaUsar.getDadoDano());
+                }
+                Interface.MostrarMensagem("-> Dano: " + dano + "!");
+                Interface.Pausa(1200);
+                alvo.setVida(alvo.getVida() - dano);
+                Interface.MostrarMensagem(rotuloCriatura(inimigos, alvo) + " agora tem " + Math.max(0, alvo.getVida()) + " de vida.");
+                Interface.Pausa(1200);
+                return;
+            }
+        }
+
+        // Ataque físico com a arma equipada
+        Interface.MostrarMensagem(comp.getNome() + " avança para atacar!");
+        Interface.Pausa(1200);
+        atacarComArmaDoCompanheiro(cf, alvo, inimigos);
+    }
+
+    // Ataque físico do companheiro usando a própria arma (roll dotado de crítico)
+    private static void atacarComArmaDoCompanheiro(FichaRpg cf, Criatura alvo, List<Criatura> inimigos) {
+        Arma arma = cf.getArmaEquipada();
+        if (arma == null && cf.getClasseDoPersonagem() != null) {
+            arma = cf.getClasseDoPersonagem().getAtaqueDesarmado();
+        }
+
+        int atributoBonus;
+        String nomeAtributo;
+        if (arma != null && arma.isAgil()) {
+            if (cf.getForca() >= cf.getDestreza()) {
+                atributoBonus = cf.getForca();
+                nomeAtributo = "Força";
+            } else {
+                atributoBonus = cf.getDestreza();
+                nomeAtributo = "Destreza";
+            }
+        } else if (arma != null && arma.getAtributoAtaque().equals("Destreza")) {
+            atributoBonus = cf.getDestreza();
+            nomeAtributo = "Destreza";
+        } else {
+            atributoBonus = cf.getForca();
+            nomeAtributo = "Força";
+        }
+
+        int dadoAtaque = MecanicasRpg.rolarDado(20);
+        int totalAtaque = dadoAtaque + atributoBonus;
+        boolean critico = dadoAtaque == 20;
+        Interface.MostrarMensagem("-> Ataque [" + (arma != null ? arma.getNome() : "Soco") + "]: " + dadoAtaque + " (Dado) + " + atributoBonus + " (" + nomeAtributo + ") = " + totalAtaque + (critico ? " [CRÍTICO!]" : ""));
+        Interface.Pausa(1500);
+
+        if (totalAtaque >= alvo.getDefesa()) {
+            Interface.MostrarMensagem("-> Acertou! (defesa do alvo: " + alvo.getDefesa() + ")");
+            Interface.Pausa(1200);
+            int dano = 0;
+            int dadosTotais = arma != null ? arma.getQuantidadeDanoArma() : 1;
+            int dadoDano = arma != null ? arma.getDadoDanoArma() : 4;
+            if (critico) dadosTotais *= 2;
+            StringBuilder roladas = new StringBuilder();
+            for (int i = 0; i < dadosTotais; i++) {
+                int d = MecanicasRpg.rolarDado(dadoDano);
+                dano += d;
+                if (roladas.length() > 0) roladas.append(" + ");
+                roladas.append(d);
+            }
+            dano += atributoBonus;
+            Interface.MostrarMensagem("-> Dados Rolados: " + roladas + " = " + dano + " (Dano: " + dadosTotais + "d" + dadoDano + " + " + nomeAtributo + ": " + atributoBonus + ")");
+            Interface.Pausa(1500);
+            alvo.setVida(alvo.getVida() - dano);
+            Interface.MostrarMensagem(rotuloCriatura(inimigos, alvo) + " agora tem " + Math.max(0, alvo.getVida()) + " de vida.");
+        } else {
+            Interface.MostrarMensagem("-> Errou! (defesa do alvo: " + alvo.getDefesa() + ")");
+        }
+        Interface.Pausa(1200);
     }
 
     // Verifica se a habilidade passiva ainda pode ser ativada nesta rodada
@@ -2087,22 +2419,53 @@ public class Floresta {
             ficha.setVidaPersonagem(Math.min(ficha.getVidaPersonagem() + cura, ficha.getVidaMaxima()));
             Interface.MostrarMensagem("Você comeu uma fruta e recuperou " + cura + " de vida! Vida atual: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima());
         } else if (itemEscolhido.getNome().equals("Kit Médico")) {
-            int cura = MecanicasRpg.rolarDado(4);
-            ficha.setVidaPersonagem(ficha.getVidaPersonagem() + cura);
-            Interface.MostrarMensagem("Você recuperou " + cura + " de vida! Vida atual: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima());
+            // Pode usar o Kit em si ou no companheiro (se estiver ferido)
+            companheiros.Companheiro comp = ficha.getCompanheiro();
+            boolean podeUsarEmSi = ficha.getVidaPersonagem() < ficha.getVidaMaxima();
+            boolean podeUsarCompanheiro = comp != null && comp.getFicha().getVidaPersonagem() < comp.getFicha().getVidaMaxima();
 
-            if (temHabilidade(ficha, "Cura Reforçada") && ficha.getManaPersonagem() >= 1) {
-                System.out.println("\nDeseja gastar 1 de mana para curar 2d4 extras com Cura Reforçada?");
+            boolean usarNoCompanheiro = false;
+            if (podeUsarEmSi && podeUsarCompanheiro) {
+                System.out.println("\nEm quem deseja usar o Kit Médico?");
+                System.out.println("1. Em você");
+                System.out.println("2. Em " + comp.getNome());
+                int quem = Interface.lerInteiro();
+                usarNoCompanheiro = quem == 2;
+            } else if (podeUsarCompanheiro) {
+                System.out.println("\nUsar o Kit Médico em " + comp.getNome() + "?");
                 System.out.println("1. Sim");
                 System.out.println("2. Não");
-                int usarCura = Interface.lerInteiro();
+                int quem = Interface.lerInteiro();
+                usarNoCompanheiro = quem == 1;
+            } else if (!podeUsarEmSi) {
+                Interface.ExibirErro("Sua vida já está no máximo!");
+                Interface.Pausa(1500);
+                return;
+            }
 
-                if (usarCura == 1) {
-                    ficha.setManaPersonagem(ficha.getManaPersonagem() - 1);
-                    int curaExtra = MecanicasRpg.rolarDado(4) + MecanicasRpg.rolarDado(4);
-                    ficha.setVidaPersonagem(ficha.getVidaPersonagem() + curaExtra);
-                    Interface.MostrarMensagem("Cura Reforçada: você recuperou +" + curaExtra + " de vida! Vida atual: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima());
-                    Interface.Pausa(1500);
+            if (usarNoCompanheiro) {
+                FichaRpg cf = comp.getFicha();
+                int cura = MecanicasRpg.rolarDado(4);
+                cf.setVidaPersonagem(Math.min(cf.getVidaPersonagem() + cura, cf.getVidaMaxima()));
+                Interface.MostrarMensagem("Você usou o Kit Médico em " + comp.getNome() + " e ela(e) recuperou " + cura + " de vida! Vida: " + cf.getVidaPersonagem() + "/" + cf.getVidaMaxima());
+            } else {
+                int cura = MecanicasRpg.rolarDado(4);
+                ficha.setVidaPersonagem(ficha.getVidaPersonagem() + cura);
+                Interface.MostrarMensagem("Você recuperou " + cura + " de vida! Vida atual: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima());
+
+                if (temHabilidade(ficha, "Cura Reforçada") && ficha.getManaPersonagem() >= 1) {
+                    System.out.println("\nDeseja gastar 1 de mana para curar 2d4 extras com Cura Reforçada?");
+                    System.out.println("1. Sim");
+                    System.out.println("2. Não");
+                    int usarCura = Interface.lerInteiro();
+
+                    if (usarCura == 1) {
+                        ficha.setManaPersonagem(ficha.getManaPersonagem() - 1);
+                        int curaExtra = MecanicasRpg.rolarDado(4) + MecanicasRpg.rolarDado(4);
+                        ficha.setVidaPersonagem(ficha.getVidaPersonagem() + curaExtra);
+                        Interface.MostrarMensagem("Cura Reforçada: você recuperou +" + curaExtra + " de vida! Vida atual: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima());
+                        Interface.Pausa(1500);
+                    }
                 }
             }
         }

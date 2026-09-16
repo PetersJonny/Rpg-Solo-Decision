@@ -164,6 +164,15 @@ public class Main {
                         }
                         break;
                     case 5:
+                        if (ficha.temCompanheiro()) {
+                            eventos.Floresta.ConversarComCompanheiro(ficha);
+                        } else {
+                            Interface.MostrarMensagem("\nEncerrando o jogo... Até a próxima aventura!");
+                            jogando = false;
+                            jogoAberto = false;
+                        }
+                        break;
+                    case 6:
                         Interface.MostrarMensagem("\nEncerrando o jogo... Até a próxima aventura!");
                         jogando = false;
                         jogoAberto = false;

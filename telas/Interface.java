@@ -169,13 +169,21 @@ public class Interface {
         if (ficha.isCansado()) {
             status += " - CANSADO (-1 em testes até dormir)";
         }
+        if (ficha.temCompanheiro()) {
+            status += "\nCompanheiro(a): " + ficha.getCompanheiro().getNome() + " (" + ficha.getCompanheiro().getClasseNome() + ", Nível " + ficha.getCompanheiro().getFicha().getNivel() + ")";
+        }
         System.out.println(status);
         System.out.println("\nO que você deseja fazer?");
         System.out.println("\n1. Ver ficha");
         System.out.println("2. Explorar a Floresta");
         System.out.println("3. Buscar Recursos na Floresta");
         System.out.println("4. Construção (Cabana / Dormir)");
-        System.out.println("5. Encerrar jogo");
+        if (ficha.temCompanheiro()) {
+            System.out.println("5. Conversar com " + ficha.getCompanheiro().getNome());
+            System.out.println("6. Encerrar jogo");
+        } else {
+            System.out.println("5. Encerrar jogo");
+        }
         int escolha = lerInteiro();
         return escolha;
     }

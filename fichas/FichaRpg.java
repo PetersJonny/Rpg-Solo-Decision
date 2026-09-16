@@ -79,6 +79,9 @@ public class FichaRpg {
     private boolean temCabana = false;
     private boolean naCabana = false;
 
+    // Companheiro (pessoa perdida que o jogador acolheu)
+    private companheiros.Companheiro companheiro = null;
+
     // Sala de Treino
     private boolean temSalaTreino = false;
     private boolean naSalaTreino = false;
@@ -390,6 +393,16 @@ public class FichaRpg {
     public boolean isCansado() { return cansado; }
     public boolean isTemCabana() { return temCabana; }
     public boolean isNaCabana() { return naCabana; }
+    public boolean temCompanheiro() { return companheiro != null; }
+    public companheiros.Companheiro getCompanheiro() { return companheiro; }
+    public void setCompanheiro(companheiros.Companheiro companheiro) { this.companheiro = companheiro; }
+    public void removerCompanheiro() { this.companheiro = null; }
+    public boolean companheiroQuerPartir() { return companheiro != null && companheiro.isPartindo(); }
+    public void registrarDormidaDoCompanheiro() {
+        if (companheiro != null) {
+            companheiro.aoDormir();
+        }
+    }
     public boolean isTemSalaTreino() { return temSalaTreino; }
     public boolean isNaSalaTreino() { return naSalaTreino; }
     public boolean isSalaJuntoCabana() { return salaJuntoCabana; }
@@ -419,9 +432,13 @@ public class FichaRpg {
         boolean virou = false;
         while (progressoPeriodo >= 3) {
             progressoPeriodo -= 3;
+            boolean eraNoite = ehNoite;
             ehNoite = !ehNoite;
             if (ehNoite) {
                 diasSemDormir++;
+            } else if (eraNoite && companheiro != null) {
+                // A noite terminou: o companheiro dormiu na cabana
+                registrarDormidaDoCompanheiro();
             }
             // Decrementa bônus de treino a cada período que se inicia
             if (treinoBonusPeriodosRestantes > 0) {
@@ -449,6 +466,7 @@ public class FichaRpg {
         progressoPeriodo = 0;
         diasSemDormir = 0;
         cansado = false;
+        registrarDormidaDoCompanheiro();
         return true;
     }
 
