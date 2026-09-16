@@ -15,6 +15,10 @@ import telas.Interface;
 
 public class Vendedor {
 
+    // Cores ANSI (mesmas usadas na Interface)
+    private static final String RESET = "\u001B[0m";
+    private static final String CIANO = "\u001B[36m";
+
     // Categorias (usadas só pela loja; não aparecem no jogo)
     private static final List<String> GERAL = List.of(
             "Faca", "Machado", "Machadinha", "Martelo", "Mangual", "Arco", "Flechas", "Lança",
@@ -39,6 +43,9 @@ public class Vendedor {
         Interface.MostrarMensagem("\"Grandes novidades, aventureiro! Tenho tudo o que se pode sobreviver por aqui... e compro o que sobra.\"");
         Interface.Pausa(2500);
 
+        // O estoque é sorteado UMA vez por encontro; só um novo vendedor re-sorteia
+        Map<String, Integer> estoque = montarEstoque(ficha);
+
         while (true) {
             Interface.barraDivisoria();
             Interface.MostrarMensagem("\n--- VENDEDOR AMBULANTE ---");
@@ -49,7 +56,7 @@ public class Vendedor {
 
             int escolha = Interface.lerInteiro();
             if (escolha == 1) {
-                Comprar(ficha);
+                Comprar(ficha, estoque);
             } else if (escolha == 2) {
                 Vender(ficha);
             } else if (escolha == 3) {
@@ -103,8 +110,7 @@ public class Vendedor {
         return estoque;
     }
 
-    private static void Comprar(FichaRpg ficha) {
-        Map<String, Integer> estoque = montarEstoque(ficha);
+    private static void Comprar(FichaRpg ficha, Map<String, Integer> estoque) {
 
         while (true) {
             if (estoque.isEmpty()) {
@@ -151,6 +157,25 @@ public class Vendedor {
             }
 
             int custo = preco * qtdComprar;
+
+            // Mostra a descrição e pede confirmação antes da compra
+            ItemRpg itemDetalhe = criarItem(nome);
+            System.out.println("\n" + CIANO + "-- " + nome.toUpperCase() + " (x" + qtdComprar + ") --" + RESET);
+            if (itemDetalhe != null) {
+                System.out.println("Descrição: " + itemDetalhe.getDescricao());
+            }
+            System.out.println("Preço: " + custo + " ouro");
+            System.out.println(CIANO + "-----------------------" + RESET);
+            System.out.println("\nDeseja comprar este item?");
+            System.out.println("1. Sim");
+            System.out.println("2. Não");
+            int confirmar = Interface.lerInteiro();
+            if (confirmar != 1) {
+                Interface.MostrarMensagem("\nCompra cancelada.");
+                Interface.Pausa(1000);
+                continue;
+            }
+
             if (!ficha.gastarOuro(custo)) {
                 Interface.ExibirErro("Ouro insuficiente! (Precisa de " + custo + ")");
                 Interface.Pausa(1500);

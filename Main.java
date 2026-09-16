@@ -153,9 +153,15 @@ public class Main {
                         break;
                     case 3:
                         eventos.Floresta.BuscarRecursos(ficha);
+                        if (ficha.getVidaPersonagem() <= 0) {
+                            personagemFaleceu = true;
+                        }
                         break;
                     case 4:
                         eventos.Floresta.MenuConstrucao(ficha);
+                        if (ficha.getVidaPersonagem() <= 0) {
+                            personagemFaleceu = true;
+                        }
                         break;
                     case 5:
                         Interface.MostrarMensagem("\nEncerrando o jogo... Até a próxima aventura!");

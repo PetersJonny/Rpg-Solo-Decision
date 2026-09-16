@@ -140,7 +140,7 @@ public class Interface {
 
     public static int MenuEscolherClasse() {
         barraDivisoria();
-        System.out.println("\n Escolha entre uma das 3 classes abaixo: \n 1.Mago (só pode usar cajado, conjura magias poderosas, porém é mais fragil). \n 2.Guerreiro (só pode usar espada e atacar corpo a corpo, porém é mais resistente). \n 3.Healer (tem poderes de cura, pode curar a si mesmo e aos outros, tem uma vida mediana).\n\n0.Voltar");
+        System.out.println("\n Escolha entre uma das 3 classes abaixo: \n 1.Mago (só pode usar cajado, conjura magias poderosas, porém é mais frágil). \n 2.Guerreiro (só pode usar espada e atacar corpo a corpo, porém é mais resistente). \n 3.Healer (tem poderes de cura, pode curar a si mesmo e aos outros, tem uma vida mediana).\n\n0.Voltar");
         int escolha = lerInteiro();
         return escolha;
     }
@@ -167,14 +167,14 @@ public class Interface {
         String periodo = ficha.isEhNoite() ? "NOITE" : "DIA";
         String status = "[ " + periodo + " - " + (3 - ficha.getProgressoPeriodo()) + "/3 para virar ]";
         if (ficha.isCansado()) {
-            status += " - CANÇADO (-1 em testes até dormir)";
+            status += " - CANSADO (-1 em testes até dormir)";
         }
         System.out.println(status);
         System.out.println("\nO que você deseja fazer?");
         System.out.println("\n1. Ver ficha");
         System.out.println("2. Explorar a Floresta");
         System.out.println("3. Buscar Recursos na Floresta");
-        System.out.println("4. Construção (Barraca / Dormir)");
+        System.out.println("4. Construção (Cabana / Dormir)");
         System.out.println("5. Encerrar jogo");
         int escolha = lerInteiro();
         return escolha;
@@ -224,7 +224,7 @@ public class Interface {
             if (eventos.Floresta.ehItemConsumivel(itemEscolhido)) {
                 System.out.println("\nDeseja usar este item?");
                 System.out.println("1. Sim");
-                System.out.println("2. Não voltar");
+                System.out.println("2. Não usar");
                 int usar = lerInteiro();
 
                 if (usar == 1) {
@@ -324,7 +324,10 @@ public class Interface {
         System.out.println("\n --------FICHA-------- \n\nNome: " + ficha.getNomePersonagem() + "\t\tNível: " + ficha.getNivel() + (ficha.getNivel() < 10 ? " (XP: " + ficha.getXp() + "/" + fichas.FichaRpg.getXpNecessaria(ficha.getNivel()) + ")" : " (XP: " + ficha.getXp() + " - Nível máximo)") + "\nDono da ficha: " + ficha.getNomePessoa() + "\t\tClasse: " + nomeDaClasse + "\nVida: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima() + "\t\tMana: " + ficha.getManaPersonagem() + "/" + ficha.getManaMaxima() + "\nOuro: " + ficha.getOuro() + "\n\nAtributos: \nConstituição: " + ficha.getConstituicao() + "\nDestreza: " + ficha.getDestreza() + "\nForça: " + ficha.getForca() + "\nSabedoria: " + ficha.getSabedoria() + "\nIntelecto: " + ficha.getIntelecto() + "\nPresença: " + ficha.getPresenca() + "\n\nCombate: " + combate + "\n\nDefesa: " + ficha.getDefesa());
 
         System.out.println("\nPeríodo: " + (ficha.isEhNoite() ? "Noite" : "Dia") + " (" + (3 - ficha.getProgressoPeriodo()) + "/3 para virar)");
-        System.out.println("Barraca: " + (ficha.isTemBarraca() ? "Montada" : "Não") + " | Cabana: " + (ficha.isTemCabana() ? "Construída" : "Não") + " | Dias sem dormir: " + ficha.getDiasSemDormir() + (ficha.isCansado() ? " (CANÇADO: -1 em testes)" : ""));
+        String cabanaStatus = !ficha.isTemCabana()
+                ? "Não construída"
+                : (ficha.isNaCabana() ? "Construída (você está nela)" : "Construída (você está longe dela)");
+        System.out.println("Cabana: " + cabanaStatus + " | Dias sem dormir: " + ficha.getDiasSemDormir() + (ficha.isCansado() ? " (CANSADO: -1 em testes)" : ""));
         
         System.out.println("\nInventário:");
         if (ficha.getInventario().isEmpty()) {

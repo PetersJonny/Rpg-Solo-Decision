@@ -13,7 +13,8 @@ public class Mago extends ClasseRpg {
         this.itensIniciais.add(new Consumivel("Poção de Mana", "Restaura 5 pontos de mana. É consumida após o uso.", 1));
         
         // Magia Base
-        this.habilidadesIniciais.add(new habilidades.Magia("Bola Elementar (" + elemento + ")", "Lança uma esfera de " + elemento.toLowerCase() + " que causa 2d8 de dano do elemento escolhido.", 3, 2, 8));
+        this.habilidadesIniciais.add(new habilidades.Magia("Bola Elementar (" + elemento + ")", "Lança uma esfera de " + elemento.toLowerCase() + " que causa 3d8 de dano do elemento escolhido.", 3, 3, 8));
+        this.habilidadesIniciais.add(new habilidades.Magia("Pequena Magia (" + elemento + ")", "Lança uma pequena carga de " + elemento.toLowerCase() + " que causa 2d8 de dano do elemento escolhido. Não gasta mana.", 0, 2, 8));
 
         // Escolhas de habilidade por nível
         this.escolhasNivel.put(5, java.util.List.of(

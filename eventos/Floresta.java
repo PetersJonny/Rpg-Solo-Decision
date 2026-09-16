@@ -46,13 +46,14 @@ public class Floresta {
         Interface.MostrarMensagem("O vento frio corta entre as árvores e você observa o ambiente ao redor...");
         Interface.Pausa(2000);
 
-        // 40% de chance de haver um encontro
-        if (MecanicasRpg.rolarDado(100) <= 40) {
-            EventoAnimal(ficha);
-        } else {
-            Interface.MostrarMensagem("\nDesta vez a floresta parece tranquila. Você não cruza com nenhuma ameaça.");
-            Interface.Pausa(2000);
+        if (ficha.isTemCabana() && ficha.isNaCabana()) {
+            Interface.MostrarMensagem("\nVocê deixa sua cabana para trás e se embrenha na floresta.");
+            Interface.Pausa(1500);
+            ficha.sairDaCabana();
         }
+
+        // Sempre há um encontro ao explorar a floresta (vendedor, fada ou criatura)
+        EventoAnimal(ficha);
 
         avancarTempoComMensagens(ficha, 1);
     }
@@ -64,10 +65,16 @@ public class Floresta {
         Interface.MostrarMensagem("\nVocê percorre a floresta em busca de materiais úteis...");
         Interface.Pausa(2000);
 
+        if (ficha.isTemCabana() && ficha.isNaCabana()) {
+            Interface.MostrarMensagem("\nVocê deixa sua cabana para trás e se afasta em direção aos bosques.");
+            Interface.Pausa(1500);
+            ficha.sairDaCabana();
+        }
+
         boolean achouAlgo = false;
         achouAlgo |= coletarRecurso(ficha, "Madeira", 40, "Troncos e galhos fortes para construção.");
         achouAlgo |= coletarRecurso(ficha, "Folha", 55, "Folhas secas e verdes, úteis como cobertura.");
-        achouAlgo |= coletarRecurso(ficha, "Pedra", 20, "Pedras arredondadas de rio, boas para construir.");
+        achouAlgo |= coletarRecurso(ficha, "Pedra", 35, "Pedras arredondadas de rio, boas para construir.");
         achouAlgo |= coletarRecurso(ficha, "Frutas", 15, "Frutas silvestres comestíveis. Cada uma cura 1d2 de vida.");
 
         if (!achouAlgo) {
@@ -75,11 +82,12 @@ public class Floresta {
             Interface.Pausa(2000);
         }
 
-        // Cabana automática: 7 madeiras + 10 folhas + 4 pedras
-        if (ficha.verificarCabanaAutomatica()) {
-            Interface.MostrarMensagem("\nCom 7 madeiras, 10 folhas e 4 pedras, você constrói uma CABANA!");
-            Interface.MostrarMensagem("Agora você tem um abrigo para dormir à noite.");
-            Interface.Pausa(2500);
+        // 30% de chance de cruzar com uma criatura (50% durante a noite)
+        int chanceEncontro = ficha.isEhNoite() ? 50 : 30;
+        if (MecanicasRpg.rolarDado(100) <= chanceEncontro) {
+            Interface.MostrarMensagem("\nEnquanto recolhe materiais, você percebe um movimento suspeito nas sombras...");
+            Interface.Pausa(1500);
+            EventoAnimal(ficha);
         }
 
         avancarTempoComMensagens(ficha, 1);
@@ -104,10 +112,19 @@ public class Floresta {
             Interface.barraDivisoria();
             System.out.println("\n--- CONSTRUÇÃO ---");
             Interface.MostrarMensagem("Período: " + (ficha.isEhNoite() ? "Noite" : "Dia"));
-            Interface.MostrarMensagem("Barraca: " + (ficha.isTemBarraca() ? "Montada" : "Não montada") + " | Cabana: " + (ficha.isTemCabana() ? "Construída" : "Não construída"));
-            Interface.MostrarMensagem("Materiais: Madeira x" + ficha.getQuantidadeDe("Madeira") + " | Folha x" + ficha.getQuantidadeDe("Folha") + " | Pedra x" + ficha.getQuantidadeDe("Pedra"));
-            System.out.println("\n1. Montar Barraca (consome 2/3 do dia ou da noite)");
-            System.out.println("2. Dormir (só à noite, com barraca ou cabana montada; cura metade da vida e mana)");
+            if (ficha.isTemCabana()) {
+                Interface.MostrarMensagem("Você está: " + (ficha.isNaCabana() ? "NA CABANA" : "LONGE da cabana (na floresta)"));
+            } else {
+                Interface.MostrarMensagem("Cabana: Não construída.");
+                Interface.MostrarMensagem("Para montar, gaste: 7 Madeiras | 10 Folhas | 4 Pedras (você tem: Madeira x" + ficha.getQuantidadeDe("Madeira") + " | Folha x" + ficha.getQuantidadeDe("Folha") + " | Pedra x" + ficha.getQuantidadeDe("Pedra") + ")");
+            }
+
+            if (!ficha.isTemCabana()) {
+                System.out.println("1. Montar Cabana (gasta 7 Madeiras, 10 Folhas e 4 Pedras; consome 2/3 do período)");
+            } else if (!ficha.isNaCabana()) {
+                System.out.println("1. Voltar para a Cabana (consome 1/3 do período)");
+            }
+            System.out.println("2. Dormir (só à noite, estando na cabana; recupera metade da vida e mana)");
             System.out.println("0. Voltar");
 
             int escolha = Interface.lerInteiro();
@@ -115,23 +132,51 @@ public class Floresta {
             if (escolha == 0) return;
 
             if (escolha == 1) {
-                if (ficha.isTemBarraca()) {
-                    Interface.ExibirErro("Você já tem uma barraca montada!");
+                if (!ficha.isTemCabana()) {
+                    if (ficha.montarCabana()) {
+                        Interface.MostrarMensagem("\nVocê constrói sua CABANA, gastando 7 madeiras, 10 folhas e 4 pedras!");
+                        Interface.MostrarMensagem("Agora você tem um abrigo seguro e pode dormir à noite (estando nela).");
+                        Interface.Pausa(2500);
+                        avancarTempoComMensagens(ficha, 2);
+                    } else {
+                        Interface.ExibirErro("Faltam materiais! Você precisa de 7 Madeiras, 10 Folhas e 4 Pedras.");
+                        Interface.Pausa(1500);
+                    }
+                } else if (!ficha.isNaCabana()) {
+                    Interface.MostrarMensagem("\nVocê segue pelo caminho de volta para sua cabana...");
                     Interface.Pausa(1500);
-                    continue;
+
+                    // Durante a volta há chance de encontro (como ao buscar recursos)
+                    int chanceEncontro = ficha.isEhNoite() ? 50 : 30;
+                    if (MecanicasRpg.rolarDado(100) <= chanceEncontro) {
+                        Interface.MostrarMensagem("\nDurante o trajeto, algo se agita entre as árvores...");
+                        Interface.Pausa(1500);
+                        EventoAnimal(ficha);
+                        if (ficha.getVidaPersonagem() <= 0) {
+                            return;
+                        }
+                    }
+
+                    ficha.voltarParaCabana();
+                    Interface.MostrarMensagem("\nVocê chega em sua cabana, levando 1/3 do período.");
+                    Interface.Pausa(2000);
+                    avancarTempoComMensagens(ficha, 1);
+                } else {
+                    Interface.ExibirErro("Opção inválida!");
                 }
-                ficha.construirBarraca();
-                Interface.MostrarMensagem("\nVocê monta uma barraca improvisada entre as árvores. Agora pode dormir à noite.");
-                Interface.Pausa(2000);
-                avancarTempoComMensagens(ficha, 2);
             } else if (escolha == 2) {
                 if (!ficha.isEhNoite()) {
-                    Interface.ExibirErro("Você só consegue dormir quando está de noite. (barraca/cabana vão te proteger)");
+                    Interface.ExibirErro("Você só consegue dormir quando está de noite.");
                     Interface.Pausa(1500);
                     continue;
                 }
-                if (!ficha.isTemBarraca() && !ficha.isTemCabana()) {
-                    Interface.ExibirErro("Você precisa de uma barraca ou cabana para dormir à noite!");
+                if (!ficha.isTemCabana()) {
+                    Interface.ExibirErro("Você ainda não tem uma cabana para dormir! Monte uma no menu de construção (opção 1).");
+                    Interface.Pausa(1500);
+                    continue;
+                }
+                if (!ficha.isNaCabana()) {
+                    Interface.ExibirErro("Você está longe da cabana! Volte para ela primeiro (opção 1, custa 1/3 do período).");
                     Interface.Pausa(1500);
                     continue;
                 }
@@ -140,8 +185,7 @@ public class Floresta {
                 ficha.dormir();
                 int curaVida = ficha.getVidaPersonagem() - vidaAntes;
                 int curaMana = ficha.getManaPersonagem() - manaAntes;
-                Interface.MostrarMensagem("\nVocê dorme profundamente em sua "
-                        + (ficha.isTemCabana() ? "cabana" : "barraca") + "...");
+                Interface.MostrarMensagem("\nVocê dorme profundamente em sua cabana...");
                 Interface.MostrarMensagem("Recuperou " + curaVida + " de vida e " + curaMana + " de mana! Vida: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima() + " | Mana: " + ficha.getManaPersonagem() + "/" + ficha.getManaMaxima());
                 Interface.MostrarMensagem("O sol nasce! Você acorda descansado e sem cansaço.");
                 Interface.Pausa(2500);
@@ -282,7 +326,7 @@ public class Floresta {
         c.setXpGanho(10);
         c.adicionarAtaque("Facada", "", 1, 4);
         c.adicionarAtaque("Soco", "", 1, 3);
-        c.setOuroDrop(9, 27, 100);
+        c.setOuroDrop(4, 17, 100);
         c.adicionarDrop("Faca", 1, 1, 35);
         return c;
     }
@@ -1305,7 +1349,7 @@ public class Floresta {
                     extra = " - Dano: " + magia.getQuantidadeDano() + "d" + magia.getDadoDano();
                 }
             }
-            System.out.println((i + 1) + ". " + hab.getNome() + " (Custo: " + custoEfetivoMagia(ficha, hab) + " Mana)" + extra);
+            System.out.println((i + 1) + ". " + hab.getNome() + " (Custo: " + (custoEfetivoMagia(ficha, hab) == 0 ? "Grátis" : custoEfetivoMagia(ficha, hab) + " Mana") + ")" + extra);
         }
         System.out.println("0. Voltar");
 
@@ -1322,6 +1366,15 @@ public class Floresta {
 
         habilidades.Habilidade habEscolhida = ativas.get(escolha - 1);
 
+        // Magias do Mago só podem ser usadas se o personagem tiver um Cajado
+        if (habEscolhida instanceof habilidades.Magia
+                && ficha.getClasseDoPersonagem() instanceof classes.Mago
+                && !ficha.temItem("Cajado")) {
+            Interface.ExibirErro("Você precisa de um Cajado para usar suas magias!");
+            Interface.Pausa(1500);
+            return -1;
+        }
+
         if (ficha.getManaPersonagem() < habEscolhida.getCustoMana()) {
             Interface.ExibirErro("Mana insuficiente! Precisa de " + habEscolhida.getCustoMana() + " de mana.");
             Interface.Pausa(1500);
@@ -1331,9 +1384,9 @@ public class Floresta {
         return ficha.getHabilidades().indexOf(habEscolhida);
     }
 
-    // Custo de mana efetivo de uma habilidade (Pequeno Grimório reduz 1 no custo das magias)
+    // Custo de mana efetivo de uma habilidade (Pequeno Grimório reduz 1 no custo das magias pagas)
     private static int custoEfetivoMagia(FichaRpg ficha, habilidades.Habilidade hab) {
-        if (hab instanceof habilidades.Magia && ficha.temItem("Pequeno Grimório")) {
+        if (hab instanceof habilidades.Magia && hab.getCustoMana() > 0 && ficha.temItem("Pequeno Grimório")) {
             return Math.max(1, hab.getCustoMana() - 1);
         }
         return hab.getCustoMana();

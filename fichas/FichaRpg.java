@@ -76,8 +76,8 @@ public class FichaRpg {
     private int progressoPeriodo = 0;
     private int diasSemDormir = 0;
     private boolean cansado = false;
-    private boolean temBarraca = false;
     private boolean temCabana = false;
+    private boolean naCabana = false;
 
     // Construtor
     public FichaRpg(String nomePessoa) {
@@ -381,11 +381,25 @@ public class FichaRpg {
     public int getProgressoPeriodo() { return progressoPeriodo; }
     public int getDiasSemDormir() { return diasSemDormir; }
     public boolean isCansado() { return cansado; }
-    public boolean isTemBarraca() { return temBarraca; }
     public boolean isTemCabana() { return temCabana; }
+    public boolean isNaCabana() { return naCabana; }
+
+    // Sair da cabana para explorar/colher recursos
+    public void sairDaCabana() {
+        if (temCabana) {
+            naCabana = false;
+        }
+    }
+
+    // Voltar para a cabana (custa 1/3 do período)
+    public void voltarParaCabana() {
+        if (temCabana) {
+            naCabana = true;
+        }
+    }
 
     // Avança o tempo do período (dia ou noite); a cada 3 unidades o período vira.
-    // Explorar e buscar recursos consomem 1/3; montar uma barraca consome 2/3.
+    // Explorar e buscar recursos consomem 1/3; montar a cabana consome 2/3.
     public boolean avancarTempo(int unidades) {
         progressoPeriodo += Math.max(0, unidades);
         boolean virou = false;
@@ -401,11 +415,11 @@ public class FichaRpg {
         return virou;
     }
 
-    // Dormir: só de noite com barraca ou cabana.
+    // Dormir: só de noite, estando NA cabana (não adianta estando longe na floresta).
     // Recupera metade da vida máxima e metade da mana máxima e faz amanhecer.
     public boolean dormir() {
         if (!ehNoite) return false;
-        if (!temBarraca && !temCabana) return false;
+        if (!temCabana || !naCabana) return false;
         int curaVida = vidaMaxima / 2;
         int curaMana = manaMaxima / 2;
         vidaPersonagem = Math.min(vidaPersonagem + curaVida, vidaMaxima);
@@ -417,21 +431,19 @@ public class FichaRpg {
         return true;
     }
 
-    public void construirBarraca() {
-        temBarraca = true;
-    }
-
-    // Cabana automática: gasta 7 madeiras, 10 folhas e 4 pedras (só a primeira vez)
-    public boolean verificarCabanaAutomatica() {
+    // Montar a cabana: gasta 7 madeiras, 10 folhas e 4 pedras (só a primeira vez).
+    // Retorna true se conseguiu construir.
+    public boolean montarCabana() {
         if (temCabana) return false;
-        if (getQuantidadeDe("Madeira") >= 7 && getQuantidadeDe("Folha") >= 10 && getQuantidadeDe("Pedra") >= 4) {
-            removerItem("Madeira", 7);
-            removerItem("Folha", 10);
-            removerItem("Pedra", 4);
-            temCabana = true;
-            return true;
+        if (getQuantidadeDe("Madeira") < 7 || getQuantidadeDe("Folha") < 10 || getQuantidadeDe("Pedra") < 4) {
+            return false;
         }
-        return false;
+        removerItem("Madeira", 7);
+        removerItem("Folha", 10);
+        removerItem("Pedra", 4);
+        temCabana = true;
+        naCabana = true;
+        return true;
     }
 
     // Total de um item no inventário (somando as pilhas)
