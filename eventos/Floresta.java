@@ -507,8 +507,8 @@ public class Floresta {
                 grupo.add(criarUrso());
                 break;
             }
-            default: { // Bandido: de dia 1-3, de noite 1-7
-                quantidade = deNoite ? MecanicasRpg.rolarEntre(1, 7) : MecanicasRpg.rolarEntre(1, 3);
+            default: { // Bandido: de dia 1-3, de noite 1-5
+                quantidade = deNoite ? MecanicasRpg.rolarEntre(1, 5) : MecanicasRpg.rolarEntre(1, 3);
                 for (int i = 0; i < quantidade; i++) {
                     grupo.add(criarBandido());
                 }
