@@ -1171,8 +1171,8 @@ public class Floresta {
         Interface.MostrarMensagem("-> Ataque [" + (arma != null ? arma.getNome() : "Soco") + "]: " + dadoAtaque + " (Dado) + " + atributoBonus + " (" + nomeAtributo + ") = " + totalAtaque + (critico ? " [CRÍTICO!]" : ""));
         Interface.Pausa(1500);
 
-        if (totalAtaque >= alvo.getDefesa()) {
-            Interface.MostrarMensagem("-> Acertou! (defesa do alvo: " + alvo.getDefesa() + ")");
+        if (critico || totalAtaque >= alvo.getDefesa()) {
+            Interface.MostrarMensagem("-> Acertou! (defesa do alvo: " + alvo.getDefesa() + ")" + (critico ? " CRÍTICO sempre acerta." : ""));
             Interface.Pausa(1200);
             int dano = 0;
             int dadosTotais = arma != null ? arma.getQuantidadeDanoArma() : 1;
@@ -1665,8 +1665,8 @@ public class Floresta {
             }
             Interface.Pausa(2000);
 
-            if (totalAtaque >= inimigo.getDefesa()) {
-                Interface.MostrarMensagem("-> Acertou! (defesa do alvo: " + inimigo.getDefesa() + ")");
+            if (critico || totalAtaque >= inimigo.getDefesa()) {
+                Interface.MostrarMensagem("-> Acertou! (defesa do alvo: " + inimigo.getDefesa() + ")" + (critico ? " CRÍTICO sempre acerta." : ""));
                 Interface.Pausa(1500);
 
                 int dadosTotais = socoQtd * (critico ? 2 : 1);
@@ -1717,8 +1717,8 @@ public class Floresta {
             }
             Interface.Pausa(2000);
 
-            if (totalAtaque >= inimigo.getDefesa()) {
-                Interface.MostrarMensagem("-> Acertou! (defesa do alvo: " + inimigo.getDefesa() + ")");
+            if (critico || totalAtaque >= inimigo.getDefesa()) {
+                Interface.MostrarMensagem("-> Acertou! (defesa do alvo: " + inimigo.getDefesa() + ")" + (critico ? " CRÍTICO sempre acerta." : ""));
                 Interface.Pausa(1500);
 
                 int dadosTotais = armaEscolhida.getQuantidadeDanoArma() * (critico ? 2 : 1);

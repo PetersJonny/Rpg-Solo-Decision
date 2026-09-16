@@ -105,14 +105,14 @@ public class Criatura {
         }
         Interface.Pausa(2000);
 
-        if (totalAtaque >= ficha.getDefesa()) {
+        if (critico || totalAtaque >= ficha.getDefesa()) {
             int dano = rolarDanoDoAtaque(ataqueEscolhido, critico);
             if (cascaGrossaAtiva) {
                 dano = Math.max(0, dano - 5);
                 Interface.MostrarMensagem("(Casca Grossa ativa! Dano reduzido em 5)");
             }
             ficha.receberDano(dano);
-            Interface.MostrarMensagem("-> Acertou! Dano: " + dano + danoTipo + " (defesa do jogador: " + ficha.getDefesa() + ")");
+            Interface.MostrarMensagem("-> Acertou! Dano: " + dano + danoTipo + " (defesa do jogador: " + ficha.getDefesa() + ")" + (critico ? " CRÍTICO sempre acerta." : ""));
             if (ficha.isProtecaoAbsolutaAtiva()) {
                 refletirProtecaoAbsoluta();
             }
