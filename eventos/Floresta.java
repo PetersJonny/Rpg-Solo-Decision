@@ -15,6 +15,12 @@ import telas.Interface;
 
 public class Floresta {
 
+    // Códigos de Cores ANSI usados nos menus
+    private static final String RESET = "\u001B[0m";
+    private static final String CIANO = "\u001B[36m";
+    private static final String VERDE = "\u001B[32m";
+    private static final String AMARELO = "\u001B[33m";
+
     // Avança o tempo e mostra o que aconteceu com o período (dia/noite) e o cansaço
     private static void avancarTempoComMensagens(FichaRpg ficha, int unidades) {
         boolean virou = ficha.avancarTempo(unidades);
