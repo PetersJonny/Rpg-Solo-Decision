@@ -72,8 +72,8 @@ public class Floresta {
     }
 
     public static void Explorar(FichaRpg ficha) {
-        Interface.barraDivisoria();
-        Interface.MostrarMensagem("\nVocê adentra as matas geladas da floresta de Freijord...");
+        Interface.cabecalhoMenu("EXPLORAÇÃO");
+        Interface.MostrarMensagem("\n  Você adentra as matas geladas da floresta de Freijord...  " + CIANO + "(1/3 de período)" + RESET);
         Interface.Pausa(2000);
         Interface.MostrarMensagem("O vento frio corta entre as árvores e você observa o ambiente ao redor...");
         Interface.Pausa(2000);
@@ -93,8 +93,8 @@ public class Floresta {
     // ==================== BUSCAR RECURSOS ====================
 
     public static void BuscarRecursos(FichaRpg ficha) {
-        Interface.barraDivisoria();
-        Interface.MostrarMensagem("\nVocê percorre a floresta em busca de materiais úteis...");
+        Interface.cabecalhoMenu("BUSCAR RECURSOS");
+        Interface.MostrarMensagem("\n  Você percorre a floresta em busca de materiais úteis...  " + CIANO + "(1/3 de período)" + RESET);
         Interface.Pausa(2000);
 
         if (ficha.isTemCabana() && ficha.isNaCabana()) {
@@ -141,9 +141,7 @@ public class Floresta {
 
     public static void MenuConstrucao(FichaRpg ficha) {
         while (true) {
-            Interface.barraDivisoria();
-            System.out.println(CIANO + "             C O N S T R U Ç Ã O" + RESET);
-            Interface.barraDivisoria();
+            Interface.cabecalhoMenu("C O N S T R U Ç Ã O");
 
             // Período e localização atuais
             String periodo = ficha.isEhNoite() ? "NOITE" : "DIA";
@@ -356,9 +354,9 @@ public class Floresta {
         Interface.MostrarMensagem("\"Por favor! Estou perdido(a) nesta floresta há dias. Ouvi dizer que você tem uma cabana... posso ficar um tempo?\"");
         Interface.Pausa(2000);
 
-        System.out.println("\nO que você faz?");
-        System.out.println("1. Acolhê-lo(a) por um tempo");
-        System.out.println("2. Recusar e seguir seu caminho");
+        System.out.println("\n  O que você faz?\n");
+        System.out.println("  1. Acolhê-lo(a) por um tempo");
+        System.out.println("  2. Recusar e seguir seu caminho");
         int escolha = Interface.lerInteiro();
 
         if (escolha == 1) {
@@ -383,19 +381,19 @@ public class Floresta {
         if (comp == null) return;
 
         while (true) {
-            Interface.barraDivisoria();
-            Interface.MostrarMensagem("\n--- CONVERSAR COM " + comp.getNome().toUpperCase() + " ---");
+            Interface.cabecalhoMenu("CONVERSAR COM " + comp.getNome().toUpperCase());
             comp.mostrarResumo();
 
-            System.out.println("\n1. Ouvir o que ela(e) tem a dizer");
-            System.out.println("2. Ver os itens que ela(e) carrega");
+            System.out.println("\n  O que deseja fazer?\n");
+            System.out.println("  1. Ouvir o que ela(e) tem a dizer");
+            System.out.println("  2. Ver os itens que ela(e) carrega");
 
             boolean podeCurar = ficha.temItem("Kit Médico")
                     && comp.getFicha().getVidaPersonagem() < comp.getFicha().getVidaMaxima();
             if (podeCurar) {
-                System.out.println("3. Curar " + comp.getNome() + " com um Kit Médico");
+                System.out.println("  3. Curar " + comp.getNome() + " com um Kit Médico");
             }
-            System.out.println("0. Voltar");
+            System.out.println("\n  " + VERDE + "0. Voltar" + RESET);
 
             int escolha = Interface.lerInteiro();
             if (escolha == 0) return;
@@ -477,9 +475,9 @@ public class Floresta {
             Interface.MostrarMensagem("\n" + nomesDosInimigos(inimigos) + " apareceu entre as sombras das árvores e você o avistou antes!");
             Interface.Pausa(2500);
 
-            System.out.println("O que deseja fazer?");
-            System.out.println("1. Lutar (Você terá +2 de Iniciativa extra por surpreendê-lo)");
-            System.out.println("2. Tentar Fugir furtivamente");
+            System.out.println("  O que deseja fazer?");
+            System.out.println("  1. Lutar (Você terá +2 de Iniciativa extra por surpreendê-lo)");
+            System.out.println("  2. Tentar Fugir furtivamente");
             int escolha = Interface.lerInteiro();
 
 
@@ -606,10 +604,10 @@ public class Floresta {
         }
         Interface.Pausa(2500);
 
-        System.out.println("\nO que deseja fazer?");
-        System.out.println("1. Tentar conversar com a Fada");
-        System.out.println("2. Lutar contra a Fada");
-        System.out.println("3. Deixá-la em paz e seguir caminho");
+        System.out.println("\n  O que deseja fazer?");
+        System.out.println("  1. Tentar conversar com a Fada");
+        System.out.println("  2. Lutar contra a Fada");
+        System.out.println("  3. Deixá-la em paz e seguir caminho");
         int escolha = Interface.lerInteiro();
 
 
@@ -714,12 +712,12 @@ public class Floresta {
         }
 
         while (ficha.getVidaPersonagem() > 0 && !inimigosVivos(inimigos).isEmpty()) {
-            Interface.barraDivisoria();
-            Interface.MostrarMensagem("Sua Vida: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima() + " | Mana: " + ficha.getManaPersonagem() + "/" + ficha.getManaMaxima());
+            Interface.cabecalhoMenu("COMBATE");
+            Interface.MostrarMensagem("  Sua Vida: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima() + " | Mana: " + ficha.getManaPersonagem() + "/" + ficha.getManaMaxima());
             if (ficha.getCuraAbsolutaBonus() > 0) {
                 Interface.MostrarMensagem("Proteção da Cura Absoluta: +" + ficha.getCuraAbsolutaBonus());
             }
-            Interface.MostrarMensagem("Inimigos:");
+            Interface.MostrarMensagem("  Inimigos:");
             for (int i = 0; i < inimigos.size(); i++) {
                 Criatura c = inimigos.get(i);
                 if (c.getVida() > 0) {
@@ -727,7 +725,7 @@ public class Floresta {
                 }
             }
             if (tentativasFuga[0] > 0) {
-                Interface.MostrarMensagem("Tentativas de fuga: " + tentativasFuga[0] + "/3");
+                Interface.MostrarMensagem("  Tentativas de fuga: " + tentativasFuga[0] + "/3");
             }
             Interface.Pausa(1500);
 
@@ -866,12 +864,12 @@ public class Floresta {
             }
         }
 
-        Interface.barraDivisoria();
+        Interface.cabecalhoMenu("FIM DO COMBATE");
         if (ficha.getVidaPersonagem() <= 0) {
-            Interface.MostrarMensagem("\nVocê foi derrotado... A floresta recupera o silêncio.");
+            Interface.MostrarMensagem("\n  Você foi derrotado... A floresta recupera o silêncio.");
             Interface.Pausa(3000);
         } else {
-            Interface.MostrarMensagem("\nVocê derrotou todos os inimigos!");
+            Interface.MostrarMensagem("\n  Você derrotou todos os inimigos!");
             Interface.Pausa(2500);
         }
         Interface.barraDivisoria();
@@ -953,12 +951,13 @@ public class Floresta {
     // A execução acontece quando chega a vez dele na ordem de iniciativa.
     private static int[] declararAcao(FichaRpg ficha, List<Criatura> inimigos, boolean[] cascaGrossaAtiva, boolean semHabilidades) {
         while (true) {
-            System.out.println("\nO que deseja fazer?");
-            System.out.println("1. Lutar");
-            System.out.println("2. Abrir Mochila");
-            System.out.println("3. Tentar Fugir");
-            System.out.println("4. Ver Ficha");
-
+            Interface.barraDivisoria();
+            System.out.println("\n  O que deseja fazer?\n");
+            System.out.println("  1. Lutar");
+            System.out.println("  2. Abrir Mochila");
+            System.out.println("  3. Tentar Fugir");
+            System.out.println("  4. Ver Ficha\n");
+            System.out.println("  Escolha uma opção:");
             int escolha = Interface.lerInteiro();
 
             if (escolha == 4) {
@@ -1217,13 +1216,14 @@ public class Floresta {
 
     // Apresenta as opções de habilidade ao atingir um novo nível com escolha
     private static void escolherHabilidadeNivel(FichaRpg ficha, int nivel, List<habilidades.Habilidade> opcoes) {
-        System.out.println("\n--- ESCOLHA UMA HABILIDADE (NÍVEL " + nivel + ") ---");
-        System.out.println("(inclui habilidades de escolha de níveis anteriores ainda não aprendidas)");
+        Interface.cabecalhoMenu("NOVA HABILIDADE - NÍVEL " + nivel);
+        System.out.println("\n  (inclui habilidades de escolha de níveis anteriores ainda não aprendidas)\n");
         for (int i = 0; i < opcoes.size(); i++) {
             habilidades.Habilidade h = opcoes.get(i);
-            System.out.println((i + 1) + ". " + h.getNome() + " (Custo: " + h.getCustoMana() + " Mana)");
-            System.out.println("   " + h.getDescricao());
+            System.out.println("  " + (i + 1) + ". " + CIANO + h.getNome() + RESET + " (Custo: " + h.getCustoMana() + " Mana)");
+            System.out.println("     " + h.getDescricao());
         }
+        System.out.println("\n  Escolha uma habilidade:");
 
         int escolha = Interface.lerInteiro();
 
@@ -1303,14 +1303,14 @@ public class Floresta {
 
     private static void escolherPontoAtributo(FichaRpg ficha) {
         while (true) {
-            Interface.barraDivisoria();
-            System.out.println("\nVocê ganhou um ponto de atributo! Escolha onde gastar:");
-            System.out.println("1. Constituição");
-            System.out.println("2. Destreza");
-            System.out.println("3. Força");
-            System.out.println("4. Sabedoria");
-            System.out.println("5. Intelecto");
-            System.out.println("6. Presença");
+            Interface.cabecalhoMenu("PONTO DE ATRIBUTO");
+            System.out.println("\n  Você ganhou um ponto de atributo! Escolha onde gastar:\n");
+            System.out.println("  1. Constituição");
+            System.out.println("  2. Destreza");
+            System.out.println("  3. Força");
+            System.out.println("  4. Sabedoria");
+            System.out.println("  5. Intelecto");
+            System.out.println("  6. Presença");
 
             int escolha = Interface.lerInteiro();
 
@@ -1377,8 +1377,8 @@ public class Floresta {
     // ==================== MENU LUTAR ====================
 
     private static int[] MenuLutarComEscolha(FichaRpg ficha, List<Criatura> inimigos, boolean[] cascaGrossaAtiva, boolean semHabilidades) {
-        Interface.barraDivisoria();
-        System.out.println("\n--- COMO DESEJA LUTAR? ---");
+        Interface.cabecalhoMenu("COMO LUTAR?");
+        System.out.println("\n");
 
         if (semHabilidades) {
             System.out.println("Você ainda está se recuperando do Estrondo e NÃO pode usar habilidades nesta rodada!");
@@ -1416,9 +1416,9 @@ public class Floresta {
         }
 
         for (int i = 0; i < descricoes.size(); i++) {
-            System.out.println((i + 1) + ". " + descricoes.get(i));
+            System.out.println("  " + (i + 1) + ". " + descricoes.get(i));
         }
-        System.out.println("0. Voltar");
+        System.out.println("\n  " + VERDE + "0. Voltar" + RESET);
 
         int escolha = Interface.lerInteiro();
 
@@ -1486,12 +1486,12 @@ public class Floresta {
         if (vivos.isEmpty()) return -1;
         if (vivos.size() == 1) return inimigos.indexOf(vivos.get(0));
 
-        System.out.println("\n--- ESCOLHA SEU ALVO ---");
+        System.out.println("\n  " + CIANO + "[ ESCOLHA SEU ALVO ]" + RESET + "\n");
         for (int i = 0; i < vivos.size(); i++) {
             Criatura c = vivos.get(i);
-            System.out.println((i + 1) + ". " + rotuloCriatura(inimigos, c) + " (Vida: " + c.getVida() + ")");
+            System.out.println("  " + (i + 1) + ". " + rotuloCriatura(inimigos, c) + " (Vida: " + c.getVida() + ")");
         }
-        System.out.println("0. Voltar");
+        System.out.println("\n  " + VERDE + "0. Voltar" + RESET);
 
         int escolha = Interface.lerInteiro();
 
@@ -1564,16 +1564,16 @@ public class Floresta {
             socoQtd = soco.getQuantidadeDanoArma();
         }
 
-        Interface.barraDivisoria();
-        System.out.println("\n--- ESCOLHA SUA ARMA ---");
+        Interface.cabecalhoMenu("ESCOLHA SUA ARMA");
+        System.out.println("\n");
         for (int i = 0; i < armas.size(); i++) {
             Arma arma = armas.get(i);
             String extra = ehFlecha.get(i) ? " (Flechas: " + getQtdFlechas(ficha) + ")" : "";
             String atributoMostrado = arma.isAgil() ? "Ágil (Força/Destreza)" : arma.getAtributoAtaque();
-            System.out.println((i + 1) + ". " + arma.getNome() + " (" + arma.getQuantidadeDanoArma() + "d" + arma.getDadoDanoArma() + " - " + arma.getTipoArma() + " - " + atributoMostrado + ")" + extra);
+            System.out.println("  " + (i + 1) + ". " + CIANO + arma.getNome() + RESET + " (" + arma.getQuantidadeDanoArma() + "d" + arma.getDadoDanoArma() + " - " + arma.getTipoArma() + " - " + atributoMostrado + ")" + extra);
         }
-        System.out.println((armas.size() + 1) + ". " + socoNome + " (" + socoQtd + "d" + socoDado + " - CaC - Força)");
-        System.out.println("0. Voltar");
+        System.out.println("  " + (armas.size() + 1) + ". " + CIANO + socoNome + RESET + " (" + socoQtd + "d" + socoDado + " - CaC - Força)");
+        System.out.println("\n  " + VERDE + "0. Voltar" + RESET);
 
         int escolha = Interface.lerInteiro();
 
@@ -1785,8 +1785,8 @@ public class Floresta {
             return -1;
         }
 
-        Interface.barraDivisoria();
-        System.out.println("\n--- SUAS HABILIDADES ---");
+        Interface.cabecalhoMenu("SUAS HABILIDADES");
+        System.out.println("\n");
         for (int i = 0; i < ativas.size(); i++) {
             habilidades.Habilidade hab = ativas.get(i);
             String extra = "";
@@ -1796,9 +1796,9 @@ public class Floresta {
                     extra = " - Dano: " + magia.getQuantidadeDano() + "d" + magia.getDadoDano();
                 }
             }
-            System.out.println((i + 1) + ". " + hab.getNome() + " (Custo: " + (custoEfetivoMagia(ficha, hab) == 0 ? "Grátis" : custoEfetivoMagia(ficha, hab) + " Mana") + ")" + extra);
+            System.out.println("  " + (i + 1) + ". " + CIANO + hab.getNome() + RESET + " (Custo: " + (custoEfetivoMagia(ficha, hab) == 0 ? "Grátis" : custoEfetivoMagia(ficha, hab) + " Mana") + ")" + extra);
         }
-        System.out.println("0. Voltar");
+        System.out.println("\n  " + VERDE + "0. Voltar" + RESET);
 
         int escolha = Interface.lerInteiro();
 
@@ -2333,11 +2333,11 @@ public class Floresta {
     // Retorna o índice do item, -1 para voltar ao menu principal ou -2 para declarar fuga.
     private static int escolherItemParaUsar(FichaRpg ficha) {
         while (true) {
-            Interface.barraDivisoria();
-            System.out.println("\n--- SUA MOCHILA ---");
+            Interface.cabecalhoMenu("SUA MOCHILA");
+            System.out.println("\n");
 
             if (ficha.getInventario().isEmpty()) {
-                System.out.println("Sua mochila está vazia.");
+                System.out.println("  Sua mochila está vazia.");
             } else {
                 for (int i = 0; i < ficha.getInventario().size(); i++) {
                     ItemRpg item = ficha.getInventario().get(i);
@@ -2345,11 +2345,11 @@ public class Floresta {
                     if (ehItemConsumivel(item)) tipo = " [Consumível]";
                     else if (item instanceof Arma) tipo = " [Arma]";
                     else if (item.getNome().equals("Flechas")) tipo = " [Munição]";
-                    System.out.println((i + 1) + ". " + item.getNome() + " (x" + item.getQuantidade() + ")" + tipo);
+                    System.out.println("  " + (i + 1) + ". " + CIANO + item.getNome() + RESET + " (x" + item.getQuantidade() + ")" + tipo);
                 }
             }
-            System.out.println("0. Voltar ao combate");
-            System.out.println("9. Tentar fugir do combate");
+            System.out.println("\n  " + VERDE + "0. Voltar ao combate" + RESET);
+            System.out.println("  " + AMARELO + "9. Tentar fugir do combate" + RESET);
 
             int escolha = Interface.lerInteiro();
 
@@ -2449,15 +2449,15 @@ public class Floresta {
 
             boolean usarNoCompanheiro = false;
             if (podeUsarEmSi && podeUsarCompanheiro) {
-                System.out.println("\nEm quem deseja usar o Kit Médico?");
-                System.out.println("1. Em você");
-                System.out.println("2. Em " + comp.getNome());
+                System.out.println("\n  Em quem deseja usar o Kit Médico?\n");
+                System.out.println("  1. Em você");
+                System.out.println("  2. Em " + comp.getNome());
                 int quem = Interface.lerInteiro();
                 usarNoCompanheiro = quem == 2;
             } else if (podeUsarCompanheiro) {
-                System.out.println("\nUsar o Kit Médico em " + comp.getNome() + "?");
-                System.out.println("1. Sim");
-                System.out.println("2. Não");
+                System.out.println("\n  Usar o Kit Médico em " + comp.getNome() + "?\n");
+                System.out.println("  1. Sim");
+                System.out.println("  2. Não");
                 int quem = Interface.lerInteiro();
                 usarNoCompanheiro = quem == 1;
             } else if (!podeUsarEmSi) {
@@ -2507,10 +2507,10 @@ public class Floresta {
     // ==================== FUGA ====================
 
     private static int TentarFugir(FichaRpg ficha, List<Criatura> inimigos, int tentativasAtuais) {
-        Interface.barraDivisoria();
-        System.out.println("\nDeseja realmente tentar fugir?");
-        System.out.println("1. Sim, tentar fugir");
-        System.out.println("2. Não, voltar ao combate");
+        Interface.cabecalhoMenu("TENTAR FUGIR");
+        System.out.println("\n  Deseja realmente tentar fugir?\n");
+        System.out.println("  1. Sim, tentar fugir");
+        System.out.println("  2. Não, voltar ao combate");
 
         int confirmar = Interface.lerInteiro();
 

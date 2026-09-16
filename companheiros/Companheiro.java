@@ -118,26 +118,25 @@ public class Companheiro {
     // ==================== EXIBIÇÃO (CONVERSAR) ====================
 
     public void mostrarResumo() {
-        Interface.barraDivisoria();
-        Interface.MostrarMensagem("\nNome: " + nome + " " + sobrenome);
-        Interface.MostrarMensagem("Classe: " + getClasseNome() + " | Nível: " + ficha.getNivel());
-        Interface.MostrarMensagem("Vida: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima() + " | Mana: " + ficha.getManaPersonagem() + "/" + ficha.getManaMaxima());
+        Interface.MostrarMensagem("\n  Nome: " + nome + " " + sobrenome);
+        Interface.MostrarMensagem("  Classe: " + getClasseNome() + " | Nível: " + ficha.getNivel());
+        Interface.MostrarMensagem("  Vida: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima() + " | Mana: " + ficha.getManaPersonagem() + "/" + ficha.getManaMaxima());
         if (dormiuPrimeiraVez) {
-            Interface.MostrarMensagem("Pretende ficar mais " + diasRestantes + " dia(s) contigo.");
+            Interface.MostrarMensagem("  Pretende ficar mais " + diasRestantes + " dia(s) contigo.");
         } else {
-            Interface.MostrarMensagem("Ainda não dormiu na cabana; vai decidir o futuro depois da primeira noite.");
+            Interface.MostrarMensagem("  Ainda não dormiu na cabana; vai decidir o futuro depois da primeira noite.");
         }
     }
 
     public void mostrarItens() {
-        System.out.println("\n" + nome + " mostra o que carrega consigo:");
+        System.out.println("\n  " + nome + " mostra o que carrega consigo:");
         List<ItemRpg> itens = ficha.getInventario();
         if (itens.isEmpty()) {
-            System.out.println("- Vazio");
+            System.out.println("  - Vazio");
             return;
         }
         for (ItemRpg item : itens) {
-            System.out.println("- " + item.getNome() + " (x" + item.getQuantidade() + "): " + item.getDescricao());
+            System.out.println("  - " + item.getNome() + " (x" + item.getQuantidade() + "): " + item.getDescricao());
         }
     }
 
@@ -166,14 +165,14 @@ public class Companheiro {
             Interface.Pausa(1800);
         }
 
-        Interface.MostrarMensagem("\nEla(e) também conta o que consegue fazer:");
+        Interface.MostrarMensagem("\n  Ela(e) também conta o que consegue fazer:");
         List<habilidades.Habilidade> habs = ficha.getHabilidades();
         if (habs.isEmpty()) {
-            System.out.println("- Nenhuma");
+            System.out.println("  - Nenhuma");
             return;
         }
         for (habilidades.Habilidade hab : habs) {
-            System.out.println("- " + hab.getNome() + " (Custo: " + hab.getCustoMana() + " Mana): " + hab.getDescricao());
+            System.out.println("  - " + hab.getNome() + " (Custo: " + hab.getCustoMana() + " Mana): " + hab.getDescricao());
         }
     }
 }

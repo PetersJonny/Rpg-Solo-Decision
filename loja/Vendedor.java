@@ -47,12 +47,12 @@ public class Vendedor {
         Map<String, Integer> estoque = montarEstoque(ficha);
 
         while (true) {
-            Interface.barraDivisoria();
-            Interface.MostrarMensagem("\n--- VENDEDOR AMBULANTE ---");
-            Interface.MostrarMensagem("Seu ouro: " + ficha.getOuro() + " moedas.");
-            System.out.println("1. Comprar");
-            System.out.println("2. Vender");
-            System.out.println("3. Sair");
+            Interface.cabecalhoMenu("VENDEDOR AMBULANTE");
+            Interface.MostrarMensagem("\n  Seu ouro: " + ficha.getOuro() + " moedas.\n");
+            System.out.println("  1. Comprar");
+            System.out.println("  2. Vender");
+            System.out.println("  3. Sair\n");
+            System.out.println("  Escolha uma opção:");
 
             int escolha = Interface.lerInteiro();
             if (escolha == 1) {
@@ -119,16 +119,16 @@ public class Vendedor {
                 return;
             }
 
-            Interface.barraDivisoria();
-            Interface.MostrarMensagem("\n--- COMPRAR --- (Seu ouro: " + ficha.getOuro() + ")");
+            Interface.cabecalhoMenu("COMPRAR");
+            Interface.MostrarMensagem("\n  Seu ouro: " + ficha.getOuro() + "\n");
             List<String> nomes = new ArrayList<>(estoque.keySet());
             for (int i = 0; i < nomes.size(); i++) {
                 String nome = nomes.get(i);
                 int qtd = estoque.get(nome);
                 String preco = nome.equals("Flechas") ? "3 ouro/un." : precoDeVenda(nome) + " ouro";
-                System.out.println((i + 1) + ". " + nome + " - " + preco + " (estoque: " + qtd + ")");
+                System.out.println("  " + (i + 1) + ". " + nome + " - " + preco + " (estoque: " + qtd + ")");
             }
-            System.out.println("0. Voltar");
+            System.out.println("\n  Escolha um item para comprar (ou " + CIANO + "0" + RESET + " para Voltar):");
 
             int escolha = Interface.lerInteiro();
             if (escolha == 0) return;
@@ -147,7 +147,7 @@ public class Vendedor {
 
             int qtdComprar = 1;
             if (podeComprarEmQuantidade(nome)) {
-                System.out.println("Quantidade para comprar (1 a " + qtdEstoque + "): ");
+                System.out.println("  Quantidade para comprar (1 a " + qtdEstoque + "): ");
                 int qtd = Interface.lerInteiro();
                 if (qtd < 1) {
                     Interface.ExibirErro("Quantidade inválida!");
@@ -160,15 +160,15 @@ public class Vendedor {
 
             // Mostra a descrição e pede confirmação antes da compra
             ItemRpg itemDetalhe = criarItem(nome);
-            System.out.println("\n" + CIANO + "-- " + nome.toUpperCase() + " (x" + qtdComprar + ") --" + RESET);
+            System.out.println("\n  " + CIANO + "-- " + nome.toUpperCase() + " (x" + qtdComprar + ") --" + RESET);
             if (itemDetalhe != null) {
-                System.out.println("Descrição: " + itemDetalhe.getDescricao());
+                System.out.println("  Descrição: " + itemDetalhe.getDescricao());
             }
-            System.out.println("Preço: " + custo + " ouro");
-            System.out.println(CIANO + "-----------------------" + RESET);
-            System.out.println("\nDeseja comprar este item?");
-            System.out.println("1. Sim");
-            System.out.println("2. Não");
+            System.out.println("  Preço: " + custo + " ouro");
+            System.out.println(CIANO + "  -----------------------" + RESET);
+            System.out.println("\n  Deseja comprar este item?\n");
+            System.out.println("  1. Sim");
+            System.out.println("  2. Não");
             int confirmar = Interface.lerInteiro();
             if (confirmar != 1) {
                 Interface.MostrarMensagem("\nCompra cancelada.");
@@ -233,9 +233,9 @@ public class Vendedor {
     // materiais especiais (Couro, Dente de Urso, Brilho Mágico) são comprados a preço cheio
     private static void Vender(FichaRpg ficha) {
         while (true) {
-            Interface.barraDivisoria();
-            Interface.MostrarMensagem("\n--- VENDER --- (Seu ouro: " + ficha.getOuro() + ")");
-            Interface.MostrarMensagem("O vendedor paga 50% do preço (Couro, Dente de Urso e Brilho Mágico a preço cheio).");
+            Interface.cabecalhoMenu("VENDER");
+            Interface.MostrarMensagem("\n  Seu ouro: " + ficha.getOuro() + "");
+            Interface.MostrarMensagem("  O vendedor paga 50% do preço (Couro, Dente de Urso e Brilho Mágico a preço cheio).");
 
             List<ItemRpg> vendaveis = new ArrayList<>();
             for (ItemRpg item : ficha.getInventario()) {
@@ -245,16 +245,17 @@ public class Vendedor {
             }
 
             if (vendaveis.isEmpty()) {
-                Interface.MostrarMensagem("Você não possui itens para vender.");
+                Interface.MostrarMensagem("  Você não possui itens para vender.");
                 Interface.Pausa(1500);
                 return;
             }
 
+            System.out.println();
             for (int i = 0; i < vendaveis.size(); i++) {
                 ItemRpg item = vendaveis.get(i);
-                System.out.println((i + 1) + ". " + item.getNome() + " (x" + item.getQuantidade() + ") - " + precoDeCompra(item.getNome()) + " ouro/un.");
+                System.out.println("  " + (i + 1) + ". " + item.getNome() + " (x" + item.getQuantidade() + ") - " + precoDeCompra(item.getNome()) + " ouro/un.");
             }
-            System.out.println("0. Voltar");
+            System.out.println("\n  Escolha um item para vender (ou " + CIANO + "0" + RESET + " para Voltar):");
 
             int escolha = Interface.lerInteiro();
             if (escolha == 0) return;
@@ -266,7 +267,7 @@ public class Vendedor {
             ItemRpg item = vendaveis.get(escolha - 1);
             int quantidade = item.getQuantidade();
             if (quantidade > 1 && !item.getNome().equals("Kit Médico")) {
-                System.out.println("Quantidade para vender (1 a " + quantidade + "): ");
+                System.out.println("  Quantidade para vender (1 a " + quantidade + "): ");
                 int qtd = Interface.lerInteiro();
                 if (qtd < 1 || qtd > quantidade) {
                     Interface.ExibirErro("Quantidade inválida!");
