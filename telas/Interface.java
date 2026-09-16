@@ -177,7 +177,7 @@ public class Interface {
         System.out.println("\n1. Ver ficha");
         System.out.println("2. Explorar a Floresta");
         System.out.println("3. Buscar Recursos na Floresta");
-        System.out.println("4. Construção (Cabana / Dormir)");
+        System.out.println("4. Construção (Dormir)");
         if (ficha.temCompanheiro()) {
             System.out.println("5. Conversar com " + ficha.getCompanheiro().getNome());
             System.out.println("6. Encerrar jogo");
