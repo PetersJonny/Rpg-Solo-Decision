@@ -142,66 +142,83 @@ public class Floresta {
     public static void MenuConstrucao(FichaRpg ficha) {
         while (true) {
             Interface.barraDivisoria();
-            System.out.println("\n--- CONSTRUÇÃO ---");
-            Interface.MostrarMensagem("Período: " + (ficha.isEhNoite() ? "Noite" : "Dia") + " (" + (3 - ficha.getProgressoPeriodo()) + "/3 restantes)");
+            System.out.println(CIANO + "             C O N S T R U Ç Ã O" + RESET);
+            Interface.barraDivisoria();
 
-            // Localização atual
+            // Período e localização atuais
+            String periodo = ficha.isEhNoite() ? "NOITE" : "DIA";
+            System.out.println("\n  Período: " + AMARELO + periodo + RESET + "  (" + (3 - ficha.getProgressoPeriodo()) + "/3 para virar)");
+
+            String local;
             if (ficha.isNaSalaTreino()) {
                 String tipoSala = ficha.isSalaJuntoCabana() ? "junto à cabana" : "longe da cabana";
-                Interface.MostrarMensagem("Você está: NA SALA DE TREINO (" + tipoSala + ")");
+                local = "NA SALA DE TREINO (" + tipoSala + ")";
             } else if (ficha.isNaCabana() && ficha.isTemCabana()) {
-                Interface.MostrarMensagem("Você está: NA CABANA");
+                local = "NA CABANA";
             } else if (ficha.isTemCabana()) {
-                Interface.MostrarMensagem("Você está: LONGE da cabana (na floresta)");
+                local = "LONGE da cabana (na floresta)";
             } else {
-                Interface.MostrarMensagem("Você está: na floresta (sem cabana)");
+                local = "na floresta (sem cabana)";
+            }
+            System.out.println("  Localização: " + CIANO + local + RESET);
+            System.out.println("  -----------------------------------------------");
+
+            // ===================== CABANA =====================
+            String statusCabana = ficha.isTemCabana() ? VERDE + "construída" + RESET : AMARELO + "não construída" + RESET;
+            System.out.println("\n  " + CIANO + "[ CABANA ]" + RESET + "  Status: " + statusCabana);
+            System.out.println("  Custo:    " + ficha.getQuantidadeDe("Madeira") + "/7x Madeira | "
+                    + ficha.getQuantidadeDe("Folha") + "/10x Folha | "
+                    + ficha.getQuantidadeDe("Pedra") + "/4x Pedra");
+            if (ficha.isTemCabana()) {
+                System.out.println("  Informação: Pode dormir à noite (estando nela) e serve de abrigo para o companheiro.");
+            } else {
+                System.out.println("  Informação: Gasta 2/3 do período para montar.");
             }
 
-            // Status do bônus de treino
+            // ===================== SALA DE TREINO =====================
+            String statusSala = ficha.isTemSalaTreino() ? VERDE + "construída" + RESET : AMARELO + "não construída" + RESET;
+            System.out.println("\n  " + CIANO + "[ SALA DE TREINO ]" + RESET + "  Status: " + statusSala);
+            System.out.println("  Custo:    " + ficha.getQuantidadeDe("Madeira") + "/10x Madeira | "
+                    + ficha.getQuantidadeDe("Folha") + "/15x Folha | "
+                    + ficha.getQuantidadeDe("Pedra") + "/5x Pedra | "
+                    + ficha.getQuantidadeDe("Couro") + "/4x Couro");
+            if (!ficha.isTemSalaTreino()) {
+                System.out.println("  Informação: Gasta 2/3 do período para montar.");
+            }
+
             if (ficha.getTreinoBonusPeriodosRestantes() > 0) {
-                Interface.MostrarMensagem("Bônus de treino ativo: +3 em " + ficha.getTreinoBonusAtributo() + " (restam " + ficha.getTreinoBonusPeriodosRestantes() + " períodos)");
+                System.out.println("\n  " + VERDE + "+3 em " + ficha.getTreinoBonusAtributo() + " ativo" + RESET + " (restam " + ficha.getTreinoBonusPeriodosRestantes() + " períodos)");
             }
 
-            // Status de cada construção
-            if (!ficha.isTemCabana()) {
-                Interface.MostrarMensagem("Cabana: não construída — Custo: 7 Madeiras, 10 Folhas, 4 Pedras (você tem: Madeira x" + ficha.getQuantidadeDe("Madeira") + " | Folha x" + ficha.getQuantidadeDe("Folha") + " | Pedra x" + ficha.getQuantidadeDe("Pedra") + ")");
-            } else {
-                Interface.MostrarMensagem("Cabana: construída.");
-            }
-
-            if (ficha.isTemSalaTreino()) {
-                String tipoSala = ficha.isSalaJuntoCabana() ? "junto à cabana" : "longe da cabana";
-                Interface.MostrarMensagem("Sala de Treino: construída (" + tipoSala + ")");
-            } else {
-                Interface.MostrarMensagem("Sala de Treino: não construída — Custo: 10 Madeiras, 15 Folhas, 5 Pedras, 4 Couros (você tem: Madeira x" + ficha.getQuantidadeDe("Madeira") + " | Folha x" + ficha.getQuantidadeDe("Folha") + " | Pedra x" + ficha.getQuantidadeDe("Pedra") + " | Couro x" + ficha.getQuantidadeDe("Couro") + ")");
-            }
+            System.out.println("\n  -----------------------------------------------");
 
             // Menu dinâmico com numeração sequencial
             int opCabana = 0, opSala = 0, opDormir = 0;
             int num = 1;
 
+            System.out.println("\n  O que deseja fazer?");
             if (!ficha.isTemCabana()) {
-                System.out.println(num + ". Montar Cabana (gasta 7 Madeiras, 10 Folhas, 4 Pedras; consome 2/3 do período)");
+                System.out.println("  " + num + ". Montar Cabana  (7x Madeira, 10x Folha, 4x Pedra — 2/3 do período)");
                 opCabana = num++;
             } else if (!ficha.isNaCabana()) {
-                System.out.println(num + ". Voltar para a Cabana (consome 1/3 do período)");
+                System.out.println("  " + num + ". Voltar para a Cabana  (1/3 do período)");
                 opCabana = num++;
             }
 
             if (!ficha.isTemSalaTreino()) {
-                System.out.println(num + ". Montar Sala de Treino (gasta 10 Madeiras, 15 Folhas, 5 Pedras, 4 Couros; consome 2/3 do período)");
+                System.out.println("  " + num + ". Montar Sala de Treino  (10x Madeira, 15x Folha, 5x Pedra, 4x Couro — 2/3 do período)");
                 opSala = num++;
             } else {
-                System.out.println(num + ". Treinar na Sala de Treino (passa o período inteiro; +3 em Força ou Destreza por 2 períodos)");
+                System.out.println("  " + num + ". Treinar na Sala de Treino  (período inteiro; +3 em Força ou Destreza por 2 períodos)");
                 opSala = num++;
             }
 
             if (ficha.isTemCabana()) {
-                System.out.println(num + ". Dormir (só à noite, estando na cabana; recupera metade da vida e mana)");
+                System.out.println("  " + num + ". Dormir  (só à noite, na cabana; recupera metade da vida e mana)");
                 opDormir = num++;
             }
 
-            System.out.println("0. Voltar");
+            System.out.println("  " + VERDE + "0. Voltar" + RESET);
             int escolha = Interface.lerInteiro();
 
             if (escolha == 0) return;
