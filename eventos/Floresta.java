@@ -206,9 +206,11 @@ public class Floresta {
             if (!ficha.isTemSalaTreino()) {
                 System.out.println("  " + num + ". Montar Sala de Treino  (10x Madeira, 15x Folha, 5x Pedra, 4x Couro — 2/3 do período)");
                 opSala = num++;
-            } else {
+            } else if (ficha.getTreinoBonusPeriodosRestantes() <= 0) {
                 System.out.println("  " + num + ". Treinar na Sala de Treino  (período inteiro; +2 em Força ou Destreza por 2 períodos)");
                 opSala = num++;
+            } else {
+                System.out.println("  " + AMARELO + "  • Treinando... (faltam " + ficha.getTreinoBonusPeriodosRestantes() + " períodos para treinar novamente)" + RESET);
             }
 
             if (ficha.isTemCabana()) {
@@ -270,6 +272,11 @@ public class Floresta {
                     }
                 } else {
                     // Treinar na Sala de Treino
+                    if (ficha.getTreinoBonusPeriodosRestantes() > 0) {
+                        Interface.ExibirErro("Você ainda está com o bônus de treino ativo! Aguarde os " + ficha.getTreinoBonusPeriodosRestantes() + " período(s) terminarem para treinar de novo.");
+                        Interface.Pausa(1500);
+                        continue;
+                    }
                     Interface.MostrarMensagem("\nVocê entra na sua sala de treino e se prepara para treinar durante todo o período...");
                     Interface.Pausa(1500);
                     ficha.entrarSalaTreino();
