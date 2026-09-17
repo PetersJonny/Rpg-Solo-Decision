@@ -849,19 +849,84 @@ public class Floresta {
             }
         }
 
-        // Após o combate, o companheiro se recupera (sem morte permanente)
+        // Após o combate, tentativas de resgate (DT 14, teste de Intelecto)
         companheiros.Companheiro comp = ficha.getCompanheiro();
+
+        // Caso 1: Companheiro morreu — jogador tenta salvá-lo
         if (comp != null) {
             FichaRpg cf = comp.getFicha();
             if (cf.getVidaPersonagem() <= 0) {
-                Interface.MostrarMensagem("\n" + comp.getNomeCompleto() + " acorda ferido, mas não rende. Recupera parte da energia.");
-                cf.setVidaPersonagem(Math.max((int) (cf.getVidaMaxima() * 0.6), 1));
+                Interface.cabecalhoMenu("RESGATE DO COMPANHEIRO");
+                Interface.MostrarMensagem("\n  " + comp.getNomeCompleto() + " cai no chão, sem vida...");
+                Interface.Pausa(1500);
+                Interface.MostrarMensagem("  Você precisa agir rápido! Teste de Intelecto (DT 14) para salvá-lo!\n");
+                Interface.Pausa(1000);
+
+                int dado = MecanicasRpg.rolarDado(20);
+                int total = dado + ficha.getIntelectoTeste();
+                Interface.MostrarMensagem("    Dado: " + dado + "  |  Intelecto: " + ficha.getIntelectoTeste() + "  |  Total: " + total + "  (DT 14)");
+                Interface.Pausa(1500);
+
+                if (total >= 14) {
+                    cf.setVidaPersonagem(Math.max((int) (cf.getVidaMaxima() * 0.3), 1));
+                    Interface.MostrarMensagem("\n  Você apoia " + comp.getNomeCompleto() + " a tempo! Ele/a acorda ferido, mas vivo(a).");
+                } else {
+                    Interface.MostrarMensagem("\n  Você falha em estabilizar " + comp.getNomeCompleto() + "... Ele(a) parte em silêncio.");
+                    Interface.Pausa(1500);
+
+                    // Transfere os itens do companheiro para o jogador
+                    List<ItemRpg> itensComp = new ArrayList<>(cf.getInventario());
+                    for (ItemRpg item : itensComp) {
+                        ficha.adicionarItem(item);
+                    }
+                    int ouroComp = cf.getOuro();
+                    if (ouroComp > 0) {
+                        ficha.adicionarOuro(ouroComp);
+                    }
+
+                    if (!itensComp.isEmpty() || ouroComp > 0) {
+                        Interface.MostrarMensagem("\n  Você recolhe os pertences de " + comp.getNomeCompleto() + ".");
+                        for (ItemRpg item : itensComp) {
+                            Interface.MostrarMensagem("    + " + item.getNome() + " (" + item.getQuantidade() + ")");
+                        }
+                        if (ouroComp > 0) {
+                            Interface.MostrarMensagem("    + " + ouroComp + " de ouro");
+                        }
+                    }
+
+                    ficha.removerCompanheiro();
+                    comp = null;
+                }
                 Interface.Pausa(2000);
             } else if (cf.getVidaPersonagem() < cf.getVidaMaxima() * 0.3) {
+                // Companheiro sobreviveu, mas muito ferido: respira fundo e se recupera um pouco
                 Interface.MostrarMensagem("\n" + comp.getNomeCompleto() + " respira fundo e se recupera um pouco após o combate.");
                 cf.setVidaPersonagem(Math.max((int) (cf.getVidaMaxima() * 0.5), 1));
                 Interface.Pausa(2000);
             }
+        }
+
+        // Caso 2: Jogador morreu — companheiro tenta salvá-lo
+        if (ficha.getVidaPersonagem() <= 0 && comp != null) {
+            FichaRpg cf = comp.getFicha();
+            Interface.cabecalhoMenu("RESGATE DO JOGADOR");
+            Interface.MostrarMensagem("\n  Você cai... " + comp.getNomeCompleto() + " se joga ao seu lado!");
+            Interface.Pausa(1500);
+            Interface.MostrarMensagem("  " + comp.getNomeCompleto() + " precisa pensar rápido! Teste de Intelecto (DT 14) para te salvar!\n");
+            Interface.Pausa(1000);
+
+            int dado = MecanicasRpg.rolarDado(20);
+            int total = dado + cf.getIntelectoTeste();
+            Interface.MostrarMensagem("    Dado: " + dado + "  |  Intelecto: " + cf.getIntelectoTeste() + "  |  Total: " + total + "  (DT 14)");
+            Interface.Pausa(1500);
+
+            if (total >= 14) {
+                ficha.setVidaPersonagem(Math.max((int) (ficha.getVidaMaxima() * 0.3), 1));
+                Interface.MostrarMensagem("\n  " + comp.getNomeCompleto() + " estabiliza você a tempo! Você acorda ferido, mas vivo.");
+            } else {
+                Interface.MostrarMensagem("\n  " + comp.getNomeCompleto() + " não consegue te estabilizar...");
+            }
+            Interface.Pausa(2000);
         }
 
         Interface.cabecalhoMenu("FIM DO COMBATE");
@@ -869,7 +934,7 @@ public class Floresta {
             Interface.MostrarMensagem("\n  Você foi derrotado... A floresta recupera o silêncio.");
             Interface.Pausa(3000);
         } else {
-            Interface.MostrarMensagem("\n  Você derrotou todos os inimigos!");
+            Interface.MostrarMensagem("\n  Você sobreviveu ao combate!");
             Interface.Pausa(2500);
         }
         Interface.barraDivisoria();
