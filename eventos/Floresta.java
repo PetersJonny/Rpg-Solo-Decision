@@ -2001,6 +2001,12 @@ public class Floresta {
                 Interface.Pausa(1000);
             }
 
+            if (nomeHab.equals("Peso da Espada")) {
+                dano += ficha.getForca();
+                Interface.MostrarMensagem("(Peso da Espada: +" + ficha.getForca() + " de Força no dano!)");
+                Interface.Pausa(1000);
+            }
+
             List<Criatura> afetados = new ArrayList<>();
             afetados.add(inimigo);
             if (magia.isAtaqueArea()) {
@@ -2062,8 +2068,9 @@ public class Floresta {
         if (vivos.isEmpty()) return true;
 
         for (int g = 1; g <= giros; g++) {
-            int danoGiro = MecanicasRpg.rolarDado(10);
-            Interface.MostrarMensagem("-> Giro " + g + ": " + danoGiro + " (1d10) de dano em área!");
+            int dadoGiro = MecanicasRpg.rolarDado(10);
+            int danoGiro = dadoGiro + ficha.getForca();
+            Interface.MostrarMensagem("-> Giro " + g + ": " + dadoGiro + " (1d10) + " + ficha.getForca() + " (Força) = " + danoGiro + " de dano em área!");
             Interface.Pausa(1500);
             for (Criatura alvo : vivos) {
                 if (alvo.getVida() <= 0) continue;
@@ -2090,7 +2097,8 @@ public class Floresta {
         for (int i = 0; i < 7; i++) {
             dano += MecanicasRpg.rolarDado(10);
         }
-        Interface.MostrarMensagem("-> Estrondo: 7d10 = " + dano + " de dano em área!");
+        dano += ficha.getForca();
+        Interface.MostrarMensagem("-> Estrondo: 7d10 + " + ficha.getForca() + " (Força) = " + dano + " de dano em área!");
         Interface.Pausa(1500);
 
         for (Criatura alvo : vivos) {

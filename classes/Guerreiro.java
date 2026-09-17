@@ -17,17 +17,17 @@ public class Guerreiro extends ClasseRpg {
         
         // Habilidades por nível
         this.habilidadesPorNivel.put(3, java.util.List.of(
-            new habilidades.Magia("Peso da Espada", "Usa o peso de sua própria espada para abater o inimigo, causando 3d8 de dano.", 3, 3, 8)
+            new habilidades.Magia("Peso da Espada", "Usa o peso de sua própria espada para abater o inimigo, causando 3d8 + Força de dano.", 2, 3, 8)
         ));
 
         this.escolhasNivel.put(5, java.util.List.of(
-            new habilidades.Habilidade("Giro", "Usa sua destreza para girar e atacar em área. Gasta 1 de mana por giro (máximo igual à sua Destreza), causando 1d10 de dano em área por giro.", 1),
+            new habilidades.Habilidade("Giro", "Usa sua destreza para girar e atacar em área. Gasta 1 de mana por giro (máximo igual à sua Destreza), causando 1d10 + Força de dano em área por giro.", 1),
             new habilidades.Habilidade("Espada Afiada", "Sua espada ganha +2d8 de dano em todos os ataques durante o combate.", 3, true)
         ));
 
         this.escolhasNivel.put(7, java.util.List.of(
             new habilidades.Habilidade("Defesa Absoluta", "Passiva sempre ativa: você ganha +5 de defesa até atacar. Quando atacar, o efeito desaparece.", 0, true),
-            new habilidades.Habilidade("Estrondo", "Gasta 5 de mana para golpear o chão com a arma, levantando terra e acertando todos os inimigos com 7d10 de dano. Você não pode usar nenhuma habilidade no próximo turno.", 5)
+            new habilidades.Habilidade("Estrondo", "Gasta 5 de mana para golpear o chão com a arma, levantando terra e acertando todos os inimigos com 7d10 + Força de dano. Você não pode usar nenhuma habilidade no próximo turno.", 5)
         ));
 
         this.escolhasNivel.put(9, java.util.List.of(
