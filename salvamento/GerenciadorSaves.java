@@ -73,8 +73,9 @@ public class GerenciadorSaves {
         }
         String classe = ficha.getClasseDoPersonagem() != null ? ficha.getClasseDoPersonagem().getNome() : "Sem classe";
         String periodo = ficha.getPeriodoDescritivo();
+        String modo = ficha.isModoDificil() ? " [DIFÍCIL]" : "";
         String data = new SimpleDateFormat("dd/MM HH:mm").format(new Date(arquivo.lastModified()));
-        return ficha.getNomePersonagem() + " (" + classe + ", Nível " + ficha.getNivel() + ") | "
+        return ficha.getNomePersonagem() + " (" + classe + ", Nível " + ficha.getNivel() + ")" + modo + " | "
                 + periodo + " " + (3 - ficha.getProgressoPeriodo()) + "/3 | Salvo em " + data;
     }
 
@@ -82,6 +83,20 @@ public class GerenciadorSaves {
         if (slot < 1 || slot > MAX_SAVES) return false;
         File arquivo = new File(new File(PASTA), nomeArquivo(slot));
         return arquivo.exists() && arquivo.delete();
+    }
+
+    // Apaga todos os saves cujo personagem tenha o nome informado (morte permanente).
+    // Retorna quantos saves foram apagados.
+    public static int deletarSavesDoPersonagem(String nomePersonagem) {
+        int apagados = 0;
+        for (int slot = 1; slot <= MAX_SAVES; slot++) {
+            if (!existeSave(slot)) continue;
+            FichaRpg ficha = carregar(slot);
+            if (ficha != null && ficha.getNomePersonagem().equalsIgnoreCase(nomePersonagem)) {
+                if (deletar(slot)) apagados++;
+            }
+        }
+        return apagados;
     }
 
     private static String nomeArquivo(int slot) {

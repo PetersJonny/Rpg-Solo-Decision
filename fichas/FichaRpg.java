@@ -85,6 +85,10 @@ public class FichaRpg implements java.io.Serializable {
     // Companheiro (pessoa perdida que o jogador acolheu)
     private companheiros.Companheiro companheiro = null;
 
+    // Modo de dificuldade e slot de save vinculado à partida
+    private ModoDificuldade modoDificuldade = ModoDificuldade.NORMAL;
+    private int slotAtual = 0; // 0 = nenhum save vinculado
+
     // Sala de Treino
     private boolean temSalaTreino = false;
     private boolean naSalaTreino = false;
@@ -191,6 +195,15 @@ public class FichaRpg implements java.io.Serializable {
     // Getters
     public String getNomePersonagem() { return nomePersonagem; }
     public String getNomePessoa() { return nomePessoa; }
+
+    // Modo de dificuldade (com fallback para saves antigos que não tinham o campo)
+    public ModoDificuldade getModoDificuldade() {
+        return modoDificuldade == null ? ModoDificuldade.NORMAL : modoDificuldade;
+    }
+    public void setModoDificuldade(ModoDificuldade modoDificuldade) { this.modoDificuldade = modoDificuldade; }
+    public boolean isModoDificil() { return getModoDificuldade() == ModoDificuldade.DIFICIL; }
+    public int getSlotAtual() { return slotAtual; }
+    public void setSlotAtual(int slotAtual) { this.slotAtual = slotAtual; }
     public int getNivel() { return nivel; }
     public int getOuro() { return ouro; }
     public int getVidaPersonagem() { return vidaPersonagem; }

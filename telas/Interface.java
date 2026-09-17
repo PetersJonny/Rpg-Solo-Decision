@@ -129,10 +129,23 @@ public class Interface {
         System.out.println("  1. Escolher nome do personagem / alterar");
         System.out.println("  2. Distribuir pontos entre atributos / mudar pontos");
         System.out.println("  3. Escolher classe / mudar classe");
-        System.out.println("  4. Mostrar ficha");
-        System.out.println("  5. Finalizar criação do personagem");
-        System.out.println("  6. Fechar o jogo\n");
+        System.out.println("  4. Escolher modo de dificuldade");
+        System.out.println("  5. Mostrar ficha");
+        System.out.println("  6. Finalizar criação do personagem");
+        System.out.println("  7. Fechar o jogo\n");
         System.out.println("  " + VERDE + "Digite a opção:" + RESET);
+        int escolha = lerInteiro();
+        return escolha;
+    }
+
+    // Escolha do modo de dificuldade (1 = Normal, 2 = Difícil). Retorna 0 se voltou.
+    public static int MenuEscolherDificuldade() {
+        System.out.println("\n");
+        cabecalhoMenu("MODO DE DIFICULDADE");
+        System.out.println("\n  Escolha o modo da sua jornada:\n");
+        System.out.println("  1. " + VERDE + "Normal" + RESET + " — " + fichas.ModoDificuldade.NORMAL.getDescricao());
+        System.out.println("  2. " + AMARELO + "Difícil" + RESET + " — " + fichas.ModoDificuldade.DIFICIL.getDescricao());
+        System.out.println("\n  " + VERDE + "0. Voltar" + RESET);
         int escolha = lerInteiro();
         return escolha;
     }
@@ -486,7 +499,8 @@ public class Interface {
             .append(" | Tipo: ").append(socoTipo).append(")");
 
         System.out.println("\n  Nome: " + CIANO + ficha.getNomePersonagem() + RESET + "        Nível: " + ficha.getNivel() + (ficha.getNivel() < 10 ? "  (XP: " + ficha.getXp() + "/" + fichas.FichaRpg.getXpNecessaria(ficha.getNivel()) + ")" : "  (XP: " + ficha.getXp() + " - Nível máximo)"));
-        System.out.println("  Dono da ficha: " + ficha.getNomePessoa() + "      Classe: " + nomeDaClasse);
+        String modoLabel = ficha.isModoDificil() ? " [DIFÍCIL]" : " [Normal]";
+        System.out.println("  Dono da ficha: " + ficha.getNomePessoa() + "      Classe: " + nomeDaClasse + "      Modo: " + (ficha.isModoDificil() ? AMARELO + "Difícil" : VERDE + "Normal") + RESET + modoLabel);
         System.out.println("  Vida: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima() + "        Mana: " + ficha.getManaPersonagem() + "/" + ficha.getManaMaxima());
         System.out.println("  Ouro: " + ficha.getOuro());
 

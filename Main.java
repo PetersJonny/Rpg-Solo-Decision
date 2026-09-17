@@ -47,6 +47,7 @@ public class Main {
                     continue;
                 }
                 ficha.resetarEfeitosCombate();
+                ficha.setSlotAtual(slot);
 
                 Interface.MostrarMensagem("\nSave carregado! Boa sorte na jornada, " + ficha.getNomePersonagem() + "!");
                 Interface.Pausa(2000);
@@ -135,10 +136,28 @@ public class Main {
                         break;
 
                     case 4:
-                        Interface.MostrarFicha(ficha);
+                        int escolhaDificuldade = Interface.MenuEscolherDificuldade();
+                        switch (escolhaDificuldade) {
+                            case 0: break;
+                            case 1:
+                                ficha.setModoDificuldade(fichas.ModoDificuldade.NORMAL);
+                                Interface.MostrarMensagem("\nModo Normal selecionado: seus saves são mantidos se você morrer.");
+                                break;
+                            case 2:
+                                ficha.setModoDificuldade(fichas.ModoDificuldade.DIFICIL);
+                                Interface.MostrarMensagem("\nModo Difícil selecionado: morte permanente apaga o save do personagem!");
+                                break;
+                            default:
+                                Interface.ExibirErro("Opção inválida!");
+                        }
+                        Interface.Pausa(1200);
                         break;
 
                     case 5:
+                        Interface.MostrarFicha(ficha);
+                        break;
+
+                    case 6:
                         if (ficha.isFichaCompleta()) {
                             criandoFicha = false;
                         } else {
@@ -146,7 +165,7 @@ public class Main {
                         }
                         break;
 
-                    case 6:
+                    case 7:
                         jogoAberto = false;
                         criandoFicha = false;
                         Interface.MostrarMensagem("\nEncerrando o jogo... Até a próxima aventura!");
@@ -265,6 +284,18 @@ public class Main {
             Interface.MostrarMensagem("\n==================================================");
             Interface.MostrarMensagem("Sua jornada termina aqui, mas toda lenda pode recomeçar!");
             Interface.MostrarMensagem("==================================================");
+
+            if (ficha.isModoDificil()) {
+                int apagados = GerenciadorSaves.deletarSavesDoPersonagem(ficha.getNomePersonagem());
+                Interface.MostrarMensagem("\n  \u001B[33mMODO DIFÍCIL \u2014 MORTE PERMANENTE!\u001B[0m");
+                if (apagados > 0) {
+                    Interface.MostrarMensagem("  O destino consumiu " + apagados + " save(s) deste personagem.");
+                } else {
+                    Interface.MostrarMensagem("  Este personagem não possuía saves para serem consumidos.");
+                }
+            } else {
+                Interface.MostrarMensagem("\n  \u001B[32mMODO NORMAL\u001B[0m \u2014 seus saves foram mantidos.");
+            }
             Interface.Pausa(3000);
             return false;
         }
@@ -278,6 +309,7 @@ public class Main {
         if (slot == -1) return; // voltou
 
         if (GerenciadorSaves.salvar(ficha, slot)) {
+            ficha.setSlotAtual(slot);
             Interface.MostrarMensagem("\nJogo salvo com sucesso no slot " + slot + "!");
         } else {
             Interface.ExibirErro("Não foi possível salvar. Verifique a pasta saves/.");
