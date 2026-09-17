@@ -34,7 +34,7 @@ public class Floresta {
         }
         Interface.Pausa(1000);
         if (ficha.isEhNoite()) {
-            Interface.MostrarMensagem("\nO sol se põe no horizonte e a noite cai sobre Freijord...");
+            Interface.MostrarMensagem("\nO sol se põe no horizonte e a noite cai sobre Freijord... " + AMARELO + "(" + ficha.getPeriodoDescritivo() + ")" + RESET);
             Interface.Pausa(2000);
             if (ficha.temCompanheiro()) {
                 companheiros.Companheiro comp = ficha.getCompanheiro();
@@ -50,7 +50,7 @@ public class Floresta {
                 Interface.Pausa(2000);
             }
         } else {
-            Interface.MostrarMensagem("\nOs primeiros raios de sol anunciam o amanhecer... é dia novamente em Freijord.");
+            Interface.MostrarMensagem("\nOs primeiros raios de sol anunciam o amanhecer... é " + AMARELO + ficha.getPeriodoDescritivo() + RESET + " em Freijord.");
             Interface.Pausa(2000);
             verificarCompanheiroPosDormir(ficha);
         }
@@ -144,7 +144,7 @@ public class Floresta {
             Interface.cabecalhoMenu("C O N S T R U Ç Ã O");
 
             // Período e localização atuais
-            String periodo = ficha.isEhNoite() ? "NOITE" : "DIA";
+            String periodo = ficha.getPeriodoDescritivoMaiusculo();
             System.out.println("\n  Período: " + AMARELO + periodo + RESET + "  (" + (3 - ficha.getProgressoPeriodo()) + "/3 para virar)");
 
             String local;

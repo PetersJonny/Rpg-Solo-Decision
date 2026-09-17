@@ -318,7 +318,7 @@ public class Interface {
         System.out.println("\n");
         cabecalhoMenu("FLORESTA DE FREIJORD");
 
-        String periodo = ficha.isEhNoite() ? "NOITE" : "DIA";
+        String periodo = ficha.getPeriodoDescritivoMaiusculo();
         System.out.println("\n  Período: " + AMARELO + periodo + RESET + "  (" + (3 - ficha.getProgressoPeriodo()) + "/3 para virar)" + (ficha.isCansado() ? "  |  " + AMARELO + "CANSADO (-1 em testes até dormir)" + RESET : ""));
         if (ficha.temCompanheiro()) {
             System.out.println("  Companheiro(a): " + CIANO + ficha.getCompanheiro().getNome() + RESET + " (" + ficha.getCompanheiro().getClasseNome() + ", Nível " + ficha.getCompanheiro().getFicha().getNivel() + ")");
@@ -499,7 +499,7 @@ public class Interface {
         System.out.println("    Defesa: " + ficha.getDefesa());
 
         System.out.println("\n  " + CIANO + "[ ABRIGO E TEMPO ]" + RESET);
-        System.out.println("    Período: " + (ficha.isEhNoite() ? "Noite" : "Dia") + " (" + (3 - ficha.getProgressoPeriodo()) + "/3 para virar)");
+        System.out.println("    Período: " + ficha.getPeriodoDescritivo() + " (" + (3 - ficha.getProgressoPeriodo()) + "/3 para virar)");
         String cabanaStatus = !ficha.isTemCabana()
                 ? "Não construída"
                 : (ficha.isNaCabana() ? "Construída (você está nela)" : "Construída (você está longe dela)");

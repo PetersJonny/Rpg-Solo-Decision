@@ -72,7 +72,7 @@ public class GerenciadorSaves {
             return "Corrompido";
         }
         String classe = ficha.getClasseDoPersonagem() != null ? ficha.getClasseDoPersonagem().getNome() : "Sem classe";
-        String periodo = ficha.isEhNoite() ? "Noite" : "Dia";
+        String periodo = ficha.getPeriodoDescritivo();
         String data = new SimpleDateFormat("dd/MM HH:mm").format(new Date(arquivo.lastModified()));
         return ficha.getNomePersonagem() + " (" + classe + ", Nível " + ficha.getNivel() + ") | "
                 + periodo + " " + (3 - ficha.getProgressoPeriodo()) + "/3 | Salvo em " + data;

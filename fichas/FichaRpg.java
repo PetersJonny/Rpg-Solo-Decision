@@ -76,6 +76,7 @@ public class FichaRpg implements java.io.Serializable {
     // Efeitos de tempo (dia/noite) e abrigo
     private boolean ehNoite = false;
     private int progressoPeriodo = 0;
+    private int diaAtual = 1; // Dia 1, Noite 1, Dia 2, Noite 2, ...
     private int diasSemDormir = 0;
     private boolean cansado = false;
     private boolean temCabana = false;
@@ -391,6 +392,9 @@ public class FichaRpg implements java.io.Serializable {
 
     public boolean isEhNoite() { return ehNoite; }
     public int getProgressoPeriodo() { return progressoPeriodo; }
+    public int getDiaAtual() { return diaAtual; }
+    public String getPeriodoDescritivo() { return (ehNoite ? "Noite " : "Dia ") + diaAtual; }
+    public String getPeriodoDescritivoMaiusculo() { return (ehNoite ? "NOITE " : "DIA ") + diaAtual; }
     public int getDiasSemDormir() { return diasSemDormir; }
     public boolean isCansado() { return cansado; }
     public boolean isTemCabana() { return temCabana; }
@@ -438,9 +442,12 @@ public class FichaRpg implements java.io.Serializable {
             ehNoite = !ehNoite;
             if (ehNoite) {
                 diasSemDormir++;
-            } else if (eraNoite && companheiro != null) {
-                // A noite terminou: o companheiro dormiu na cabana
-                registrarDormidaDoCompanheiro();
+            } else {
+                diaAtual++;
+                if (eraNoite && companheiro != null) {
+                    // A noite terminou: o companheiro dormiu na cabana
+                    registrarDormidaDoCompanheiro();
+                }
             }
             // Decrementa bônus de treino a cada período que se inicia
             if (treinoBonusPeriodosRestantes > 0) {
@@ -466,6 +473,7 @@ public class FichaRpg implements java.io.Serializable {
         manaPersonagem = Math.min(manaPersonagem + curaMana, manaMaxima);
         ehNoite = false;
         progressoPeriodo = 0;
+        diaAtual++;
         diasSemDormir = 0;
         cansado = false;
         registrarDormidaDoCompanheiro();
