@@ -15,9 +15,9 @@ import telas.Interface;
 
 public class Vendedor {
 
-    // Cores ANSI (mesmas usadas na Interface)
-    private static final String RESET = "\u001B[0m";
-    private static final String CIANO = "\u001B[36m";
+    // Cores reutilizadas da Interface (evita duplicação)
+    private static final String RESET = Interface.RESET;
+    private static final String CIANO = Interface.CIANO;
 
     // Categorias (usadas só pela loja; não aparecem no jogo)
     private static final List<String> GERAL = List.of(

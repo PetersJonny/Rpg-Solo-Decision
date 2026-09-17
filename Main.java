@@ -58,11 +58,6 @@ public class Main {
                 continue;
             }
 
-            if (escolhaInicial != 1) {
-                Interface.ExibirErro("Opção inválida!");
-                continue;
-            }
-
             // ==================== NOVO JOGO ====================
             String nomePessoa = Interface.PedirNomeJogador();
             FichaRpg ficha = new FichaRpg(nomePessoa);
@@ -85,30 +80,10 @@ public class Main {
 
                         while (totalDePontos > 0) {
                             int atributoEscolhido = Interface.MenuDistribuirAtributos(totalDePontos);
-
                             if (atributoEscolhido == 0) break;
 
-                            if (atributoEscolhido < 1 || atributoEscolhido > 6) {
-                                Interface.ExibirErro("Opção inválida!");
-                                continue;
-                            }
-
                             int gastoDePontos = Interface.PedirQuantidadePontos(totalDePontos);
-
-                            if (gastoDePontos <= 0) {
-                                Interface.ExibirErro("Por favor, insira um valor maior que zero!");
-                                continue;
-                            }
-
-                            if (gastoDePontos > 6) {
-                                Interface.MostrarMensagem("Você colocou mais que 6 pontos! Por isso, foram aplicados apenas 6.");
-                                gastoDePontos = 6;
-                            }
-
-                            if (gastoDePontos > totalDePontos && totalDePontos < 6) {
-                                gastoDePontos = totalDePontos;
-                                Interface.MostrarMensagem("Como só restavam " + totalDePontos + " pontos, foram aplicados apenas " + totalDePontos + ".");
-                            }
+                            gastoDePontos = Math.min(gastoDePontos, totalDePontos);
 
                             ficha.adicionarAtributo(atributoEscolhido, gastoDePontos);
                             totalDePontos -= gastoDePontos;
@@ -119,36 +94,26 @@ public class Main {
                     case 3:
                         int escolhaClasse = Interface.MenuEscolherClasse();
                         switch (escolhaClasse) {
-                            case 0: break;
-                            case 1:
+                            case 1 -> {
                                 String elemento = Interface.EscolherElementoMago();
                                 if (elemento != null) ficha.setClasse(new Mago(elemento));
-                                break;
-                            case 2:
-                                ficha.setClasse(new Guerreiro());
-                                break;
-                            case 3:
-                                ficha.setClasse(new Healer());
-                                break;
-                            default:
-                                Interface.ExibirErro("Opção inválida!");
+                            }
+                            case 2 -> ficha.setClasse(new Guerreiro());
+                            case 3 -> ficha.setClasse(new Healer());
                         }
                         break;
 
                     case 4:
                         int escolhaDificuldade = Interface.MenuEscolherDificuldade();
                         switch (escolhaDificuldade) {
-                            case 0: break;
-                            case 1:
+                            case 1 -> {
                                 ficha.setModoDificuldade(fichas.ModoDificuldade.NORMAL);
                                 Interface.MostrarMensagem("\nModo Normal selecionado: seus saves são mantidos se você morrer.");
-                                break;
-                            case 2:
+                            }
+                            case 2 -> {
                                 ficha.setModoDificuldade(fichas.ModoDificuldade.DIFICIL);
                                 Interface.MostrarMensagem("\nModo Difícil selecionado: morte permanente apaga o save do personagem!");
-                                break;
-                            default:
-                                Interface.ExibirErro("Opção inválida!");
+                            }
                         }
                         Interface.Pausa(1200);
                         break;
@@ -169,10 +134,6 @@ public class Main {
                         jogoAberto = false;
                         criandoFicha = false;
                         Interface.MostrarMensagem("\nEncerrando o jogo... Até a próxima aventura!");
-                        break;
-
-                    default:
-                        Interface.ExibirErro("Opção inválida!");
                         break;
                 }
             }
@@ -217,9 +178,6 @@ public class Main {
                                 break;
                             case 3:
                                 naFicha = false;
-                                break;
-                            default:
-                                Interface.ExibirErro("Opção inválida!");
                                 break;
                         }
                     }
@@ -268,10 +226,6 @@ public class Main {
                     encerrarJogo(ficha);
                     jogando = false;
                     encerrouJogo = true;
-                    break;
-
-                default:
-                    Interface.ExibirErro("Opção inválida!");
                     break;
             }
 

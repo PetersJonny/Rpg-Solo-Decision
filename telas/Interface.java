@@ -7,12 +7,12 @@ import java.util.Scanner;
 import salvamento.GerenciadorSaves;
 
 public class Interface {
-    // Códigos de Cores ANSI
-    private static final String RESET = "\u001B[0m";
-    private static final String AMARELO = "\u001B[33m";
-    private static final String CIANO = "\u001B[36m";
-    private static final String VERDE = "\u001B[32m";
-    private static final String NEGRITO = "\u001B[1m";
+    // Códigos de Cores ANSI (públicos para evitar duplicação em outras classes)
+    public static final String RESET = "\u001B[0m";
+    public static final String AMARELO = "\u001B[33m";
+    public static final String CIANO = "\u001B[36m";
+    public static final String VERDE = "\u001B[32m";
+    public static final String NEGRITO = "\u001B[1m";
 
     // Entrada de Dados
     public static final Scanner scanner = new Scanner(System.in);
@@ -49,6 +49,16 @@ public class Interface {
             } catch (NumberFormatException e) {
                 ExibirErro("Opção inválida! Digite um número.");
             }
+        }
+    }
+
+    // Lê um número inteiro garantindo que esteja entre min e max (inclusive), reexibindo um erro
+    // até que o valor seja válido. Usado em menus em que as opções precisam continuar visíveis.
+    public static int lerOpcao(int min, int max) {
+        while (true) {
+            int valor = lerInteiro();
+            if (valor >= min && valor <= max) return valor;
+            ExibirErro("Opção inválida! Escolha entre " + min + (min == max ? "." : " e " + max + "."));
         }
     }
 
@@ -110,10 +120,14 @@ public class Interface {
         return lerNome();
     }
 
-    // Lê um nome com limite de 20 caracteres
+    // Lê um nome obrigatório com limite de 20 caracteres
     private static String lerNome() {
         while (true) {
             String nome = scanner.nextLine().trim();
+            if (nome.isEmpty()) {
+                ExibirErro("Você não pode deixar o nome em branco. Digite novamente:");
+                continue;
+            }
             if (nome.length() > 20) {
                 ExibirErro("O nome pode ter no máximo 20 caracteres. Digite novamente:");
                 continue;
@@ -134,11 +148,8 @@ public class Interface {
         System.out.println("  6. Finalizar criação do personagem");
         System.out.println("  7. Fechar o jogo\n");
         System.out.println("  " + VERDE + "Digite a opção:" + RESET);
-        int escolha = lerInteiro();
-        return escolha;
+        return lerOpcao(1, 7);
     }
-
-    // Escolha do modo de dificuldade (1 = Normal, 2 = Difícil). Retorna 0 se voltou.
     public static int MenuEscolherDificuldade() {
         System.out.println("\n");
         cabecalhoMenu("MODO DE DIFICULDADE");
@@ -146,8 +157,7 @@ public class Interface {
         System.out.println("  1. " + VERDE + "Normal" + RESET + " — " + fichas.ModoDificuldade.NORMAL.getDescricao());
         System.out.println("  2. " + AMARELO + "Difícil" + RESET + " — " + fichas.ModoDificuldade.DIFICIL.getDescricao());
         System.out.println("\n  " + VERDE + "0. Voltar" + RESET);
-        int escolha = lerInteiro();
-        return escolha;
+        return lerOpcao(0, 2);
     }
 
     public static int MenuDistribuirAtributos(int pontosSobrando) {
@@ -161,15 +171,13 @@ public class Interface {
         System.out.println("  5. Intelecto");
         System.out.println("  6. Presença\n");
         System.out.println("  " + VERDE + "0. Voltar" + RESET);
-        int escolha = lerInteiro();
-        return escolha;
+        return lerOpcao(0, 6);
     }
 
     public static int PedirQuantidadePontos(int pontosSobrando) {
         cabecalhoMenu("QUANTIDADE DE PONTOS");
         System.out.println("\n  Quantos pontos deseja gastar? Tem " + AMARELO + pontosSobrando + RESET + " pontos ainda.");
-        int gasto = lerInteiro();
-        return gasto;
+        return lerOpcao(1, 6);
     }
 
     public static int MenuEscolherClasse() {
@@ -179,11 +187,11 @@ public class Interface {
         System.out.println("  2. " + CIANO + "Guerreiro" + RESET + " — só pode usar espada e atacar corpo a corpo, porém é mais resistente.");
         System.out.println("  3. " + CIANO + "Healer" + RESET + " — tem poderes de cura, pode curar a si mesmo e aos outros, tem uma vida mediana.\n");
         System.out.println("  " + VERDE + "0. Voltar" + RESET);
-        int escolha = lerInteiro();
-        return escolha;
+        return lerOpcao(0, 3);
     }
 
     public static String EscolherElementoMago() {
+        System.out.println("\n");
         cabecalhoMenu("ELEMENTO DO MAGO");
         System.out.println("\n  Como Mago, você deve escolher o elemento da sua Bola Elementar:\n");
         System.out.println("  1. Fogo");
@@ -193,7 +201,7 @@ public class Interface {
         System.out.println("  5. Terra");
         System.out.println("  6. Ácido\n");
         System.out.println("  " + VERDE + "0. Voltar" + RESET);
-        int escolha = lerInteiro();
+        int escolha = lerOpcao(0, 6);
         switch (escolha) {
             case 1: return "Fogo";
             case 2: return "Água";
@@ -215,7 +223,7 @@ public class Interface {
         System.out.println("  3. " + AMARELO + "Apagar Save" + RESET + " — deletar um save salvo");
         System.out.println("  4. Fechar o jogo\n");
         System.out.println("  " + VERDE + "Digite a opção:" + RESET);
-        return lerInteiro();
+        return lerOpcao(1, 4);
     }
 
     // Tela para escolher qual save continuar. Retorna o slot (1 a 3),
@@ -239,12 +247,12 @@ public class Interface {
             }
             System.out.println("\n  " + VERDE + "0. Voltar" + RESET);
 
-            int escolha = lerInteiro();
+            int escolha = lerOpcao(0, GerenciadorSaves.MAX_SAVES);
             if (escolha == 0) return -1;
-            if (escolha >= 1 && escolha <= GerenciadorSaves.MAX_SAVES && GerenciadorSaves.existeSave(escolha)) {
+            if (GerenciadorSaves.existeSave(escolha)) {
                 return escolha;
             }
-            ExibirErro("Opção inválida ou save vazio!");
+            ExibirErro("Save vazio!");
         }
     }
 
@@ -324,7 +332,7 @@ public class Interface {
         System.out.println("  1. Sim");
         System.out.println("  2. Não\n");
         System.out.println("  " + VERDE + "Digite a opção:" + RESET);
-        return lerInteiro() == 1;
+        return lerOpcao(1, 2) == 1;
     }
 
     public static int MenuPrincipalAventura(FichaRpg ficha) {
@@ -341,17 +349,19 @@ public class Interface {
         System.out.println("  2. Explorar a Floresta");
         System.out.println("  3. Buscar Recursos na Floresta");
         System.out.println("  4. Construção (Dormir)");
+        int totalOpcoes = 4;
         if (ficha.temCompanheiro()) {
             System.out.println("  5. Conversar com " + ficha.getCompanheiro().getNome());
             System.out.println("  6. Salvar Jogo");
             System.out.println("  7. Encerrar jogo");
+            totalOpcoes = 7;
         } else {
             System.out.println("  5. Salvar Jogo");
             System.out.println("  6. Encerrar jogo");
+            totalOpcoes = 6;
         }
         System.out.println("\n  " + VERDE + "Digite a opção:" + RESET);
-        int escolha = lerInteiro();
-        return escolha;
+        return lerOpcao(1, totalOpcoes);
     }
 
     // Interação com a Ficha
@@ -363,8 +373,7 @@ public class Interface {
         System.out.println("  2. Ver Inventário (Ler descrições)");
         System.out.println("  3. Voltar para a Aventura");
         System.out.println("\n  " + VERDE + "Digite a opção:" + RESET);
-        int escolha = lerInteiro();
-        return escolha;
+        return lerOpcao(1, 3);
     }
 
     public static void InspecionarInventario(FichaRpg ficha) {

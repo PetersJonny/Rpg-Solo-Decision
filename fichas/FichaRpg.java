@@ -406,6 +406,7 @@ public class FichaRpg implements java.io.Serializable {
     public boolean isEhNoite() { return ehNoite; }
     public int getProgressoPeriodo() { return progressoPeriodo; }
     public int getDiaAtual() { return diaAtual; }
+    public void setDiaAtual(int dia) { this.diaAtual = dia; }
     public String getPeriodoDescritivo() { return (ehNoite ? "Noite " : "Dia ") + diaAtual; }
     public String getPeriodoDescritivoMaiusculo() { return (ehNoite ? "NOITE " : "DIA ") + diaAtual; }
     public int getDiasSemDormir() { return diasSemDormir; }
