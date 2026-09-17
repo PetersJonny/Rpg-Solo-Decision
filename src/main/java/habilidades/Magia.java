@@ -33,6 +33,21 @@ public class Magia extends Habilidade {
         if (alvoIndex < 0 || alvoIndex >= inimigos.size()) return true;
         Criatura inimigo = inimigos.get(alvoIndex);
         
+        int custoPago = MotorDeCombate.custoEfetivoMagia(ficha, this);
+        if (ficha.getManaPersonagem() < custoPago) {
+            Interface.ExibirErro("Mana insuficiente!");
+            Interface.Pausa(1500);
+            return true;
+        }
+        ficha.setManaPersonagem(ficha.getManaPersonagem() - custoPago);
+        if (custoPago < getCustoMana()) {
+            Interface.MostrarMensagem("(Pequeno Grimório reduziu o custo da magia em 1!)");
+            Interface.Pausa(1000);
+        }
+        
+        Interface.MostrarMensagem("\nVocê usa " + getNome() + "!");
+        Interface.Pausa(1500);
+        
         int quantidade = getQuantidadeDano();
         if (ficha.isPoderAbsolutoAtivo()) {
             quantidade *= 2;
@@ -77,36 +92,18 @@ public class Magia extends Habilidade {
                     nomes.append(MotorDeCombate.rotuloCriatura(inimigos, afetado));
                 }
             }
-            Interface.MostrarMensagem("A magia atinge: " + nomes.toString());
+            Interface.MostrarMensagem("-> Ataque em área! Atinge: " + nomes.toString());
+            Interface.Pausa(2000);
         }
-        
-        int bnsMagia = ficha.getIntelectoTeste();
-        if (ficha.isSemiDeusAtivo()) bnsMagia += 4;
-        int totalMagia = dano + bnsMagia;
-        Interface.MostrarMensagem("-> Poder Mágico Total: " + dano + " + " + bnsMagia + " (Intelecto/Bônus) = " + totalMagia);
-        Interface.Pausa(1500);
         
         for (Criatura alvo : afetados) {
             if (alvo.getVida() <= 0) continue;
-            
-            int dadoDefesa = MecanicasRpg.rolarDado(20);
-            int totalDefesa = dadoDefesa + alvo.getDefesa();
-            Interface.MostrarMensagem("\nDefesa de " + MotorDeCombate.rotuloCriatura(inimigos, alvo) + ": " + dadoDefesa + " (Dado) + " + alvo.getDefesa() + " (Defesa) = " + totalDefesa);
-            Interface.Pausa(1500);
-            
-            if (totalDefesa >= totalMagia) {
-                Interface.MostrarMensagem("A criatura resiste e recebe apenas metade do dano!");
-                int danoFinal = Math.max(1, totalMagia / 2);
-                alvo.setVida(alvo.getVida() - danoFinal);
-                Interface.MostrarMensagem("Dano: " + danoFinal + " -> Vida: " + Math.max(0, alvo.getVida()));
-            } else {
-                Interface.MostrarMensagem("A magia atinge em cheio!");
-                alvo.setVida(alvo.getVida() - totalMagia);
-                Interface.MostrarMensagem("Dano: " + totalMagia + " -> Vida: " + Math.max(0, alvo.getVida()));
-            }
+            alvo.setVida(alvo.getVida() - dano);
+            Interface.MostrarMensagem(MotorDeCombate.rotuloCriatura(inimigos, alvo) + " agora tem " + Math.max(0, alvo.getVida()) + " de vida.");
             Interface.Pausa(1500);
         }
         
+        MotorDeCombate.aplicarVenenoCuraParaMorte(ficha, inimigos, alvoIndex);
         return true;
     }
 }

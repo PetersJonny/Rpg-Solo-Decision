@@ -11,6 +11,7 @@ import habilidades.ativas.HabilidadeEstrondo;
 import habilidades.ativas.HabilidadePrisao;
 import habilidades.ativas.HabilidadeProtecaoAbsoluta;
 import habilidades.Magia;
+import mecanicas.MecanicasRpg;
 import java.util.ArrayList;
 import java.util.List;
 import org.mockito.MockedStatic;
@@ -113,5 +114,42 @@ class HabilidadesAtivasTest {
         int custoReal = MotorDeCombate.custoEfetivoMagia(ficha, magiaPequena);
         
         assertEquals(1, custoReal, "O Pequeno Grimório não deve reduzir o custo para 0 (min 1 para magias que custam algo)");
+    }
+
+    @Test
+    void testMagiaDescontaManaDoJogador() {
+        Magia magia = new Magia("Bola Elementar", "...", 3, 2, 8);
+
+        try (MockedStatic<Interface> mocked = Mockito.mockStatic(Interface.class)) {
+            mocked.when(Interface::pressionarParaRolar).thenAnswer(i -> null);
+            mocked.when(() -> Interface.Pausa(Mockito.anyInt())).thenAnswer(i -> null);
+            mocked.when(() -> Interface.MostrarMensagem(Mockito.anyString())).thenAnswer(i -> null);
+
+            magia.executar(ficha, inimigos, 0);
+        }
+
+        assertEquals(17, ficha.getManaPersonagem(), "Lançar a magia deve custar 3 de mana (20 -> 17)");
+    }
+
+    @Test
+    void testMagiaAcertaDiretoSemBonusDeIntelectoOuSemiDeus() {
+        ficha.adicionarAtributo(5, 10); // Intelecto 10
+        ficha.setSemiDeusAtivo(true);
+
+        Magia magia = new Magia("Bola Elementar", "...", 3, 2, 8);
+
+        try (MockedStatic<Interface> mocked = Mockito.mockStatic(Interface.class);
+             MockedStatic<MecanicasRpg> dados = Mockito.mockStatic(MecanicasRpg.class)) {
+            mocked.when(Interface::pressionarParaRolar).thenAnswer(i -> null);
+            mocked.when(() -> Interface.Pausa(Mockito.anyInt())).thenAnswer(i -> null);
+            mocked.when(() -> Interface.MostrarMensagem(Mockito.anyString())).thenAnswer(i -> null);
+            dados.when(() -> MecanicasRpg.rolarDado(Mockito.anyInt())).thenReturn(4);
+
+            magia.executar(ficha, inimigos, 0);
+        }
+
+        // 2d8 = 8 de dano direto, sem rolagem de defesa e sem bônus de Intelecto/Semi Deus.
+        // Goblin (vida 5) - 8 = -3.
+        assertEquals(-3, inimigos.get(0).getVida(), "Goblin (vida 5) deve receber exatamente 8 de dano direto");
     }
 }
