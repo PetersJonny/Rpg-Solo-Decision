@@ -4,14 +4,30 @@ Um RPG de mesa single-player em **Java** executado no terminal. Você cria sua f
 
 ## Como Rodar
 
-1. Tenha o [JDK](https://www.oracle.com/java/technologies/downloads/) instalado (Java 17+).
-2. Compile o projeto:
+O projeto passou por uma modernização arquitetural e agora utiliza o sistema de build **Maven**, facilitando o gerenciamento de dependências, testes unitários e adoção de novas versões do Java.
+
+### Requisitos
+- **Java 21+** (JDK 21)
+- **Apache Maven** (opcional via terminal, mas recomendado; caso contrário, use uma IDE compatível como IntelliJ IDEA, Eclipse ou VS Code).
+
+### Instruções via Terminal
+
+1. **Testando a Arquitetura (QA):**
+   O projeto conta com uma suíte de 36 testes automatizados que cobrem desde regras matemáticas e inventário até Padrões de Projeto (Command e Strategy).
    ```bash
-   javac -d bin $(find . -name "*.java")
+   mvn clean test
    ```
-3. Execute:
+
+2. **Compilando:**
+   Para compilar apenas os binários:
    ```bash
-   java -cp bin Main
+   mvn clean compile
+   ```
+
+3. **Executando o Jogo:**
+   O arquivo `pom.xml` já está configurado com o `exec-maven-plugin` para rodar o jogo rapidamente:
+   ```bash
+   mvn exec:java
    ```
 
 ## Fluxo do Jogo
@@ -100,16 +116,16 @@ Encontros em grupo permitem **escolher o alvo** dos seus ataques/habilidades.
 ## Estrutura do Projeto
 
 ```
-├── Main.java               # Loop principal, criação de ficha e mapa
-├── classes/                # ClasseRpg, Mago, Guerreiro, Healer
-├── fichas/FichaRpg.java    # Atributos, inventário, ouro, defesa, habilidades
-├── criaturas/Criatura.java # Monstros, ataques, acerto/crítico, drops
-├── eventos/Floresta.java   # Encontros e sistema de combate completo
+├── Main.java                   # Loop principal, criação de ficha e mapa
+├── classes/                    # ClasseRpg, Mago, Guerreiro, Healer
+├── fichas/FichaRpg.java        # Atributos, inventário, ouro, defesa, habilidades
+├── criaturas/Criatura.java     # Monstros, ataques, acerto/crítico, drops
+├── eventos/Floresta.java       # Encontros e sistema de combate completo
 ├── mecanicas/MecanicasRpg.java # Rolagens de dado e dano
-├── narrativa/Aventura.java # Prólogo
-├── telas/Interface.java    # Menus, ficha e entradas do jogador
-├── itens/                  # ItemRpg, Arma, Armadura, Consumivel
-└── habilidades/            # Habilidade e Magia
+├── narrativa/Aventura.java     # Prólogo
+├── telas/Interface.java        # Menus, ficha e entradas do jogador
+├── itens/                      # ItemRpg, Arma, Armadura, Consumivel
+└── habilidades/                # Habilidade e Magia
 ```
 
 ## Conceitos Aplicados

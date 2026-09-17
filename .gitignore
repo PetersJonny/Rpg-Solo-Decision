@@ -1,2 +1,10 @@
 bin/
 saves/
+target/
+*.class
+.idea/
+*.iml
+.vscode/
+.project
+.classpath
+.settings/
