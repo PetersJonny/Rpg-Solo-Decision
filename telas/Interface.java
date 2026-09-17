@@ -4,6 +4,7 @@ import classes.ClasseRpg;
 import fichas.FichaRpg;
 import itens.ItemRpg;
 import java.util.Scanner;
+import salvamento.GerenciadorSaves;
 
 public class Interface {
     // Códigos de Cores ANSI
@@ -191,6 +192,80 @@ public class Interface {
         }
     }
 
+    // Menu exibido antes do nome: Novo Jogo ou Carregar Jogo (1 ou 2); 3 = sair
+    public static int MenuInicial() {
+        System.out.println("\n");
+        cabecalhoMenu("MENU PRINCIPAL");
+        System.out.println("\n  O que deseja fazer?\n");
+        System.out.println("  1. " + CIANO + "Novo Jogo" + RESET + " — começar uma nova aventura do zero");
+        System.out.println("  2. " + CIANO + "Carregar Jogo" + RESET + " — continuar um de seus saves");
+        System.out.println("  3. Fechar o jogo\n");
+        System.out.println("  " + VERDE + "Digite a opção:" + RESET);
+        return lerInteiro();
+    }
+
+    // Tela para escolher qual save continuar. Retorna o slot (1 a 3),
+    // -1 se o jogador voltou, ou -2 se não existe nenhum save salvo.
+    public static int MenuCarregarJogo() {
+        while (true) {
+            if (GerenciadorSaves.quantidadeSaves() == 0) {
+                return -2;
+            }
+
+            System.out.println("\n");
+            cabecalhoMenu("CARREGAR JOGO");
+            System.out.println("\n  Escolha qual save continuar:\n");
+            for (int slot = 1; slot <= GerenciadorSaves.MAX_SAVES; slot++) {
+                String info = GerenciadorSaves.infoSlot(slot);
+                if (GerenciadorSaves.existeSave(slot)) {
+                    System.out.println("  " + slot + ". " + CIANO + info + RESET);
+                } else {
+                    System.out.println("  " + slot + ". " + AMARELO + info + RESET);
+                }
+            }
+            System.out.println("\n  " + VERDE + "0. Voltar" + RESET);
+
+            int escolha = lerInteiro();
+            if (escolha == 0) return -1;
+            if (escolha >= 1 && escolha <= GerenciadorSaves.MAX_SAVES && GerenciadorSaves.existeSave(escolha)) {
+                return escolha;
+            }
+            ExibirErro("Opção inválida ou save vazio!");
+        }
+    }
+
+    // Tela para escolher em qual slot salvar (permite sobrescrever). Retorna o slot (1 a 3) ou -1.
+    public static int MenuSalvarJogo(FichaRpg ficha) {
+        while (true) {
+            System.out.println("\n");
+            cabecalhoMenu("SALVAR JOGO");
+            System.out.println("\n  Escolha o slot onde deseja salvar:\n");
+            for (int slot = 1; slot <= GerenciadorSaves.MAX_SAVES; slot++) {
+                String info = GerenciadorSaves.infoSlot(slot);
+                if (GerenciadorSaves.existeSave(slot)) {
+                    System.out.println("  " + slot + ". " + AMARELO + info + RESET + "  (será substituído)");
+                } else {
+                    System.out.println("  " + slot + ". " + VERDE + "Vazio" + RESET);
+                }
+            }
+            System.out.println("\n  " + VERDE + "0. Voltar" + RESET);
+
+            int escolha = lerInteiro();
+            if (escolha == 0) return -1;
+            if (escolha >= 1 && escolha <= GerenciadorSaves.MAX_SAVES) return escolha;
+            ExibirErro("Opção inválida!");
+        }
+    }
+
+    // Pergunta se o jogador quer salvar antes de sair (1 = sim, 2 = não)
+    public static boolean PerguntarSalvarAntesDeSair() {
+        System.out.println("\n  Deseja salvar o jogo antes de sair?\n");
+        System.out.println("  1. Sim");
+        System.out.println("  2. Não\n");
+        System.out.println("  " + VERDE + "Digite a opção:" + RESET);
+        return lerInteiro() == 1;
+    }
+
     public static int MenuPrincipalAventura(FichaRpg ficha) {
         System.out.println("\n");
         cabecalhoMenu("FLORESTA DE FREIJORD");
@@ -207,9 +282,11 @@ public class Interface {
         System.out.println("  4. Construção (Dormir)");
         if (ficha.temCompanheiro()) {
             System.out.println("  5. Conversar com " + ficha.getCompanheiro().getNome());
-            System.out.println("  6. Encerrar jogo");
+            System.out.println("  6. Salvar Jogo");
+            System.out.println("  7. Encerrar jogo");
         } else {
-            System.out.println("  5. Encerrar jogo");
+            System.out.println("  5. Salvar Jogo");
+            System.out.println("  6. Encerrar jogo");
         }
         System.out.println("\n  " + VERDE + "Digite a opção:" + RESET);
         int escolha = lerInteiro();

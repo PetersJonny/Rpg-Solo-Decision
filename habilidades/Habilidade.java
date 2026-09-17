@@ -1,6 +1,8 @@
 package habilidades;
 
-public class Habilidade {
+public class Habilidade implements java.io.Serializable {
+    private static final long serialVersionUID = 1L;
+
     protected String nome;
     protected String descricao;
     protected int custoMana;

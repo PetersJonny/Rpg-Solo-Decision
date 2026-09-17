@@ -8,7 +8,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class ClasseRpg {
+public abstract class ClasseRpg implements java.io.Serializable {
+    private static final long serialVersionUID = 1L;
+
     // Identificação
     protected String nome;
     

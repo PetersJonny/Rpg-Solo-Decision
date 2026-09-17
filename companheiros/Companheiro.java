@@ -9,7 +9,8 @@ import java.util.List;
 import mecanicas.MecanicasRpg;
 import telas.Interface;
 
-public class Companheiro {
+public class Companheiro implements java.io.Serializable {
+    private static final long serialVersionUID = 1L;
 
     private static final String[] PRIMEIROS_NOMES = {
         "Alaric", "Bianca", "Cedric", "Dara", "Ernesto", "Fiona", "Gael", "Helena",

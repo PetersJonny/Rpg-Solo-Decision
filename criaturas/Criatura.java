@@ -8,7 +8,9 @@ import java.util.List;
 import mecanicas.MecanicasRpg;
 import telas.Interface;
 
-public class Criatura {
+public class Criatura implements java.io.Serializable {
+    private static final long serialVersionUID = 1L;
+
     private String nome;
     private int nivel;
     private int vida;
@@ -182,7 +184,9 @@ public class Criatura {
         }
     }
 
-    public static class Ataque {
+    public static class Ataque implements java.io.Serializable {
+        private static final long serialVersionUID = 1L;
+
         public String nome;
         public String tipoDano;
         public int qtdDado;
@@ -196,7 +200,9 @@ public class Criatura {
         }
     }
 
-    public static class Drop {
+    public static class Drop implements java.io.Serializable {
+        private static final long serialVersionUID = 1L;
+
         public String nomeItem;
         public int qtdMin;
         public int qtdMax;

@@ -8,7 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 import mecanicas.MecanicasRpg;
 
-public class FichaRpg {
+public class FichaRpg implements java.io.Serializable {
+    private static final long serialVersionUID = 1L;
+
     // Identificação
     private String nomePersonagem = "Desconhecido", nomePessoa;
     
