@@ -14,9 +14,20 @@ public class Main {
         while (jogoAberto) {
             int escolhaInicial = Interface.MenuInicial();
 
-            if (escolhaInicial == 3) {
+            if (escolhaInicial == 4) {
                 Interface.MostrarMensagem("\nEncerrando o jogo... Até a próxima aventura!");
                 break;
+            }
+
+            if (escolhaInicial == 3) {
+                // ==================== APAGAR SAVE ====================
+                if (GerenciadorSaves.quantidadeSaves() == 0) {
+                    Interface.ExibirErro("Você ainda não possui nenhum save para apagar.");
+                    Interface.Pausa(1500);
+                    continue;
+                }
+                Interface.MenuApagarSave();
+                continue;
             }
 
             if (escolhaInicial == 2) {

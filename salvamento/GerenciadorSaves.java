@@ -78,6 +78,12 @@ public class GerenciadorSaves {
                 + periodo + " " + (3 - ficha.getProgressoPeriodo()) + "/3 | Salvo em " + data;
     }
 
+    public static boolean deletar(int slot) {
+        if (slot < 1 || slot > MAX_SAVES) return false;
+        File arquivo = new File(new File(PASTA), nomeArquivo(slot));
+        return arquivo.exists() && arquivo.delete();
+    }
+
     private static String nomeArquivo(int slot) {
         return "save" + slot + ".dat";
     }

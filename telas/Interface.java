@@ -192,14 +192,15 @@ public class Interface {
         }
     }
 
-    // Menu exibido antes do nome: Novo Jogo ou Carregar Jogo (1 ou 2); 3 = sair
+    // Menu exibido antes do nome: Novo/Carregar/Apagar/Fechar
     public static int MenuInicial() {
         System.out.println("\n");
         cabecalhoMenu("MENU PRINCIPAL");
         System.out.println("\n  O que deseja fazer?\n");
         System.out.println("  1. " + CIANO + "Novo Jogo" + RESET + " — começar uma nova aventura do zero");
         System.out.println("  2. " + CIANO + "Carregar Jogo" + RESET + " — continuar um de seus saves");
-        System.out.println("  3. Fechar o jogo\n");
+        System.out.println("  3. " + AMARELO + "Apagar Save" + RESET + " — deletar um save salvo");
+        System.out.println("  4. Fechar o jogo\n");
         System.out.println("  " + VERDE + "Digite a opção:" + RESET);
         return lerInteiro();
     }
@@ -254,6 +255,53 @@ public class Interface {
             if (escolha == 0) return -1;
             if (escolha >= 1 && escolha <= GerenciadorSaves.MAX_SAVES) return escolha;
             ExibirErro("Opção inválida!");
+        }
+    }
+
+    // Tela para escolher qual save apagar (com confirmação). Retorna true se deletou.
+    public static boolean MenuApagarSave() {
+        while (true) {
+            if (GerenciadorSaves.quantidadeSaves() == 0) {
+                return false;
+            }
+
+            System.out.println("\n");
+            cabecalhoMenu("APAGAR SAVE");
+            System.out.println("\n  Escolha qual save deseja deletar:\n");
+            for (int slot = 1; slot <= GerenciadorSaves.MAX_SAVES; slot++) {
+                String info = GerenciadorSaves.infoSlot(slot);
+                if (GerenciadorSaves.existeSave(slot)) {
+                    System.out.println("  " + slot + ". " + CIANO + info + RESET);
+                } else {
+                    System.out.println("  " + slot + ". " + AMARELO + info + RESET);
+                }
+            }
+            System.out.println("\n  " + VERDE + "0. Voltar" + RESET);
+
+            int escolha = lerInteiro();
+            if (escolha == 0) return false;
+            if (escolha < 1 || escolha > GerenciadorSaves.MAX_SAVES || !GerenciadorSaves.existeSave(escolha)) {
+                ExibirErro("Opção inválida ou save vazio!");
+                continue;
+            }
+
+            // Confirmação antes de apagar
+            System.out.println("\n  Tem certeza que deseja apagar o save " + escolha + "?\n");
+            System.out.println("  " + AMARELO + GerenciadorSaves.infoSlot(escolha) + RESET);
+            System.out.println("\n  1. Sim, apagar");
+            System.out.println("  2. Não, manter\n");
+            System.out.println("  " + VERDE + "Digite a opção:" + RESET);
+            int confirma = lerInteiro();
+
+            if (confirma == 1) {
+                if (GerenciadorSaves.deletar(escolha)) {
+                    MostrarMensagem("\n  Save " + escolha + " apagado com sucesso.");
+                } else {
+                    ExibirErro("Falha ao apagar o save.");
+                }
+                Pausa(1500);
+                return true;
+            }
         }
     }
 
