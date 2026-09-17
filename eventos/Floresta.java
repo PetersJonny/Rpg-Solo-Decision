@@ -185,7 +185,7 @@ public class Floresta {
             }
 
             if (ficha.getTreinoBonusPeriodosRestantes() > 0) {
-                System.out.println("\n  " + VERDE + "+3 em " + ficha.getTreinoBonusAtributo() + " ativo" + RESET + " (restam " + ficha.getTreinoBonusPeriodosRestantes() + " períodos)");
+                System.out.println("\n  " + VERDE + "+2 em " + ficha.getTreinoBonusAtributo() + " ativo" + RESET + " (restam " + ficha.getTreinoBonusPeriodosRestantes() + " períodos)");
             }
 
             System.out.println("\n  -----------------------------------------------");
@@ -207,7 +207,7 @@ public class Floresta {
                 System.out.println("  " + num + ". Montar Sala de Treino  (10x Madeira, 15x Folha, 5x Pedra, 4x Couro — 2/3 do período)");
                 opSala = num++;
             } else {
-                System.out.println("  " + num + ". Treinar na Sala de Treino  (período inteiro; +3 em Força ou Destreza por 2 períodos)");
+                System.out.println("  " + num + ". Treinar na Sala de Treino  (período inteiro; +2 em Força ou Destreza por 2 períodos)");
                 opSala = num++;
             }
 
@@ -282,19 +282,19 @@ public class Floresta {
                     }
                     Interface.Pausa(2000);
 
-                    System.out.println("\nQue atributo você deseja treinar? (+3 em um atributo por 2 períodos)");
+                    System.out.println("\nQue atributo você deseja treinar? (+2 em um atributo por 2 períodos)");
                     System.out.println("1. Força");
                     System.out.println("2. Destreza");
                     System.out.println("0. Não treinar");
                     int escolhaAtributo = Interface.lerInteiro();
                     if (escolhaAtributo == 1) {
                         ficha.treinarAtributo("Força");
-                        Interface.MostrarMensagem("\nVocê treinou sua força! +3 em Força por 2 períodos.");
-                        Interface.MostrarMensagem("Bônus aplicado: Força, dano, defesa, testes de força — tudo contará o extra.");
+                        Interface.MostrarMensagem("\nVocê treinou sua força! +2 em Força por 2 períodos.");
+                        Interface.MostrarMensagem("Bônus aplicado: Força, dano e testes de força contam o extra.");
                     } else if (escolhaAtributo == 2) {
                         ficha.treinarAtributo("Destreza");
-                        Interface.MostrarMensagem("\nVocê treinou sua destreza! +3 em Destreza por 2 períodos.");
-                        Interface.MostrarMensagem("Bônus aplicado: Destreza, defesa, testes de destreza — tudo contará o extra.");
+                        Interface.MostrarMensagem("\nVocê treinou sua destreza! +2 em Destreza por 2 períodos.");
+                        Interface.MostrarMensagem("Bônus aplicado: Destreza e testes de destreza contam o extra.");
                     } else {
                         Interface.MostrarMensagem("\nVocê decide não aplicar nenhum bônus de treino agora.");
                     }

@@ -521,7 +521,7 @@ public class Interface {
         String salaStatus = !ficha.isTemSalaTreino()
                 ? "Não construída"
                 : (ficha.isSalaJuntoCabana() ? "Construída (junto à cabana)" : "Construída (longe da cabana)");
-        System.out.println("    Sala de Treino: " + salaStatus + (ficha.isNaSalaTreino() ? " (você está nela)" : "") + (ficha.getTreinoBonusPeriodosRestantes() > 0 ? " | Bônus de treino: +3 em " + ficha.getTreinoBonusAtributo() + " (restam " + ficha.getTreinoBonusPeriodosRestantes() + " períodos)" : ""));
+        System.out.println("    Sala de Treino: " + salaStatus + (ficha.isNaSalaTreino() ? " (você está nela)" : "") + (ficha.getTreinoBonusPeriodosRestantes() > 0 ? " | Bônus de treino: +2 em " + ficha.getTreinoBonusAtributo() + " (restam " + ficha.getTreinoBonusPeriodosRestantes() + " períodos)" : ""));
 
         System.out.println("\n  " + CIANO + "[ INVENTÁRIO ]" + RESET);
         if (ficha.getInventario().isEmpty()) {

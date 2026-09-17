@@ -209,12 +209,12 @@ public class FichaRpg implements java.io.Serializable {
     public int getVidaPersonagem() { return vidaPersonagem; }
     public int getManaPersonagem() { return manaPersonagem; }
     public int getConstituicao() { return constituicao; }
-    public int getDestreza() { return destreza + ("Destreza".equals(treinoBonusAtributo) ? 3 : 0); }
-    public int getForca() { return forca + ("Força".equals(treinoBonusAtributo) ? 3 : 0); }
+    public int getDestreza() { return destreza + ("Destreza".equals(treinoBonusAtributo) ? 2 : 0); }
+    public int getForca() { return forca + ("Força".equals(treinoBonusAtributo) ? 2 : 0); }
     public int getSabedoria() { return sabedoria; }
     public int getIntelecto() { return intelecto; }
     public int getPresenca() { return presenca; }
-    public int getDefesa() { return defesa + ("Destreza".equals(treinoBonusAtributo) ? 3 : 0) + (armaduraEquipada != null ? armaduraEquipada.getBonusDefesa() : 0) + bonusDefesaTemporario + (defesaAbsolutaAtiva ? 5 : 0); }
+    public int getDefesa() { return defesa + (armaduraEquipada != null ? armaduraEquipada.getBonusDefesa() : 0) + bonusDefesaTemporario + (defesaAbsolutaAtiva ? 5 : 0); }
     public itens.Armadura getArmaduraEquipada() { return armaduraEquipada; }
     public ClasseRpg getClasseDoPersonagem() { return classeDoPersonagem; }
     public Arma getArmaEquipada() { return armaEquipada; }
@@ -538,7 +538,7 @@ public class FichaRpg implements java.io.Serializable {
         }
     }
 
-    // Aplica o bônus de treino (+3 em Força ou Destreza) que dura os 2 períodos seguintes
+    // Aplica o bônus de treino (+2 em Força ou Destreza) que dura os 2 períodos seguintes
     public void treinarAtributo(String atributo) {
         this.treinoBonusAtributo = atributo;
         this.treinoBonusPeriodosRestantes = 2;
