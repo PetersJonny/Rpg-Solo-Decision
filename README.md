@@ -372,6 +372,7 @@ Enquanto estiver com você, o companheiro:
 - **Conversar** mostra falas da classe e as habilidades dele.
 - **Ver itens** mostra o inventário dele.
 - **Curar com Kit Médico** cura ele em 1d4 (consome 1 do seu Kit). Ele também dorme na cabana à noite.
+- **Despedir-se** (menu de conversa) faz o companheiro se despedir na hora e seguir o próprio caminho — útil se você quiser se livrar dele antes da hora (não há segunda chance).
 
 ---
 

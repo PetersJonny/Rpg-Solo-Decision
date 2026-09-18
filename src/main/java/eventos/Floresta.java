@@ -15,11 +15,11 @@ import telas.Interface;
 
 public class Floresta {
 
-    // Códigos de Cores ANSI usados nos menus
-    private static final String RESET = "\u001B[0m";
-    private static final String CIANO = "\u001B[36m";
-    private static final String VERDE = "\u001B[32m";
-    private static final String AMARELO = "\u001B[33m";
+    // Códigos de Cores ANSI (aliases das usadas na Interface, para um único ponto de origem)
+    private static final String RESET = Interface.RESET;
+    private static final String CIANO = Interface.CIANO;
+    private static final String VERDE = Interface.VERDE;
+    private static final String AMARELO = Interface.AMARELO;
 
     // Avança o tempo e mostra o que aconteceu com o período (dia/noite) e o cansaço
     private static void avancarTempoComMensagens(FichaRpg ficha, int unidades) {
@@ -219,7 +219,7 @@ public class Floresta {
             }
 
             System.out.println("  " + VERDE + "0. Voltar" + RESET);
-            int escolha = Interface.lerInteiro();
+            int escolha = Interface.lerOpcao(0, num - 1);
 
             if (escolha == 0) return;
 
@@ -293,7 +293,7 @@ public class Floresta {
                     System.out.println("1. Força");
                     System.out.println("2. Destreza");
                     System.out.println("0. Não treinar");
-                    int escolhaAtributo = Interface.lerInteiro();
+                    int escolhaAtributo = Interface.lerOpcao(0, 2);
                     if (escolhaAtributo == 1) {
                         ficha.treinarAtributo("Força");
                         Interface.MostrarMensagem("\nVocê treinou sua força! +2 em Força por 2 períodos.");
@@ -364,7 +364,7 @@ public class Floresta {
         System.out.println("\n  O que você faz?\n");
         System.out.println("  1. Acolhê-lo(a) por um tempo");
         System.out.println("  2. Recusar e seguir seu caminho");
-        int escolha = Interface.lerInteiro();
+        int escolha = Interface.lerOpcao(2);
 
         if (escolha == 1) {
             if (ficha.temCompanheiro()) {
@@ -397,24 +397,44 @@ public class Floresta {
 
             boolean podeCurar = ficha.temItem("Kit Médico")
                     && comp.getFicha().getVidaPersonagem() < comp.getFicha().getVidaMaxima();
+
+            int num = 3;
+            int opCurar = -1, opDespedir = -1;
             if (podeCurar) {
-                System.out.println("  3. Curar " + comp.getNome() + " com um Kit Médico");
+                opCurar = num++;
+                System.out.println("  " + opCurar + ". Curar " + comp.getNome() + " com um Kit Médico");
             }
+            opDespedir = num++;
+            System.out.println("  " + opDespedir + ". Despedir-se de " + comp.getNome());
             System.out.println("\n  " + VERDE + "0. Voltar" + RESET);
 
-            int escolha = Interface.lerInteiro();
+            int escolha = Interface.lerOpcao(0, num - 1);
             if (escolha == 0) return;
             if (escolha == 1) {
                 comp.falarSobreClasse();
             } else if (escolha == 2) {
                 comp.mostrarItens();
                 Interface.Pausa(1500);
-            } else if (escolha == 3 && podeCurar) {
+            } else if (escolha == opCurar) {
                 curarCompanheiroComKit(ficha);
-            } else {
-                Interface.ExibirErro("Opção inválida!");
+            } else if (escolha == opDespedir) {
+                String nomePartiu = comp.getNome();
+                if (confirmarDespedida(comp)) {
+                    ficha.removerCompanheiro();
+                    Interface.MostrarMensagem("\nVocês se despedem com gratidão. " + nomePartiu + " segue agora o próprio caminho.");
+                    Interface.Pausa(2000);
+                    return;
+                }
             }
         }
+    }
+
+    // Pedido de confirmação antes de dispensar o companheiro (sai do grupo)
+    private static boolean confirmarDespedida(companheiros.Companheiro comp) {
+        System.out.println("\n  Deseja mesmo se despedir de " + comp.getNome() + "? Ela(e) deixará de te acompanhar.\n");
+        System.out.println("  1. Sim, despedir-me");
+        System.out.println("  2. Não, quero que fique");
+        return Interface.lerOpcao(2) == 1;
     }
 
     // Usa um Kit Médico do inventário do jogador para curar o companheiro
@@ -485,14 +505,13 @@ public class Floresta {
             System.out.println("  O que deseja fazer?");
             System.out.println("  1. Lutar (Você terá +2 de Iniciativa extra por surpreendê-lo)");
             System.out.println("  2. Tentar Fugir furtivamente");
-            int escolha = Interface.lerInteiro();
-
+            int escolha = Interface.lerOpcao(2);
 
             if (escolha == 1) {
                 Interface.MostrarMensagem("\nVocê saca sua arma e parte para cima!");
                 Interface.Pausa(2500);
                 mecanicas.MotorDeCombate.IniciarCombate(ficha, inimigos, true);
-            } else if (escolha == 2) {
+            } else {
                 Interface.pressionarParaTeste("Destreza (Fuga)");
                 int dadoDestreza = MecanicasRpg.rolarDado(20);
                 int totalDestreza = dadoDestreza + ficha.getDestrezaTeste();
@@ -506,10 +525,6 @@ public class Floresta {
                     Interface.Pausa(2500);
                     mecanicas.MotorDeCombate.IniciarCombate(ficha, inimigos, false);
                 }
-            } else {
-                Interface.ExibirErro("Escolha inválida! Você hesitou e foi notado!");
-                Interface.Pausa(2500);
-                mecanicas.MotorDeCombate.IniciarCombate(ficha, inimigos, false);
             }
         } else {
             Interface.MostrarMensagem("\n" + mecanicas.MotorDeCombate.nomesDosInimigos(inimigos) + " saltou das sombras e te surpreendeu!");
@@ -545,7 +560,7 @@ public class Floresta {
         System.out.println("  1. Tentar conversar com a Fada");
         System.out.println("  2. Lutar contra a Fada");
         System.out.println("  3. Deixá-la em paz e seguir caminho");
-        int escolha = Interface.lerInteiro();
+        int escolha = Interface.lerOpcao(3);
 
 
         if (escolha == 1) {

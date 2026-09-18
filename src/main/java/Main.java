@@ -58,11 +58,6 @@ public class Main {
                 continue;
             }
 
-            if (escolhaInicial != 1) {
-                Interface.ExibirErro("Opção inválida!");
-                continue;
-            }
-
             // ==================== NOVO JOGO ====================
             String nomePessoa = Interface.PedirNomeJogador();
             FichaRpg ficha = new FichaRpg(nomePessoa);
@@ -87,11 +82,6 @@ public class Main {
                             int atributoEscolhido = Interface.MenuDistribuirAtributos(totalDePontos);
 
                             if (atributoEscolhido == 0) break;
-
-                            if (atributoEscolhido < 1 || atributoEscolhido > 6) {
-                                Interface.ExibirErro("Opção inválida!");
-                                continue;
-                            }
 
                             int gastoDePontos = Interface.PedirQuantidadePontos(totalDePontos);
 
@@ -287,14 +277,14 @@ public class Main {
 
             if (ficha.isModoDificil()) {
                 int apagados = GerenciadorSaves.deletarSavesDoPersonagem(ficha.getNomePersonagem());
-                Interface.MostrarMensagem("\n  \u001B[33mMODO DIFÍCIL \u2014 MORTE PERMANENTE!\u001B[0m");
+                Interface.MostrarMensagem("\n  " + Interface.AMARELO + "MODO DIFÍCIL \u2014 MORTE PERMANENTE!" + Interface.RESET);
                 if (apagados > 0) {
                     Interface.MostrarMensagem("  O destino consumiu " + apagados + " save(s) deste personagem.");
                 } else {
                     Interface.MostrarMensagem("  Este personagem não possuía saves para serem consumidos.");
                 }
             } else {
-                Interface.MostrarMensagem("\n  \u001B[32mMODO NORMAL\u001B[0m \u2014 seus saves foram mantidos.");
+                Interface.MostrarMensagem("\n  " + Interface.VERDE + "MODO NORMAL" + Interface.RESET + " \u2014 seus saves foram mantidos.");
             }
             Interface.Pausa(3000);
             return false;

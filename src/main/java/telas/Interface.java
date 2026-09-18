@@ -7,11 +7,11 @@ import java.util.Scanner;
 import salvamento.GerenciadorSaves;
 
 public class Interface {
-    // Códigos de Cores ANSI
-    private static final String RESET = "\u001B[0m";
-    private static final String AMARELO = "\u001B[33m";
-    private static final String CIANO = "\u001B[36m";
-    private static final String VERDE = "\u001B[32m";
+    // Códigos de Cores ANSI (públicos para outras telas usarem os mesmos aliases)
+    public static final String RESET = "\u001B[0m";
+    public static final String AMARELO = "\u001B[33m";
+    public static final String CIANO = "\u001B[36m";
+    public static final String VERDE = "\u001B[32m";
     private static final String NEGRITO = "\u001B[1m";
 
     // Entrada de Dados
@@ -50,6 +50,20 @@ public class Interface {
                 ExibirErro("Opção inválida! Digite um número.");
             }
         }
+    }
+
+    // Lê uma opção garantida dentro de [min, max] (menus com opções fixas)
+    public static int lerOpcao(int min, int max) {
+        while (true) {
+            int escolha = lerInteiro();
+            if (escolha >= min && escolha <= max) return escolha;
+            ExibirErro("Opção inválida! Escolha entre " + min + " e " + max + ".");
+        }
+    }
+
+    // Lê uma opção garantida entre 1 e max
+    public static int lerOpcao(int max) {
+        return lerOpcao(1, max);
     }
 
     // Pausa para leitura
@@ -138,8 +152,7 @@ public class Interface {
         System.out.println("  6. Finalizar criação do personagem");
         System.out.println("  7. Fechar o jogo\n");
         System.out.println("  " + VERDE + "Digite a opção:" + RESET);
-        int escolha = lerInteiro();
-        return escolha;
+        return lerOpcao(7);
     }
 
     // Escolha do modo de dificuldade (1 = Normal, 2 = Difícil). Retorna 0 se voltou.
@@ -150,8 +163,7 @@ public class Interface {
         System.out.println("  1. " + VERDE + "Normal" + RESET + " — " + fichas.ModoDificuldade.NORMAL.getDescricao());
         System.out.println("  2. " + AMARELO + "Difícil" + RESET + " — " + fichas.ModoDificuldade.DIFICIL.getDescricao());
         System.out.println("\n  " + VERDE + "0. Voltar" + RESET);
-        int escolha = lerInteiro();
-        return escolha;
+        return lerOpcao(0, 2);
     }
 
     public static int MenuDistribuirAtributos(int pontosSobrando) {
@@ -165,8 +177,7 @@ public class Interface {
         System.out.println("  5. Intelecto");
         System.out.println("  6. Presença\n");
         System.out.println("  " + VERDE + "0. Voltar" + RESET);
-        int escolha = lerInteiro();
-        return escolha;
+        return lerOpcao(0, 6);
     }
 
     public static int PedirQuantidadePontos(int pontosSobrando) {
@@ -183,8 +194,7 @@ public class Interface {
         System.out.println("  2. " + CIANO + "Guerreiro" + RESET + " — só pode usar espada e atacar corpo a corpo, porém é mais resistente.");
         System.out.println("  3. " + CIANO + "Healer" + RESET + " — tem poderes de cura, pode curar a si mesmo e aos outros, tem uma vida mediana.\n");
         System.out.println("  " + VERDE + "0. Voltar" + RESET);
-        int escolha = lerInteiro();
-        return escolha;
+        return lerOpcao(0, 3);
     }
 
     public static String EscolherElementoMago() {
@@ -197,7 +207,7 @@ public class Interface {
         System.out.println("  5. Terra");
         System.out.println("  6. Ácido\n");
         System.out.println("  " + VERDE + "0. Voltar" + RESET);
-        int escolha = lerInteiro();
+        int escolha = lerOpcao(0, 6);
         switch (escolha) {
             case 1: return "Fogo";
             case 2: return "Água";
@@ -219,7 +229,7 @@ public class Interface {
         System.out.println("  3. " + AMARELO + "Apagar Save" + RESET + " — deletar um save salvo");
         System.out.println("  4. Fechar o jogo\n");
         System.out.println("  " + VERDE + "Digite a opção:" + RESET);
-        return lerInteiro();
+        return lerOpcao(4);
     }
 
     // Tela para escolher qual save continuar. Retorna o slot (1 a 3),
@@ -243,9 +253,9 @@ public class Interface {
             }
             System.out.println("\n  " + VERDE + "0. Voltar" + RESET);
 
-            int escolha = lerInteiro();
+            int escolha = lerOpcao(0, GerenciadorSaves.MAX_SAVES);
             if (escolha == 0) return -1;
-            if (escolha >= 1 && escolha <= GerenciadorSaves.MAX_SAVES && GerenciadorSaves.existeSave(escolha)) {
+            if (GerenciadorSaves.existeSave(escolha)) {
                 return escolha;
             }
             ExibirErro("Opção inválida ou save vazio!");
@@ -268,10 +278,9 @@ public class Interface {
             }
             System.out.println("\n  " + VERDE + "0. Voltar" + RESET);
 
-            int escolha = lerInteiro();
+            int escolha = lerOpcao(0, GerenciadorSaves.MAX_SAVES);
             if (escolha == 0) return -1;
-            if (escolha >= 1 && escolha <= GerenciadorSaves.MAX_SAVES) return escolha;
-            ExibirErro("Opção inválida!");
+            return escolha;
         }
     }
 
@@ -295,9 +304,9 @@ public class Interface {
             }
             System.out.println("\n  " + VERDE + "0. Voltar" + RESET);
 
-            int escolha = lerInteiro();
+            int escolha = lerOpcao(0, GerenciadorSaves.MAX_SAVES);
             if (escolha == 0) return false;
-            if (escolha < 1 || escolha > GerenciadorSaves.MAX_SAVES || !GerenciadorSaves.existeSave(escolha)) {
+            if (!GerenciadorSaves.existeSave(escolha)) {
                 ExibirErro("Opção inválida ou save vazio!");
                 continue;
             }
@@ -308,7 +317,7 @@ public class Interface {
             System.out.println("\n  1. Sim, apagar");
             System.out.println("  2. Não, manter\n");
             System.out.println("  " + VERDE + "Digite a opção:" + RESET);
-            int confirma = lerInteiro();
+            int confirma = lerOpcao(2);
 
             if (confirma == 1) {
                 if (GerenciadorSaves.deletar(escolha)) {
@@ -328,7 +337,7 @@ public class Interface {
         System.out.println("  1. Sim");
         System.out.println("  2. Não\n");
         System.out.println("  " + VERDE + "Digite a opção:" + RESET);
-        return lerInteiro() == 1;
+        return lerOpcao(2) == 1;
     }
 
     public static int MenuPrincipalAventura(FichaRpg ficha) {
@@ -354,8 +363,7 @@ public class Interface {
             System.out.println("  6. Encerrar jogo");
         }
         System.out.println("\n  " + VERDE + "Digite a opção:" + RESET);
-        int escolha = lerInteiro();
-        return escolha;
+        return lerOpcao(ficha.temCompanheiro() ? 7 : 6);
     }
 
     // Interação com a Ficha
@@ -367,8 +375,7 @@ public class Interface {
         System.out.println("  2. Ver Inventário (Ler descrições)");
         System.out.println("  3. Voltar para a Aventura");
         System.out.println("\n  " + VERDE + "Digite a opção:" + RESET);
-        int escolha = lerInteiro();
-        return escolha;
+        return lerOpcao(3);
     }
 
     public static void InspecionarInventario(FichaRpg ficha) {
@@ -388,13 +395,8 @@ public class Interface {
             System.out.println("\n  " + VERDE + "0. Voltar" + RESET);
 
             System.out.println("\n  Digite o número do item que deseja ver a descrição:");
-            int escolha = lerInteiro();
-
+            int escolha = lerOpcao(0, ficha.getInventario().size());
             if (escolha == 0) return;
-            if (escolha < 1 || escolha > ficha.getInventario().size()) {
-                ExibirErro("Opção inválida!");
-                continue;
-            }
 
             ItemRpg itemEscolhido = ficha.getInventario().get(escolha - 1);
             System.out.println("\n" + CIANO + "  -- " + itemEscolhido.getNome().toUpperCase() + " --" + RESET);
@@ -405,7 +407,7 @@ public class Interface {
                 System.out.println("\n  Deseja usar este item?");
                 System.out.println("  1. Sim");
                 System.out.println("  2. Não usar");
-                int usar = lerInteiro();
+                int usar = lerOpcao(2);
 
                 if (usar == 1) {
                     String nomeItem = itemEscolhido.getNome();
@@ -448,7 +450,7 @@ public class Interface {
         System.out.println("\n  " + VERDE + "0. Voltar" + RESET);
 
         System.out.println("\n  Digite o número da habilidade que deseja ler a descrição:");
-        int escolha = lerInteiro();
+        int escolha = lerOpcao(0, ficha.getHabilidades().size());
 
         if (escolha > 0 && escolha <= ficha.getHabilidades().size()) {
             habilidades.Habilidade habEscolhida = ficha.getHabilidades().get(escolha - 1);
@@ -456,8 +458,6 @@ public class Interface {
             System.out.println("  Custo de Mana: " + habEscolhida.getCustoMana());
             System.out.println("  Descrição: " + habEscolhida.getDescricao());
             System.out.println(CIANO + "  -----------------------" + RESET);
-        } else if (escolha != 0) {
-            ExibirErro("Opção inválida!");
         }
     }
 

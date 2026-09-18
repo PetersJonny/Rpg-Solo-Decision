@@ -15,9 +15,9 @@ import telas.Interface;
 
 public class Vendedor {
 
-    // Cores ANSI (mesmas usadas na Interface)
-    private static final String RESET = "\u001B[0m";
-    private static final String CIANO = "\u001B[36m";
+    // Cores ANSI (aliases das usadas na Interface, para um único ponto de origem)
+    private static final String RESET = Interface.RESET;
+    private static final String CIANO = Interface.CIANO;
 
     // Categorias (usadas só pela loja; não aparecem no jogo)
     private static final List<String> GERAL = List.of(
@@ -54,7 +54,7 @@ public class Vendedor {
             System.out.println("  3. Sair\n");
             System.out.println("  Escolha uma opção:");
 
-            int escolha = Interface.lerInteiro();
+            int escolha = Interface.lerOpcao(3);
             if (escolha == 1) {
                 Comprar(ficha, estoque);
             } else if (escolha == 2) {
@@ -130,12 +130,8 @@ public class Vendedor {
             }
             System.out.println("\n  Escolha um item para comprar (ou " + CIANO + "0" + RESET + " para Voltar):");
 
-            int escolha = Interface.lerInteiro();
+            int escolha = Interface.lerOpcao(0, nomes.size());
             if (escolha == 0) return;
-            if (escolha < 1 || escolha > nomes.size()) {
-                Interface.ExibirErro("Opção inválida!");
-                continue;
-            }
 
             String nome = nomes.get(escolha - 1);
             int qtdEstoque = estoque.get(nome);
@@ -169,7 +165,7 @@ public class Vendedor {
             System.out.println("\n  Deseja comprar este item?\n");
             System.out.println("  1. Sim");
             System.out.println("  2. Não");
-            int confirmar = Interface.lerInteiro();
+            int confirmar = Interface.lerOpcao(2);
             if (confirmar != 1) {
                 Interface.MostrarMensagem("\nCompra cancelada.");
                 Interface.Pausa(1000);
@@ -257,12 +253,8 @@ public class Vendedor {
             }
             System.out.println("\n  Escolha um item para vender (ou " + CIANO + "0" + RESET + " para Voltar):");
 
-            int escolha = Interface.lerInteiro();
+            int escolha = Interface.lerOpcao(0, vendaveis.size());
             if (escolha == 0) return;
-            if (escolha < 1 || escolha > vendaveis.size()) {
-                Interface.ExibirErro("Opção inválida!");
-                continue;
-            }
 
             ItemRpg item = vendaveis.get(escolha - 1);
             int quantidade = item.getQuantidade();
