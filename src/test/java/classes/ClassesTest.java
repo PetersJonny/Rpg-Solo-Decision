@@ -29,6 +29,8 @@ class ClassesTest {
         
         assertEquals(1, magoFogo.getBonusIntelecto());
         assertEquals(2, magoFogo.getBonusPresenca());
+        assertEquals(0, magoFogo.getBonusConstituicao());
+        assertEquals(-2, magoFogo.getBonusForca());
         
         // Magias mudam pelo elemento
         assertEquals("Bola Elementar (Fogo)", magoFogo.getHabilidadesIniciais().get(0).getNome());
