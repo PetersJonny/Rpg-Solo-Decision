@@ -299,9 +299,10 @@ Coletar recursos (ou voltar para a cabana) tem **30% de chance de gerar um encon
 
 ### Encontros aleatórios (a cada exploração)
 
-1. **10%** — Vendedor ambulante
-2. **20%** — encontro secreto raro (veja o aviso de spoiler na seção de Criaturas)
-3. Senão — criatura sorteada (1 = Lobo, 2 = Urso, 3 = Bandido)
+1. **Descoberta do Labirinto do Minotauro** (só enquanto não encontrado; veja a seção Estruturas) — chance começa em **1%** e aumenta **+1% a cada dia** que passa
+2. **10%** — Vendedor ambulante
+3. **20%** — encontro secreto raro (veja o aviso de spoiler na seção de Criaturas)
+4. Senão — criatura sorteada (1 = Lobo, 2 = Urso, 3 = Bandido)
 
 ---
 
@@ -322,6 +323,19 @@ Coletar recursos (ou voltar para a cabana) tem **30% de chance de gerar um encon
 
 - **Custo:** 5 Madeira + 4 Folha + 4 Pedra + 1 **Pó da Fada** (2/3 de período; o Pó da Fada é o drop da Fada)
 - **Estudar:** gasta o período restante e dá **+1 dado de dano em TODAS as habilidades de dano por 2 períodos** (magias, Estrondo, Giro e Explosão de Poder). O efeito vale os 2 períodos seguintes ao estudo (estudou de dia → vale na noite + no dia seguinte; estudou de noite → vale no dia + na noite seguinte). Não dá para estudar de novo enquanto o bônus estiver ativo.
+
+---
+
+## Estruturas Encontradas
+
+### Labirinto do Minotauro
+
+- **Como encontrar:** apenas **explorando a floresta**. A chance começa em **1%** por exploração e aumenta **+1% a cada dia** que passa (até 100%). Uma vez encontrado, não é sorteado de novo.
+- Ao descobrir a entrada, o jogador escolhe **entrar agora** ou **não entrar** — se não entrar, o local fica acessível pelo menu principal (como as construções), na opção **Labirinto**.
+- Ao entrar, a interface vira sobre o labirinto (apenas **ver a ficha** continua disponível).
+- **O caminho é randomizado na descoberta e salvo na ficha** — ao voltar depois, continua exatamente de onde parou (células visitadas permanecem iluminadas).
+- **Navegação:** a tela mostra apenas a grade ao redor do personagem — as **laterais/paredes** onde você está (`##`) e os corredores vizinhos (`.`) — mais o que **já foi percorrido** (iluminado `·`) e sua posição (`@`). O resto do labirinto fica escuro, inclusive o centro (visível apenas enquanto se explora). **W** = cima, **S** = baixo, **A** = esquerda, **D** = direita — executa no momento da tecla, **sem Enter**; qualquer outra tecla não faz nada. Uma câmera acompanha o personagem para que o labirinto (grade 31x31, bem maior) caiba na tela.
+- Há **apenas uma entrada**. Ao pisar na **primeira casa do centro** (área central), o labirinto se encerra — é onde o minotauro aguarda (mecânica virá em etapa futura). **Casas especiais:** em algumas casas aleatórias há **encontros com monstros** (8 por labirinto) e em outras há **recompensas** (6 por labirinto) — cada casa especial é sorteada na geração e ativa uma única vez; as listas de monstros/recompensas ainda serão definidas.
 
 ---
 

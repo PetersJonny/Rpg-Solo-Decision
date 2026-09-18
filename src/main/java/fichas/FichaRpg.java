@@ -100,6 +100,10 @@ public class FichaRpg implements java.io.Serializable {
     private boolean temMesaMagias = false;
     private int magiaBonusPeriodosRestantes = 0;
 
+    // Estruturas encontradas na floresta (só podem ser descobertas explorando)
+    private boolean labirintoEncontrado = false;
+    private estruturas.Labirinto labirinto = null; // grade salva junto da ficha
+
     // Construtor
     public FichaRpg(String nomePessoa) {
         this.nomePessoa = nomePessoa;
@@ -441,6 +445,18 @@ public class FichaRpg implements java.io.Serializable {
     public boolean isTemMesaMagias() { return temMesaMagias; }
     public int getMagiaBonusPeriodosRestantes() { return magiaBonusPeriodosRestantes; }
     public boolean isMagiaBonusAtivo() { return magiaBonusPeriodosRestantes > 0; }
+
+    public boolean isLabirintoEncontrado() { return labirintoEncontrado; }
+    public void setLabirintoEncontrado(boolean labirintoEncontrado) { this.labirintoEncontrado = labirintoEncontrado; }
+
+    public estruturas.Labirinto getLabirinto() { return labirinto; }
+    public void setLabirinto(estruturas.Labirinto labirinto) { this.labirinto = labirinto; }
+
+    // Chance de descobrir o Labirinto do Minotauro a cada exploração:
+    // começa em 1% e aumenta +1% a cada dia que passa (dia 1 = 1%, dia 2 = 2%...), até no máximo 100%.
+    public int getLabirintoChanceDescoberta() {
+        return Math.min(diaAtual, 100);
+    }
 
     // Sair da cabana para explorar/colher recursos (também sai da sala de treino)
     public void sairDaCabana() {

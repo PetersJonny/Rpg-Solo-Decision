@@ -12,6 +12,7 @@ public class Interface {
     public static final String AMARELO = "\u001B[33m";
     public static final String CIANO = "\u001B[36m";
     public static final String VERDE = "\u001B[32m";
+    public static final String VERMELHO = "\u001B[31m";
     private static final String NEGRITO = "\u001B[1m";
 
     // Entrada de Dados
@@ -340,6 +341,18 @@ public class Interface {
         return lerOpcao(2) == 1;
     }
 
+    // Números das opções dinâmicas do menu da floresta: {Labirinto, Conversar, Salvar, Encerrar}.
+    // É a única fonte da numeração, usada tanto para imprimir quanto para o Main interpretar a escolha.
+    public static int[] opcoesMenuFloresta(FichaRpg ficha) {
+        int num = 5;
+        int opLabirinto = -1, opConversar = -1;
+        if (ficha.isLabirintoEncontrado()) opLabirinto = num++;
+        if (ficha.temCompanheiro()) opConversar = num++;
+        int opSalvar = num++;
+        int opEncerrar = num++;
+        return new int[]{opLabirinto, opConversar, opSalvar, opEncerrar};
+    }
+
     public static int MenuPrincipalAventura(FichaRpg ficha) {
         System.out.println("\n");
         cabecalhoMenu("FLORESTA DE FREIJORD");
@@ -349,21 +362,26 @@ public class Interface {
         if (ficha.temCompanheiro()) {
             System.out.println("  Companheiro(a): " + CIANO + ficha.getCompanheiro().getNome() + RESET + " (" + ficha.getCompanheiro().getClasseNome() + ", Nível " + ficha.getCompanheiro().getFicha().getNivel() + ")");
         }
+        if (ficha.isLabirintoEncontrado()) {
+            System.out.println("  " + CIANO + "Labirinto descoberto" + RESET);
+        }
         System.out.println("\n  O que você deseja fazer?\n");
+
+        int[] ops = opcoesMenuFloresta(ficha);
         System.out.println("  1. Ver ficha");
         System.out.println("  2. Explorar a Floresta");
         System.out.println("  3. Buscar Recursos na Floresta");
         System.out.println("  4. Construção (Dormir)");
-        if (ficha.temCompanheiro()) {
-            System.out.println("  5. Conversar com " + ficha.getCompanheiro().getNome());
-            System.out.println("  6. Salvar Jogo");
-            System.out.println("  7. Encerrar jogo");
-        } else {
-            System.out.println("  5. Salvar Jogo");
-            System.out.println("  6. Encerrar jogo");
+        if (ops[0] > 0) {
+            System.out.println("  " + ops[0] + ". Labirinto");
         }
+        if (ops[1] > 0) {
+            System.out.println("  " + ops[1] + ". Conversar com " + ficha.getCompanheiro().getNome());
+        }
+        System.out.println("  " + ops[2] + ". Salvar Jogo");
+        System.out.println("  " + ops[3] + ". Encerrar jogo");
         System.out.println("\n  " + VERDE + "Digite a opção:" + RESET);
-        return lerOpcao(ficha.temCompanheiro() ? 7 : 6);
+        return lerOpcao(1, ops[3]);
     }
 
     // Interação com a Ficha

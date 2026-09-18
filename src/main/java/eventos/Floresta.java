@@ -1,15 +1,12 @@
 package eventos;
 
-import classes.*;
+import java.util.ArrayList;
+import java.util.List;
+
 import criaturas.Criatura;
 import fichas.FichaRpg;
-import itens.Arma;
 import itens.Consumivel;
 import itens.ItemRpg;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 import mecanicas.MecanicasRpg;
 import telas.Interface;
 
@@ -531,6 +528,11 @@ public class Floresta {
         Interface.MostrarMensagem("\nAlgo se move por entre as árvores...");
         Interface.Pausa(2500);
 
+        // Chance de descobrir o Labirinto do Minotauro explorando (1% + 1% a cada dia, até encontrar)
+        if (estruturas.LabirintoDoMinotauro.tentarDescoberta(ficha)) {
+            return;
+        }
+
         // 10% de chance de encontrar um vendedor ambulante
         if (MecanicasRpg.rolarDado(100) <= 10) {
             loja.Vendedor.EncontrarVendedor(ficha);
@@ -648,7 +650,5 @@ public class Floresta {
             Interface.Pausa(2500);
         }
     }
-
-    // ==================== INICIAR COMBATE ====================
 
 }

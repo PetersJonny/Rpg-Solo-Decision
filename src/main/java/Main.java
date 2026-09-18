@@ -1,11 +1,13 @@
 import classes.*;
 import fichas.FichaRpg;
 import telas.Interface;
+import telas.Teclado;
 import salvamento.GerenciadorSaves;
 
 public class Main {
     public static void main(String[] args) {
 
+        Teclado.assegurarTerminalSaudavel(); // recupera o terminal (eco) mesmo se a última sessão fechou no modo cru
         Interface.BarraCarregamento("Carregando jogo...");
         Interface.ExibirBoasVindas();
 
@@ -191,78 +193,50 @@ public class Main {
 
         while (jogando) {
             int escolhaAventura = Interface.MenuPrincipalAventura(ficha);
+            int[] ops = Interface.opcoesMenuFloresta(ficha);
 
-            switch (escolhaAventura) {
-                case 1:
-                    Interface.MostrarFicha(ficha);
-                    boolean naFicha = true;
-                    while (naFicha) {
-                        int acaoFicha = Interface.MenuFicha();
-                        switch (acaoFicha) {
-                            case 1:
-                                Interface.InspecionarHabilidades(ficha);
-                                break;
-                            case 2:
-                                Interface.InspecionarInventario(ficha);
-                                break;
-                            case 3:
-                                naFicha = false;
-                                break;
-                            default:
-                                Interface.ExibirErro("Opção inválida!");
-                                break;
-                        }
-                    }
-                    break;
-
-                case 2:
-                    eventos.Floresta.Explorar(ficha);
-                    if (ficha.getVidaPersonagem() <= 0) {
-                        personagemFaleceu = true;
-                    }
-                    break;
-
-                case 3:
-                    eventos.Floresta.BuscarRecursos(ficha);
-                    if (ficha.getVidaPersonagem() <= 0) {
-                        personagemFaleceu = true;
-                    }
-                    break;
-
-                case 4:
-                    eventos.Floresta.MenuConstrucao(ficha);
-                    if (ficha.getVidaPersonagem() <= 0) {
-                        personagemFaleceu = true;
-                    }
-                    break;
-
-                case 5:
-                    if (ficha.temCompanheiro()) {
-                        eventos.Floresta.ConversarComCompanheiro(ficha);
+            if (escolhaAventura == 1) {
+                Interface.MostrarFicha(ficha);
+                boolean naFicha = true;
+                while (naFicha) {
+                    int acaoFicha = Interface.MenuFicha();
+                    if (acaoFicha == 1) {
+                        Interface.InspecionarHabilidades(ficha);
+                    } else if (acaoFicha == 2) {
+                        Interface.InspecionarInventario(ficha);
+                    } else if (acaoFicha == 3) {
+                        naFicha = false;
                     } else {
-                        salvarJogo(ficha);
+                        Interface.ExibirErro("Opção inválida!");
                     }
-                    break;
-
-                case 6:
-                    if (ficha.temCompanheiro()) {
-                        salvarJogo(ficha);
-                    } else {
-                        encerrarJogo(ficha);
-                        jogando = false;
-                        encerrouJogo = true;
-                    }
-                    break;
-
-                case 7:
-                    encerrarJogo(ficha);
-                    jogando = false;
-                    encerrouJogo = true;
-                    break;
-
-                default:
-                    Interface.ExibirErro("Opção inválida!");
-                    break;
+                }
+            } else if (escolhaAventura == 2) {
+                eventos.Floresta.Explorar(ficha);
+                if (ficha.getVidaPersonagem() <= 0) {
+                    personagemFaleceu = true;
+                }
+            } else if (escolhaAventura == 3) {
+                eventos.Floresta.BuscarRecursos(ficha);
+                if (ficha.getVidaPersonagem() <= 0) {
+                    personagemFaleceu = true;
+                }
+            } else if (escolhaAventura == 4) {
+                eventos.Floresta.MenuConstrucao(ficha);
+                if (ficha.getVidaPersonagem() <= 0) {
+                    personagemFaleceu = true;
+                }
+            } else if (escolhaAventura == ops[0]) {
+                estruturas.LabirintoDoMinotauro.MenuLabirinto(ficha);
+            } else if (escolhaAventura == ops[1]) {
+                eventos.Floresta.ConversarComCompanheiro(ficha);
+            } else if (escolhaAventura == ops[2]) {
+                salvarJogo(ficha);
+            } else if (escolhaAventura == ops[3]) {
+                encerrarJogo(ficha);
+                jogando = false;
+                encerrouJogo = true;
+            } else {
+                Interface.ExibirErro("Opção inválida!");
             }
 
             if (personagemFaleceu) {
