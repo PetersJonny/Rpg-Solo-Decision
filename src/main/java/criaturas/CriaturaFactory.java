@@ -76,7 +76,7 @@ public class CriaturaFactory {
         c.setChanceAparecer(20);
         c.setXpGanho(30);
         c.adicionarAtaque("Brilho Cintilante", "luz", 1, 6);
-        c.adicionarDrop("Brilho Mágico", 1, 1, 100);
+        c.adicionarDrop("Pó da Fada", 1, 1, 100);
         return c;
     }
 }

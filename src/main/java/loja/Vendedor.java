@@ -226,12 +226,12 @@ public class Vendedor {
     }
 
     // O vendedor compra QUALQUER item do jogador por 50% do preço de venda;
-    // materiais especiais (Couro, Dente de Urso, Brilho Mágico) são comprados a preço cheio
+    // materiais especiais (Couro, Dente de Urso, Pó da Fada) são comprados a preço cheio
     private static void Vender(FichaRpg ficha) {
         while (true) {
             Interface.cabecalhoMenu("VENDER");
             Interface.MostrarMensagem("\n  Seu ouro: " + ficha.getOuro() + "");
-            Interface.MostrarMensagem("  O vendedor paga 50% do preço (Couro, Dente de Urso e Brilho Mágico a preço cheio).");
+            Interface.MostrarMensagem("  O vendedor paga 50% do preço (Couro, Dente de Urso e Pó da Fada a preço cheio).");
 
             List<ItemRpg> vendaveis = new ArrayList<>();
             for (ItemRpg item : ficha.getInventario()) {
@@ -318,7 +318,7 @@ public class Vendedor {
         switch (nome) {
             case "Couro": return 6;
             case "Dente de Urso": return 14;
-            case "Brilho Mágico": return 75;
+            case "Pó da Fada": return 75;
             default:
                 int preco = precoDeVenda(nome);
                 return preco < 0 ? 1 : preco / 2;

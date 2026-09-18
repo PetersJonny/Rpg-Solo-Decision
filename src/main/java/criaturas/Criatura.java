@@ -175,8 +175,8 @@ public class Criatura implements java.io.Serializable {
                 return new ItemRpg("Couro", "Pele de animal curtida, usada em artesanato e na confecção de equipamentos.", 1);
             case "Dente de Urso":
                 return new ItemRpg("Dente de Urso", "Presas grandes e afiadas, valiosas para alquimistas e caçadores.", 1);
-            case "Brilho Mágico":
-                return new ItemRpg("Brilho Mágico", "Fragmento de luz condensada deixado por uma fada.", 1);
+            case "Pó da Fada":
+                return new ItemRpg("Pó da Fada", "Pó de luz condensada deixado por uma fada.", 1);
             case "Faca":
                 return new Arma("Faca", "Uma faca afiada que causa 1d4 de dano corpo a corpo, usando Destreza.", "CaC", 4, 1, 1, "Destreza");
             default:

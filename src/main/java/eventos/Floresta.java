@@ -184,14 +184,29 @@ public class Floresta {
                 System.out.println("  Informação: Gasta 2/3 do período para montar.");
             }
 
+            // ===================== MESA DE MAGIAS =====================
+            String statusMesa = ficha.isTemMesaMagias() ? VERDE + "construída" + RESET : AMARELO + "não construída" + RESET;
+            System.out.println("\n  " + CIANO + "[ MESA DE MAGIAS ]" + RESET + "  Status: " + statusMesa);
+            System.out.println("  Custo:    " + ficha.getQuantidadeDe("Madeira") + "/5x Madeira | "
+                    + ficha.getQuantidadeDe("Folha") + "/4x Folha | "
+                    + ficha.getQuantidadeDe("Pedra") + "/4x Pedra | "
+                    + ficha.getQuantidadeDe("Pó da Fada") + "/1x Pó da Fada");
+            if (!ficha.isTemMesaMagias()) {
+                System.out.println("  Informação: Gasta 2/3 do período para montar.");
+            }
+
             if (ficha.getTreinoBonusPeriodosRestantes() > 0) {
                 System.out.println("\n  " + VERDE + "+2 em " + ficha.getTreinoBonusAtributo() + " ativo" + RESET + " (restam " + ficha.getTreinoBonusPeriodosRestantes() + " períodos)");
+            }
+
+            if (ficha.getMagiaBonusPeriodosRestantes() > 0) {
+                System.out.println("\n  " + VERDE + "+1 dado de dano em habilidades ativo" + RESET + " (restam " + ficha.getMagiaBonusPeriodosRestantes() + " períodos)");
             }
 
             System.out.println("\n  -----------------------------------------------");
 
             // Menu dinâmico com numeração sequencial
-            int opCabana = 0, opSala = 0, opDormir = 0;
+            int opCabana = 0, opSala = 0, opMesa = 0, opDormir = 0;
             int num = 1;
 
             System.out.println("\n  O que deseja fazer?");
@@ -211,6 +226,16 @@ public class Floresta {
                 opSala = num++;
             } else {
                 System.out.println("  " + AMARELO + "  • Treinando... (faltam " + ficha.getTreinoBonusPeriodosRestantes() + " períodos para treinar novamente)" + RESET);
+            }
+
+            if (!ficha.isTemMesaMagias()) {
+                System.out.println("  " + num + ". Montar Mesa de Magias  (5x Madeira, 4x Folha, 4x Pedra, 1x Pó da Fada — 2/3 do período)");
+                opMesa = num++;
+            } else if (ficha.getMagiaBonusPeriodosRestantes() <= 0) {
+                System.out.println("  " + num + ". Estudar na Mesa de Magias  (período inteiro; +1 dado de dano em habilidades por 2 períodos)");
+                opMesa = num++;
+            } else {
+                System.out.println("  " + AMARELO + "  • Estudando... (faltam " + ficha.getMagiaBonusPeriodosRestantes() + " períodos para estudar novamente)" + RESET);
             }
 
             if (ficha.isTemCabana()) {
@@ -307,6 +332,40 @@ public class Floresta {
                     }
                     Interface.Pausa(2000);
                     ficha.terminarTreino();
+                }
+                continue;
+            }
+
+            // =================== MESA DE MAGIAS ===================
+            if (escolha == opMesa) {
+                if (!ficha.isTemMesaMagias()) {
+                    // Montar Mesa de Magias
+                    if (ficha.construirMesaMagias()) {
+                        Interface.MostrarMensagem("\nVocê constrói sua MESA DE MAGIAS, gastando 5 madeiras, 4 folhas, 4 pedras e 1 Pó da Fada!");
+                        Interface.MostrarMensagem("Agora você pode estudar magia nela, gastando o período inteiro.");
+                        Interface.Pausa(2500);
+                        avancarTempoComMensagens(ficha, 2);
+                    } else {
+                        Interface.ExibirErro("Faltam materiais! Você precisa de 5 Madeiras, 4 Folhas, 4 Pedras e 1 Pó da Fada.");
+                        Interface.Pausa(1500);
+                    }
+                } else {
+                    // Estudar na Mesa de Magias
+                    if (ficha.getMagiaBonusPeriodosRestantes() > 0) {
+                        Interface.ExibirErro("Você ainda está sob o efeito da Mesa de Magias! Aguarde os " + ficha.getMagiaBonusPeriodosRestantes() + " período(s) terminarem para estudar de novo.");
+                        Interface.Pausa(1500);
+                        continue;
+                    }
+                    Interface.MostrarMensagem("\nVocê se senta na mesa de magias e dedica todo o período ao estudo...");
+                    Interface.Pausa(1500);
+                    int unidadesFaltando = 3 - ficha.getProgressoPeriodo();
+                    avancarTempoComMensagens(ficha, unidadesFaltando);
+                    Interface.MostrarMensagem("\nVocê estuda os princípios de afiar magias durante o período inteiro.");
+                    Interface.Pausa(2000);
+                    ficha.estudarMagia();
+                    Interface.MostrarMensagem("\nVocê sente suas habilidades mais afiadas! +1 dado de dano em TODAS as suas habilidades por 2 períodos.");
+                    Interface.MostrarMensagem("O efeito vale a partir do próximo período, enquanto durar.");
+                    Interface.Pausa(2000);
                 }
                 continue;
             }

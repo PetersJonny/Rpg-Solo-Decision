@@ -1304,10 +1304,23 @@ public class MotorDeCombate {
         List<Criatura> vivos = inimigosVivos(inimigos);
         if (vivos.isEmpty()) return true;
 
+        int dadosPorGiro = 1;
+        if (ficha.isMagiaBonusAtivo()) {
+            dadosPorGiro++;
+            Interface.MostrarMensagem("(Mesa de Magias! +1 dado de dano em cada giro)");
+            Interface.Pausa(1000);
+        }
+
         for (int g = 1; g <= giros; g++) {
-            int dadoGiro = MecanicasRpg.rolarDado(10);
-            int danoGiro = dadoGiro + ficha.getForca();
-            Interface.MostrarMensagem("-> Giro " + g + ": " + dadoGiro + " (1d10) + " + ficha.getForca() + " (Força) = " + danoGiro + " de dano em área!");
+            int danoGiro = ficha.getForca();
+            StringBuilder roladas = new StringBuilder();
+            for (int i = 0; i < dadosPorGiro; i++) {
+                int dadoGiro = MecanicasRpg.rolarDado(10);
+                danoGiro += dadoGiro;
+                if (roladas.length() > 0) roladas.append(" + ");
+                roladas.append(dadoGiro);
+            }
+            Interface.MostrarMensagem("-> Giro " + g + ": " + roladas + " (1d10" + (dadosPorGiro > 1 ? " + 1d10 (Mesa de Magias)" : "") + ") + " + ficha.getForca() + " (Força) = " + danoGiro + " de dano em área!");
             Interface.Pausa(1500);
             for (Criatura alvo : vivos) {
                 if (alvo.getVida() <= 0) continue;
@@ -1329,13 +1342,20 @@ public class MotorDeCombate {
         List<Criatura> vivos = inimigosVivos(inimigos);
         if (vivos.isEmpty()) return true;
 
+        int totalDados = 7;
+        if (ficha.isMagiaBonusAtivo()) {
+            totalDados++;
+            Interface.MostrarMensagem("(Mesa de Magias! +1 dado de dano)");
+            Interface.Pausa(1000);
+        }
+
         int dano = 0;
         Interface.pressionarParaRolar();
-        for (int i = 0; i < 7; i++) {
+        for (int i = 0; i < totalDados; i++) {
             dano += MecanicasRpg.rolarDado(10);
         }
         dano += ficha.getForca();
-        Interface.MostrarMensagem("-> Estrondo: 7d10 + " + ficha.getForca() + " (Força) = " + dano + " de dano em área!");
+        Interface.MostrarMensagem("-> Estrondo: " + totalDados + "d10 + " + ficha.getForca() + " (Força) = " + dano + " de dano em área!");
         Interface.Pausa(1500);
 
         for (Criatura alvo : vivos) {
@@ -1451,6 +1471,11 @@ public class MotorDeCombate {
         ficha.setManaPersonagem(ficha.getManaPersonagem() - gasto);
         int pares = gasto / 2;
         int totalDados = pares * 2;
+        if (ficha.isMagiaBonusAtivo()) {
+            totalDados++;
+            Interface.MostrarMensagem("(Mesa de Magias! +1 dado de dano)");
+            Interface.Pausa(1000);
+        }
 
         String elemento = "místico";
         for (habilidades.Habilidade h : ficha.getHabilidades()) {

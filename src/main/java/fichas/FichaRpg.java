@@ -96,6 +96,10 @@ public class FichaRpg implements java.io.Serializable {
     private String treinoBonusAtributo = null; // "Força" ou "Destreza"
     private int treinoBonusPeriodosRestantes = 0;
 
+    // Mesa de Magias
+    private boolean temMesaMagias = false;
+    private int magiaBonusPeriodosRestantes = 0;
+
     // Construtor
     public FichaRpg(String nomePessoa) {
         this.nomePessoa = nomePessoa;
@@ -434,6 +438,9 @@ public class FichaRpg implements java.io.Serializable {
     public boolean isSalaJuntoCabana() { return salaJuntoCabana; }
     public String getTreinoBonusAtributo() { return treinoBonusAtributo; }
     public int getTreinoBonusPeriodosRestantes() { return treinoBonusPeriodosRestantes; }
+    public boolean isTemMesaMagias() { return temMesaMagias; }
+    public int getMagiaBonusPeriodosRestantes() { return magiaBonusPeriodosRestantes; }
+    public boolean isMagiaBonusAtivo() { return magiaBonusPeriodosRestantes > 0; }
 
     // Sair da cabana para explorar/colher recursos (também sai da sala de treino)
     public void sairDaCabana() {
@@ -475,6 +482,10 @@ public class FichaRpg implements java.io.Serializable {
                 if (treinoBonusPeriodosRestantes <= 0) {
                     treinoBonusAtributo = null;
                 }
+            }
+            // Decrementa o bônus da Mesa de Magias a cada período que se inicia
+            if (magiaBonusPeriodosRestantes > 0) {
+                magiaBonusPeriodosRestantes--;
             }
             virou = true;
         }
@@ -561,6 +572,27 @@ public class FichaRpg implements java.io.Serializable {
             naCabana = false;
             naSalaTreino = true;
         }
+    }
+
+    // Montar a mesa de magias: gasta 5 madeiras, 4 folhas, 4 pedras e 1 Pó da Fada.
+    // Retorna true se conseguiu construir.
+    public boolean construirMesaMagias() {
+        if (temMesaMagias) return false;
+        if (getQuantidadeDe("Madeira") < 5 || getQuantidadeDe("Folha") < 4 || getQuantidadeDe("Pedra") < 4 || getQuantidadeDe("Pó da Fada") < 1) {
+            return false;
+        }
+        removerItem("Madeira", 5);
+        removerItem("Folha", 4);
+        removerItem("Pedra", 4);
+        removerItem("Pó da Fada", 1);
+        temMesaMagias = true;
+        return true;
+    }
+
+    // Estudar na mesa de magias (gasta o período inteiro): +1 dado de dano
+    // em TODAS as habilidades de dano, valendo os 2 períodos seguintes
+    public void estudarMagia() {
+        this.magiaBonusPeriodosRestantes = 2;
     }
 
     // Total de um item no inventário (somando as pilhas)

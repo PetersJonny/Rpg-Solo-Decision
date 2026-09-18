@@ -213,6 +213,7 @@ Teste: `d20 + Destreza` contra **10 + Iniciativa da criatura mais rápida viva**
 - **Pequeno Grimório** (item) reduz o custo das magias pagas em 1 (mínimo 1).
 - **Chapéu Mágico** (item) adiciona **+3** de dano a todas as magias.
 - **Poder Absoluto** dobra a quantidade de dados das magias.
+- **Mesa de Magias** (construção) adiciona **+1 dado de dano** a **todas** as habilidades de dano (magias, Estrondo, Giro e Explosão de Poder) por 2 períodos.
 - **Peso da Espada** soma + Força ao dano.
 - **Magia em área** atinge o alvo e os inimigos adjacentes na lista.
 - Magias **sempre acertam** (sem teste de defesa) e aplicam o veneno da Cura para a Morte no alvo.
@@ -255,7 +256,7 @@ O companheiro age sozinho no seu turno de iniciativa:
 Além dos animais e bandidos, existe um encontro raro: a **Fada** (vida 4, defesa 14, acerto automático, ataque Brilho Cintilante 1d6, XP 30). Ela acontece **uma única vez por personagem** (20% de chance a cada exploração até ser encontrada) e oferece três opções:
 
 - **Conversar** — teste de Sabedoria (dificuldade 14): se passar, ganha **+1 em um atributo aleatório**.
-- **Lutar** — combate contra a fada; o **Brilho Mágico** dela (drop garantido) vale **75 de ouro** — o maior item de valor do jogo.
+- **Lutar** — combate contra a fada; o **Pó da Fada** dela (drop garantido) vale **75 de ouro** — o maior item de valor do jogo, e é o ingrediente da **Mesa de Magias**.
 - **Deixá-la em paz** — nada acontece.
 </details>
 
@@ -273,7 +274,7 @@ O hub do jogo é o menu **"FLORESTA DE FREIJORD"**:
 
 ### Tempo
 
-- Cada ação gasta **1/3 de período** (construir custa 2/3; treinar gasta o período inteiro).
+- Cada ação gasta **1/3 de período** (construir custa 2/3; treinar e estudar magia gastam o período inteiro).
 - A cada 3 unidades, o período alterna entre **Dia** e **Noite**. O dia nº sobe no amanhecer.
 - Ficar **2 noites sem dormir** deixa você **cansado** (−1 em testes).
 - À **noite**, encontros ficam mais perigosos: grupos maiores de lobos e bandidos, e mais chance de emboscada.
@@ -317,6 +318,11 @@ Coletar recursos (ou voltar para a cabana) tem **30% de chance de gerar um encon
 - **Custo:** 10 Madeira + 15 Folha + 5 Pedra + 4 **Couro** (2/3 de período; o Couro vem de lobos e ursos)
 - **Treinar:** gasta o período restante e dá **+2 em Força ou Destreza por 2 períodos** (reativa a cada novo treino). O bônus vale para dano, acerto, iniciativa e testes.
 
+### Mesa de Magias
+
+- **Custo:** 5 Madeira + 4 Folha + 4 Pedra + 1 **Pó da Fada** (2/3 de período; o Pó da Fada é o drop da Fada)
+- **Estudar:** gasta o período restante e dá **+1 dado de dano em TODAS as habilidades de dano por 2 períodos** (magias, Estrondo, Giro e Explosão de Poder). O efeito vale os 2 períodos seguintes ao estudo (estudou de dia → vale na noite + no dia seguinte; estudou de noite → vale no dia + na noite seguinte). Não dá para estudar de novo enquanto o bônus estiver ativo.
+
 ---
 
 ## Vendedor
@@ -344,7 +350,7 @@ O **vendedor ambulante** aparece em 10% das explorações. O estoque é sorteado
 ### Regras de venda
 
 - O vendedor compra qualquer item seu por **50% do preço de compra**.
-- **Exceção (preço cheio):** **Couro (6)**, **Dente de Urso (14)** e **Brilho Mágico (75)** — os materiais raros valem o preço cheio. Guarde-os para construir ou venda quando precisar de ouro.
+- **Exceção (preço cheio):** **Couro (6)**, **Dente de Urso (14)** e **Pó da Fada (75)** — os materiais raros valem o preço cheio. Guarde-os para construir ou venda quando precisar de ouro.
 
 ### Itens mágicos do Mago
 
@@ -427,7 +433,7 @@ A melhor armadura é equipada automaticamente; as demais ficam na mochila sem ef
 |---|---|---|
 | Couro | Lobo (40%), Urso (60%) | Construção da Sala de Treino (4x) · vende por 6g |
 | Dente de Urso | Urso (20%) | Vende por 14g |
-| Brilho Mágico | Fada (100%) | Vende por 75g |
+| Pó da Fada | Fada (100%) | Ingrediente da Mesa de Magias · vende por 75g |
 | Madeira / Folha / Pedra | Recursos da floresta | Construção |
 
 ---

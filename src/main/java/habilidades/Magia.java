@@ -49,6 +49,11 @@ public class Magia extends Habilidade {
         Interface.Pausa(1500);
         
         int quantidade = getQuantidadeDano();
+        if (ficha.isMagiaBonusAtivo()) {
+            quantidade++;
+            Interface.MostrarMensagem("(Mesa de Magias! +1 dado de dano na sua habilidade)");
+            Interface.Pausa(1000);
+        }
         if (ficha.isPoderAbsolutoAtivo()) {
             quantidade *= 2;
             Interface.MostrarMensagem("(Poder Absoluto dobra os dados de dano das suas magias!)");
