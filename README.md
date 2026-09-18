@@ -4,7 +4,7 @@ Um **RPG de mesa single-player** jogado no terminal, em **Java** (requer Java 21
 
 Este README é o guia completo do jogo: se ficar perdido em qualquer momento, volte aqui.
 
-> **Aviso:** este guia explica todas as mecânicas (combate, progressão, construção, vendedor, salvamento). Algumas partes revelam **eventos secretos do jogo** — essas seções estão marcadas com um aviso de spoiler e podem ser recolhidas.
+> **Aviso:** este guia explica **todas as mecânicas** do jogo (combate, progressão, construção, vendedor, salvamento) — mecânica **não é spoiler**. O que é spoiler é o **mundo em si**: as criaturas/monstros, os encontros secretos e os mistérios da floresta. Essas partes estão marcadas com aviso de spoiler e podem ser recolhidas.
 
 ---
 
@@ -53,7 +53,7 @@ Você distribui **6 pontos** entre os seis atributos. Depois escolhe a classe (M
 | **Constituição** | Vida; pontos extras aqui dão vida retroativa por nível já ganho |
 | **Destreza** | Iniciativa, Defesa, testes de fuga, armas à distância e armas "Ágeis" |
 | **Força** | Dano e acerto de armas corpo a corpo e do soco |
-| **Sabedoria** | Testes sociais (ex.: conversar com a fada) |
+| **Sabedoria** | Testes sociais (ex.: conversas e negociações) |
 | **Intelecto** | Testes de conhecimento, salvamento de companheiro |
 | **Presença** | Detecta ameaças antes de serem emboscadas; define a Mana |
 
@@ -64,11 +64,7 @@ Depois de **2 noites sem dormir**, o personagem fica **cansado**: **−1 em todo
 ### Dificuldade
 
 - **Normal** — ao morrer, os saves do personagem são mantidos.
-- **Difícil** — morte permanente.
-  - <details>
-    <summary>⚠️ <b>Spoiler da dificuldade Difícil</b> — clique para revelar</summary>
-    No modo **Difícil**, ao morrer, **todos os saves com o nome do personagem são apagados**. Não há segunda chance.
-    </details>
+- **Difícil** — morte permanente: ao morrer, **todos os saves com o nome do personagem são apagados**. Não há segunda chance.
 
 ---
 
@@ -230,11 +226,7 @@ O companheiro age sozinho no seu turno de iniciativa:
 ### Morte e resgate
 
 - Se **você** cair a 0 de vida, o Healer tenta reviver com **Cura Total** (10 de mana, uma vez por combate).
-- Se o **companheiro** morrer, você tenta estabilizá-lo: precisa de **Intelecto ≥ 14** e um **d20 ≥ 16**.
-  - <details>
-    <summary>⚠️ <b>Spoiler: falha no resgate</b> — clique para revelar</summary>
-    Se o resgate falhar, o companheiro morre em definitivo e **todos os itens e o ouro dele passam para você**.
-    </details>
+- Se o **companheiro** morrer, você tenta estabilizá-lo: precisa de **Intelecto ≥ 14** e um **d20 ≥ 16**. Se o resgate falhar, o companheiro morre em definitivo e **todos os itens e o ouro dele passam para você**.
 - Companheiro vivo com menos de 30% de vida após a vitória se recupera para 50%.
 
 ### Vitória e Derrota
@@ -244,14 +236,14 @@ O companheiro age sozinho no seu turno de iniciativa:
 
 ### Criaturas
 
+<details>
+<summary>⚠️ <b>Spoiler: as criaturas da floresta</b> — clique para revelar</summary>
+
 | Criatura | Qtd (dia / noite) | Vida | Defesa | Iniciativa | Acerto | Teste Presença | XP | Ataques | Saque |
 |---|---|---|---|---|---|---|---|---|---|
 | Lobo Selvagem | 1–2 / 1–4 | 14 | 10 | +3 | +3 | 8 | 25 | Mordida 1d6, Arranhão 2d4 | Couro 1–2 (40%) |
 | Urso | 1 / 1 | 35 | 7 | +0 | +1 | 5 | 50 | Mordida 1d10, Arranhão 2d8 | Couro 2–4 (60%), Dente de Urso (20%) |
 | Bandido | 1–3 / 1–5 | 9 | 12 | +1 | +2 | 15 | 10 | Facada 1d4, Soco 1d3 | Ouro 4–17 (100%), Faca (35%) |
-
-<details>
-<summary>⚠️ <b>Spoiler: encontro secreto — a Fada</b> — clique para revelar</summary>
 
 Além dos animais e bandidos, existe um encontro raro: a **Fada** (vida 4, defesa 14, acerto automático, ataque Brilho Cintilante 1d6, XP 30). Ela acontece **uma única vez por personagem** (20% de chance a cada exploração até ser encontrada) e oferece três opções:
 
@@ -277,7 +269,7 @@ O hub do jogo é o menu **"FLORESTA DE FREIJORD"**:
 - Cada ação gasta **1/3 de período** (construir custa 2/3; treinar e estudar magia gastam o período inteiro).
 - A cada 3 unidades, o período alterna entre **Dia** e **Noite**. O dia nº sobe no amanhecer.
 - Ficar **2 noites sem dormir** deixa você **cansado** (−1 em testes).
-- À **noite**, encontros ficam mais perigosos: grupos maiores de lobos e bandidos, e mais chance de emboscada.
+- À **noite**, encontros ficam mais perigosos: grupos maiores de criaturas, e mais chance de emboscada.
 
 ### Teste de Presença (detectar ameaça)
 
@@ -299,10 +291,10 @@ Coletar recursos (ou voltar para a cabana) tem **30% de chance de gerar um encon
 
 ### Encontros aleatórios (a cada exploração)
 
-1. **Descoberta do Labirinto do Minotauro** (só enquanto não encontrado; veja a seção Estruturas) — chance começa em **1%** e aumenta **+1% a cada dia** que passa
+1. **Descoberta do Labirinto** (só enquanto não encontrado; veja a seção Estruturas) — chance começa em **1%** e aumenta **+1% a cada dia** que passa
 2. **10%** — Vendedor ambulante
 3. **20%** — encontro secreto raro (veja o aviso de spoiler na seção de Criaturas)
-4. Senão — criatura sorteada (1 = Lobo, 2 = Urso, 3 = Bandido)
+4. Senão — **uma criatura da floresta** (a tabela com os nomes é spoiler; veja a seção de Criaturas)
 
 ---
 
@@ -316,26 +308,30 @@ Coletar recursos (ou voltar para a cabana) tem **30% de chance de gerar um encon
 
 ### Sala de Treino
 
-- **Custo:** 10 Madeira + 15 Folha + 5 Pedra + 4 **Couro** (2/3 de período; o Couro vem de lobos e ursos)
+- **Custo:** 10 Madeira + 15 Folha + 5 Pedra + 4 **Couro** (2/3 de período; o Couro vem de criaturas — veja spoiler na seção de Criaturas)
 - **Treinar:** gasta o período restante e dá **+2 em Força ou Destreza por 2 períodos** (reativa a cada novo treino). O bônus vale para dano, acerto, iniciativa e testes.
 
 ### Mesa de Magias
 
-- **Custo:** 5 Madeira + 4 Folha + 4 Pedra + 1 **Pó da Fada** (2/3 de período; o Pó da Fada é o drop da Fada)
+- **Custo:** 5 Madeira + 4 Folha + 4 Pedra + 1 **Pó da Fada** (2/3 de período; o Pó da Fada vem de um encontro secreto — veja spoiler na seção de Criaturas)
 - **Estudar:** gasta o período restante e dá **+1 dado de dano em TODAS as habilidades de dano por 2 períodos** (magias, Estrondo, Giro e Explosão de Poder). O efeito vale os 2 períodos seguintes ao estudo (estudou de dia → vale na noite + no dia seguinte; estudou de noite → vale no dia + na noite seguinte). Não dá para estudar de novo enquanto o bônus estiver ativo.
 
 ---
 
 ## Estruturas Encontradas
 
-### Labirinto do Minotauro
+### Labirinto
 
 - **Como encontrar:** apenas **explorando a floresta**. A chance começa em **1%** por exploração e aumenta **+1% a cada dia** que passa (até 100%). Uma vez encontrado, não é sorteado de novo.
 - Ao descobrir a entrada, o jogador escolhe **entrar agora** ou **não entrar** — se não entrar, o local fica acessível pelo menu principal (como as construções), na opção **Labirinto**.
 - Ao entrar, a interface vira sobre o labirinto (apenas **ver a ficha** continua disponível).
 - **O caminho é randomizado na descoberta e salvo na ficha** — ao voltar depois, continua exatamente de onde parou (células visitadas permanecem iluminadas).
 - **Navegação:** a tela mostra apenas a grade ao redor do personagem — as **laterais/paredes** onde você está (`##`) e os corredores vizinhos (`.`) — mais o que **já foi percorrido** (iluminado `·`) e sua posição (`@`). O resto do labirinto fica escuro, inclusive o centro (visível apenas enquanto se explora). **W** = cima, **S** = baixo, **A** = esquerda, **D** = direita — executa no momento da tecla, **sem Enter**; qualquer outra tecla não faz nada. Uma câmera acompanha o personagem para que o labirinto (grade 31x31, bem maior) caiba na tela.
-- Há **apenas uma entrada**. Ao pisar na **primeira casa do centro** (área central), o labirinto se encerra — é onde o minotauro aguarda (mecânica virá em etapa futura). **Casas especiais:** em algumas casas aleatórias há **encontros com monstros** (8 por labirinto) e em outras há **recompensas** (6 por labirinto) — cada casa especial é sorteada na geração e ativa uma única vez; as listas de monstros/recompensas ainda serão definidas.
+- Há **apenas uma entrada**. Ao pisar na **primeira casa do centro** (área central), o labirinto se encerra. **Casas especiais:** em algumas casas aleatórias há **encontros** (8 por labirinto) e em outras há **recompensas** (6 por labirinto) — cada casa especial é sorteada na geração e ativa uma única vez; as listas de encontros/recompensas ainda serão definidas.
+  <details>
+  <summary>⚠️ <b>Spoiler: o segredo do centro</b> — clique para revelar</summary>
+  No coração do labirinto aguarda o **Minotauro** — a mecânica dele virá em etapa futura.
+  </details>
 
 ---
 
@@ -445,9 +441,9 @@ A melhor armadura é equipada automaticamente; as demais ficam na mochila sem ef
 
 | Material | De onde vem | Uso / valor |
 |---|---|---|
-| Couro | Lobo (40%), Urso (60%) | Construção da Sala de Treino (4x) · vende por 6g |
-| Dente de Urso | Urso (20%) | Vende por 14g |
-| Pó da Fada | Fada (100%) | Ingrediente da Mesa de Magias · vende por 75g |
+| Couro | Saque de criaturas (ver spoiler na seção de Criaturas) | Construção da Sala de Treino (4x) · vende por 6g |
+| Dente de Urso | Saque de criaturas (ver spoiler na seção de Criaturas) | Vende por 14g |
+| Pó da Fada | Encontro secreto (ver spoiler na seção de Criaturas) | Ingrediente da Mesa de Magias · vende por 75g |
 | Madeira / Folha / Pedra | Recursos da floresta | Construção |
 
 ---
