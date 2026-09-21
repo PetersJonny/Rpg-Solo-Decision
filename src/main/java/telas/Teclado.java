@@ -66,9 +66,26 @@ public class Teclado {
     }
 
     // Lê uma única tecla pressionada (bloqueia até algo ser pressionado).
+    // No modo cru, as setas chegam como sequência de escape: ESC [ A/B/C/D.
+    // Aqui elas são convertidas para ↑ ↓ ← → (mesma direção do WASD); qualquer
+    // outra tecla/sequência sem ser seta ou WASD é descartada (não faz nada).
     public static char lerTecla() {
         try {
-            return (char) System.in.read();
+            int b = System.in.read();
+            if (b == -1) return '\0';
+            if (b != 27) return (char) b; // não é ESC: tecla comum
+            // Começou uma sequência de escape. Sem mais bytes é só um ESC solto.
+            if (System.in.available() == 0) return '\0';
+            int br = System.in.read();
+            if (br != '[') return '\0'; // sequência desconhecida: nada acontece
+            int dir = System.in.read();
+            switch (dir) {
+                case 'A': return '↑'; // seta para cima
+                case 'B': return '↓'; // seta para baixo
+                case 'C': return '→'; // seta para a direita
+                case 'D': return '←'; // seta para a esquerda
+                default: return '\0';  // outra tecla: nada acontece
+            }
         } catch (IOException e) {
             return '\0';
         }

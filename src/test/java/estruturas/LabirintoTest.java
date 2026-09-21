@@ -166,6 +166,24 @@ class LabirintoTest {
         assertTrue(lab.chegouAoCentro());
     }
 
+    @Test
+    void testConcluirLabirintoRemoveDisponibilidadeDoMenu() {
+        fichas.FichaRpg ficha = new fichas.FichaRpg("Teste");
+        ficha.setLabirintoEncontrado(true);
+        ficha.setLabirinto(lab);
+        assertTrue(ficha.isLabirintoDisponivel(), "Antes do centro, a opção deve existir no menu");
+
+        int alvoL = lab.getCentroLinha() - 2;
+        int alvoC = lab.getCentroColuna();
+        int[] caminho = caminhoAteO(lab.getEntradaLinha(), lab.getEntradaColuna(), alvoL, alvoC);
+        for (int[] passo : direcoesDoCaminho(caminho)) {
+            assertTrue(lab.mover(passo[0], passo[1]));
+            if (lab.isCentroAlcancado()) break;
+        }
+        assertTrue(lab.isCentroAlcancado(), "O centro deve ter sido alcançado");
+        assertFalse(ficha.isLabirintoDisponivel(), "Após o centro, a opção deve sumir do menu");
+    }
+
     // BFS da posição atual até um destino; retorna o caminho de células [linha, coluna]
     private int[] caminhoAteO(int origemL, int origemC, int destinoL, int destinoC) {
         int total = t * t;

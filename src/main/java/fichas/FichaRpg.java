@@ -53,6 +53,7 @@ public class FichaRpg implements java.io.Serializable {
     private boolean curaParaMorteAtivo;
     private criaturas.Criatura alvoCuraParaMorte;
     private boolean curaTotalUsada;
+    private boolean infectado; // infecção zumbi: 1d4 de dano por rodada de combate
 
     // Efeitos lvl 7
     private boolean defesaAbsolutaAtiva;
@@ -452,6 +453,12 @@ public class FichaRpg implements java.io.Serializable {
     public estruturas.Labirinto getLabirinto() { return labirinto; }
     public void setLabirinto(estruturas.Labirinto labirinto) { this.labirinto = labirinto; }
 
+    // O labirinto fica acessível no menu enquanto não tiver sido concluído.
+    // Ao alcançar o centro, ele desmorona, o jogador foge para a floresta e a opção some.
+    public boolean isLabirintoDisponivel() {
+        return labirintoEncontrado && labirinto != null && !labirinto.isCentroAlcancado();
+    }
+
     // Chance de descobrir o Labirinto do Minotauro a cada exploração:
     // começa em 1% e aumenta +1% a cada dia que passa (dia 1 = 1%, dia 2 = 2%...), até no máximo 100%.
     public int getLabirintoChanceDescoberta() {
@@ -641,6 +648,7 @@ public class FichaRpg implements java.io.Serializable {
         this.curaParaMorteAtivo = false;
         this.alvoCuraParaMorte = null;
         this.curaTotalUsada = false;
+        this.infectado = false;
         this.defesaAbsolutaAtiva = false;
         this.rodadasSemHabilidade = 0;
         this.magiaProibidaUsada = false;
@@ -681,6 +689,9 @@ public class FichaRpg implements java.io.Serializable {
 
     public boolean isCuraTotalUsada() { return curaTotalUsada; }
     public void setCuraTotalUsada(boolean curaTotalUsada) { this.curaTotalUsada = curaTotalUsada; }
+
+    public boolean isInfectado() { return infectado; }
+    public void setInfectado(boolean infectado) { this.infectado = infectado; }
 
     public boolean isDefesaAbsolutaAtiva() { return defesaAbsolutaAtiva; }
     public void setDefesaAbsolutaAtiva(boolean defesaAbsolutaAtiva) { this.defesaAbsolutaAtiva = defesaAbsolutaAtiva; }

@@ -116,6 +116,16 @@ public class MotorDeCombate {
             cascaGrossaAtiva[0] = false;
             ficha.setMagiaProibidaAtiva(false);
 
+            // Infecção zumbi: o ferimento contaminado corrói 1d4 no início de cada rodada
+            if (ficha.isInfectado() && ficha.getVidaPersonagem() > 0) {
+                int danoInfecao = MecanicasRpg.rolarDado(4);
+                ficha.receberDano(danoInfecao);
+                Interface.MostrarMensagem("\nSua infecção zumbi corrói as feridas! Dano: " + danoInfecao + " (Vida: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima() + ")");
+                Interface.Pausa(2000);
+                if (ficha.getVidaPersonagem() <= 0 && !tentarReviver(ficha)) break;
+                if (inimigosVivos(inimigos).isEmpty()) break;
+            }
+
             // O líquido mortal de Cura para a Morte começa a agir a partir do próximo turno
             if (ficha.isCuraParaMortePreparado()) {
                 ficha.setCuraParaMortePreparado(false);
@@ -143,6 +153,7 @@ public class MotorDeCombate {
                 if (resultadoFuga == 0) {
                     Interface.MostrarMensagem("\nVocê conseguiu escapar da floresta!");
                     Interface.Pausa(2500);
+                    ficha.setInfectado(false); // a infecção some quando o combate acaba
                     return;
                 }
                 if (resultadoFuga == 1) {
@@ -166,6 +177,7 @@ public class MotorDeCombate {
                     if (resultado == 0) {
                         Interface.MostrarMensagem("\nVocê conseguiu escapar da floresta!");
                         Interface.Pausa(2500);
+                        ficha.setInfectado(false); // a infecção some quando o combate acaba
                         return;
                     }
                     // Processa XP/drops dos inimigos que acabaram de morrer
@@ -213,13 +225,13 @@ public class MotorDeCombate {
                         if (atacarCompanheiro) {
                             Interface.MostrarMensagem(rotuloCriatura(inimigos, c) + " mira em " + comp2.getNomeCompleto() + "!");
                             Interface.Pausa(1500);
-                            c.atacarJogador(comp2.getFicha(), false);
+                            c.atacarJogador(comp2.getFicha(), false, false);
                             if (comp2.getFicha().getVidaPersonagem() <= 0) {
                                 Interface.MostrarMensagem("\n" + comp2.getNomeCompleto() + " cai em combate!");
                                 Interface.Pausa(1500);
                             }
                         } else {
-                            c.atacarJogador(ficha, cascaGrossaAtiva[0]);
+                            c.atacarJogador(ficha, cascaGrossaAtiva[0], true);
                         }
                         // Inimigos podem morrer pelo reflexo da Proteção Absoluta
                         processarMortes(inimigos, mortesProcessadas, ficha);
@@ -295,6 +307,7 @@ public class MotorDeCombate {
         }
 
         Interface.cabecalhoMenu("FIM DO COMBATE");
+        ficha.setInfectado(false); // a infecção some quando o combate acaba
         if (ficha.getVidaPersonagem() <= 0) {
             Interface.MostrarMensagem("\n  Você foi derrotado... A floresta recupera o silêncio.");
             Interface.Pausa(3000);
@@ -455,7 +468,7 @@ public class MotorDeCombate {
             Criatura maisRapido = inimigoMaisRapidoVivo(inimigos);
             if (maisRapido != null) {
                 jaAtacouNaRodada.add(maisRapido);
-                maisRapido.atacarJogador(ficha, cascaGrossaAtiva[0]);
+                maisRapido.atacarJogador(ficha, cascaGrossaAtiva[0], true);
             }
             return -1;
         } else if (resultadoFuga == 3) {
@@ -1654,6 +1667,10 @@ public class MotorDeCombate {
                 ficha.setVidaPersonagem(Math.min(ficha.getVidaPersonagem() + cura, ficha.getVidaMaxima()));
                 int curaReal = ficha.getVidaPersonagem() - antes;
                 Interface.MostrarMensagem("Você usou o Kit Médico e recuperou " + curaReal + " de vida! Vida: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima());
+                if (ficha.isInfectado()) {
+                    ficha.setInfectado(false);
+                    Interface.MostrarMensagem("Os curativos do Kit Médico expulsam a infecção! Você está curado.");
+                }
                 break;
             }
             default:
@@ -1709,7 +1726,7 @@ public class MotorDeCombate {
 
                 String descExibida = itemEscolhido.getDescricao();
                 if (itemEscolhido.getNome().equals("Kit Médico")) {
-                    descExibida = "Pode ser usado para curar 1d4 de vida. Usos restantes: " + itemEscolhido.getQuantidade();
+                    descExibida = "Pode ser usado para curar 1d4 de vida e acaba com uma infecção. Usos restantes: " + itemEscolhido.getQuantidade();
                 } else if (itemEscolhido.getNome().equals("Poção de Mana")) {
                     descExibida = "Restaura 5 pontos de mana. Usos restantes: " + itemEscolhido.getQuantidade();
                 } else if (itemEscolhido.getNome().equals("Poção Grande de Mana")) {
@@ -1784,9 +1801,10 @@ public class MotorDeCombate {
             ficha.setVidaPersonagem(Math.min(ficha.getVidaPersonagem() + cura, ficha.getVidaMaxima()));
             Interface.MostrarMensagem("Você comeu uma fruta e recuperou " + cura + " de vida! Vida atual: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima());
         } else if (itemEscolhido.getNome().equals("Kit Médico")) {
-            // Pode usar o Kit em si ou no companheiro (se estiver ferido)
+            // Pode usar o Kit em si ou no companheiro (se estiver ferido);
+            // com vida cheia, ainda pode usar em você mesmo para curar uma infecção
             companheiros.Companheiro comp = ficha.getCompanheiro();
-            boolean podeUsarEmSi = ficha.getVidaPersonagem() < ficha.getVidaMaxima();
+            boolean podeUsarEmSi = ficha.getVidaPersonagem() < ficha.getVidaMaxima() || ficha.isInfectado();
             boolean podeUsarCompanheiro = comp != null && comp.getFicha().getVidaPersonagem() < comp.getFicha().getVidaMaxima();
 
             boolean usarNoCompanheiro = false;
@@ -1831,6 +1849,12 @@ public class MotorDeCombate {
                         Interface.MostrarMensagem("Cura Reforçada: você recuperou +" + curaExtra + " de vida! Vida atual: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima());
                         Interface.Pausa(1500);
                     }
+                }
+
+                if (ficha.isInfectado()) {
+                    ficha.setInfectado(false);
+                    Interface.MostrarMensagem("Os curativos do Kit Médico expulsam a infecção! Você está curado.");
+                    Interface.Pausa(2000);
                 }
             }
         }

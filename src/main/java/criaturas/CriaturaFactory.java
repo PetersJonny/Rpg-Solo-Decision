@@ -79,4 +79,46 @@ public class CriaturaFactory {
         c.adicionarDrop("Pó da Fada", 1, 1, 100);
         return c;
     }
+
+    // ==================== CRIATURAS DO LABIRINTO ====================
+
+    // Esqueleto: arqueiro veloz. O Ataque de Ossos (1d4) pode se repetir: 80% de um
+    // segundo ataque e, se repetir, 33% de um terceiro — cada um é um ataque novo.
+    public static Criatura criarEsqueleto() {
+        Criatura c = new Criatura("Esqueleto", 2, 12, 12, 4);
+        c.setBonusAcerto(2);
+        c.setDcFuga(15);
+        c.setXpGanho(40);
+        c.adicionarAtaque("Arco", "", 1, 6); // mesmo dano do Arco do jogo (1d6)
+        c.adicionarAtaque("Ataque de Ossos", "", 1, 4);
+        c.configurarAtaqueEncadeado("Ataque de Ossos", 80, 33);
+        c.adicionarDrop("Osso", 1, 3, 30);
+        c.adicionarDrop("Arco", 1, 1, 10);
+        c.adicionarDrop("Flechas", 1, 7, 35);
+        return c;
+    }
+
+    // Zumbi: resistente e lento. A Mordida (1d6) tem 30% de chance de infectar,
+    // causando 1d4 de dano por rodada enquanto o combate durar.
+    public static Criatura criarZumbi() {
+        Criatura c = new Criatura("Zumbi", 2, 18, 10, 2);
+        c.setBonusAcerto(3);
+        c.setDcFuga(10);
+        c.setXpGanho(40);
+        c.adicionarAtaque("Mordida", "", 1, 6);
+        c.configurarInfeccao("Mordida", 30);
+        c.adicionarDrop("Carne Podre", 1, 4, 40);
+        return c;
+    }
+
+    // Baú Monstruoso: armadilha viva dentro dos baús do labirinto.
+    public static Criatura criarBauMonstruoso() {
+        Criatura c = new Criatura("Baú Monstruoso", 3, 25, 10, 4);
+        c.setBonusAcerto(4);
+        c.setDcFuga(12);
+        c.setXpGanho(50);
+        c.adicionarAtaque("Mordida", "", 1, 8);
+        c.setOuroDrop(4, 17, 100);
+        return c;
+    }
 }

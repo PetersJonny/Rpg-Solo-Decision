@@ -252,6 +252,20 @@ Além dos animais e bandidos, existe um encontro raro: a **Fada** (vida 4, defes
 - **Deixá-la em paz** — nada acontece.
 </details>
 
+<details>
+<summary>⚠️ <b>Spoiler: as criaturas do Labirinto</b> — clique para revelar</summary>
+
+Nos 8 **encontros** do labirinto: **40% Esqueleto, 40% Zumbi e 20% Baú**. Fugir usa **Teste de Destreza** contra a dificuldade de cada criatura (dificuldade mostrada abaixo).
+
+| Criatura | Nível | Vida | Defesa | Iniciativa | Acerto | Fuga (Destreza) | XP | Ataques | Saque |
+|---|---|---|---|---|---|---|---|---|---|
+| Esqueleto | 2 | 12 | 12 | +4 | +2 | 15 | 40 | Arco 1d6, Ataque de Ossos 1d4 (80% de atacar de novo, 33% de um terceiro) | Osso 1–3 (30%), Arco (10%), Flechas 1–7 (35%) |
+| Zumbi | 2 | 18 | 10 | +2 | +3 | 10 | 40 | Mordida 1d6 (30% de infectar: 1d4 de dano por rodada de combate, curada com Kit Médico) | Carne Podre 1–4 (40%) |
+| Baú Monstruoso | 3 | 25 | 10 | +4 | +4 | 12 | 50 | Mordida 1d8 | Ouro 4–17 (100%) |
+
+O **Baú** (encontro) e as casas de **recompensa** (20% de chance) oferecem um **baú antigo**: dá para **abrir** ou **não abrir**. Abrindo, **50%** tem ouro (7–14) e **50%** u m **Baú Monstruoso** salta para o combate. **Carne Podre** e **Osso** não podem ser comprados no vendedor (só vendidos).
+</details>
+
 ---
 
 ## Floresta de Freijord
@@ -326,8 +340,8 @@ Coletar recursos (ou voltar para a cabana) tem **30% de chance de gerar um encon
 - Ao descobrir a entrada, o jogador escolhe **entrar agora** ou **não entrar** — se não entrar, o local fica acessível pelo menu principal (como as construções), na opção **Labirinto**.
 - Ao entrar, a interface vira sobre o labirinto (apenas **ver a ficha** continua disponível).
 - **O caminho é randomizado na descoberta e salvo na ficha** — ao voltar depois, continua exatamente de onde parou (células visitadas permanecem iluminadas).
-- **Navegação:** a tela mostra apenas a grade ao redor do personagem — as **laterais/paredes** onde você está (`##`) e os corredores vizinhos (`.`) — mais o que **já foi percorrido** (iluminado `·`) e sua posição (`@`). O resto do labirinto fica escuro, inclusive o centro (visível apenas enquanto se explora). **W** = cima, **S** = baixo, **A** = esquerda, **D** = direita — executa no momento da tecla, **sem Enter**; qualquer outra tecla não faz nada. Uma câmera acompanha o personagem para que o labirinto (grade 31x31, bem maior) caiba na tela.
-- Há **apenas uma entrada**. Ao pisar na **primeira casa do centro** (área central), o labirinto se encerra. **Casas especiais:** em algumas casas aleatórias há **encontros** (8 por labirinto) e em outras há **recompensas** (6 por labirinto) — cada casa especial é sorteada na geração e ativa uma única vez; as listas de encontros/recompensas ainda serão definidas.
+- **Navegação:** a tela mostra apenas a grade ao redor do personagem — as **laterais/paredes** onde você está (`##`) e os corredores vizinhos (`.`) — mais o que **já foi percorrido** (iluminado `·`) e sua posição (`@`). O resto do labirinto fica escuro, inclusive o centro (visível apenas enquanto se explora). Movimento via **W/A/S/D ou as setas do teclado** (↑ ↓ ← →) — executa no momento da tecla, **sem Enter**; qualquer outra tecla (número, caractere etc.) não faz nada. Uma câmera acompanha o personagem para que o labirinto (grade 31x31, bem maior) caiba na tela.
+- Há **apenas uma entrada**. Ao pisar na **primeira casa do centro** (área central), o labirinto **começa a desmoronar**: o jogador foge correndo, volta à floresta e o labirinto se **fecha para sempre** — a opção **Labirinto** some do menu. **Casas especiais:** em algumas casas aleatórias há **encontros** (8 por labirinto) e em outras há **recompensas** (6 por labirinto) — cada casa especial é sorteada na geração e ativa uma única vez. **Encontros:** 40% Esqueleto, 40% Zumbi e 20% Baú. **Recompensas:** 20% Baú (os outros 80% por enquanto não dão nada). Ao perceber um monstro, dá para **Lutar** ou **Tentar Fugir** com um **Teste de Destreza** (a dificuldade é por criatura — veja o spoiler abaixo).
   <details>
   <summary>⚠️ <b>Spoiler: o segredo do centro</b> — clique para revelar</summary>
   No coração do labirinto aguarda o **Minotauro** — a mecânica dele virá em etapa futura.
@@ -360,7 +374,7 @@ O **vendedor ambulante** aparece em 10% das explorações. O estoque é sorteado
 ### Regras de venda
 
 - O vendedor compra qualquer item seu por **50% do preço de compra**.
-- **Exceção (preço cheio):** **Couro (6)**, **Dente de Urso (14)** e **Pó da Fada (75)** — os materiais raros valem o preço cheio. Guarde-os para construir ou venda quando precisar de ouro.
+- **Exceção (preços especiais de saque):** **Couro (6)**, **Dente de Urso (14)**, **Pó da Fada (75)** e **Carne Podre (15)** valem o preço cheio; o **Osso** é pago pela metade do valor cheio (23 → **11**). Guarde-os para construir ou venda quando precisar de ouro.
 
 ### Itens mágicos do Mago
 
@@ -429,7 +443,7 @@ A melhor armadura é equipada automaticamente; as demais ficam na mochila sem ef
 
 | Item | Efeito | Use |
 |---|---|---|
-| Kit Médico | Cura 1d4 (em você ou no companheiro) | Combate (gasta o turno) ou inventário |
+| Kit Médico | Cura 1d4 (em você ou no companheiro) e **acaba com uma infecção** | Combate (gasta o turno) ou inventário |
 | Frutas | Cura 1d2 | Recurso coletado na floresta |
 | Poção de Mana | +5 de mana | ✔ |
 | Poção Grande de Mana | +7 de mana | Vendedor (Mago) |
@@ -445,6 +459,8 @@ A melhor armadura é equipada automaticamente; as demais ficam na mochila sem ef
 | Dente de Urso | Saque de criaturas (ver spoiler na seção de Criaturas) | Vende por 14g |
 | Pó da Fada | Encontro secreto (ver spoiler na seção de Criaturas) | Ingrediente da Mesa de Magias · vende por 75g |
 | Madeira / Folha / Pedra | Recursos da floresta | Construção |
+| Osso | Labirinto (Esqueleto) | Vende por 11g (não é comprado no vendedor) |
+| Carne Podre | Labirinto (Zumbi) | Vende por 15g (não é comprado no vendedor) |
 
 ---
 

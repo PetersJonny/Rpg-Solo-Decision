@@ -25,6 +25,19 @@ public class Criatura implements java.io.Serializable {
     private List<Ataque> ataques = new ArrayList<>();
     private List<Drop> drops = new ArrayList<>();
 
+    // Dificuldade para fugir com Teste de Destreza (usada nos encontros do labirinto)
+    private int dcFuga = 12;
+
+    // Ataque que pode se repetir em cadeia (ex.: Esqueleto): depois do ataque original,
+    // tem chance de atacar de novo (chanceAtaqueRepetir) e, se repetir, chance de um terceiro (chanceAtaqueRepetir2).
+    private String ataqueRepetivel;
+    private int chanceAtaqueRepetir;
+    private int chanceAtaqueRepetir2;
+
+    // Ataque que pode infectar o alvo (ex.: Zumbi): ao acertar, o alvo toma 1d4 de dano por rodada
+    private String ataqueInfeccioso;
+    private int chanceInfeccao;
+
     public Criatura(String nome, int nivel, int vida, int defesa, int iniciativa) {
         this.nome = nome;
         this.nivel = nivel;
@@ -42,6 +55,26 @@ public class Criatura implements java.io.Serializable {
     public void setAcertoAutomatico(boolean acertoAutomatico) { this.acertoAutomatico = acertoAutomatico; }
     public void setTestePresenca(int testePresenca) { this.testePresenca = testePresenca; }
     public void setChanceAparecer(int chanceAparecer) { this.chanceAparecer = chanceAparecer; }
+
+    // Dificuldade para o jogador fugir com Teste de Destreza
+    public void setDcFuga(int dcFuga) { this.dcFuga = dcFuga; }
+    public int getDcFuga() { return dcFuga; }
+
+    // Configura um ataque que pode se repetir em cadeia: ao usar `nomeAtaque`, a criatura
+    // tem `chanceSegundo`% de atacar de novo e, se repetir, `chanceTerceiro`% de um terceiro.
+    // Cada repetição é um ataque totalmente novo (nova rolagem de acerto e dano).
+    public void configurarAtaqueEncadeado(String nomeAtaque, int chanceSegundo, int chanceTerceiro) {
+        this.ataqueRepetivel = nomeAtaque;
+        this.chanceAtaqueRepetir = chanceSegundo;
+        this.chanceAtaqueRepetir2 = chanceTerceiro;
+    }
+
+    // Configura um ataque que infecta o alvo ao acertar (chance%). A infecção causa
+    // 1d4 de dano por rodada e some quando o combate acaba.
+    public void configurarInfeccao(String nomeAtaque, int chance) {
+        this.ataqueInfeccioso = nomeAtaque;
+        this.chanceInfeccao = chance;
+    }
 
     // Ataques e Drops
     public void adicionarAtaque(String nome, String tipoDano, int qtdDado, int ladosDado) {
@@ -75,8 +108,34 @@ public class Criatura implements java.io.Serializable {
 
     public void setVida(int vida) { this.vida = vida; }
 
-    // Ataque da criatura contra o jogador
-    public Ataque atacarJogador(FichaRpg ficha, boolean cascaGrossaAtiva) {
+    // Ataque da criatura contra o jogador. `alvoJogadorPrincipal` indica se o alvo é o
+    // personagem principal (só ele pode ser infectado). Depois do ataque, se o ataque
+    // usado for repetível, a criatura pode atacar novamente (cada repetição é um ataque novo).
+    public Ataque atacarJogador(FichaRpg ficha, boolean cascaGrossaAtiva, boolean alvoJogadorPrincipal) {
+        Ataque ataqueEscolhido = null;
+        int repeticao = 0;
+        while (true) {
+            ataqueEscolhido = executarAtaque(ficha, cascaGrossaAtiva, alvoJogadorPrincipal);
+
+            boolean podeRepetir = ataqueRepetivel != null
+                    && ataqueEscolhido != null
+                    && ataqueEscolhido.nome.equals(ataqueRepetivel)
+                    && repeticao < 2
+                    && ficha.getVidaPersonagem() > 0;
+            if (!podeRepetir) break;
+
+            int chance = repeticao == 0 ? chanceAtaqueRepetir : chanceAtaqueRepetir2;
+            if (MecanicasRpg.rolarDado(100) > chance) break;
+
+            Interface.MostrarMensagem(nome + " se movimenta e ataca novamente com " + ataqueEscolhido.nome + "!");
+            Interface.Pausa(1500);
+            repeticao++;
+        }
+        return ataqueEscolhido;
+    }
+
+    // Realiza UM ataque completo (escolhe o ataque, rola acerto/dano e aplica a infecção).
+    private Ataque executarAtaque(FichaRpg ficha, boolean cascaGrossaAtiva, boolean alvoJogadorPrincipal) {
         Ataque ataqueEscolhido = ataques.get(MecanicasRpg.rolarDado(ataques.size()) - 1);
 
         String danoTipo = ataqueEscolhido.tipoDano == null || ataqueEscolhido.tipoDano.isEmpty()
@@ -118,6 +177,7 @@ public class Criatura implements java.io.Serializable {
             if (ficha.isProtecaoAbsolutaAtiva()) {
                 refletirProtecaoAbsoluta();
             }
+            aplicarInfeccao(ficha, alvoJogadorPrincipal, ataqueEscolhido);
         } else {
             int danoQueCausaria = rolarDanoDoAtaque(ataqueEscolhido, false);
             Interface.MostrarMensagem("-> Errou! Dano que causaria: " + danoQueCausaria + danoTipo + " (defesa do jogador: " + ficha.getDefesa() + ")");
@@ -125,6 +185,19 @@ public class Criatura implements java.io.Serializable {
         Interface.Pausa(2000);
 
         return ataqueEscolhido;
+    }
+
+    // Se o ataque usado pode infectar e o alvo é o personagem principal, sorteia a infecção
+    private void aplicarInfeccao(FichaRpg ficha, boolean alvoJogadorPrincipal, Ataque ataque) {
+        if (!alvoJogadorPrincipal || ataqueInfeccioso == null || !ataque.nome.equals(ataqueInfeccioso)) {
+            return;
+        }
+        if (ficha.isInfectado()) return; // não acumula
+        if (MecanicasRpg.rolarDado(100) <= chanceInfeccao) {
+            ficha.setInfectado(true);
+            Interface.MostrarMensagem("A mordida abre uma ferida que infecciona! Você sofrerá 1d4 de dano por rodada.");
+            Interface.Pausa(2000);
+        }
     }
 
     // Rola o dano do ataque, dobrando a quantidade de dados em caso de crítico
@@ -179,6 +252,14 @@ public class Criatura implements java.io.Serializable {
                 return new ItemRpg("Pó da Fada", "Pó de luz condensada deixado por uma fada.", 1);
             case "Faca":
                 return new Arma("Faca", "Uma faca afiada que causa 1d4 de dano corpo a corpo, usando Destreza.", "CaC", 4, 1, 1, "Destreza");
+            case "Osso":
+                return new ItemRpg("Osso", "Ossos antigos retirados de criaturas do labirinto, valiosos para artesãos e alquimistas.", 1);
+            case "Carne Podre":
+                return new ItemRpg("Carne Podre", "Carne em decomposição que exala um odor insuportável. Poucos compradores aceitam isso.", 1);
+            case "Arco":
+                return new Arma("Arco", "Um arco de madeira que dispara flechas, causando 1d6 de dano à distância. Consome flechas.", "LA", 6, 1, 1);
+            case "Flechas":
+                return new ItemRpg("Flechas", "Munição para arcos e foices.", 1);
             default:
                 return null;
         }

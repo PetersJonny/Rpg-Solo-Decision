@@ -227,6 +227,9 @@ public class Main {
                 }
             } else if (escolhaAventura == ops[0]) {
                 estruturas.LabirintoDoMinotauro.MenuLabirinto(ficha);
+                if (ficha.getVidaPersonagem() <= 0) {
+                    personagemFaleceu = true;
+                }
             } else if (escolhaAventura == ops[1]) {
                 eventos.Floresta.ConversarComCompanheiro(ficha);
             } else if (escolhaAventura == ops[2]) {

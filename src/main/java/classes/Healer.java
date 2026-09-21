@@ -10,7 +10,7 @@ public class Healer extends ClasseRpg {
         this.nome = "Healer";
         this.armaPrincipal = new Arma("Bisturi", "Um bisturi afiado e rápido, perfeito para cortes precisos. Causa 1d4 de dano.", "CaC", 4, 1, 1, "Ágil", true);
         this.itensIniciais.add(this.armaPrincipal);
-        this.itensIniciais.add(new Consumivel("Kit Médico", "Pode ser usado para curar 1d4 de vida. Possui 5 usos.", 5));
+        this.itensIniciais.add(new Consumivel("Kit Médico", "Pode ser usado para curar 1d4 de vida e acaba com uma infecção. Possui 5 usos.", 5));
         
         // Habilidade Base
         this.habilidadesIniciais.add(new habilidades.Habilidade("Conhecimento Avançado", "Permite rerrolar um resultado falho em testes de atributos.", 2));

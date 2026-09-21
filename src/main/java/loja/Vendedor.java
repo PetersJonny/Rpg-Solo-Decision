@@ -319,6 +319,8 @@ public class Vendedor {
             case "Couro": return 6;
             case "Dente de Urso": return 14;
             case "Pó da Fada": return 75;
+            case "Osso": return 11; // valor cheio 23, pago pela metade
+            case "Carne Podre": return 15; // valor cheio de venda
             default:
                 int preco = precoDeVenda(nome);
                 return preco < 0 ? 1 : preco / 2;
@@ -369,7 +371,7 @@ public class Vendedor {
             case "Poção Grande de Mana":
                 return new Consumivel("Poção Grande de Mana", "Restaura 7 pontos de mana. É consumida após o uso.", 1);
             case "Kit Médico":
-                return new Consumivel("Kit Médico", "Pode ser usado para curar 1d4 de vida. Possui 5 usos.", 1);
+                return new Consumivel("Kit Médico", "Pode ser usado para curar 1d4 de vida e acaba com uma infecção. Possui 5 usos.", 1);
             case "Chapéu Mágico":
                 return new ItemRpg("Chapéu Mágico", "Um chapéu encantado que aumenta o dano das suas magias em +3.", 1);
             case "Pequeno Grimório":

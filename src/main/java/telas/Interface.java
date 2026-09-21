@@ -346,7 +346,7 @@ public class Interface {
     public static int[] opcoesMenuFloresta(FichaRpg ficha) {
         int num = 5;
         int opLabirinto = -1, opConversar = -1;
-        if (ficha.isLabirintoEncontrado()) opLabirinto = num++;
+        if (ficha.isLabirintoDisponivel()) opLabirinto = num++;
         if (ficha.temCompanheiro()) opConversar = num++;
         int opSalvar = num++;
         int opEncerrar = num++;
@@ -362,7 +362,7 @@ public class Interface {
         if (ficha.temCompanheiro()) {
             System.out.println("  Companheiro(a): " + CIANO + ficha.getCompanheiro().getNome() + RESET + " (" + ficha.getCompanheiro().getClasseNome() + ", Nível " + ficha.getCompanheiro().getFicha().getNivel() + ")");
         }
-        if (ficha.isLabirintoEncontrado()) {
+        if (ficha.isLabirintoDisponivel()) {
             System.out.println("  " + CIANO + "Labirinto descoberto" + RESET);
         }
         System.out.println("\n  O que você deseja fazer?\n");
@@ -430,7 +430,7 @@ public class Interface {
                 if (usar == 1) {
                     String nomeItem = itemEscolhido.getNome();
                     boolean cheio = false;
-                    if ((nomeItem.equals("Frutas") || nomeItem.equals("Kit Médico")) && ficha.getVidaPersonagem() >= ficha.getVidaMaxima()) {
+                    if ((nomeItem.equals("Frutas") || nomeItem.equals("Kit Médico")) && ficha.getVidaPersonagem() >= ficha.getVidaMaxima() && !(nomeItem.equals("Kit Médico") && ficha.isInfectado())) {
                         ExibirErro("Sua vida já está no máximo!");
                         cheio = true;
                     } else if ((nomeItem.equals("Poção de Mana") || nomeItem.equals("Poção Grande de Mana")) && ficha.getManaPersonagem() >= ficha.getManaMaxima()) {
