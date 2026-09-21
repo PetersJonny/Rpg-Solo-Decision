@@ -88,6 +88,7 @@ public class CriaturaFactory {
         Criatura c = new Criatura("Esqueleto", 2, 12, 12, 4);
         c.setBonusAcerto(2);
         c.setDcFuga(15);
+        c.setMortoVivo(true);
         c.setXpGanho(40);
         c.adicionarAtaque("Arco", "", 1, 6); // mesmo dano do Arco do jogo (1d6)
         c.adicionarAtaque("Ataque de Ossos", "", 1, 4);
@@ -104,6 +105,7 @@ public class CriaturaFactory {
         Criatura c = new Criatura("Zumbi", 2, 18, 10, 2);
         c.setBonusAcerto(3);
         c.setDcFuga(10);
+        c.setMortoVivo(true);
         c.setXpGanho(40);
         c.adicionarAtaque("Mordida", "", 1, 6);
         c.configurarInfeccao("Mordida", 30);
@@ -116,6 +118,7 @@ public class CriaturaFactory {
         Criatura c = new Criatura("Baú Monstruoso", 3, 25, 10, 4);
         c.setBonusAcerto(4);
         c.setDcFuga(12);
+        c.setMortoVivo(true);
         c.setXpGanho(50);
         c.adicionarAtaque("Mordida", "", 1, 8);
         c.setOuroDrop(4, 17, 100);

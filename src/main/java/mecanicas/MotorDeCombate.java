@@ -104,7 +104,7 @@ public class MotorDeCombate {
             Interface.MostrarMensagem("  Inimigos:");
             for (int i = 0; i < inimigos.size(); i++) {
                 Criatura c = inimigos.get(i);
-                if (c.getVida() > 0) {
+                if (c.getVida() > 0 && !c.isFugiu()) {
                     Interface.MostrarMensagem("  " + (i + 1) + ". " + c.getNome() + " (Vida: " + c.getVida() + ")");
                 }
             }
@@ -154,6 +154,7 @@ public class MotorDeCombate {
                     Interface.MostrarMensagem("\nVocê conseguiu escapar da floresta!");
                     Interface.Pausa(2500);
                     ficha.setInfectado(false); // a infecção some quando o combate acaba
+                    ficha.setPactoMortalAtivo(false); // o Pacto Mortal dura só até o fim do combate
                     return;
                 }
                 if (resultadoFuga == 1) {
@@ -178,6 +179,7 @@ public class MotorDeCombate {
                         Interface.MostrarMensagem("\nVocê conseguiu escapar da floresta!");
                         Interface.Pausa(2500);
                         ficha.setInfectado(false); // a infecção some quando o combate acaba
+                    ficha.setPactoMortalAtivo(false); // o Pacto Mortal dura só até o fim do combate
                         return;
                     }
                     // Processa XP/drops dos inimigos que acabaram de morrer
@@ -191,7 +193,7 @@ public class MotorDeCombate {
                     }
                 } else {
                     Criatura c = inimigos.get(token[1] - 1);
-                    if (c.getVida() > 0 && !jaAtacouNaRodada.contains(c)) {
+                    if (c.getVida() > 0 && !c.isFugiu() && !jaAtacouNaRodada.contains(c)) {
                         // PRISÃO: o inimigo preso tenta se libertar no início da sua vez (d20, precisa de 15+)
                         if (ficha.getPrisaoAtiva() == c) {
                             int testePrisao = MecanicasRpg.rolarDado(20);
@@ -308,6 +310,7 @@ public class MotorDeCombate {
 
         Interface.cabecalhoMenu("FIM DO COMBATE");
         ficha.setInfectado(false); // a infecção some quando o combate acaba
+                    ficha.setPactoMortalAtivo(false); // o Pacto Mortal dura só até o fim do combate
         if (ficha.getVidaPersonagem() <= 0) {
             Interface.MostrarMensagem("\n  Você foi derrotado... A floresta recupera o silêncio.");
             Interface.Pausa(3000);
@@ -568,7 +571,7 @@ public class MotorDeCombate {
                 }
                 Interface.MostrarMensagem("-> Dano: " + dano + "!");
                 Interface.Pausa(1200);
-                alvo.setVida(alvo.getVida() - dano);
+                aplicarDanoCriatura(alvo, dano);
                 Interface.MostrarMensagem(rotuloCriatura(inimigos, alvo) + " agora tem " + Math.max(0, alvo.getVida()) + " de vida.");
                 Interface.Pausa(1200);
                 return;
@@ -629,7 +632,7 @@ public class MotorDeCombate {
             dano += atributoBonus;
             Interface.MostrarMensagem("-> Dados Rolados: " + roladas + " = " + dano + " (Dano: " + dadosTotais + "d" + dadoDano + " + " + nomeAtributo + ": " + atributoBonus + ")");
             Interface.Pausa(1500);
-            alvo.setVida(alvo.getVida() - dano);
+            aplicarDanoCriatura(alvo, dano);
             Interface.MostrarMensagem(rotuloCriatura(inimigos, alvo) + " agora tem " + Math.max(0, alvo.getVida()) + " de vida.");
         } else {
             Interface.MostrarMensagem("-> Errou! (defesa do alvo: " + alvo.getDefesa() + ")");
@@ -853,6 +856,11 @@ public class MotorDeCombate {
                 descricoes.add("Magia Proibida (Custo: 5 Mana) - não gasta sua ação");
                 acoes.add(new int[]{4, -1, -1, -1});
             }
+
+            if (ficha.temItem("Coroa do Rei") && ficha.isReiDasCriaturas() && ficha.getManaPersonagem() >= 3) {
+                descricoes.add("Rei das Criaturas (Custo: 3 Mana) - comande uma criatura sem gastar sua ação");
+                acoes.add(new int[]{5, -1, -1, -1});
+            }
         }
 
         for (int i = 0; i < descricoes.size(); i++) {
@@ -910,6 +918,11 @@ public class MotorDeCombate {
             return MenuLutarComEscolha(ficha, inimigos, cascaGrossaAtiva, semHabilidades);
         }
 
+        if (acao[0] == 5) {
+            usarReiDasCriaturas(ficha, inimigos);
+            return MenuLutarComEscolha(ficha, inimigos, cascaGrossaAtiva, semHabilidades);
+        }
+
         return null;
     }
 
@@ -917,7 +930,7 @@ public class MotorDeCombate {
     public static int escolherAlvo(List<Criatura> inimigos) {
         List<Criatura> vivos = new ArrayList<>();
         for (Criatura c : inimigos) {
-            if (c.getVida() > 0) {
+            if (c.getVida() > 0 && !c.isFugiu()) {
                 vivos.add(c);
             }
         }
@@ -943,7 +956,7 @@ public class MotorDeCombate {
     public static List<Criatura> inimigosVivos(List<Criatura> inimigos) {
         List<Criatura> vivos = new ArrayList<>();
         for (Criatura c : inimigos) {
-            if (c.getVida() > 0) {
+            if (c.getVida() > 0 && !c.isFugiu()) {
                 vivos.add(c);
             }
         }
@@ -1178,6 +1191,24 @@ public class MotorDeCombate {
                 dano += atributoBonus;
                 Interface.MostrarMensagem("-> Dados Rolados: " + roladas + " = " + dano + " (Dano: " + dadosTotais + "d" + armaEscolhida.getDadoDanoArma() + " + " + nomeAtributo + ": " + atributoBonus + ")");
                 Interface.Pausa(2000);
+
+                // Espada Majestral: banhada em ouro e magia, causa +1d4 de dano de luz
+                // e o dobro do dano total contra mortos-vivos
+                if (armaEscolhida.getNome().equals("Espada Majestral")) {
+                    int dadosLuz = critico ? 2 : 1;
+                    int luz = 0;
+                    for (int i = 0; i < dadosLuz; i++) {
+                        luz += MecanicasRpg.rolarDado(4);
+                    }
+                    dano += luz;
+                    Interface.MostrarMensagem("(Espada Majestral! +" + luz + " de dano de luz" + (dadosLuz > 1 ? " (crítico)" : "") + ")");
+                    Interface.Pausa(1500);
+                    if (inimigo.isMortoVivo()) {
+                        dano *= 2;
+                        Interface.MostrarMensagem("(Espada Majestral! DANO DOBRADO contra " + inimigo.getNome() + ", um morto-vivo)");
+                        Interface.Pausa(1500);
+                    }
+                }
             } else {
                 Interface.MostrarMensagem("-> Errou! (defesa do alvo: " + inimigo.getDefesa() + ")");
                 Interface.Pausa(1500);
@@ -1197,7 +1228,7 @@ public class MotorDeCombate {
                 Interface.MostrarMensagem("(Espada Afiada! +" + bonusAfiada + " de dano)");
                 Interface.Pausa(1500);
             }
-            inimigo.setVida(inimigo.getVida() - dano);
+            aplicarDanoCriatura(inimigo, dano);
             Interface.MostrarMensagem(rotuloCriatura(inimigos, inimigo) + " agora tem " + Math.max(0, inimigo.getVida()) + " de vida.");
             Interface.Pausa(2000);
         }
@@ -1213,7 +1244,8 @@ public class MotorDeCombate {
         for (habilidades.Habilidade hab : ficha.getHabilidades()) {
             if (!hab.isPassiva()
                     && !hab.getNome().equals("Cura Reforçada")
-                    && !hab.getNome().equals("Magia Proibida")) {
+                    && !hab.getNome().equals("Magia Proibida")
+                    && !(hab.getNome().equals("Pacto Mortal") && !ficha.temItem("Olho Demoníaco"))) {
                 ativas.add(hab);
             }
         }
@@ -1337,7 +1369,7 @@ public class MotorDeCombate {
             Interface.Pausa(1500);
             for (Criatura alvo : vivos) {
                 if (alvo.getVida() <= 0) continue;
-                alvo.setVida(alvo.getVida() - danoGiro);
+                aplicarDanoCriatura(alvo, danoGiro);
                 Interface.MostrarMensagem(rotuloCriatura(inimigos, alvo) + " agora tem " + Math.max(0, alvo.getVida()) + " de vida.");
             }
             Interface.Pausa(1500);
@@ -1373,7 +1405,7 @@ public class MotorDeCombate {
 
         for (Criatura alvo : vivos) {
             if (alvo.getVida() <= 0) continue;
-            alvo.setVida(alvo.getVida() - dano);
+            aplicarDanoCriatura(alvo, dano);
             Interface.MostrarMensagem(rotuloCriatura(inimigos, alvo) + " agora tem " + Math.max(0, alvo.getVida()) + " de vida.");
         }
         Interface.MostrarMensagem("Você não poderá usar habilidades no próximo turno!");
@@ -1516,7 +1548,7 @@ public class MotorDeCombate {
 
         List<Criatura> vivos = inimigosVivos(inimigos);
         for (Criatura alvo : vivos) {
-            alvo.setVida(alvo.getVida() - dano);
+            aplicarDanoCriatura(alvo, dano);
             Interface.MostrarMensagem(rotuloCriatura(inimigos, alvo) + " agora tem " + Math.max(0, alvo.getVida()) + " de vida.");
             Interface.Pausa(1500);
         }
@@ -1596,7 +1628,7 @@ public class MotorDeCombate {
         if (alvo.getVida() <= 0 || alvo != ficha.getAlvoCuraParaMorte()) return;
 
         int veneno = MecanicasRpg.rolarDado(8) + MecanicasRpg.rolarDado(8) + MecanicasRpg.rolarDado(8);
-        alvo.setVida(alvo.getVida() - veneno);
+        aplicarDanoCriatura(alvo, veneno);
         Interface.MostrarMensagem("(Cura para a Morte! O líquido mortal causa " + veneno + " de dano)");
         Interface.Pausa(1500);
     }
@@ -1911,5 +1943,151 @@ public class MotorDeCombate {
         Interface.MostrarMensagem("\nVocê se afasta um passo! Tentativa " + novasTentativas + "/3");
         Interface.Pausa(2000);
         return novasTentativas;
+    }
+
+    // ==================== TESOUROS DO LABIRINTO ====================
+
+    // Aplica dano a uma criatura respeitando o Pacto Mortal: um alvo enfraquecido
+    // sofre +5 de dano demoníaco em cada golpe recebido (de qualquer fonte).
+    public static void aplicarDanoCriatura(Criatura c, int dano) {
+        if (dano <= 0) return;
+        if (c.isEnfraquecido()) {
+            dano += 5;
+            Interface.MostrarMensagem("(Pacto Mortal! " + c.getNome() + " sofre +5 de dano demoníaco)");
+            Interface.Pausa(1000);
+        }
+        c.setVida(Math.max(0, c.getVida() - dano));
+    }
+
+    // Pacto Mortal (Olho Demoníaco): gasta 4 de mana. Até o fim do combate o alvo tem
+    // -2 nas rolagens e +5 de dano demoníaco, mas VOCÊ sofre +3 em todo dano recebido.
+    public static boolean usarPactoMortal(FichaRpg ficha, List<Criatura> inimigos, int alvoIndex, habilidades.Habilidade hab) {
+        if (!ficha.temItem("Olho Demoníaco")) {
+            Interface.ExibirErro("Você precisa do Olho Demoníaco para usar o Pacto Mortal!");
+            Interface.Pausa(1500);
+            return true;
+        }
+        if (alvoIndex < 0 || alvoIndex >= inimigos.size()) {
+            Interface.MostrarMensagem("Nenhum alvo escolhido.");
+            Interface.Pausa(1500);
+            return true;
+        }
+        Criatura alvo = inimigos.get(alvoIndex);
+        ficha.setManaPersonagem(ficha.getManaPersonagem() - hab.getCustoMana());
+        ficha.setPactoMortalAtivo(true);
+        alvo.setEnfraquecido(true);
+        Interface.MostrarMensagem("\nSeu olho demoníaco se volta para " + rotuloCriatura(inimigos, alvo) + " e o Pacto Mortal é selado!");
+        Interface.MostrarMensagem("Até o fim do combate: " + alvo.getNome() + " tem -2 nas rolagens e +5 de dano demoníaco, mas VOCÊ sofre +3 em todo dano.");
+        Interface.Pausa(2000);
+        return true;
+    }
+
+    // Rei das Criaturas (Coroa do Rei): 3 de mana, não gasta a ação. O jogador rola um
+    // teste de Presença contra a criatura (d20 + nível dela); vencendo, comanda: Fugir,
+    // Atacar a si mesma ou Atacar outro monstro.
+    public static boolean usarReiDasCriaturas(FichaRpg ficha, List<Criatura> inimigos) {
+        if (!ficha.temItem("Coroa do Rei")) {
+            Interface.ExibirErro("Você precisa da Coroa do Rei para isso!");
+            Interface.Pausa(1500);
+            return true;
+        }
+        if (ficha.getManaPersonagem() < 3) {
+            Interface.ExibirErro("Mana insuficiente! O Rei das Criaturas custa 3 de mana.");
+            Interface.Pausa(1500);
+            return true;
+        }
+        List<Criatura> vivos = inimigosVivos(inimigos);
+        if (vivos.isEmpty()) return true;
+
+        int alvoIndex = escolherAlvo(inimigos);
+        if (alvoIndex < 0) return true;
+        Criatura alvo = inimigos.get(alvoIndex);
+
+        ficha.setManaPersonagem(ficha.getManaPersonagem() - 3);
+
+        Interface.pressionarParaTeste("Presença (Rei das Criaturas)");
+        int dadoJogador = MecanicasRpg.rolarDado(20);
+        int totalJogador = dadoJogador + ficha.getPresencaTeste();
+        int dadoCriatura = MecanicasRpg.rolarDado(20);
+        int totalCriatura = dadoCriatura + alvo.getNivel();
+        Interface.MostrarMensagem("-> Você: " + dadoJogador + " + " + ficha.getPresencaTeste() + " (Presença) = " + totalJogador
+                + "  |  " + alvo.getNome() + ": " + dadoCriatura + " + " + alvo.getNivel() + " (Nível) = " + totalCriatura);
+        Interface.Pausa(3000);
+
+        if (totalJogador <= totalCriatura) {
+            Interface.MostrarMensagem("\n" + alvo.getNome() + " resiste à sua vontade e não obedece o comando.");
+            Interface.Pausa(2000);
+            return true;
+        }
+
+        Interface.MostrarMensagem(VERDE + "\n" + alvo.getNome() + " curva-se à sua presença!" + RESET);
+        Interface.Pausa(1500);
+
+        List<String> comandos = new ArrayList<>();
+        comandos.add("Fugir do combate");
+        comandos.add("Atacar a si mesma");
+        if (outrosVivos(inimigos, alvo).size() > 0) {
+            comandos.add("Atacar outro monstro");
+        }
+
+        System.out.println("\n  Qual comando você dá a " + alvo.getNome() + "?\n");
+        for (int i = 0; i < comandos.size(); i++) {
+            System.out.println("  " + (i + 1) + ". " + comandos.get(i));
+        }
+        int escolha = Interface.lerOpcao(comandos.size());
+
+        if (escolha == 1) {
+            alvo.setFugiu(true);
+            Interface.MostrarMensagem("\n" + alvo.getNome() + " recua aterrorizado e desaparece nos corredores, fugindo do combate!");
+            Interface.Pausa(2000);
+        } else if (escolha == 2) {
+            Interface.MostrarMensagem("\nAo seu comando, " + alvo.getNome() + " se volta contra si mesmo!");
+            Interface.Pausa(1500);
+            criaturaAtacaCriatura(alvo, alvo, inimigos);
+        } else {
+            List<Criatura> outros = outrosVivos(inimigos, alvo);
+            Criatura outro = outros.get(MecanicasRpg.rolarDado(outros.size()) - 1);
+            Interface.MostrarMensagem("\nAo seu comando, " + alvo.getNome() + " avança sobre " + rotuloCriatura(inimigos, outro) + "!");
+            Interface.Pausa(1500);
+            criaturaAtacaCriatura(alvo, outro, inimigos);
+        }
+        return true;
+    }
+
+    // Criaturas vivas exceto `excluida` (usado no comando "Atacar outro monstro")
+    private static List<Criatura> outrosVivos(List<Criatura> inimigos, Criatura excluida) {
+        List<Criatura> outros = new ArrayList<>();
+        for (Criatura c : inimigosVivos(inimigos)) {
+            if (c != excluida) outros.add(c);
+        }
+        return outros;
+    }
+
+    // Uma criatura ataca outra (ou a si mesma): rola acerto contra a defesa do alvo e,
+    // se acertar, causa o dano de um de seus ataques (crítico dobra os dados).
+    public static void criaturaAtacaCriatura(Criatura atacante, Criatura alvo, List<Criatura> inimigos) {
+        int dado = MecanicasRpg.rolarDado(20);
+        int total = dado + atacante.getBonusAcerto();
+        boolean critico = dado == 20;
+        Interface.MostrarMensagem("-> " + atacante.getNome() + " ataca " + (alvo == atacante ? "a si mesma" : rotuloCriatura(inimigos, alvo)) + ": " + dado + " (Dado) + " + atacante.getBonusAcerto() + " (Bônus) = " + total + " (Defesa: " + alvo.getDefesa() + ")" + (critico ? " [CRÍTICO!]" : ""));
+        Interface.Pausa(2000);
+
+        if (!critico && total < alvo.getDefesa()) {
+            Interface.MostrarMensagem("-> O golpe erra!");
+            Interface.Pausa(1500);
+            return;
+        }
+
+        Criatura.Ataque ataque = atacante.getAtaques().get(MecanicasRpg.rolarDado(atacante.getAtaques().size()) - 1);
+        int dadosTotais = ataque.qtdDado * (critico ? 2 : 1);
+        int dano = 0;
+        for (int i = 0; i < dadosTotais; i++) {
+            dano += MecanicasRpg.rolarDado(ataque.ladosDado);
+        }
+        Interface.MostrarMensagem("-> " + atacante.getNome() + " acerta com " + ataque.nome + " causando " + dano + " de dano" + (critico ? " (crítico!)" : "") + "!");
+        Interface.Pausa(1500);
+        aplicarDanoCriatura(alvo, dano);
+        Interface.MostrarMensagem(rotuloCriatura(inimigos, alvo) + " agora tem " + Math.max(0, alvo.getVida()) + " de vida.");
+        Interface.Pausa(1500);
     }
 }

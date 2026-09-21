@@ -58,4 +58,33 @@ class CombatCoerenciaTest {
         int resultadoIniciativa = MecanicasRpg.rolarDado(20);
         assertTrue(resultadoIniciativa >= 1 && resultadoIniciativa <= 20, "O dado puro nunca deve ser <= 0 ou maior que lados");
     }
+
+    @Test
+    void inimigosFugidosSaoRemovidosDaContagem() {
+        Criatura lobo1 = new Criatura("Lobo", 20, 10, 4, 1);
+        Criatura lobo2 = new Criatura("Lobo", 20, 10, 4, 1);
+        Criatura lobo3 = new Criatura("Lobo", 20, 10, 4, 1);
+        java.util.List<Criatura> inimigos = java.util.List.of(lobo1, lobo2, lobo3);
+
+        // Todos vivos e sem fugir
+        assertEquals(3, MotorDeCombate.inimigosVivos(inimigos).size());
+
+        // Um morto e um fugido: só o restante vale
+        lobo2.setVida(0);
+        lobo3.setFugiu(true);
+        java.util.List<Criatura> vivos = MotorDeCombate.inimigosVivos(inimigos);
+        assertEquals(1, vivos.size());
+        assertEquals(lobo1, vivos.get(0));
+
+        // escolherAlvo também ignora fugidos
+        assertEquals(0, MotorDeCombate.escolherAlvo(inimigos), "Só o lobo1 está combatendo");
+    }
+
+    @Test
+    void aplicarDanoCriaturaAplicaBonusDemonicoAEnfraquecido() {
+        Criatura alvo = new Criatura("Lobo", 1, 30, 10, 4);
+        alvo.setEnfraquecido(true);
+        MotorDeCombate.aplicarDanoCriatura(alvo, 10);
+        assertEquals(15, alvo.getVida(), "10 + 5 de dano demoníaco");
+    }
 }

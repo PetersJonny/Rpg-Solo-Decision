@@ -35,7 +35,22 @@ public class Vendedor {
             "Cajado", "Chapéu Mágico", "Poção Grande de Mana", "Pequeno Grimório"
     );
 
+    // Todas as armas do jogo (usadas no sorteio de 17% das recompensas do labirinto)
+    private static final List<String> ARMAS_DO_JOGO = List.of(
+            "Faca", "Machado", "Machadinha", "Martelo", "Mangual", "Arco", "Lança", "Espada",
+            "Espada Pesada", "Machado de Guerra", "Martelo de Guerra", "Bisturi", "Arco Refinado",
+            "Nunchako", "Foice", "Cajado"
+    );
+
     private static final int TAMANHO_ESTOQUE = 5;
+
+    // Sorteia uma das armas do jogo para a recompensa de 17% do labirinto
+    public static ItemRpg sortearArmaDoJogo() {
+        String nome = ARMAS_DO_JOGO.get(MecanicasRpg.rolarDado(ARMAS_DO_JOGO.size()) - 1);
+        ItemRpg item = criarItem(nome);
+        if (item == null) return new Arma("Faca", "Uma faca afiada que causa 1d4 de dano corpo a corpo, usando Destreza.", "CaC", 4, 1, 1, "Destreza");
+        return item;
+    }
 
     public static void EncontrarVendedor(FichaRpg ficha) {
         Interface.barraDivisoria();
@@ -235,7 +250,9 @@ public class Vendedor {
 
             List<ItemRpg> vendaveis = new ArrayList<>();
             for (ItemRpg item : ficha.getInventario()) {
-                if (item.getQuantidade() > 0) {
+                if (item.getQuantidade() > 0
+                        && !item.getNome().equals("Olho Demoníaco")
+                        && !item.getNome().equals("Espada Majestral")) {
                     vendaveis.add(item);
                 }
             }
@@ -321,6 +338,7 @@ public class Vendedor {
             case "Pó da Fada": return 75;
             case "Osso": return 11; // valor cheio 23, pago pela metade
             case "Carne Podre": return 15; // valor cheio de venda
+            case "Coroa do Rei": return 300; // fortuna real, só pode ser encontrada 1 vez
             default:
                 int preco = precoDeVenda(nome);
                 return preco < 0 ? 1 : preco / 2;

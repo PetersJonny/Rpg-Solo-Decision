@@ -3,6 +3,7 @@ package criaturas;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
 class CriaturaFactoryTest {
@@ -93,5 +94,22 @@ class CriaturaFactoryTest {
         assertFalse(ficha.isInfectado(), "Kit Médico deve curar a infecção");
         assertEquals(0, kit.getQuantidade());
         assertEquals(ficha.getVidaMaxima(), ficha.getVidaPersonagem());
+    }
+
+    @Test
+    void criaturasDoLabirintoSaoMortosVivos() {
+        assertTrue(CriaturaFactory.criarEsqueleto().isMortoVivo());
+        assertTrue(CriaturaFactory.criarZumbi().isMortoVivo());
+        assertTrue(CriaturaFactory.criarBauMonstruoso().isMortoVivo());
+        assertFalse(CriaturaFactory.criarLobo().isMortoVivo(), "Lobo é animal comum, não morto-vivo");
+    }
+
+    @Test
+    void espadaMajestralEncantaCorretamente() {
+        itens.Arma espada = new itens.Arma("Espada Majestral", "1d12 + 1d4 de luz, dobro contra mortos-vivos", "CaC", 12, 1, 1);
+        assertEquals("Espada Majestral", espada.getNome());
+        assertEquals(12, espada.getDadoDanoArma());
+        assertEquals(1, espada.getQuantidadeDanoArma());
+        assertTrue(espada.getTipoArma().contains("CaC"));
     }
 }

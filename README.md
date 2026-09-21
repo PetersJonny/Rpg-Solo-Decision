@@ -263,7 +263,23 @@ Nos 8 **encontros** do labirinto: **40% Esqueleto, 40% Zumbi e 20% Baú**. Fugir
 | Zumbi | 2 | 18 | 10 | +2 | +3 | 10 | 40 | Mordida 1d6 (30% de infectar: 1d4 de dano por rodada de combate, curada com Kit Médico) | Carne Podre 1–4 (40%) |
 | Baú Monstruoso | 3 | 25 | 10 | +4 | +4 | 12 | 50 | Mordida 1d8 | Ouro 4–17 (100%) |
 
-O **Baú** (encontro) e as casas de **recompensa** (20% de chance) oferecem um **baú antigo**: dá para **abrir** ou **não abrir**. Abrindo, **50%** tem ouro (7–14) e **50%** u m **Baú Monstruoso** salta para o combate. **Carne Podre** e **Osso** não podem ser comprados no vendedor (só vendidos).
+O **Baú** (encontro) oferece um **baú antigo**: dá para **abrir** ou **não abrir**. Abrindo, **50%** tem ouro (7–14) e **50%** um **Baú Monstruoso** salta para o combate. **Carne Podre** e **Osso** não podem ser comprados no vendedor (só vendidos). Os três são **mortos-vivos**: a **Espada Majestral** causa **dano dobrado** contra eles.
+</details>
+
+<details>
+<summary>⚠️ <b>Spoiler: os tesouros raros do Labirinto</b> — clique para revelar</summary>
+
+Os **3%** das casas de recompensa sorteiam um **tesouro raro** entre os que ainda não foram encontrados (cada um cai **uma única vez** por ficha, na ordem Olho Demoníaco → Espada Majestral → Coroa do Rei):
+
+| Tesouro | Efeito |
+|---|---|
+| **Olho Demoníaco** | Ao tocá-lo, um **chamado** sussurra: **Aceitar** concede o item + a habilidade **Pacto Mortal** (4 de mana); **Recusar** dá nada, mas o item já conta como achado. O Olho **não pode ser vendido**. |
+| **Espada Majestral** | Arma **CaC**: **1d12 + Força + 1d4 de dano de luz** (luz também dobra no crítico) e **dano total dobrado contra mortos-vivos** (Esqueleto, Zumbi e Baú Monstruoso). **Não pode ser vendida**. |
+| **Coroa do Rei** | Item de **300g** (pode ser vendida). Exige um **Teste de Intelecto 18+** para desvendar o segredo: passando, revela a habilidade **Rei das Criaturas** (funciona enquanto a Coroa estiver consigo); falhando, guarda a Coroa mesmo assim. |
+
+**Pacto Mortal** (habilidade ativa, 4 de mana, alvo obrigatório): até o fim do combate o alvo tem **-2 em suas rolagens** e **+5 de dano demoníaco** em cada golpe sofrido, mas **todos os danos que você receber aumentam em +3** enquanto a maldição durar (usar o Olho é obrigatório).
+
+**Rei das Criaturas** (3 de mana, **não gasta a ação**): rode um **Teste de Presença** (1d20 + Presença) contra cada criatura (1d20 + nível). Vencendo, você a **comanda**: **fugir** do combate (some sem dar XP nem saque), **atacar a si mesma** ou **atacar outro monstro** do combate.
 </details>
 
 ---
@@ -341,7 +357,7 @@ Coletar recursos (ou voltar para a cabana) tem **30% de chance de gerar um encon
 - Ao entrar, a interface vira sobre o labirinto (apenas **ver a ficha** continua disponível).
 - **O caminho é randomizado na descoberta e salvo na ficha** — ao voltar depois, continua exatamente de onde parou (células visitadas permanecem iluminadas).
 - **Navegação:** a tela mostra apenas a grade ao redor do personagem — as **laterais/paredes** onde você está (`##`) e os corredores vizinhos (`.`) — mais o que **já foi percorrido** (iluminado `·`) e sua posição (`@`). O resto do labirinto fica escuro, inclusive o centro (visível apenas enquanto se explora). Movimento via **W/A/S/D ou as setas do teclado** (↑ ↓ ← →) — executa no momento da tecla, **sem Enter**; qualquer outra tecla (número, caractere etc.) não faz nada. Uma câmera acompanha o personagem para que o labirinto (grade 31x31, bem maior) caiba na tela.
-- Há **apenas uma entrada**. Ao pisar na **primeira casa do centro** (área central), o labirinto **começa a desmoronar**: o jogador foge correndo, volta à floresta e o labirinto se **fecha para sempre** — a opção **Labirinto** some do menu. **Casas especiais:** em algumas casas aleatórias há **encontros** (8 por labirinto) e em outras há **recompensas** (6 por labirinto) — cada casa especial é sorteada na geração e ativa uma única vez. **Encontros:** 40% Esqueleto, 40% Zumbi e 20% Baú. **Recompensas:** 20% Baú (os outros 80% por enquanto não dão nada). Ao perceber um monstro, dá para **Lutar** ou **Tentar Fugir** com um **Teste de Destreza** (a dificuldade é por criatura — veja o spoiler abaixo).
+- Há **apenas uma entrada**. Ao pisar na **primeira casa do centro** (área central), o labirinto **começa a desmoronar**: o jogador foge correndo, volta à floresta e o labirinto se **fecha para sempre** — a opção **Labirinto** some do menu. **Casas especiais:** em algumas casas aleatórias há **encontros** (8 por labirinto) e em outras há **recompensas** (6 por labirinto) — cada casa especial é sorteada na geração e ativa uma única vez. **Encontros:** 40% Esqueleto, 40% Zumbi e 20% Baú. **Recompensas:** **80%** ouro (7–19), **17%** uma arma sorteada entre as armas do vendedor e **3%** um dos **tesouros raros** (Olho Demoníaco, Espada Majestral e Coroa do Rei — cada um só cai **uma vez** por ficha; detalhes no spoiler abaixo). Ao perceber um monstro, dá para **Lutar** ou **Tentar Fugir** com um **Teste de Destreza** (a dificuldade é por criatura — veja o spoiler abaixo).
   <details>
   <summary>⚠️ <b>Spoiler: o segredo do centro</b> — clique para revelar</summary>
   No coração do labirinto aguarda o **Minotauro** — a mecânica dele virá em etapa futura.
@@ -461,6 +477,9 @@ A melhor armadura é equipada automaticamente; as demais ficam na mochila sem ef
 | Madeira / Folha / Pedra | Recursos da floresta | Construção |
 | Osso | Labirinto (Esqueleto) | Vende por 11g (não é comprado no vendedor) |
 | Carne Podre | Labirinto (Zumbi) | Vende por 15g (não é comprado no vendedor) |
+| Olho Demoníaco | Labirinto (recompensa rara) | Desbloqueia o **Pacto Mortal** · não é vendido |
+| Espada Majestral | Labirinto (recompensa rara) | Arma 1d12 + 1d4 de luz, dobro contra mortos-vivos · não é vendida |
+| Coroa do Rei | Labirinto (recompensa rara) | Desbloqueia o **Rei das Criaturas** · vende por 300g |
 
 ---
 

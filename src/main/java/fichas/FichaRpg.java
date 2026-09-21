@@ -105,6 +105,17 @@ public class FichaRpg implements java.io.Serializable {
     private boolean labirintoEncontrado = false;
     private estruturas.Labirinto labirinto = null; // grade salva junto da ficha
 
+    // Tesouros raros do Labirinto (cada um só pode ser encontrado 1 vez)
+    private boolean olhoDemonicoEncontrado = false;
+    private boolean espadaMajestralEncontrada = false;
+    private boolean coroaReiEncontrada = false;
+
+    // Coroa do Rei: quem decifra seu segredo (teste de Intelecto 18+) vira o Rei das Criaturas
+    private boolean reiDasCriaturas = false;
+
+    // Pacto Mortal (Olho Demoníaco): ativo até o fim do combate — você sofre +3 em todo dano
+    private boolean pactoMortalAtivo = false;
+
     // Construtor
     public FichaRpg(String nomePessoa) {
         this.nomePessoa = nomePessoa;
@@ -453,6 +464,21 @@ public class FichaRpg implements java.io.Serializable {
     public estruturas.Labirinto getLabirinto() { return labirinto; }
     public void setLabirinto(estruturas.Labirinto labirinto) { this.labirinto = labirinto; }
 
+    public boolean isOlhoDemonicoEncontrado() { return olhoDemonicoEncontrado; }
+    public void setOlhoDemonicoEncontrado(boolean olhoDemonicoEncontrado) { this.olhoDemonicoEncontrado = olhoDemonicoEncontrado; }
+
+    public boolean isEspadaMajestralEncontrada() { return espadaMajestralEncontrada; }
+    public void setEspadaMajestralEncontrada(boolean espadaMajestralEncontrada) { this.espadaMajestralEncontrada = espadaMajestralEncontrada; }
+
+    public boolean isCoroaReiEncontrada() { return coroaReiEncontrada; }
+    public void setCoroaReiEncontrada(boolean coroaReiEncontrada) { this.coroaReiEncontrada = coroaReiEncontrada; }
+
+    public boolean isReiDasCriaturas() { return reiDasCriaturas; }
+    public void setReiDasCriaturas(boolean reiDasCriaturas) { this.reiDasCriaturas = reiDasCriaturas; }
+
+    public boolean isPactoMortalAtivo() { return pactoMortalAtivo; }
+    public void setPactoMortalAtivo(boolean pactoMortalAtivo) { this.pactoMortalAtivo = pactoMortalAtivo; }
+
     // O labirinto fica acessível no menu enquanto não tiver sido concluído.
     // Ao alcançar o centro, ele desmorona, o jogador foge para a floresta e a opção some.
     public boolean isLabirintoDisponivel() {
@@ -649,6 +675,7 @@ public class FichaRpg implements java.io.Serializable {
         this.alvoCuraParaMorte = null;
         this.curaTotalUsada = false;
         this.infectado = false;
+        this.pactoMortalAtivo = false;
         this.defesaAbsolutaAtiva = false;
         this.rodadasSemHabilidade = 0;
         this.magiaProibidaUsada = false;
@@ -732,9 +759,15 @@ public class FichaRpg implements java.io.Serializable {
     public boolean isConhecimentoAbsolutoAplicado() { return conhecimentoAbsolutoAplicado; }
     public void setConhecimentoAbsolutoAplicado(boolean conhecimentoAbsolutoAplicado) { this.conhecimentoAbsolutoAplicado = conhecimentoAbsolutoAplicado; }
 
-    // Recebe dano considerando a proteção da Cura Absoluta (absorve dano primeiro)
+    // Recebe dano considerando a proteção da Cura Absoluta (absorve dano primeiro).
+    // O Pacto Mortal (Olho Demoníaco) faz você sofrer +3 em todo dano até o fim do combate.
     public void receberDano(int dano) {
         if (dano < 0) return;
+        if (pactoMortalAtivo) {
+            dano += 3;
+            telas.Interface.MostrarMensagem("(Pacto Mortal! Você sofre +3 de dano)");
+            telas.Interface.Pausa(1200);
+        }
         if (curaAbsolutaBonus > 0) {
             if (dano <= curaAbsolutaBonus) {
                 curaAbsolutaBonus -= dano;

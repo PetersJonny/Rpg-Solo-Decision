@@ -38,6 +38,15 @@ public class Criatura implements java.io.Serializable {
     private String ataqueInfeccioso;
     private int chanceInfeccao;
 
+    // Morto-vivo (Esqueleto, Zumbi, Baú Monstruoso): a Espada Majestral causa dano dobrado contra eles
+    private boolean mortoVivo;
+
+    // Enfraquecido pelo Pacto Mortal: -2 em suas rolagens e +5 de dano demoníaco em cada golpe sofrido
+    private boolean enfraquecido;
+
+    // Fugi do combate por comando da Coroa do Rei: some sem dar XP nem drops
+    private boolean fugiu;
+
     public Criatura(String nome, int nivel, int vida, int defesa, int iniciativa) {
         this.nome = nome;
         this.nivel = nivel;
@@ -75,6 +84,18 @@ public class Criatura implements java.io.Serializable {
         this.ataqueInfeccioso = nomeAtaque;
         this.chanceInfeccao = chance;
     }
+
+    // Marca a criatura como morto-vivo (Espada Majestral causa dano dobrado contra ela)
+    public void setMortoVivo(boolean mortoVivo) { this.mortoVivo = mortoVivo; }
+    public boolean isMortoVivo() { return mortoVivo; }
+
+    // Pacto Mortal: enfraquece o alvo até o fim do combate (-2 em rolagens e +5 de dano sofrido)
+    public void setEnfraquecido(boolean enfraquecido) { this.enfraquecido = enfraquecido; }
+    public boolean isEnfraquecido() { return enfraquecido; }
+
+    // Fuga ordenada pela Coroa do Rei: a criatura abandona o combate sem XP/drops
+    public void setFugiu(boolean fugiu) { this.fugiu = fugiu; }
+    public boolean isFugiu() { return fugiu; }
 
     // Ataques e Drops
     public void adicionarAtaque(String nome, String tipoDano, int qtdDado, int ladosDado) {
@@ -159,6 +180,11 @@ public class Criatura implements java.io.Serializable {
 
         int dadoAtaque = MecanicasRpg.rolarDado(20);
         int totalAtaque = dadoAtaque + bonusAcerto;
+        if (enfraquecido) {
+            totalAtaque -= 2;
+            Interface.MostrarMensagem("(Pacto Mortal: " + nome + " tem -2 em suas rolagens)");
+            Interface.Pausa(1000);
+        }
         boolean critico = dadoAtaque == 20;
         Interface.MostrarMensagem("-> Ataque do " + nome + " [" + ataqueEscolhido.nome + "]: " + dadoAtaque + " (Dado) + " + bonusAcerto + " (Bônus) = " + totalAtaque + (critico ? " [CRÍTICO!]" : ""));
         if (critico) {

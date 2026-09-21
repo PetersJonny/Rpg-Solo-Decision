@@ -144,4 +144,39 @@ class FichaRpgTest {
         assertEquals(60, ficha.getVidaPersonagem()); // 10 + 50 (metade)
         assertEquals(30, ficha.getManaPersonagem()); // 5 + 25 (metade)
     }
+
+    @Test
+    void pactoMortalEhLimpadoNoResetDeCombate() {
+        boolean pacto = ficha.isPactoMortalAtivo();
+        assertFalse(pacto);
+        ficha.setPactoMortalAtivo(true);
+        assertTrue(ficha.isPactoMortalAtivo());
+        ficha.resetarEfeitosCombate();
+        assertFalse(ficha.isPactoMortalAtivo(), "Reset de combate deve limpar o Pacto Mortal");
+    }
+
+    @Test
+    void pactoMortalAumentaDanoSofridoEmTres() {
+        ficha.setVidaMaxima(100);
+        ficha.setVidaPersonagem(50);
+        ficha.setPactoMortalAtivo(true);
+        ficha.receberDano(10);
+        assertEquals(37, ficha.getVidaPersonagem(), "50 - (10 + 3) = 37");
+    }
+
+    @Test
+    void olhoDemonicoEncontradoESaveFlags() {
+        assertFalse(ficha.isOlhoDemonicoEncontrado());
+        assertFalse(ficha.isEspadaMajestralEncontrada());
+        assertFalse(ficha.isCoroaReiEncontrada());
+        assertFalse(ficha.isReiDasCriaturas());
+        ficha.setOlhoDemonicoEncontrado(true);
+        ficha.setEspadaMajestralEncontrada(true);
+        ficha.setCoroaReiEncontrada(true);
+        ficha.setReiDasCriaturas(true);
+        assertTrue(ficha.isOlhoDemonicoEncontrado());
+        assertTrue(ficha.isEspadaMajestralEncontrada());
+        assertTrue(ficha.isCoroaReiEncontrada());
+        assertTrue(ficha.isReiDasCriaturas());
+    }
 }

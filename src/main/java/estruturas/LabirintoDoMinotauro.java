@@ -175,7 +175,8 @@ public class LabirintoDoMinotauro {
 
     // Casas especiais do labirinto, ativadas uma única vez:
 //   ENCONTRO    -> 40% Esqueleto, 40% Zumbi, 20% Baú
-//   RECOMPENSA  -> 20% Baú (os outros 80% por enquanto não dão nada)
+//   RECOMPENSA  -> 80% ouro (7-19), 17% arma sorteada do vendedor, 3% item raro
+//                  (Olho Demoníaco, Espada Majestral e Coroa do Rei, cada um 1 vez)
 // O combate e os menus usam o terminal canonico (Enter), então esta rotina sai do
 // modo tecla única antes das escolhas e volta para ele no final.
     private static void processarEvento(Labirinto lab, FichaRpg ficha) {
@@ -193,14 +194,102 @@ public class LabirintoDoMinotauro {
                 } else {
                     encontrarBau(ficha);
                 }
-            } else if (MecanicasRpg.rolarDado(100) <= 20) {
-                encontrarBau(ficha); // RECOMPENSA: só 20% tem baú
+            } else {
+                gerarRecompensa(ficha);
             }
         } finally {
             Teclado.modoTeclaUnica(); // volta ao modo de movimento
             Teclado.limparBuffer();
         }
         desenhar(lab, false, ' '); // redesenha o labirinto depois do evento
+    }
+
+    // RECOMPENSA: 80% ouro (7-19), 17% arma sorteada do vendedor e 3% de um dos
+    // tesouros raros (cada um só cai UMA vez por ficha).
+    private static void gerarRecompensa(FichaRpg ficha) {
+        int sorteio = MecanicasRpg.rolarDado(100);
+        if (sorteio <= 80) {
+            int ouro = MecanicasRpg.rolarEntre(7, 19);
+            ficha.adicionarOuro(ouro);
+            Interface.MostrarMensagem(VERDE + "Você encontra um pote de moedas esquecidas! Coleta " + ouro + " de ouro." + RESET);
+            Interface.Pausa(3000);
+        } else if (sorteio <= 97) {
+            itens.ItemRpg arma = loja.Vendedor.sortearArmaDoJogo();
+            ficha.adicionarItem(arma);
+            Interface.MostrarMensagem(CIANO + "Entre os escombros, uma arma antiga e bem conservada: " + arma.getNome() + "!" + RESET);
+            Interface.Pausa(3000);
+        } else if (!ficha.isOlhoDemonicoEncontrado()) {
+            encontrarOlhoDemonico(ficha);
+        } else if (!ficha.isEspadaMajestralEncontrada()) {
+            encontrarEspadaMajestral(ficha);
+        } else if (!ficha.isCoroaReiEncontrada()) {
+            encontrarCoroaDoRei(ficha);
+        } else {
+            int ouro = MecanicasRpg.rolarEntre(7, 19);
+            ficha.adicionarOuro(ouro);
+            Interface.MostrarMensagem(VERDE + "Você encontra um pote de moedas esquecidas! Coleta " + ouro + " de ouro." + RESET);
+            Interface.Pausa(3000);
+        }
+    }
+
+    // Tesouro raro: Olho Demoníaco. Aceitar o chamado concede o item e a
+    // habilidade Pacto Mortal; recusar dá nada, mas o item já conta como achado.
+    private static void encontrarOlhoDemonico(FichaRpg ficha) {
+        ficha.setOlhoDemonicoEncontrado(true);
+        Interface.MostrarMensagem(VERMELHO + "Nas trevas, algo a observa com um olho único e pulsante..." + RESET);
+        Interface.Pausa(3000);
+        Interface.MostrarMensagem("\nÉ um Olho Demoníaco, borbulhando sobre um pedestal de pedra. Um chamado sussurra em sua mente, oferecendo poder sobre as criaturas do abismo.");
+        Interface.Pausa(3500);
+
+        System.out.println("  O que deseja fazer?");
+        System.out.println("  1. Aceitar o chamado");
+        System.out.println("  2. Recusar e seguir caminho");
+        int escolha = Interface.lerOpcao(2);
+
+        if (escolha == 1) {
+            ficha.adicionarItem(new itens.ItemRpg("Olho Demoníaco", "Um olho de pedra que pulsa com energia sombria. Permite usar a habilidade Pacto Mortal em combate.", 1));
+            ficha.getHabilidades().add(new habilidades.ativas.HabilidadePactoMortal());
+            Interface.MostrarMensagem(VERMELHO + "O olho se fixa à sua mão, e o conhecimento do Pacto Mortal flui por seus veios." + RESET);
+            Interface.Pausa(3000);
+        } else {
+            Interface.MostrarMensagem("\nVocê vira as costas ao olho pulsante, que se dissolve em pó por trás de você.");
+            Interface.Pausa(2500);
+        }
+    }
+
+    // Tesouro raro: Espada Majestral. 1d12 de dano + 1d4 de luz, e dobra o dano
+    // contra mortos-vivos.
+    private static void encontrarEspadaMajestral(FichaRpg ficha) {
+        ficha.setEspadaMajestralEncontrada(true);
+        Interface.MostrarMensagem(CIANO + "Uma luz dourada rasga as sombras: cravada na rocha, uma espada majestral banhada a ouro espera por você." + RESET);
+        Interface.Pausa(3500);
+        ficha.adicionarItem(new itens.Arma("Espada Majestral", "Uma espada banhada em ouro e magia antiga. Causa 1d12 de dano e +1d4 de dano de luz, usando Força. Dobra o dano contra mortos-vivos.", "CaC", 12, 1, 1));
+        Interface.MostrarMensagem(VERDE + "Você ergue a Espada Majestral! Ela brilha com a promessa de destruir os mortos-vivos." + RESET);
+        Interface.Pausa(3000);
+    }
+
+    // Tesouro raro: Coroa do Rei. Um teste de Intelecto 18+ revela o segredo de
+    // comandar criaturas (habilidade Rei das Criaturas).
+    private static void encontrarCoroaDoRei(FichaRpg ficha) {
+        ficha.setCoroaReiEncontrada(true);
+        Interface.MostrarMensagem(AMARELO + "Sentada em um trono de pedra, uma coroa enferrujada aguarda. Perto dela, criaturas parecem hesitar em avançar." + RESET);
+        Interface.Pausa(3500);
+        ficha.adicionarItem(new itens.ItemRpg("Coroa do Rei", "A coroa do senhor do labirinto. Vale 300 moedas de ouro... e talvez guarde um segredo.", 1));
+
+        Interface.pressionarParaTeste("Intelecto (Desvendar o segredo)");
+        int dado = MecanicasRpg.rolarDado(20);
+        int total = dado + ficha.getIntelectoTeste();
+        Interface.MostrarMensagem("-> Teste de Intelecto: " + dado + " (Dado) + " + ficha.getIntelectoTeste() + " (Atributo) = " + total + " (Dificuldade: 18)");
+        Interface.Pausa(3000);
+
+        if (total >= 18) {
+            ficha.setReiDasCriaturas(true);
+            Interface.MostrarMensagem(AMARELO + "Você decifra as runas esculpidas sob o aro da coroa... e sente o título de Rei das Criaturas pulsar em seu peito!" + RESET);
+            Interface.Pausa(3000);
+        } else {
+            Interface.MostrarMensagem("\nA coroa parece apenas uma peça velha e valiosa. Você a guarda mesmo assim.");
+            Interface.Pausa(2500);
+        }
     }
 
     // Encontro de combate: oferece Lutar ou Fugir (Teste de Destreza contra a
