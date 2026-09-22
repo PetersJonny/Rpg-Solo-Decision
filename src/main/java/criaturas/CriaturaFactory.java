@@ -124,4 +124,23 @@ public class CriaturaFactory {
         c.setOuroDrop(4, 17, 100);
         return c;
     }
+
+    // Minotauro: o guardião do coração do labirinto. Nível 5, sem possibilidade de
+    // fuga (a porta se fecha). Tem 20% de chance de INVESTIR: teste de Destreza do
+    // jogador contra o teste de ataque dele — passou, ele colide na parede e toma 25;
+    // falhou, o jogador toma 2d10. Ao morrer, cai o Chifre de Minotauro (50% 1-2,
+    // 100g cada) e a recompensa exclusiva da classe do jogador.
+    public static Criatura criarMinotauro() {
+        Criatura c = new Criatura("Minotauro", 5, 150, 15, 5);
+        c.setBonusAcerto(4);
+        c.setDcFuga(25);
+        c.setSemFuga(true);
+        c.setDropDeClasse(true);
+        c.setXpGanho(500);
+        c.adicionarAtaque("Garras", "corte", 2, 6);
+        c.adicionarAtaque("Chifre", "perfurante", 1, 12);
+        c.configurarInvestida(20, 2, 10, 25);
+        c.adicionarDrop("Chifre de Minotauro", 1, 2, 50);
+        return c;
+    }
 }

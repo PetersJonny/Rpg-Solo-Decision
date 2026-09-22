@@ -240,19 +240,20 @@ public class Vendedor {
         }
     }
 
-    // O vendedor compra QUALQUER item do jogador por 50% do preço de venda;
-    // materiais especiais (Couro, Dente de Urso, Pó da Fada) são comprados a preço cheio
+    // O vendedor compra QUALQUER item do jogador por 70% do valor original
     private static void Vender(FichaRpg ficha) {
         while (true) {
             Interface.cabecalhoMenu("VENDER");
             Interface.MostrarMensagem("\n  Seu ouro: " + ficha.getOuro() + "");
-            Interface.MostrarMensagem("  O vendedor paga 50% do preço (Couro, Dente de Urso e Pó da Fada a preço cheio).");
+            Interface.MostrarMensagem("  O vendedor paga 70% do valor de cada item.");
 
             List<ItemRpg> vendaveis = new ArrayList<>();
             for (ItemRpg item : ficha.getInventario()) {
                 if (item.getQuantidade() > 0
                         && !item.getNome().equals("Olho Demoníaco")
-                        && !item.getNome().equals("Espada Majestral")) {
+                        && !item.getNome().equals("Espada Majestral")
+                        && !item.getNome().equals("Espada do Minotauro")
+                        && !item.getNome().equals("Cajado de Sangue")) {
                     vendaveis.add(item);
                 }
             }
@@ -329,20 +330,24 @@ public class Vendedor {
         }
     }
 
-    // Preço que o vendedor paga (jogador VENDE por 50% do preço dele);
-    // materiais especiais (drops de monstros) são comprados a preço CHEIO
+    // Preço que o vendedor PAGA ao jogador: TODO item é comprado por 70% do valor
+    // original (o preço de venda da loja para os itens dela; para drops, tesouros e
+    // materiais, o valor cheio de raridade — Osso 23, Dente de Urso 14, etc.).
     private static int precoDeCompra(String nome) {
+        int valorCheio;
         switch (nome) {
-            case "Couro": return 6;
-            case "Dente de Urso": return 14;
-            case "Pó da Fada": return 75;
-            case "Osso": return 11; // valor cheio 23, pago pela metade
-            case "Carne Podre": return 15; // valor cheio de venda
-            case "Coroa do Rei": return 300; // fortuna real, só pode ser encontrada 1 vez
+            case "Couro": valorCheio = 6; break;
+            case "Dente de Urso": valorCheio = 14; break;
+            case "Pó da Fada": valorCheio = 75; break;
+            case "Osso": valorCheio = 23; break; // preço cheio de raridade
+            case "Carne Podre": valorCheio = 15; break;
+            case "Coroa do Rei": valorCheio = 300; break; // fortuna real, só pode ser encontrada 1 vez
+            case "Chifre de Minotauro": valorCheio = 100; break; // troféu do boss do labirinto
             default:
                 int preco = precoDeVenda(nome);
-                return preco < 0 ? 1 : preco / 2;
+                valorCheio = preco < 0 ? 1 : preco;
         }
+        return valorCheio * 70 / 100;
     }
 
     // Cria a instância do item para venda/compra

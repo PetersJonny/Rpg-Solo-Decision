@@ -424,7 +424,11 @@ public class MotorDeCombate {
             System.out.println("\n  O que deseja fazer?\n");
             System.out.println("  1. Lutar");
             System.out.println("  2. Abrir Mochila");
-            System.out.println("  3. Tentar Fugir");
+            if (temBossSemFuga(inimigos)) {
+                System.out.println(AMARELO + "  3. Tentar Fugir (INDISPONÍVEL — a porta se fechou!)" + RESET);
+            } else {
+                System.out.println("  3. Tentar Fugir");
+            }
             System.out.println("  4. Ver Ficha\n");
             System.out.println("  Escolha uma opção:");
             int escolha = Interface.lerInteiro();
@@ -445,6 +449,11 @@ public class MotorDeCombate {
                 if (item == -2) return new ComandoAguardar();
                 return new ComandoUsarItem(item);
             } else if (escolha == 3) {
+                if (temBossSemFuga(inimigos)) {
+                    Interface.ExibirErro("A porta se fechou! Não há como fugir deste combate!");
+                    Interface.Pausa(1500);
+                    continue;
+                }
                 return new ComandoFuga();
             } else {
                 Interface.ExibirErro("Escolha inválida!");
@@ -480,6 +489,16 @@ public class MotorDeCombate {
             tentativasFuga[0] = resultadoFuga;
             return 1;
         }
+    }
+
+    // Há uma criatura viva que bloqueia a fuga no combate (ex.: Minotauro)?
+    public static boolean temBossSemFuga(List<Criatura> inimigos) {
+        for (Criatura c : inimigos) {
+            if (c.getVida() > 0 && c.isSemFuga()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     // Retorna a criatura viva com maior iniciativa base
@@ -1087,8 +1106,79 @@ public class MotorDeCombate {
             Interface.Pausa(1500);
         }
 
-        Interface.MostrarMensagem("\nVocê prepara seu ataque contra " + rotuloCriatura(inimigos, inimigo) + "...");
+        // Curandeiro Combatente (Healer): cada 1 de mana compra 1 ataque extra (máx = nível)
+        int ataquesExtras = comprarAtaquesExtrasCurandeiro(ficha, inimigo);
+        if (ataquesExtras > 0) {
+            Interface.MostrarMensagem("\nCurandeiro Combatente! Você gasta " + ataquesExtras + " de mana e executa " + ataquesExtras + " ataque(s) extra(s).");
+            Interface.Pausa(1500);
+        }
+
+        boolean acertou = false;
+        for (int ataque = 0; ataque <= ataquesExtras; ataque++) {
+            if (inimigo.getVida() <= 0) break;
+            int danoCausado = ataqueComArmaUnico(ficha, inimigos, alvoIndex, armaIndex, ataque > 0);
+            if (danoCausado > 0) {
+                acertou = true;
+                curarCurandeiroNoGolpe(ficha, danoCausado);
+            }
+        }
+
+        // Espada do Minotauro (Guerreiro): 30% de chance de atacar de novo após o golpe
+        if (armaIndex >= 0 && armaIndex < ficha.getInventario().size()
+                && ficha.getInventario().get(armaIndex) instanceof Arma
+                && ((Arma) ficha.getInventario().get(armaIndex)).getNome().equals("Espada do Minotauro")
+                && inimigo.getVida() > 0
+                && MecanicasRpg.rolarDado(100) <= 30) {
+            Interface.MostrarMensagem("\nA Espada do Minotauro volta com fúria total! Você ataca de novo!");
+            Interface.Pausa(1500);
+            int danoCausado = ataqueComArmaUnico(ficha, inimigos, alvoIndex, armaIndex, true);
+            if (danoCausado > 0) {
+                acertou = true;
+                curarCurandeiroNoGolpe(ficha, danoCausado);
+            }
+        }
+
+        return acertou;
+    }
+
+    // Curandeiro Combatente (Healer): oferece comprar ataques extras gastando mana
+    // (1 de mana por ataque, máximo = nível). O acerto de cada golpe cura metade do dano.
+    private static int comprarAtaquesExtrasCurandeiro(FichaRpg ficha, Criatura inimigo) {
+        if (!(ficha.getClasseDoPersonagem() instanceof classes.Healer)) return 0;
+        if (!temHabilidade(ficha, "Curandeiro Combatente")) return 0;
+        if (ficha.getManaPersonagem() < 1 || inimigo.getVida() <= 0) return 0;
+        int maxExtra = Math.min(ficha.getNivel(), ficha.getManaPersonagem());
+        System.out.println("\n  Curandeiro Combatente: cada 1 de mana compra 1 ataque extra (todo acerto cura metade do dano).");
+        System.out.println("  Ataques extras possíveis: 0 a " + maxExtra + ".");
+        System.out.println("  Escolha uma opção:");
+        int extra = Interface.lerOpcao(0, maxExtra);
+        ficha.setManaPersonagem(ficha.getManaPersonagem() - extra);
+        return extra;
+    }
+
+    // Curandeiro Combatente (Healer): cada ataque que acerta cura metade do dano causado
+    private static void curarCurandeiroNoGolpe(FichaRpg ficha, int danoCausado) {
+        if (!(ficha.getClasseDoPersonagem() instanceof classes.Healer)) return;
+        if (!temHabilidade(ficha, "Curandeiro Combatente")) return;
+        int cura = danoCausado / 2;
+        if (cura <= 0) return;
+        ficha.setVidaPersonagem(Math.min(ficha.getVidaMaxima(), ficha.getVidaPersonagem() + cura));
+        Interface.MostrarMensagem("(Curandeiro Combatente! O golpe acerta e você se cura " + cura + " de vida.)");
         Interface.Pausa(1500);
+    }
+
+    // Executa UM ataque com arma (ou soco) e devolve o dano causado (0 se errou/inválido)
+    private static int ataqueComArmaUnico(FichaRpg ficha, List<Criatura> inimigos, int alvoIndex, int armaIndex, boolean golpeExtra) {
+        if (alvoIndex < 0 || alvoIndex >= inimigos.size()) return 0;
+        Criatura inimigo = inimigos.get(alvoIndex);
+
+        if (golpeExtra) {
+            Interface.MostrarMensagem("\nVocê encadeia um novo golpe contra " + rotuloCriatura(inimigos, inimigo) + "...");
+            Interface.Pausa(1200);
+        } else {
+            Interface.MostrarMensagem("\nVocê prepara seu ataque contra " + rotuloCriatura(inimigos, inimigo) + "...");
+            Interface.Pausa(1500);
+        }
 
         int dadoAtaque, totalAtaque, dano = 0;
         int atributoBonus;
@@ -1218,7 +1308,7 @@ public class MotorDeCombate {
                 consumirFlecha(ficha);
             }
         } else {
-            return false;
+            return 0;
         }
 
         if (dano > 0) {
@@ -1234,7 +1324,7 @@ public class MotorDeCombate {
         }
 
         aplicarVenenoCuraParaMorte(ficha, inimigos, alvoIndex);
-        return dano > 0;
+        return dano;
     }
 
     // ==================== HABILIDADES ====================
@@ -1287,7 +1377,8 @@ public class MotorDeCombate {
         // Magias do Mago só podem ser usadas se o personagem tiver um Cajado
         if (habEscolhida instanceof habilidades.Magia
                 && ficha.getClasseDoPersonagem() instanceof classes.Mago
-                && !ficha.temItem("Cajado")) {
+                && !ficha.temItem("Cajado")
+                && !ficha.temItem("Cajado de Sangue")) {
             Interface.ExibirErro("Você precisa de um Cajado para usar suas magias!");
             Interface.Pausa(1500);
             return -1;

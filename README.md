@@ -262,6 +262,9 @@ Nos 8 **encontros** do labirinto: **40% Esqueleto, 40% Zumbi e 20% Baú**. Fugir
 | Esqueleto | 2 | 12 | 12 | +4 | +2 | 15 | 40 | Arco 1d6, Ataque de Ossos 1d4 (80% de atacar de novo, 33% de um terceiro) | Osso 1–3 (30%), Arco (10%), Flechas 1–7 (35%) |
 | Zumbi | 2 | 18 | 10 | +2 | +3 | 10 | 40 | Mordida 1d6 (30% de infectar: 1d4 de dano por rodada de combate, curada com Kit Médico) | Carne Podre 1–4 (40%) |
 | Baú Monstruoso | 3 | 25 | 10 | +4 | +4 | 12 | 50 | Mordida 1d8 | Ouro 4–17 (100%) |
+| Minotauro\* | 5 | 150 | 15 | +5 | +4 | 25\*\* | 500 | Garras 2d6, Chifre 1d12, **Investida 20%** | Chifre de Minotauro 1–2 (50%) + recompensa por classe |
+
+\* **Minotauro** é o chefe do centro e não pode ser encontrado nas casas comuns. \*\* A fuga dele é bloqueada: a porta se fecha, então nem o Teste de Destreza é oferecido.
 
 O **Baú** (encontro) oferece um **baú antigo**: dá para **abrir** ou **não abrir**. Abrindo, **50%** tem ouro (7–14) e **50%** um **Baú Monstruoso** salta para o combate. **Carne Podre** e **Osso** não podem ser comprados no vendedor (só vendidos). Os três são **mortos-vivos**: a **Espada Majestral** causa **dano dobrado** contra eles.
 </details>
@@ -357,10 +360,20 @@ Coletar recursos (ou voltar para a cabana) tem **30% de chance de gerar um encon
 - Ao entrar, a interface vira sobre o labirinto (apenas **ver a ficha** continua disponível).
 - **O caminho é randomizado na descoberta e salvo na ficha** — ao voltar depois, continua exatamente de onde parou (células visitadas permanecem iluminadas).
 - **Navegação:** a tela mostra apenas a grade ao redor do personagem — as **laterais/paredes** onde você está (`##`) e os corredores vizinhos (`.`) — mais o que **já foi percorrido** (iluminado `·`) e sua posição (`@`). O resto do labirinto fica escuro, inclusive o centro (visível apenas enquanto se explora). Movimento via **W/A/S/D ou as setas do teclado** (↑ ↓ ← →) — executa no momento da tecla, **sem Enter**; qualquer outra tecla (número, caractere etc.) não faz nada. Uma câmera acompanha o personagem para que o labirinto (grade 31x31, bem maior) caiba na tela.
-- Há **apenas uma entrada**. Ao pisar na **primeira casa do centro** (área central), o labirinto **começa a desmoronar**: o jogador foge correndo, volta à floresta e o labirinto se **fecha para sempre** — a opção **Labirinto** some do menu. **Casas especiais:** em algumas casas aleatórias há **encontros** (8 por labirinto) e em outras há **recompensas** (6 por labirinto) — cada casa especial é sorteada na geração e ativa uma única vez. **Encontros:** 40% Esqueleto, 40% Zumbi e 20% Baú. **Recompensas:** **80%** ouro (7–19), **17%** uma arma sorteada entre as armas do vendedor e **3%** um dos **tesouros raros** (Olho Demoníaco, Espada Majestral e Coroa do Rei — cada um só cai **uma vez** por ficha; detalhes no spoiler abaixo). Ao perceber um monstro, dá para **Lutar** ou **Tentar Fugir** com um **Teste de Destreza** (a dificuldade é por criatura — veja o spoiler abaixo).
+- Há **apenas uma entrada**. **Casas especiais:** em algumas casas aleatórias há **encontros** (8 por labirinto) e em outras há **recompensas** (6 por labirinto) — cada casa especial é sorteada na geração e ativa uma única vez. **Encontros:** 40% Esqueleto, 40% Zumbi e 20% Baú. **Recompensas:** **80%** ouro (7–19), **17%** uma arma sorteada entre as armas do vendedor e **3%** um dos **tesouros raros** (Olho Demoníaco, Espada Majestral e Coroa do Rei — cada um só cai **uma vez** por ficha; detalhes no spoiler abaixo). Ao perceber um monstro, dá para **Lutar** ou **Tentar Fugir** com um **Teste de Destreza** (a dificuldade é por criatura — veja o spoiler abaixo). Ao pisar na **primeira casa do centro**, o **Minotauro** enfrenta você — **a porta se fecha e não dá para fugir** do combate. **Vencendo o Minotauro**, o labirinto **desmorona**: o jogador foge correndo, volta à floresta e o labirinto se **fecha para sempre** — a opção **Labirinto** some do menu.
   <details>
-  <summary>⚠️ <b>Spoiler: o segredo do centro</b> — clique para revelar</summary>
-  No coração do labirinto aguarda o **Minotauro** — a mecânica dele virá em etapa futura.
+  <summary>⚠️ <b>Spoiler: o Minotauro (chefe do centro)</b> — clique para revelar</summary>
+
+  Ao pisar na **primeira casa do centro**, uma silhueta colossal barra seu caminho e a porta se fecha:
+
+  - **Minotauro** (Nível 5): **150** de vida, **15** de defesa, **+5** de iniciativa e **+4** de bônus de ataque; ataques comuns de **Garras 2d6** e **Chifre 1d12**.
+  - **Investida (20% dos ataques):** o Minotauro baixa a cabeça e investe. Você rola um **Teste de Destreza** contra o **teste de ataque** dele (empate favorece você). **Passou:** ele bate de frente na parede e sofre **25** de dano. **Falhou:** ele te atinge em cheio e você sofre **2d10** de dano.
+  - **A porta se fecha:** não há como fugir — a opção de fuga fica bloqueada até a vitória (se o **Rei das Criaturas** ordenar que ele fuja, ele se retira e reaparece com a vida cheia numa próxima tentativa).
+  - Recompensas: **500 XP**, **Chifre de Minotauro** (50% de cair, 1–2, vale **70g** em troca) e a **recompensa exclusiva da classe**:
+    - **Guerreiro:** a **Espada do Minotauro** — **2d10 + Força**, com **30%** de chance de **atacar de novo** após cada golpe.
+    - **Mago:** o **Cajado de Sangue** — **1d6 + Força** e **+1 dado de dano** em todas as suas magias (conta como Cajado para conjurar).
+    - **Healer:** a habilidade passiva **Curandeiro Combatente** — ao atacar, cada **1 de mana** (máximo = seu nível) compra **1 ataque extra**, e **todo ataque que acerta cura metade do dano causado**.
+  - **Vitória:** o labirinto **desmorona e se fecha para sempre** (XP e drops são aplicados na morte do chefe). **Derrota:** você morre no coração do labirinto.
   </details>
 
 ---
@@ -389,8 +402,7 @@ O **vendedor ambulante** aparece em 10% das explorações. O estoque é sorteado
 
 ### Regras de venda
 
-- O vendedor compra qualquer item seu por **50% do preço de compra**.
-- **Exceção (preços especiais de saque):** **Couro (6)**, **Dente de Urso (14)**, **Pó da Fada (75)** e **Carne Podre (15)** valem o preço cheio; o **Osso** é pago pela metade do valor cheio (23 → **11**). Guarde-os para construir ou venda quando precisar de ouro.
+- O vendedor compra **qualquer item** seu por **70% do valor original** — o preço da loja para os produtos dele e o valor cheio de raridade para drops/tesouros (Osso cheio 23 → **16**, Dente de Urso 14 → **9**, Chifre de Minotauro 100 → **70**, etc.).
 
 ### Itens mágicos do Mago
 
@@ -475,11 +487,14 @@ A melhor armadura é equipada automaticamente; as demais ficam na mochila sem ef
 | Dente de Urso | Saque de criaturas (ver spoiler na seção de Criaturas) | Vende por 14g |
 | Pó da Fada | Encontro secreto (ver spoiler na seção de Criaturas) | Ingrediente da Mesa de Magias · vende por 75g |
 | Madeira / Folha / Pedra | Recursos da floresta | Construção |
-| Osso | Labirinto (Esqueleto) | Vende por 11g (não é comprado no vendedor) |
-| Carne Podre | Labirinto (Zumbi) | Vende por 15g (não é comprado no vendedor) |
+| Osso | Labirinto (Esqueleto) | Vende por 16g (70% do valor cheio 23) · não é comprado no vendedor |
+| Carne Podre | Labirinto (Zumbi) | Vende por 10g (70% do valor 15) · não é comprado no vendedor |
 | Olho Demoníaco | Labirinto (recompensa rara) | Desbloqueia o **Pacto Mortal** · não é vendido |
 | Espada Majestral | Labirinto (recompensa rara) | Arma 1d12 + 1d4 de luz, dobro contra mortos-vivos · não é vendida |
-| Coroa do Rei | Labirinto (recompensa rara) | Desbloqueia o **Rei das Criaturas** · vende por 300g |
+| Coroa do Rei | Labirinto (recompensa rara) | Desbloqueia o **Rei das Criaturas** · vende por 210g (70% do valor 300) |
+| Chifre de Minotauro | Labirinto (chefe Minotauro) | Vende por 70g (70% do valor 100) · não é comprado no vendedor |
+| Espada do Minotauro | Labirinto (chefe Minotauro, Guerreiro) | Arma 2d10 + Força, 30% de atacar de novo · não é vendida |
+| Cajado de Sangue | Labirinto (chefe Minotauro, Mago) | Arma 1d6 + Força, +1 dado de dano em magias · não é vendido |
 
 ---
 

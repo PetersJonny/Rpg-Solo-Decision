@@ -65,4 +65,13 @@ class LabirintoMinotauroTest {
         // O guard impede o sorteio: não encontra de novo
         assertFalse(estruturas.LabirintoDoMinotauro.tentarDescoberta(ficha));
     }
+
+    @Test
+    void minotauroDerrotadoComecaFalso() {
+        assertFalse(ficha.isMinotauroDerrotado(), "O Minotauro ainda não foi derrotado");
+        ficha.setMinotauroDerrotado(true);
+        assertTrue(ficha.isMinotauroDerrotado());
+        // Compat: nova ficha (como um save antigo desserializado) volta ao default false
+        assertFalse(new FichaRpg("Outro").isMinotauroDerrotado());
+    }
 }

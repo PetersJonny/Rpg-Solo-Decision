@@ -18,9 +18,8 @@ import telas.Teclado;
 // movendo-se imediatamente com W/A/S/D. O objetivo desta etapa é chegar ao centro.
 public class LabirintoDoMinotauro {
 
-    // TEMP (só para teste): em true, a descoberta é sempre garantida (100%).
-    // Reverter para false para voltar ao sorteio normal (1% + 1% por dia).
-    private static final boolean TESTE_DESCOBERTA_GARANTIDA = true;
+    // Sorteio normal de descoberta: 1% + 1% por dia, até 100%.
+    private static final boolean TESTE_DESCOBERTA_GARANTIDA = false;
 
     private static final String RESET = Interface.RESET;
     private static final String CIANO = Interface.CIANO;
@@ -112,8 +111,9 @@ public class LabirintoDoMinotauro {
 
     // Navegação interna: só a grade do labirinto e as teclas W/A/S/D aparecem.
     // Cada tecla move imediatamente (sem Enter); qualquer outra tecla não faz nada.
-    // Ao alcançar o centro (pela primeira vez), o labirinto desmorona, o jogador
-    // foge e volta à floresta — retorna true (ele não pode mais entrar).
+    // Ao alcançar o centro (pela primeira vez) o Minotauro trava um combate sem fuga;
+    // vencê-lo faz o labirinto desmoronar, o jogador foge e volta à floresta — retorna
+    // true (ele não pode mais entrar). Morrer para o boss encerra a jornada.
     private static boolean AdentrarLabirinto(FichaRpg ficha) {
         Labirinto lab = ficha.getLabirinto();
 
@@ -145,6 +145,17 @@ public class LabirintoDoMinotauro {
                     desenhar(lab, true, Character.toUpperCase(tecla));
                     Interface.MostrarMensagem("\n" + CIANO + "Você adentra o coração do labirinto!" + RESET);
                     Interface.Pausa(4000);
+                    if (!ficha.isMinotauroDerrotado()) {
+                        Teclado.restaurar(); // menus e combate esperam terminal canonico
+                        try {
+                            enfrentarMinotauro(ficha);
+                        } finally {
+                            Teclado.modoTeclaUnica();
+                            Teclado.limparBuffer();
+                        }
+                        if (ficha.getVidaPersonagem() <= 0) return false; // morreu para o Minotauro
+                        if (!ficha.isMinotauroDerrotado()) continue; // o boss escape: tente de novo
+                    }
                     desmoronar();
                     return true;
                 }
@@ -360,6 +371,33 @@ public class LabirintoDoMinotauro {
             Interface.Pausa(3000);
             encontrarMonstro(ficha, criaturas.CriaturaFactory.criarBauMonstruoso());
         }
+    }
+
+    // Boss do coração do labirinto: ao chegar no centro, o Minotauro se ergue e a
+    // porta se fecha atrás de você — não há como fugir. Vencê-lo marca a ficha (o
+    // labirinto desmorona logo em seguida, na chamada). Se o "Rei das Criaturas"
+    // ordenar a fuga dele, ele se retira, some sem XP/drops e renasce com a vida
+    // cheia numa próxima tentativa.
+    private static void enfrentarMinotauro(FichaRpg ficha) {
+        Interface.MostrarMensagem(VERMELHO + "Um rugido estala entre as pedras e o chão treme. Das sombras do coração do labirinto surge uma silhueta colossal..." + RESET);
+        Interface.Pausa(4000);
+        Interface.MostrarMensagem(VERMELHO + "O MINOTAURO ergue-se diante de você, e a porta atrás de você se fecha com um estrondo. Não há como fugir!" + RESET);
+        Interface.Pausa(4000);
+
+        List<Criatura> inimigos = Collections.singletonList(criaturas.CriaturaFactory.criarMinotauro());
+        mecanicas.MotorDeCombate.IniciarCombate(ficha, inimigos, false);
+
+        if (ficha.getVidaPersonagem() <= 0) return;
+
+        for (Criatura c : inimigos) {
+            if (c.getVida() <= 0 && !c.isFugiu()) {
+                ficha.setMinotauroDerrotado(true);
+                return;
+            }
+        }
+        // O Minotauro fugiu (Rei das Criaturas): ele volta às sombras com a vida cheia
+        Interface.MostrarMensagem("\nO Minotauro recua para as sombras, e a porta se reabre com um rangido. Você pode tentar de novo.");
+        Interface.Pausa(3000);
     }
 
     // Desenha a tela do labirinto: apenas o entorno do personagem (paredes laterais e

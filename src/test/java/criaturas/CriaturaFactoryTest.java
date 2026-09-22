@@ -112,4 +112,81 @@ class CriaturaFactoryTest {
         assertEquals(1, espada.getQuantidadeDanoArma());
         assertTrue(espada.getTipoArma().contains("CaC"));
     }
+
+    @Test
+    void minotauroComConfiguracaoCorreta() {
+        Criatura m = CriaturaFactory.criarMinotauro();
+        assertEquals("Minotauro", m.getNome());
+        assertEquals(5, m.getNivel());
+        assertEquals(150, m.getVida());
+        assertEquals(15, m.getDefesa());
+        assertEquals(5, m.getIniciativa());
+        assertEquals(4, m.getBonusAcerto());
+        assertEquals(25, m.getDcFuga());
+        assertEquals(500, m.getXpGanho());
+        assertTrue(m.isSemFuga(), "A porta se fecha: não há como fugir do Minotauro");
+        assertTrue(m.isDropDeClasse(), "Minotauro concede a recompensa exclusiva da classe");
+        assertFalse(m.isMortoVivo(), "Minotauro é uma criatura viva, não um morto-vivo");
+        assertEquals(2, m.getAtaques().size());
+        assertEquals("Garras", m.getAtaques().get(0).nome);
+        assertEquals(2, m.getAtaques().get(0).qtdDado);
+        assertEquals(6, m.getAtaques().get(0).ladosDado);
+        assertEquals("Chifre", m.getAtaques().get(1).nome);
+        assertEquals(1, m.getAtaques().get(1).qtdDado);
+        assertEquals(12, m.getAtaques().get(1).ladosDado);
+    }
+
+    @Test
+    void criarItemDropCobreOsItensDoMinotauro() {
+        itens.ItemRpg chifre = Criatura.criarItemDrop("Chifre de Minotauro");
+        assertNotNull(chifre);
+        assertEquals("Chifre de Minotauro", chifre.getNome());
+
+        itens.Arma espada = (itens.Arma) Criatura.criarItemDrop("Espada do Minotauro");
+        assertNotNull(espada);
+        assertEquals("Espada do Minotauro", espada.getNome());
+        assertEquals(10, espada.getDadoDanoArma());
+        assertEquals(2, espada.getQuantidadeDanoArma());
+        assertTrue(espada.getTipoArma().contains("CaC"));
+        assertEquals("Força", espada.getAtributoAtaque());
+
+        itens.Arma cajado = (itens.Arma) Criatura.criarItemDrop("Cajado de Sangue");
+        assertNotNull(cajado);
+        assertEquals("Cajado de Sangue", cajado.getNome());
+        assertEquals(6, cajado.getDadoDanoArma());
+        assertEquals(1, cajado.getQuantidadeDanoArma());
+        assertTrue(cajado.getTipoArma().contains("CaC"));
+    }
+
+    @Test
+    void minotauroConcedeRecompensaPorClasse() {
+        // Guerreiro -> Espada do Minotauro
+        fichas.FichaRpg guerreiro = new fichas.FichaRpg("G");
+        guerreiro.setClasse(new classes.Guerreiro());
+        CriaturaFactory.criarMinotauro().processarDrops(guerreiro);
+        assertTrue(guerreiro.temItem("Espada do Minotauro"), "Guerreiro recebe a Espada do Minotauro");
+
+        // Mago -> Cajado de Sangue
+        fichas.FichaRpg mago = new fichas.FichaRpg("M");
+        mago.setClasse(new classes.Mago("Fogo"));
+        CriaturaFactory.criarMinotauro().processarDrops(mago);
+        assertTrue(mago.temItem("Cajado de Sangue"), "Mago recebe o Cajado de Sangue");
+
+        // Healer -> habilidade Curandeiro Combatente (sem item e sem duplicar)
+        fichas.FichaRpg healer = new fichas.FichaRpg("H");
+        healer.setClasse(new classes.Healer());
+        CriaturaFactory.criarMinotauro().processarDrops(healer);
+        assertFalse(healer.temItem("Espada do Minotauro"));
+        assertEquals(1, contarHabilidade(healer, "Curandeiro Combatente"), "Healer desperta o Curandeiro Combatente");
+        CriaturaFactory.criarMinotauro().processarDrops(healer);
+        assertEquals(1, contarHabilidade(healer, "Curandeiro Combatente"), "A habilidade não pode duplicar");
+    }
+
+    private static int contarHabilidade(fichas.FichaRpg ficha, String nome) {
+        int total = 0;
+        for (habilidades.Habilidade h : ficha.getHabilidades()) {
+            if (h.getNome().equals(nome)) total++;
+        }
+        return total;
+    }
 }

@@ -54,6 +54,11 @@ public class Magia extends Habilidade {
             Interface.MostrarMensagem("(Mesa de Magias! +1 dado de dano na sua habilidade)");
             Interface.Pausa(1000);
         }
+        if (ficha.temItem("Cajado de Sangue")) {
+            quantidade++;
+            Interface.MostrarMensagem("(Cajado de Sangue! +1 dado de dano na sua magia)");
+            Interface.Pausa(1000);
+        }
         if (ficha.isPoderAbsolutoAtivo()) {
             quantidade *= 2;
             Interface.MostrarMensagem("(Poder Absoluto dobra os dados de dano das suas magias!)");

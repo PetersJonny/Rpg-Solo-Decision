@@ -11,6 +11,10 @@ import telas.Interface;
 public class Criatura implements java.io.Serializable {
     private static final long serialVersionUID = 1L;
 
+    private static final String RESET = Interface.RESET;
+    private static final String VERDE = Interface.VERDE;
+    private static final String VERMELHO = Interface.VERMELHO;
+
     private String nome;
     private int nivel;
     private int vida;
@@ -46,6 +50,20 @@ public class Criatura implements java.io.Serializable {
 
     // Fugi do combate por comando da Coroa do Rei: some sem dar XP nem drops
     private boolean fugiu;
+
+    // Investida (ex.: Minotauro): chance% do ataque virar uma carga. Se o jogador
+    // vencer o teste de Destreza contra o teste de ataque da criatura, ela toma
+    // `danoParede` (bate na parede); se falhar, o jogador toma `qtd/lados` de dano.
+    private int chanceInvestida;
+    private int investidaDanoFalhaQtd;
+    private int investidaDanoFalhaLados;
+    private int investidaDanoParede;
+
+    // Boss sem fuga (ex.: Minotauro): a porta se fecha e não dá para fugir do combate
+    private boolean semFuga;
+
+    // Ao morrer, concede a recompensa exclusiva da classe do jogador
+    private boolean dropDeClasse;
 
     public Criatura(String nome, int nivel, int vida, int defesa, int iniciativa) {
         this.nome = nome;
@@ -96,6 +114,22 @@ public class Criatura implements java.io.Serializable {
     // Fuga ordenada pela Coroa do Rei: a criatura abandona o combate sem XP/drops
     public void setFugiu(boolean fugiu) { this.fugiu = fugiu; }
     public boolean isFugiu() { return fugiu; }
+
+    // Investida: exige um teste de Destreza do alvo (sentido de esquivar/agarrar).
+    public void configurarInvestida(int chance, int qtdDanoFalha, int ladosDanoFalha, int danoParede) {
+        this.chanceInvestida = chance;
+        this.investidaDanoFalhaQtd = qtdDanoFalha;
+        this.investidaDanoFalhaLados = ladosDanoFalha;
+        this.investidaDanoParede = danoParede;
+    }
+
+    // Boss sem fuga: em combate, a fuga é bloqueada (a porta se fecha)
+    public void setSemFuga(boolean semFuga) { this.semFuga = semFuga; }
+    public boolean isSemFuga() { return semFuga; }
+
+    // Ao morrer, concede a recompensa exclusiva da classe do jogador
+    public void setDropDeClasse(boolean dropDeClasse) { this.dropDeClasse = dropDeClasse; }
+    public boolean isDropDeClasse() { return dropDeClasse; }
 
     // Ataques e Drops
     public void adicionarAtaque(String nome, String tipoDano, int qtdDado, int ladosDado) {
@@ -157,6 +191,12 @@ public class Criatura implements java.io.Serializable {
 
     // Realiza UM ataque completo (escolhe o ataque, rola acerto/dano e aplica a infecção).
     private Ataque executarAtaque(FichaRpg ficha, boolean cascaGrossaAtiva, boolean alvoJogadorPrincipal) {
+        // INVESTIDA: com chance%, o ataque vira uma carga que pede teste de Destreza
+        if (chanceInvestida > 0 && MecanicasRpg.rolarDado(100) <= chanceInvestida) {
+            executarInvestida(ficha, cascaGrossaAtiva);
+            return null;
+        }
+
         Ataque ataqueEscolhido = ataques.get(MecanicasRpg.rolarDado(ataques.size()) - 1);
 
         String danoTipo = ataqueEscolhido.tipoDano == null || ataqueEscolhido.tipoDano.isEmpty()
@@ -213,6 +253,49 @@ public class Criatura implements java.io.Serializable {
         return ataqueEscolhido;
     }
 
+    // Investida: o alvo faz um teste de Destreza contra o teste de ataque da criatura.
+    // Se o alvo passar, a criatura colide com a parede e sofre `danoParede`; se falhar,
+    // o alvo recebe `qtd/lados` de dano.
+    private void executarInvestida(FichaRpg ficha, boolean cascaGrossaAtiva) {
+        Interface.MostrarMensagem("\n" + VERMELHO + nome + " BAIXA A CABEÇA E INVESTE CONTRA VOCÊ COM FÚRIA CEGA!" + RESET);
+        Interface.Pausa(2000);
+
+        Interface.pressionarParaTeste("Destreza (Esquivar da investida)");
+        int dadoJogador = MecanicasRpg.rolarDado(20);
+        int totalJogador = dadoJogador + ficha.getDestrezaTeste();
+        int dadoMonstro = MecanicasRpg.rolarDado(20);
+        int totalMonstro = dadoMonstro + bonusAcerto;
+        if (enfraquecido) {
+            totalMonstro -= 2;
+            Interface.MostrarMensagem("(Pacto Mortal: " + nome + " tem -2 em suas rolagens)");
+            Interface.Pausa(1000);
+        }
+        Interface.MostrarMensagem("-> Investida! Você: " + dadoJogador + " (Dado) + " + ficha.getDestrezaTeste() + " (Destreza) = " + totalJogador);
+        Interface.MostrarMensagem("-> " + nome + ": " + dadoMonstro + " (Dado) + " + bonusAcerto + " (Bônus) = " + totalMonstro);
+        Interface.Pausa(2000);
+
+        if (totalJogador >= totalMonstro) {
+            Interface.MostrarMensagem(VERDE + "Você se joga para o lado e " + nome + " bate de frente na parede! Ele sofre " + investidaDanoParede + " de dano!" + RESET);
+            this.setVida(this.getVida() - investidaDanoParede);
+            Interface.Pausa(2500);
+        } else {
+            int dano = 0;
+            for (int i = 0; i < investidaDanoFalhaQtd; i++) {
+                dano += MecanicasRpg.rolarDado(investidaDanoFalhaLados);
+            }
+            if (cascaGrossaAtiva) {
+                dano = Math.max(0, dano - 5);
+                Interface.MostrarMensagem("(Casca Grossa ativa! Dano reduzido em 5)");
+            }
+            ficha.receberDano(dano);
+            Interface.MostrarMensagem(VERMELHO + "A investida te atinge em cheio! Dano: " + dano + " (Vida: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima() + ")" + RESET);
+            if (ficha.isProtecaoAbsolutaAtiva()) {
+                refletirProtecaoAbsoluta();
+            }
+            Interface.Pausa(2500);
+        }
+    }
+
     // Se o ataque usado pode infectar e o alvo é o personagem principal, sorteia a infecção
     private void aplicarInfeccao(FichaRpg ficha, boolean alvoJogadorPrincipal, Ataque ataque) {
         if (!alvoJogadorPrincipal || ataqueInfeccioso == null || !ataque.nome.equals(ataqueInfeccioso)) {
@@ -265,6 +348,40 @@ public class Criatura implements java.io.Serializable {
                 }
             }
         }
+
+        if (dropDeClasse) {
+            dropExclusivoDaClasse(ficha);
+        }
+    }
+
+    // Recompensa exclusiva da classe (só o Minotauro concede):
+    // Guerreiro ganha a Espada do Minotauro, Mago o Cajado de Sangue e Healer a
+    // habilidade Curandeiro Combatente.
+    private void dropExclusivoDaClasse(FichaRpg ficha) {
+        if (ficha.getClasseDoPersonagem() == null) return;
+
+        if (ficha.getClasseDoPersonagem() instanceof classes.Guerreiro) {
+            ItemRpg item = criarItemDrop("Espada do Minotauro");
+            ficha.adicionarItem(item);
+            Interface.MostrarMensagem(VERDE + "-> Entre as ruínas, você arranca a Espada do Minotauro, troféu digno de um guerreiro!" + RESET);
+        } else if (ficha.getClasseDoPersonagem() instanceof classes.Mago) {
+            ItemRpg item = criarItemDrop("Cajado de Sangue");
+            ficha.adicionarItem(item);
+            Interface.MostrarMensagem(VERDE + "-> O sangue do colosso alimenta o Cajado de Sangue, que cai em suas mãos!" + RESET);
+        } else if (ficha.getClasseDoPersonagem() instanceof classes.Healer) {
+            boolean jaTem = false;
+            for (habilidades.Habilidade h : ficha.getHabilidades()) {
+                if (h.getNome().equals("Curandeiro Combatente")) {
+                    jaTem = true;
+                    break;
+                }
+            }
+            if (!jaTem) {
+                ficha.getHabilidades().add(new habilidades.ativas.HabilidadeCurandeiroCombatente());
+            }
+            Interface.MostrarMensagem(VERDE + "-> Suas feridas comandam sangue e aço: você desperta a habilidade Curandeiro Combatente!" + RESET);
+        }
+        Interface.Pausa(2500);
     }
 
     // Cria os objetos de itens dropados
@@ -286,6 +403,12 @@ public class Criatura implements java.io.Serializable {
                 return new Arma("Arco", "Um arco de madeira que dispara flechas, causando 1d6 de dano à distância. Consome flechas.", "LA", 6, 1, 1);
             case "Flechas":
                 return new ItemRpg("Flechas", "Munição para arcos e foices.", 1);
+            case "Chifre de Minotauro":
+                return new ItemRpg("Chifre de Minotauro", "O troféu de um colosso, cobiçado por caçadores e ferreiros de renome. Vale 100 moedas de ouro.", 1);
+            case "Espada do Minotauro":
+                return new Arma("Espada do Minotauro", "Forjada das grades do labirinto, pulsa com a fúria do colosso. Causa 2d10 + Força de dano e tem 30% de chance de atacar de novo.", "CaC", 10, 2, 1);
+            case "Cajado de Sangue":
+                return new Arma("Cajado de Sangue", "Um cajado que pulsa com sangue antigo. Causa 1d6 + Força de dano e concede +1 dado de dano às suas magias.", "CaC/mágico", 6, 1, 1);
             default:
                 return null;
         }

@@ -87,4 +87,18 @@ class CombatCoerenciaTest {
         MotorDeCombate.aplicarDanoCriatura(alvo, 10);
         assertEquals(15, alvo.getVida(), "10 + 5 de dano demoníaco");
     }
+
+    @Test
+    void bossSemFugaBloqueiaAFugaDoCombate() {
+        Criatura minotauro = criaturas.CriaturaFactory.criarMinotauro();
+        assertTrue(MotorDeCombate.temBossSemFuga(java.util.List.of(minotauro)), "Minotauro vivo bloqueia a fuga");
+
+        // Morto: deixa de bloquear
+        minotauro.setVida(0);
+        assertFalse(MotorDeCombate.temBossSemFuga(java.util.List.of(minotauro)));
+
+        // Criatura comum não bloqueia
+        Criatura lobo = new Criatura("Lobo", 20, 10, 4, 1);
+        assertFalse(MotorDeCombate.temBossSemFuga(java.util.List.of(lobo)));
+    }
 }

@@ -116,6 +116,9 @@ public class FichaRpg implements java.io.Serializable {
     // Pacto Mortal (Olho Demoníaco): ativo até o fim do combate — você sofre +3 em todo dano
     private boolean pactoMortalAtivo = false;
 
+    // Minotauro: ao ser derrotado no coração do labirinto, ele não aparece de novo
+    private boolean minotauroDerrotado = false;
+
     // Construtor
     public FichaRpg(String nomePessoa) {
         this.nomePessoa = nomePessoa;
@@ -475,6 +478,9 @@ public class FichaRpg implements java.io.Serializable {
 
     public boolean isReiDasCriaturas() { return reiDasCriaturas; }
     public void setReiDasCriaturas(boolean reiDasCriaturas) { this.reiDasCriaturas = reiDasCriaturas; }
+
+    public boolean isMinotauroDerrotado() { return minotauroDerrotado; }
+    public void setMinotauroDerrotado(boolean minotauroDerrotado) { this.minotauroDerrotado = minotauroDerrotado; }
 
     public boolean isPactoMortalAtivo() { return pactoMortalAtivo; }
     public void setPactoMortalAtivo(boolean pactoMortalAtivo) { this.pactoMortalAtivo = pactoMortalAtivo; }
