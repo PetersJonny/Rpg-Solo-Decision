@@ -105,6 +105,13 @@ public class FichaRpg implements java.io.Serializable {
     private boolean mesaJuntoSala = false; // se a mesa foi construída estando na sala de treino
     private boolean salaJuntoMesa = false; // se a sala foi construída estando na mesa de magias
 
+    // Profundidade da travessia em que cada construção foi montada (o "ponto" dela).
+    // Montar de novo em outro lugar move o ponto; a distância entre duas construções
+    // é a diferença entre as profundidades onde cada uma está.
+    private int profundidadeCabana = 0;
+    private int profundidadeSalaTreino = 0;
+    private int profundidadeMesaMagias = 0;
+
     // Estruturas encontradas na floresta (só podem ser descobertas explorando)
     private boolean labirintoEncontrado = false;
     private estruturas.Labirinto labirinto = null; // grade salva junto da ficha
@@ -478,53 +485,42 @@ public class FichaRpg implements java.io.Serializable {
     public boolean isMesaJuntoSala() { return mesaJuntoSala; }
     public boolean isSalaJuntoMesa() { return salaJuntoMesa; }
 
-    // Localização (id) em que o jogador está: 0 = cabana, 1 = local da sala de
-    // treino, 2 = local da mesa de magias, 3 = floresta. Estruturas construídas
-    // no mesmo local compartilham o id: estando em uma delas, as vizinhas ficam
-    // acessíveis sem novo deslocamento.
+    public int getProfundidadeCabana() { return profundidadeCabana; }
+    public int getProfundidadeSalaTreino() { return profundidadeSalaTreino; }
+    public int getProfundidadeMesaMagias() { return profundidadeMesaMagias; }
+
+    // Distância (em períodos de caminhada) entre o ponto atual e uma profundidade qualquer.
+    public int getDistanciaAte(int profundidadeAlvo) {
+        return Math.abs(profundidadeFloresta - profundidadeAlvo);
+    }
+
+    // Localização (id) em que o jogador está: 0 = ponto da cabana, 1 = ponto da sala
+    // de treino, 2 = ponto da mesa de magias, 3 = meio da mata. Duas estruturas
+    // montadas na MESMA profundidade ficam no mesmo ponto.
     public int getLocalizacaoAtual() {
-        if (naMesaMagias) return getLocalizacaoMesa();
-        if (naSalaTreino) return getLocalizacaoSala();
         if (naCabana) return 0;
+        if (naSalaTreino) return getLocalizacaoSala();
+        if (naMesaMagias) return getLocalizacaoMesa();
         return 3;
     }
 
-    // Localização da sala de treino (0 = junto à cabana; ou o local da mesa,
-    // se ela foi construída na mesa; ou o local próprio dela).
+    // Ponto onde a sala de treino fica (0 = ponto da cabana; 2 = ponto da mesa; 1 = ponto próprio).
     public int getLocalizacaoSala() {
-        if (salaJuntoCabana) return 0;
-        if (salaJuntoMesa) return getLocalizacaoMesaDireta();
+        if (!temSalaTreino) return 1;
+        if (profundidadeSalaTreino == profundidadeCabana) return 0;
+        if (profundidadeSalaTreino == profundidadeMesaMagias) return 2;
         return 1;
     }
 
-    // Localização da mesa de magias (0 = junto à cabana; ou o local da sala,
-    // se ela foi construída na sala; ou o local próprio dela).
+    // Ponto onde a mesa de magias fica (0 = ponto da cabana; 2 = ponto próprio ou da sala).
     public int getLocalizacaoMesa() {
-        if (mesaJuntoCabana) return 0;
-        if (mesaJuntoSala) return getLocalizacaoSalaDireta();
+        if (!temMesaMagias) return 2;
+        if (profundidadeMesaMagias == profundidadeCabana) return 0;
         return 2;
     }
 
-    private int getLocalizacaoSalaDireta() {
-        if (salaJuntoCabana) return 0;
-        if (salaJuntoMesa) {
-            if (mesaJuntoCabana) return 0;
-            if (mesaJuntoSala) return 1;
-            return 2;
-        }
-        return 1;
-    }
-
-    private int getLocalizacaoMesaDireta() {
-        if (mesaJuntoCabana) return 0;
-        if (mesaJuntoSala) {
-            if (salaJuntoCabana) return 0;
-            if (salaJuntoMesa) return 2;
-            return 1;
-        }
-        return 2;
-    }
-
+    // Uma construção só pode ser usada quando o jogador está no ponto dela
+    // (o ponto em que ela foi montada).
     public boolean podeUsarCabana() { return temCabana && getLocalizacaoAtual() == 0; }
     public boolean podeUsarSalaTreino() { return temSalaTreino && getLocalizacaoAtual() == getLocalizacaoSala(); }
     public boolean podeUsarMesaMagias() { return temMesaMagias && getLocalizacaoAtual() == getLocalizacaoMesa(); }
@@ -580,11 +576,30 @@ public class FichaRpg implements java.io.Serializable {
     // Aprofunda a travessia (1 unidade = 1/3 do período); no máximo sai da floresta.
     public void adicionarProfundidade(int unidades) {
         profundidadeFloresta = Math.min(PROFUNDIDADE_PARA_SAIR, profundidadeFloresta + Math.max(0, unidades));
+        sincronizarLocalizacao();
     }
 
     // Reduz a profundidade ao voltar para as construções (nunca abaixo de 0).
     public void reduzirProfundidade(int unidades) {
         profundidadeFloresta = Math.max(0, profundidadeFloresta - Math.max(0, unidades));
+        sincronizarLocalizacao();
+    }
+
+    // Ao mudar de profundidade, o jogador passa a estar "em" qualquer construção
+    // que ocupa exatamente aquela profundidade (várias podem ficar juntas no mesmo ponto).
+    private void sincronizarLocalizacao() {
+        naCabana = temCabana && profundidadeFloresta == profundidadeCabana;
+        naSalaTreino = temSalaTreino && profundidadeFloresta == profundidadeSalaTreino;
+        naMesaMagias = temMesaMagias && profundidadeFloresta == profundidadeMesaMagias;
+    }
+
+    // Recalcula os flags de "junto": duas estruturas ficam juntas quando foram
+    // montadas na MESMA profundidade (mesmo ponto da mata).
+    private void recomputarAdjacencias() {
+        salaJuntoCabana = temSalaTreino && temCabana && profundidadeSalaTreino == profundidadeCabana;
+        salaJuntoMesa = temSalaTreino && temMesaMagias && profundidadeSalaTreino == profundidadeMesaMagias;
+        mesaJuntoCabana = temMesaMagias && temCabana && profundidadeMesaMagias == profundidadeCabana;
+        mesaJuntoSala = temMesaMagias && temSalaTreino && profundidadeMesaMagias == profundidadeSalaTreino;
     }
 
     // Sair da cabana para explorar/colher recursos (também sai da sala e da mesa)
@@ -686,15 +701,18 @@ public class FichaRpg implements java.io.Serializable {
         removerItem("Folha", 10);
         removerItem("Pedra", 4);
         temCabana = true;
+        profundidadeCabana = profundidadeFloresta;
         naCabana = true;
         naSalaTreino = false;
         naMesaMagias = false;
+        recomputarAdjacencias();
         return true;
     }
 
     // Montar a sala de treino: gasta 10 madeiras, 15 folhas, 5 pedras e 4 couros.
-    // Se for construída enquanto o jogador estiver na cabana, ela fica JUNTO da cabana
-    // (estar nela não conta como ter saído). Se construída fora, são lugares separados.
+    // Ela fica ancorada exatamente no ponto da mata onde for construída: se for
+    // no mesmo ponto de outra construção, ficam JUNTO (estar em uma permite usar
+    // a vizinha sem novo deslocamento); caso contrário, são pontos separados.
     public boolean construirSalaTreino() {
         if (temSalaTreino) return false;
         if (getQuantidadeDe("Madeira") < 10 || getQuantidadeDe("Folha") < 15 || getQuantidadeDe("Pedra") < 5 || getQuantidadeDe("Couro") < 4) {
@@ -705,8 +723,8 @@ public class FichaRpg implements java.io.Serializable {
         removerItem("Pedra", 5);
         removerItem("Couro", 4);
         temSalaTreino = true;
-        salaJuntoCabana = naCabana;
-        salaJuntoMesa = !naCabana && naMesaMagias && temMesaMagias;
+        profundidadeSalaTreino = profundidadeFloresta;
+        recomputarAdjacencias();
         naSalaTreino = true;
         naMesaMagias = false;
         return true;
@@ -755,16 +773,74 @@ public class FichaRpg implements java.io.Serializable {
         removerItem("Pedra", 4);
         removerItem("Pó da Fada", 1);
         temMesaMagias = true;
-        mesaJuntoCabana = naCabana;
-        mesaJuntoSala = !naCabana && naSalaTreino && temSalaTreino;
+        profundidadeMesaMagias = profundidadeFloresta;
+        recomputarAdjacencias();
         naMesaMagias = true;
         naSalaTreino = false;
-        if (mesaJuntoCabana) {
-            naCabana = true;
-        } else {
-            naCabana = false;
-        }
+        naCabana = mesaJuntoCabana;
         return true;
+    }
+
+    // Mover (montar uma nova) construção no ponto atual, gastando a mesma matéria-prima.
+    // O novo local passa a ser o ponto da construção; o antigo fica para trás.
+    public boolean moverCabana() {
+        if (!temCabana) return false;
+        if (getQuantidadeDe("Madeira") < 7 || getQuantidadeDe("Folha") < 10 || getQuantidadeDe("Pedra") < 4) {
+            return false;
+        }
+        removerItem("Madeira", 7);
+        removerItem("Folha", 10);
+        removerItem("Pedra", 4);
+        profundidadeCabana = profundidadeFloresta;
+        naCabana = true;
+        naSalaTreino = false;
+        naMesaMagias = false;
+        recomputarAdjacencias();
+        return true;
+    }
+
+    public boolean moverSalaTreino() {
+        if (!temSalaTreino) return false;
+        if (getQuantidadeDe("Madeira") < 10 || getQuantidadeDe("Folha") < 15 || getQuantidadeDe("Pedra") < 5 || getQuantidadeDe("Couro") < 4) {
+            return false;
+        }
+        removerItem("Madeira", 10);
+        removerItem("Folha", 15);
+        removerItem("Pedra", 5);
+        removerItem("Couro", 4);
+        profundidadeSalaTreino = profundidadeFloresta;
+        naSalaTreino = true;
+        naMesaMagias = false;
+        recomputarAdjacencias();
+        naCabana = salaJuntoCabana;
+        return true;
+    }
+
+    public boolean moverMesaMagias() {
+        if (!temMesaMagias) return false;
+        if (getQuantidadeDe("Madeira") < 5 || getQuantidadeDe("Folha") < 4 || getQuantidadeDe("Pedra") < 4 || getQuantidadeDe("Pó da Fada") < 1) {
+            return false;
+        }
+        removerItem("Madeira", 5);
+        removerItem("Folha", 4);
+        removerItem("Pedra", 4);
+        removerItem("Pó da Fada", 1);
+        profundidadeMesaMagias = profundidadeFloresta;
+        naMesaMagias = true;
+        naSalaTreino = false;
+        recomputarAdjacencias();
+        naCabana = mesaJuntoCabana;
+        return true;
+    }
+
+    // Profundidade da construção mais adiantada na travessia (a mais próxima da
+    // borda da floresta). Usado quando se volta de uma cidade para as construções.
+    public int getProfundidadeConstrucaoMaisProxima() {
+        int p = 0;
+        if (temCabana) p = Math.max(p, profundidadeCabana);
+        if (temSalaTreino) p = Math.max(p, profundidadeSalaTreino);
+        if (temMesaMagias) p = Math.max(p, profundidadeMesaMagias);
+        return p;
     }
 
     // Estudar na mesa de magias (gasta o período inteiro): +1 dado de dano

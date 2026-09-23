@@ -294,10 +294,9 @@ O hub do jogo é o menu **"FLORESTA DE FREIJORD"**:
 1. **Ver ficha**
 2. **Explorar a Floresta** — sempre gera um encontro (1/3 de período)
 3. **Buscar Recursos na Floresta** — coleta materiais (1/3 de período)
-4. **Construção (Dormir)** — construir/dormir
+4. **Construção (Dormir)** — construir, caminhar até uma construção ou dormir (veja a seção Construção)
 5. **Tentar sair da floresta** — caminha adentrando a mata, em busca de algo além de árvores e mato (veja a seção Travessia)
-6. **Voltar para as construções** — aparece quando você já se afastou caminhando (veja a seção Travessia)
-7. **Conversar com o companheiro** / **Salvar Jogo** / **Encerrar jogo** (os números variam se você tem um companheiro ou já encontrou o Labirinto)
+6. **Conversar com o companheiro** / **Salvar Jogo** / **Encerrar jogo** (os números variam se você tem um companheiro ou já encontrou o Labirinto)
 
 ### Tempo
 
@@ -340,7 +339,7 @@ Dizem que quem caminha por tempo suficiente, adentrando a mata em busca de algo 
 - A opção **"Tentar sair da floresta"** (menu principal da floresta) faz você caminhar adentrando o mato. Você escolhe **quantos períodos caminhar por vez** (de **1 a 3**, cada um gasta 1/3 do período) e, **após cada período**, decide se **continua caminhando ou para por aqui**.
 - Leva **20 períodos no total** para sair da floresta — mas esse **contador é oculto**: você nunca sabe o quanto falta.
 - Cada período de caminhada tem **a mesma chance de encontro da exploração** (30% de dia, 50% à noite) — só que **sem encontrar recursos**.
-- Um período gasto indo é **um período para voltar**: a opção **"Voltar para as construções"** (que aparece enquanto você está caminhando) refaz o caminho de volta na mesma quantidade de períodos.
+- Pode acontecer de você parar e o menu **Construção** ficar acessível no ponto atual: cada construção é **ancorada no ponto da mata onde foi montada**, então a opção sempre mostra **a distância (em períodos de caminhada) até cada construção** e permite **caminhar até ela** (mesmo custo turno a turno da ida) ou **montar uma construção nova ali**, que passa a ser o novo ponto (veja a seção Construção).
 - Ao sair da floresta, o jogador chega a uma **cidade para além dela** (o destino é sorteado). O primeiro destino disponível é o **Vilarejo de Scarbor**. Enquanto estiver fora das suas construções, **não dá para construir, treinar ou dormir** — é preciso voltar para as construções.
 
 ### Vilarejo (fora da floresta)
@@ -351,24 +350,30 @@ Dizem que quem caminha por tempo suficiente, adentrando a mata em busca de algo 
 
 ## Construção
 
+Cada construção fica **ancorada no ponto da mata onde foi montada** — na trilha da travessia (distância oculta até a borda). O menu Construção (sempre acessível) mostra, de cada construção, a **distância em períodos de caminhada** até o seu ponto:
+
+- **"Montar X aqui"** constrói (ou reconstrói) a construção **no ponto onde você está agora**, pagando o custo normal — a nova passa a ser o ponto dela (a antiga fica para trás).
+- **"Ir para X (N período(s))"** caminha de onde você está até a construção, turno a turno (mesma chance de encontro de caminhar).
+- Montar duas construções **na mesma profundidade** deixa-as **junto** no mesmo ponto (usa as duas sem novo deslocamento). Em pontos diferentes, cada uma exige a real distância de caminhada.
+
 ### Cabana
 
 - **Custo:** 7 Madeira + 10 Folha + 4 Pedra (2/3 de período)
-- Permite **dormir à noite** (recupera **metade da vida e metade da mana**) e zera o cansaço.
+- Permite **dormir à noite** (recupera **metade da vida e metade da mana**) e zera o cansaço — só estando no ponto dela.
 - É o pré-requisito para receber visitas (veja a seção de Companheiros).
-- Sair da cabana para a floresta (explorar/recursos) ou **ir ao Labirinto** conta como **não estar mais nela** — voltar para ela custa 1/3 de período.
+- Sair da cabana para a floresta (explorar/recursos) ou **ir ao Labirinto** conta como **não estar mais nela**.
 
 ### Sala de Treino
 
 - **Custo:** 10 Madeira + 15 Folha + 5 Pedra + 4 **Couro** (2/3 de período; o Couro vem de criaturas — veja spoiler na seção de Criaturas)
 - **Treinar:** gasta o período restante e dá **+2 em Força ou Destreza por 2 períodos** (reativa a cada novo treino). O bônus vale para dano, acerto, iniciativa e testes.
-- **Localização:** a sala fica **junto à cabana** se for construída estando nela (ou **junto à mesa de magias**, se for construída estando nela). Caso contrário ela fica em **um local separado** — para treinar é preciso **ir até a sala** (1/3 de período), não dá para usar de longe. Estando em um local que também tenha a mesa, as duas ficam acessíveis sem novo deslocamento.
+- **Localização:** fica no ponto desta travessia onde você a montou. Se for o mesmo ponto da cabana ou da mesa, elas ficam **junto** (usa sem novo deslocamento); caso contrário, é preciso **caminhar até a sala** (a distância entre os pontos), não dá para usar de longe.
 
 ### Mesa de Magias
 
 - **Custo:** 5 Madeira + 4 Folha + 4 Pedra + 1 **Pó da Fada** (2/3 de período; o Pó da Fada vem de um encontro secreto — veja spoiler na seção de Criaturas)
 - **Estudar:** gasta o período restante e dá **+1 dado de dano em TODAS as habilidades de dano por 2 períodos** (magias, Estrondo, Giro e Explosão de Poder). O efeito vale os 2 períodos seguintes ao estudo (estudou de dia → vale na noite + no dia seguinte; estudou de noite → vale no dia + na noite seguinte). Não dá para estudar de novo enquanto o bônus estiver ativo.
-- **Localização:** a mesa fica **junto à cabana** se for construída estando nela, ou **junto à sala de treino** se for construída estando nela. Caso contrário ela fica em **um local separado** — para estudar é preciso **ir até a mesa** (1/3 de período), não dá para usar de longe. Estando em um local que também tenha a sala, as duas ficam acessíveis sem novo deslocamento.
+- **Localização:** fica no ponto desta travessia onde você a montou. Se for o mesmo ponto da cabana ou da sala, elas ficam **junto** (usa sem novo deslocamento); caso contrário, é preciso **caminhar até a mesa** (a distância entre os pontos), não dá para usar de longe.
 
 ---
 

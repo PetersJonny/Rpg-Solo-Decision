@@ -243,20 +243,15 @@ public class Main {
                         personagemFaleceu = true;
                     }
                 } else if (ops[1] > 0 && escolhaAventura == ops[1]) {
-                    eventos.TravessiaDaFloresta.VoltarParaConstrucoes(ficha);
-                    if (ficha.getVidaPersonagem() <= 0) {
-                        personagemFaleceu = true;
-                    }
-                } else if (ops[2] > 0 && escolhaAventura == ops[2]) {
                     estruturas.LabirintoDoMinotauro.MenuLabirinto(ficha);
                     if (ficha.getVidaPersonagem() <= 0) {
                         personagemFaleceu = true;
                     }
-                } else if (ops[3] > 0 && escolhaAventura == ops[3]) {
+                } else if (ops[2] > 0 && escolhaAventura == ops[2]) {
                     eventos.Floresta.ConversarComCompanheiro(ficha);
-                } else if (escolhaAventura == ops[4]) {
+                } else if (escolhaAventura == ops[3]) {
                     salvarJogo(ficha);
-                } else if (escolhaAventura == ops[5]) {
+                } else if (escolhaAventura == ops[4]) {
                     encerrarJogo(ficha);
                     jogando = false;
                     encerrouJogo = true;

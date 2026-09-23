@@ -74,22 +74,46 @@ public class TravessiaDaFloresta {
         }
     }
 
-    // "Voltar para as construções": percorre a mesma quantidade de períodos gastos para
-    // se afastar (a profundidade oculta volta a zero até chegar perto das construções).
-    public static void VoltarParaConstrucoes(FichaRpg ficha) {
-        Interface.MostrarMensagem("\nVocê se vira e começa a refazer o caminho, cortando de volta o mato em direção às suas construções...");
-        Interface.Pausa(2000);
+    // Caminha de onde o jogador está até uma construção em outro ponto da mata:
+    // a ida/fim custam a distância entre os pontos (turno a turno, como a travessia).
+    public static void CaminharAteConstrucao(FichaRpg ficha, int profundidadeAlvo, String nomeConstrucao) {
+        int distancia = ficha.getDistanciaAte(profundidadeAlvo);
+        if (distancia == 0) return;
 
-        while (ficha.getProfundidadeFloresta() > 0 && ficha.getVidaPersonagem() > 0) {
+        Interface.MostrarMensagem("\nVocê se prepara para ir até " + nomeConstrucao + ".");
+        Interface.MostrarMensagem("Será preciso gastar " + distancia + " período(s) de caminhada para chegar lá.");
+        Interface.Pausa(2500);
+
+        while (ficha.getProfundidadeFloresta() != profundidadeAlvo && ficha.getVidaPersonagem() > 0) {
+            percorrerUmTurno(ficha, ficha.getProfundidadeFloresta() < profundidadeAlvo);
+        }
+        if (ficha.getVidaPersonagem() <= 0) return;
+
+        Interface.MostrarMensagem("\nA mata se abre aos poucos e você chega a " + nomeConstrucao + ".");
+        Interface.Pausa(2000);
+    }
+
+    // "Voltar para as construções": percorre de volta até a construção mais
+    // adiantada na travessia (a mais próxima de quem volta de fora da floresta).
+    public static void VoltarParaConstrucoes(FichaRpg ficha) {
+        int alvo = ficha.getProfundidadeConstrucaoMaisProxima();
+        int tempo = ficha.getProfundidadeFloresta() - alvo;
+        if (tempo <= 0) return;
+
+        Interface.MostrarMensagem("\nVocê decide voltar para as suas construções.");
+        Interface.MostrarMensagem("Será preciso gastar " + tempo + " período(s) de caminhada para chegar lá.");
+        Interface.Pausa(2500);
+
+        while (ficha.getProfundidadeFloresta() > alvo && ficha.getVidaPersonagem() > 0) {
             percorrerUmTurno(ficha, false);
         }
         if (ficha.getVidaPersonagem() <= 0) return;
 
         Interface.MostrarMensagem("\nAos poucos a vegetação fica conhecida de novo... suas construções aparecem entre as árvores!");
-        Interface.MostrarMensagem("Você está de volta perto das suas construções.");
-        if (ficha.isTemCabana()) {
-            ficha.voltarParaCabana();
-            Interface.MostrarMensagem("\nVocê entra em sua cabana, aliviado por estar de volta a um lugar seguro.");
+        if (ficha.podeUsarCabana()) {
+            Interface.MostrarMensagem("Você entra em sua cabana, aliviado por estar de volta a um lugar seguro.");
+        } else {
+            Interface.MostrarMensagem("Você está de volta ao ponto das suas construções.");
         }
         Interface.Pausa(2500);
     }
@@ -104,8 +128,8 @@ public class TravessiaDaFloresta {
         }
 
         Interface.MostrarMensagem(indoEmbora
-                ? "\nVocê adentra o mato, se afastando das construções em busca de algo além de árvores..."
-                : "\nVocê corta o mato de volta, na direção das suas construções...");
+                ? "\nVocê avança mata adentro, seguindo seu caminho entre árvores e mato..."
+                : "\nVocê corta o mato de volta, refazendo o caminho por entre as árvores...");
         Interface.Pausa(2000);
 
         // Mesma chance de encontro da exploração (30% de dia, 50% à noite), mas não coleta recurso

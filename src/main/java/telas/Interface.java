@@ -342,19 +342,17 @@ public class Interface {
     }
 
     // Números das opções dinâmicas do menu da floresta:
-    // {Viajar, VoltarP/Construções, Labirinto, Conversar, Salvar, Encerrar}.
+    // {Viajar, Labirinto, Conversar, Salvar, Encerrar}.
     // É a única fonte da numeração, usada tanto para imprimir quanto para o Main interpretar a escolha.
     public static int[] opcoesMenuFloresta(FichaRpg ficha) {
         int num = 5;
         int opViajar = num++; // sempre disponível: "Tentar sair da floresta" (ou continuar, se já estiver caminhando)
-        int opVoltar = -1;
-        if (ficha.getProfundidadeFloresta() > 0) opVoltar = num++;
         int opLabirinto = -1, opConversar = -1;
         if (ficha.isLabirintoDisponivel()) opLabirinto = num++;
         if (ficha.temCompanheiro()) opConversar = num++;
         int opSalvar = num++;
         int opEncerrar = num++;
-        return new int[]{opViajar, opVoltar, opLabirinto, opConversar, opSalvar, opEncerrar};
+        return new int[]{opViajar, opLabirinto, opConversar, opSalvar, opEncerrar};
     }
 
     public static int MenuPrincipalAventura(FichaRpg ficha) {
@@ -382,18 +380,15 @@ public class Interface {
             System.out.println("  " + ops[0] + ". Tentar sair da floresta");
         }
         if (ops[1] > 0) {
-            System.out.println("  " + ops[1] + ". Voltar para as construções");
+            System.out.println("  " + ops[1] + ". Labirinto");
         }
         if (ops[2] > 0) {
-            System.out.println("  " + ops[2] + ". Labirinto");
+            System.out.println("  " + ops[2] + ". Conversar com " + ficha.getCompanheiro().getNome());
         }
-        if (ops[3] > 0) {
-            System.out.println("  " + ops[3] + ". Conversar com " + ficha.getCompanheiro().getNome());
-        }
-        System.out.println("  " + ops[4] + ". Salvar Jogo");
-        System.out.println("  " + ops[5] + ". Encerrar jogo");
+        System.out.println("  " + ops[3] + ". Salvar Jogo");
+        System.out.println("  " + ops[4] + ". Encerrar jogo");
         System.out.println("\n  " + VERDE + "Digite a opção:" + RESET);
-        return lerOpcao(1, ops[5]);
+        return lerOpcao(1, ops[4]);
     }
 
     // Menu do vilarejo (para além da floresta). Por enquanto é um lugar sem

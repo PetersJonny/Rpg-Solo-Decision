@@ -136,15 +136,10 @@ public class Floresta {
 
     // ==================== CONSTRUÇÃO ====================
 
-    public static void MenuConstrucao(FichaRpg ficha) {
-        // Longe da cabana e das construções (no meio da mata, buscando algo além de árvores)
-        if (ficha.getProfundidadeFloresta() > 0) {
-            Interface.MostrarMensagem("\nVocê está distante das suas construções, no meio do caminho.");
-            Interface.MostrarMensagem("Volte pelo menu principal (Voltar para as construções) antes de construir, treinar ou dormir.");
-            Interface.Pausa(2500);
-            return;
-        }
-
+public static void MenuConstrucao(FichaRpg ficha) {
+        // Cada construção fica ancorada no ponto da mata em que foi montada.
+        // Aqui é possível construir no ponto atual, caminhar até uma construção
+        // (gastando a distância entre os pontos) ou usá-la quando se está nela.
         while (true) {
             Interface.cabecalhoMenu("C O N S T R U Ç Ã O");
 
@@ -153,20 +148,14 @@ public class Floresta {
             System.out.println("\n  Período: " + AMARELO + periodo + RESET + "  (" + (3 - ficha.getProgressoPeriodo()) + "/3 para virar)");
 
             String local;
-            if (ficha.isNaMesaMagias()) {
-                String tipoMesa = ficha.isMesaJuntoCabana() ? "junto à cabana"
-                        : ficha.isMesaJuntoSala() ? "junto à sala de treino" : "longe da cabana";
-                local = "NA MESA DE MAGIAS (" + tipoMesa + ")";
-            } else if (ficha.isNaSalaTreino()) {
-                String tipoSala = ficha.isSalaJuntoCabana() ? "junto à cabana"
-                        : ficha.isSalaJuntoMesa() ? "junto à mesa de magias" : "longe da cabana";
-                local = "NA SALA DE TREINO (" + tipoSala + ")";
-            } else if (ficha.isNaCabana() && ficha.isTemCabana()) {
+            if (ficha.podeUsarCabana()) {
                 local = "NA CABANA";
-            } else if (ficha.isTemCabana()) {
-                local = "LONGE da cabana (na floresta)";
+            } else if (ficha.podeUsarSalaTreino()) {
+                local = "NA SALA DE TREINO";
+            } else if (ficha.podeUsarMesaMagias()) {
+                local = "NA MESA DE MAGIAS";
             } else {
-                local = "na floresta (sem cabana)";
+                local = "NO MEIO DA MATA";
             }
             System.out.println("  Localização: " + CIANO + local + RESET);
             System.out.println("  -----------------------------------------------");
@@ -178,6 +167,7 @@ public class Floresta {
                     + ficha.getQuantidadeDe("Folha") + "/10x Folha | "
                     + ficha.getQuantidadeDe("Pedra") + "/4x Pedra");
             if (ficha.isTemCabana()) {
+                System.out.println("  Localização: " + descreverPonto(ficha, ficha.getProfundidadeCabana()));
                 System.out.println("  Informação: Pode dormir à noite (estando nela) e serve de abrigo para o companheiro.");
             } else {
                 System.out.println("  Informação: Gasta 2/3 do período para montar.");
@@ -193,9 +183,8 @@ public class Floresta {
             if (!ficha.isTemSalaTreino()) {
                 System.out.println("  Informação: Gasta 2/3 do período para montar.");
             } else {
-                String localSala = ficha.isSalaJuntoCabana() ? "junto à cabana"
-                        : ficha.isSalaJuntoMesa() ? "junto à mesa de magias" : "longe da cabana";
-                System.out.println("  Localização: " + localSala + " — só usa estando nela (ou vá até ela)");
+                System.out.println("  Localização: " + descreverPonto(ficha, ficha.getProfundidadeSalaTreino())
+                        + " — só usa estando nela (ou vá até o ponto dela)");
             }
 
             // ===================== MESA DE MAGIAS =====================
@@ -208,9 +197,8 @@ public class Floresta {
             if (!ficha.isTemMesaMagias()) {
                 System.out.println("  Informação: Gasta 2/3 do período para montar.");
             } else {
-                String localMesa = ficha.isMesaJuntoCabana() ? "junto à cabana"
-                        : ficha.isMesaJuntoSala() ? "junto à sala de treino" : "longe da cabana";
-                System.out.println("  Localização: " + localMesa + " — só usa estando nela (ou vá até ela)");
+                System.out.println("  Localização: " + descreverPonto(ficha, ficha.getProfundidadeMesaMagias())
+                        + " — só usa estando nela (ou vá até o ponto dela)");
             }
 
             if (ficha.getTreinoBonusPeriodosRestantes() > 0) {
@@ -224,211 +212,235 @@ public class Floresta {
             System.out.println("\n  -----------------------------------------------");
 
             // Menu dinâmico com numeração sequencial
-            int opCabana = 0, opSala = 0, opMesa = 0, opDormir = 0;
+            int opMontarCabana = 0, opIrCabana = 0, opDormir = 0;
+            int opMontarSala = 0, opIrSala = 0, opTreinar = 0;
+            int opMontarMesa = 0, opIrMesa = 0, opEstudar = 0;
             int num = 1;
 
             System.out.println("\n  O que deseja fazer?");
+
+            // =================== CABANA ===================
             if (!ficha.isTemCabana()) {
-                System.out.println("  " + num + ". Montar Cabana  (7x Madeira, 10x Folha, 4x Pedra — 2/3 do período)");
-                opCabana = num++;
-            } else if (!ficha.isNaCabana()) {
-                System.out.println("  " + num + ". Voltar para a Cabana  (1/3 do período)");
-                opCabana = num++;
+                System.out.println("  " + num + ". Montar Cabana aqui  (7x Madeira, 10x Folha, 4x Pedra — 2/3 do período)");
+                opMontarCabana = num++;
+            } else if (ficha.podeUsarCabana()) {
+                System.out.println("  " + num + ". Dormir  (só à noite; recupera metade da vida e mana)");
+                opDormir = num++;
+            } else {
+                System.out.println("  " + num + ". Ir para a Cabana  (" + ficha.getDistanciaAte(ficha.getProfundidadeCabana()) + " período(s) de caminhada)");
+                opIrCabana = num++;
+                System.out.println("  " + num + ". Montar Cabana aqui  (novo ponto; 7x Madeira, 10x Folha, 4x Pedra — 2/3 do período)");
+                opMontarCabana = num++;
             }
 
+            // =================== SALA DE TREINO ===================
             if (!ficha.isTemSalaTreino()) {
-                System.out.println("  " + num + ". Montar Sala de Treino  (10x Madeira, 15x Folha, 5x Pedra, 4x Couro — 2/3 do período)");
-                opSala = num++;
+                System.out.println("  " + num + ". Montar Sala de Treino aqui  (10x Madeira, 15x Folha, 5x Pedra, 4x Couro — 2/3 do período)");
+                opMontarSala = num++;
             } else if (ficha.getTreinoBonusPeriodosRestantes() > 0) {
                 System.out.println("  " + AMARELO + "  • Treinando... (faltam " + ficha.getTreinoBonusPeriodosRestantes() + " períodos para treinar novamente)" + RESET);
             } else if (ficha.podeUsarSalaTreino()) {
                 System.out.println("  " + num + ". Treinar na Sala de Treino  (período inteiro; +2 em Força ou Destreza por 2 períodos)");
-                opSala = num++;
+                opTreinar = num++;
             } else {
-                System.out.println("  " + num + ". Ir para a Sala de Treino  (1/3 do período)");
-                opSala = num++;
+                System.out.println("  " + num + ". Ir para a Sala de Treino  (" + ficha.getDistanciaAte(ficha.getProfundidadeSalaTreino()) + " período(s) de caminhada)");
+                opIrSala = num++;
+                System.out.println("  " + num + ". Montar Sala de Treino aqui  (novo ponto; 10x Madeira, 15x Folha, 5x Pedra, 4x Couro — 2/3 do período)");
+                opMontarSala = num++;
             }
 
+            // =================== MESA DE MAGIAS ===================
             if (!ficha.isTemMesaMagias()) {
-                System.out.println("  " + num + ". Montar Mesa de Magias  (5x Madeira, 4x Folha, 4x Pedra, 1x Pó da Fada — 2/3 do período)");
-                opMesa = num++;
+                System.out.println("  " + num + ". Montar Mesa de Magias aqui  (5x Madeira, 4x Folha, 4x Pedra, 1x Pó da Fada — 2/3 do período)");
+                opMontarMesa = num++;
             } else if (ficha.getMagiaBonusPeriodosRestantes() > 0) {
                 System.out.println("  " + AMARELO + "  • Estudando... (faltam " + ficha.getMagiaBonusPeriodosRestantes() + " períodos para estudar novamente)" + RESET);
             } else if (ficha.podeUsarMesaMagias()) {
                 System.out.println("  " + num + ". Estudar na Mesa de Magias  (período inteiro; +1 dado de dano em habilidades por 2 períodos)");
-                opMesa = num++;
+                opEstudar = num++;
             } else {
-                System.out.println("  " + num + ". Ir para a Mesa de Magias  (1/3 do período)");
-                opMesa = num++;
+                System.out.println("  " + num + ". Ir para a Mesa de Magias  (" + ficha.getDistanciaAte(ficha.getProfundidadeMesaMagias()) + " período(s) de caminhada)");
+                opIrMesa = num++;
+                System.out.println("  " + num + ". Montar Mesa de Magias aqui  (novo ponto; 5x Madeira, 4x Folha, 4x Pedra, 1x Pó da Fada — 2/3 do período)");
+                opMontarMesa = num++;
             }
 
-            if (ficha.isTemCabana() && ficha.isNaCabana()) {
-                System.out.println("  " + num + ". Dormir  (só à noite, na cabana; recupera metade da vida e mana)");
-                opDormir = num++;
-            }
-
-            System.out.println("  " + VERDE + "0. Voltar" + RESET);
+            System.out.println("  " + VERDE + "0. Voltar para a floresta" + RESET);
             int escolha = Interface.lerOpcao(0, num - 1);
 
             if (escolha == 0) return;
 
-            // =================== CABANA ===================
-            if (escolha == opCabana) {
+            // =================== MONTAR CABANA ===================
+            if (escolha == opMontarCabana) {
+                if (ficha.isTemCabana()) {
+                    if (ficha.moverCabana()) {
+                        Interface.MostrarMensagem("\nVocê constrói uma NOVA cabana bem aqui, gastando 7 madeiras, 10 folhas e 4 pedras!");
+                        Interface.MostrarMensagem("Ela agora é o ponto da construção — a antiga fica para trás.");
+                        Interface.Pausa(2500);
+                        avancarTempoComMensagens(ficha, 2);
+                        continue;
+                    }
+                    Interface.ExibirErro("Faltam materiais! Você precisa de 7 Madeiras, 10 Folhas e 4 Pedras.");
+                    Interface.Pausa(1500);
+                    continue;
+                }
+                if (ficha.montarCabana()) {
+                    Interface.MostrarMensagem("\nVocê constrói sua CABANA, gastando 7 madeiras, 10 folhas e 4 pedras!");
+                    Interface.MostrarMensagem("Agora você tem um abrigo seguro e pode dormir à noite (estando nela).");
+                    Interface.Pausa(2500);
+                    avancarTempoComMensagens(ficha, 2);
+                    continue;
+                }
+                Interface.ExibirErro("Faltam materiais! Você precisa de 7 Madeiras, 10 Folhas e 4 Pedras.");
+                Interface.Pausa(1500);
+                continue;
+            }
+
+            // =================== IR PARA A CABANA ===================
+            if (escolha == opIrCabana) {
                 if (!ficha.isTemCabana()) {
-                    if (ficha.montarCabana()) {
-                        Interface.MostrarMensagem("\nVocê constrói sua CABANA, gastando 7 madeiras, 10 folhas e 4 pedras!");
-                        Interface.MostrarMensagem("Agora você tem um abrigo seguro e pode dormir à noite (estando nela).");
-                        Interface.Pausa(2500);
-                        avancarTempoComMensagens(ficha, 2);
-                    } else {
-                        Interface.ExibirErro("Faltam materiais! Você precisa de 7 Madeiras, 10 Folhas e 4 Pedras.");
-                        Interface.Pausa(1500);
-                    }
-                } else if (!ficha.isNaCabana()) {
-                    Interface.MostrarMensagem("\nVocê segue pelo caminho de volta para sua cabana...");
+                    Interface.ExibirErro("Você ainda não tem uma cabana!");
                     Interface.Pausa(1500);
-                    int chanceEncontro = ficha.isEhNoite() ? 50 : 30;
-                    if (MecanicasRpg.rolarDado(100) <= chanceEncontro) {
-                        Interface.MostrarMensagem("\nDurante o trajeto, algo se agita entre as árvores...");
-                        Interface.Pausa(1500);
-                        EventoAnimal(ficha);
-                        if (ficha.getVidaPersonagem() <= 0) return;
-                    }
-                    ficha.voltarParaCabana();
-                    Interface.MostrarMensagem("\nVocê chega em sua cabana, levando 1/3 do período.");
-                    Interface.Pausa(2000);
-                    avancarTempoComMensagens(ficha, 1);
+                    continue;
                 }
+                TravessiaDaFloresta.CaminharAteConstrucao(ficha, ficha.getProfundidadeCabana(), "sua CABANA");
+                if (ficha.getVidaPersonagem() <= 0) return;
                 continue;
             }
 
-            // =================== SALA DE TREINO ===================
-            if (escolha == opSala) {
+            // =================== MONTAR SALA DE TREINO ===================
+            if (escolha == opMontarSala) {
+                if (ficha.isTemSalaTreino()) {
+                    if (ficha.moverSalaTreino()) {
+                        Interface.MostrarMensagem("\nVocê constrói uma NOVA sala de treino bem aqui, gastando 10 madeiras, 15 folhas, 5 pedras e 4 couros!");
+                        Interface.MostrarMensagem("Ela agora é o ponto da construção — a antiga fica para trás.");
+                        Interface.Pausa(2500);
+                        avancarTempoComMensagens(ficha, 2);
+                        continue;
+                    }
+                    Interface.ExibirErro("Faltam materiais! Você precisa de 10 Madeiras, 15 Folhas, 5 Pedras e 4 Couros.");
+                    Interface.Pausa(1500);
+                    continue;
+                }
+                if (ficha.construirSalaTreino()) {
+                    Interface.MostrarMensagem("\nVocê constrói sua SALA DE TREINO, gastando 10 madeiras, 15 folhas, 5 pedras e 4 couros!");
+                    Interface.MostrarMensagem(mensagemLocalSala(ficha));
+                    Interface.Pausa(2500);
+                    avancarTempoComMensagens(ficha, 2);
+                    continue;
+                }
+                Interface.ExibirErro("Faltam materiais! Você precisa de 10 Madeiras, 15 Folhas, 5 Pedras e 4 Couros.");
+                Interface.Pausa(1500);
+                continue;
+            }
+
+            // =================== IR PARA A SALA DE TREINO ===================
+            if (escolha == opIrSala) {
                 if (!ficha.isTemSalaTreino()) {
-                    // Montar Sala de Treino
-                    if (ficha.construirSalaTreino()) {
-                        Interface.MostrarMensagem("\nVocê constrói sua SALA DE TREINO, gastando 10 madeiras, 15 folhas, 5 pedras e 4 couros!");
-                        if (ficha.isSalaJuntoCabana()) {
-                            Interface.MostrarMensagem("A sala ficou junto à sua cabana — estar nela não conta como ter saído.");
-                        } else if (ficha.isSalaJuntoMesa()) {
-                            Interface.MostrarMensagem("A sala ficou no mesmo local da sua mesa de magias — você usa as duas sem novo deslocamento.");
-                        } else {
-                            Interface.MostrarMensagem("A sala ficou em um local separado da cabana — para usá-la você precisa ir até lá.");
-                        }
-                        Interface.Pausa(2500);
-                        avancarTempoComMensagens(ficha, 2);
-                    } else {
-                        Interface.ExibirErro("Faltam materiais! Você precisa de 10 Madeiras, 15 Folhas, 5 Pedras e 4 Couros.");
-                        Interface.Pausa(1500);
-                    }
-                } else if (ficha.podeUsarSalaTreino()) {
-                    // Treinar na Sala de Treino
-                    if (ficha.getTreinoBonusPeriodosRestantes() > 0) {
-                        Interface.ExibirErro("Você ainda está com o bônus de treino ativo! Aguarde os " + ficha.getTreinoBonusPeriodosRestantes() + " período(s) terminarem para treinar de novo.");
-                        Interface.Pausa(1500);
-                        continue;
-                    }
-                    Interface.MostrarMensagem("\nVocê entra na sua sala de treino e se prepara para treinar durante todo o período...");
+                    Interface.ExibirErro("Você ainda não tem uma sala de treino!");
                     Interface.Pausa(1500);
-                    ficha.entrarSalaTreino();
-
-                    int unidadesFaltando = 3 - ficha.getProgressoPeriodo();
-                    avancarTempoComMensagens(ficha, unidadesFaltando);
-                    Interface.MostrarMensagem("\nVocê treina intensamente durante o período inteiro...");
-                    if (ficha.temCompanheiro()) {
-                        Interface.MostrarMensagem("Enquanto isso, " + ficha.getCompanheiro().getNome() + " aproveita para treinar junto com você.");
-                    }
-                    Interface.Pausa(2000);
-
-                    System.out.println("\nQue atributo você deseja treinar? (+2 em um atributo por 2 períodos)");
-                    System.out.println("1. Força");
-                    System.out.println("2. Destreza");
-                    System.out.println("0. Não treinar");
-                    int escolhaAtributo = Interface.lerOpcao(0, 2);
-                    if (escolhaAtributo == 1) {
-                        ficha.treinarAtributo("Força");
-                        Interface.MostrarMensagem("\nVocê treinou sua força! +2 em Força por 2 períodos.");
-                        Interface.MostrarMensagem("Bônus aplicado: Força, dano e testes de força contam o extra.");
-                    } else if (escolhaAtributo == 2) {
-                        ficha.treinarAtributo("Destreza");
-                        Interface.MostrarMensagem("\nVocê treinou sua destreza! +2 em Destreza por 2 períodos.");
-                        Interface.MostrarMensagem("Bônus aplicado: Destreza e testes de destreza contam o extra.");
-                    } else {
-                        Interface.MostrarMensagem("\nVocê decide não aplicar nenhum bônus de treino agora.");
-                    }
-                    Interface.Pausa(2000);
-                    ficha.terminarTreino();
-                } else {
-                    // Ir para a Sala de Treino (ela está longe daqui)
-                    Interface.MostrarMensagem("\nVocê segue pelo caminho que leva à sua sala de treino...");
-                    Interface.Pausa(1500);
-                    int chanceEncontro = ficha.isEhNoite() ? 50 : 30;
-                    if (MecanicasRpg.rolarDado(100) <= chanceEncontro) {
-                        Interface.MostrarMensagem("\nDurante o trajeto, algo se agita entre as árvores...");
-                        Interface.Pausa(1500);
-                        EventoAnimal(ficha);
-                        if (ficha.getVidaPersonagem() <= 0) return;
-                    }
-                    ficha.irParaSalaTreino();
-                    Interface.MostrarMensagem("\nVocê chega à sua sala de treino, levando 1/3 do período.");
-                    Interface.Pausa(2000);
-                    avancarTempoComMensagens(ficha, 1);
+                    continue;
                 }
+                TravessiaDaFloresta.CaminharAteConstrucao(ficha, ficha.getProfundidadeSalaTreino(), "sua SALA DE TREINO");
+                if (ficha.getVidaPersonagem() <= 0) return;
                 continue;
             }
 
-            // =================== MESA DE MAGIAS ===================
-            if (escolha == opMesa) {
-                if (!ficha.isTemMesaMagias()) {
-                    // Montar Mesa de Magias
-                    if (ficha.construirMesaMagias()) {
-                        Interface.MostrarMensagem("\nVocê constrói sua MESA DE MAGIAS, gastando 5 madeiras, 4 folhas, 4 pedras e 1 Pó da Fada!");
-                        if (ficha.isMesaJuntoCabana()) {
-                            Interface.MostrarMensagem("A mesa ficou junto à sua cabana — estar nela não conta como ter saído.");
-                        } else if (ficha.isMesaJuntoSala()) {
-                            Interface.MostrarMensagem("A mesa ficou no mesmo local da sua sala de treino — você usa as duas sem novo deslocamento.");
-                        } else {
-                            Interface.MostrarMensagem("A mesa ficou em um local separado, longe da cabana — para usá-la você precisa ir até lá.");
-                        }
+            // =================== TREINAR ===================
+            if (escolha == opTreinar) {
+                if (ficha.getTreinoBonusPeriodosRestantes() > 0) {
+                    Interface.ExibirErro("Você ainda está com o bônus de treino ativo! Aguarde os " + ficha.getTreinoBonusPeriodosRestantes() + " período(s) terminarem para treinar de novo.");
+                    Interface.Pausa(1500);
+                    continue;
+                }
+                Interface.MostrarMensagem("\nVocê entra na sua sala de treino e se prepara para treinar durante todo o período...");
+                Interface.Pausa(1500);
+                ficha.entrarSalaTreino();
+
+                int unidadesFaltando = 3 - ficha.getProgressoPeriodo();
+                avancarTempoComMensagens(ficha, unidadesFaltando);
+                Interface.MostrarMensagem("\nVocê treina intensamente durante o período inteiro...");
+                if (ficha.temCompanheiro()) {
+                    Interface.MostrarMensagem("Enquanto isso, " + ficha.getCompanheiro().getNome() + " aproveita para treinar junto com você.");
+                }
+                Interface.Pausa(2000);
+
+                System.out.println("\nQue atributo você deseja treinar? (+2 em um atributo por 2 períodos)");
+                System.out.println("1. Força");
+                System.out.println("2. Destreza");
+                System.out.println("0. Não treinar");
+                int escolhaAtributo = Interface.lerOpcao(0, 2);
+                if (escolhaAtributo == 1) {
+                    ficha.treinarAtributo("Força");
+                    Interface.MostrarMensagem("\nVocê treinou sua força! +2 em Força por 2 períodos.");
+                    Interface.MostrarMensagem("Bônus aplicado: Força, dano e testes de força contam o extra.");
+                } else if (escolhaAtributo == 2) {
+                    ficha.treinarAtributo("Destreza");
+                    Interface.MostrarMensagem("\nVocê treinou sua destreza! +2 em Destreza por 2 períodos.");
+                    Interface.MostrarMensagem("Bônus aplicado: Destreza e testes de destreza contam o extra.");
+                } else {
+                    Interface.MostrarMensagem("\nVocê decide não aplicar nenhum bônus de treino agora.");
+                }
+                Interface.Pausa(2000);
+                ficha.terminarTreino();
+                continue;
+            }
+
+            // =================== MONTAR MESA DE MAGIAS ===================
+            if (escolha == opMontarMesa) {
+                if (ficha.isTemMesaMagias()) {
+                    if (ficha.moverMesaMagias()) {
+                        Interface.MostrarMensagem("\nVocê constrói uma NOVA mesa de magias bem aqui, gastando 5 madeiras, 4 folhas, 4 pedras e 1 Pó da Fada!");
+                        Interface.MostrarMensagem("Ela agora é o ponto da construção — a antiga fica para trás.");
                         Interface.Pausa(2500);
                         avancarTempoComMensagens(ficha, 2);
-                    } else {
-                        Interface.ExibirErro("Faltam materiais! Você precisa de 5 Madeiras, 4 Folhas, 4 Pedras e 1 Pó da Fada.");
-                        Interface.Pausa(1500);
-                    }
-                } else if (ficha.podeUsarMesaMagias()) {
-                    // Estudar na Mesa de Magias
-                    if (ficha.getMagiaBonusPeriodosRestantes() > 0) {
-                        Interface.ExibirErro("Você ainda está sob o efeito da Mesa de Magias! Aguarde os " + ficha.getMagiaBonusPeriodosRestantes() + " período(s) terminarem para estudar de novo.");
-                        Interface.Pausa(1500);
                         continue;
                     }
-                    Interface.MostrarMensagem("\nVocê se senta na mesa de magias e dedica todo o período ao estudo...");
+                    Interface.ExibirErro("Faltam materiais! Você precisa de 5 Madeiras, 4 Folhas, 4 Pedras e 1 Pó da Fada.");
                     Interface.Pausa(1500);
-                    int unidadesFaltando = 3 - ficha.getProgressoPeriodo();
-                    avancarTempoComMensagens(ficha, unidadesFaltando);
-                    Interface.MostrarMensagem("\nVocê estuda os princípios de afiar magias durante o período inteiro.");
-                    Interface.Pausa(2000);
-                    ficha.estudarMagia();
-                    Interface.MostrarMensagem("\nVocê sente suas habilidades mais afiadas! +1 dado de dano em TODAS as suas habilidades por 2 períodos.");
-                    Interface.MostrarMensagem("O efeito vale a partir do próximo período, enquanto durar.");
-                    Interface.Pausa(2000);
-                } else {
-                    // Ir para a Mesa de Magias (ela está longe daqui)
-                    Interface.MostrarMensagem("\nVocê segue pelo caminho que leva à sua mesa de magias...");
-                    Interface.Pausa(1500);
-                    int chanceEncontro = ficha.isEhNoite() ? 50 : 30;
-                    if (MecanicasRpg.rolarDado(100) <= chanceEncontro) {
-                        Interface.MostrarMensagem("\nDurante o trajeto, algo se agita entre as árvores...");
-                        Interface.Pausa(1500);
-                        EventoAnimal(ficha);
-                        if (ficha.getVidaPersonagem() <= 0) return;
-                    }
-                    ficha.irParaMesaMagias();
-                    Interface.MostrarMensagem("\nVocê chega à sua mesa de magias, levando 1/3 do período.");
-                    Interface.Pausa(2000);
-                    avancarTempoComMensagens(ficha, 1);
+                    continue;
                 }
+                if (ficha.construirMesaMagias()) {
+                    Interface.MostrarMensagem("\nVocê constrói sua MESA DE MAGIAS, gastando 5 madeiras, 4 folhas, 4 pedras e 1 Pó da Fada!");
+                    Interface.MostrarMensagem(mensagemLocalMesa(ficha));
+                    Interface.Pausa(2500);
+                    avancarTempoComMensagens(ficha, 2);
+                    continue;
+                }
+                Interface.ExibirErro("Faltam materiais! Você precisa de 5 Madeiras, 4 Folhas, 4 Pedras e 1 Pó da Fada.");
+                Interface.Pausa(1500);
+                continue;
+            }
+
+            // =================== IR PARA A MESA DE MAGIAS ===================
+            if (escolha == opIrMesa) {
+                if (!ficha.isTemMesaMagias()) {
+                    Interface.ExibirErro("Você ainda não tem uma mesa de magias!");
+                    Interface.Pausa(1500);
+                    continue;
+                }
+                TravessiaDaFloresta.CaminharAteConstrucao(ficha, ficha.getProfundidadeMesaMagias(), "sua MESA DE MAGIAS");
+                if (ficha.getVidaPersonagem() <= 0) return;
+                continue;
+            }
+
+            // =================== ESTUDAR ===================
+            if (escolha == opEstudar) {
+                if (ficha.getMagiaBonusPeriodosRestantes() > 0) {
+                    Interface.ExibirErro("Você ainda está sob o efeito da Mesa de Magias! Aguarde os " + ficha.getMagiaBonusPeriodosRestantes() + " período(s) terminarem para estudar de novo.");
+                    Interface.Pausa(1500);
+                    continue;
+                }
+                Interface.MostrarMensagem("\nVocê se senta na mesa de magias e dedica todo o período ao estudo...");
+                Interface.Pausa(1500);
+                int unidadesFaltando = 3 - ficha.getProgressoPeriodo();
+                avancarTempoComMensagens(ficha, unidadesFaltando);
+                Interface.MostrarMensagem("\nVocê estuda os princípios de afiar magias durante o período inteiro.");
+                Interface.Pausa(2000);
+                ficha.estudarMagia();
+                Interface.MostrarMensagem("\nVocê sente suas habilidades mais afiadas! +1 dado de dano em TODAS as suas habilidades por 2 períodos.");
+                Interface.MostrarMensagem("O efeito vale a partir do próximo período, enquanto durar.");
+                Interface.Pausa(2000);
                 continue;
             }
 
@@ -467,6 +479,37 @@ public class Floresta {
 
             Interface.ExibirErro("Opção inválida!");
         }
+    }
+
+    // Descreve onde uma construção está em relação ao ponto atual do jogador.
+    private static String descreverPonto(FichaRpg ficha, int profundidadeConstrucao) {
+        int distancia = ficha.getDistanciaAte(profundidadeConstrucao);
+        if (distancia == 0) {
+            return VERDE + "você está aqui" + RESET;
+        }
+        return "a " + distancia + " período(s) de caminhada daqui";
+    }
+
+    // Mensagens de localização ao montar a sala de treino.
+    private static String mensagemLocalSala(FichaRpg ficha) {
+        if (ficha.isSalaJuntoCabana()) {
+            return "A sala ficou no mesmo ponto da sua cabana — você usa as duas sem novo deslocamento.";
+        }
+        if (ficha.isSalaJuntoMesa()) {
+            return "A sala ficou no mesmo ponto da sua mesa de magias — você usa as duas sem novo deslocamento.";
+        }
+        return "A sala ficou em um ponto separado da mata — para usá-la você precisa caminhar até lá.";
+    }
+
+    // Mensagens de localização ao montar a mesa de magias.
+    private static String mensagemLocalMesa(FichaRpg ficha) {
+        if (ficha.isMesaJuntoCabana()) {
+            return "A mesa ficou no mesmo ponto da sua cabana — você usa as duas sem novo deslocamento.";
+        }
+        if (ficha.isMesaJuntoSala()) {
+            return "A mesa ficou no mesmo ponto da sua sala de treino — você usa as duas sem novo deslocamento.";
+        }
+        return "A mesa ficou em um ponto separado da mata — para usá-la você precisa caminhar até lá.";
     }
 
     // ==================== PESSOA PERDIDA (SISTEMA DE AJUDA) ====================
