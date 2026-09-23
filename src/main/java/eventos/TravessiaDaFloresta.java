@@ -48,7 +48,7 @@ public class TravessiaDaFloresta {
 
         int caminhados = 0;
         while (caminhados < plano) {
-            percorrerUmTurno(ficha, true);
+            boolean houveAcontecimento = percorrerUmTurno(ficha, true);
             if (ficha.getVidaPersonagem() <= 0) return; // morreu no caminho
             caminhados++;
 
@@ -58,14 +58,20 @@ public class TravessiaDaFloresta {
             }
 
             if (caminhados < plano) {
-                System.out.println("\n  Você caminhou " + caminhados + " de " + plano + " período(s).");
-                System.out.println("  1. Continuar caminhando");
-                System.out.println("  2. Parar por aqui");
-                System.out.println("\n  " + VERDE + "Digite a opção:" + RESET);
-                if (Interface.lerOpcao(2) == 2) {
-                    Interface.MostrarMensagem("\nVocê decide parar de caminhar por enquanto e permanece onde parou, rodeado de árvores e mato.");
-                    Interface.Pausa(2000);
-                    return;
+                if (!houveAcontecimento) {
+                    // Nada interrompeu a marcha: segue caminhando sem perguntar.
+                    Interface.MostrarMensagem("\nNada interrompeu sua marcha. Você continua caminhando...");
+                    Interface.Pausa(1500);
+                } else {
+                    System.out.println("\n  Você caminhou " + caminhados + " de " + plano + " período(s).");
+                    System.out.println("  1. Continuar caminhando");
+                    System.out.println("  2. Parar por aqui");
+                    System.out.println("\n  " + VERDE + "Digite a opção:" + RESET);
+                    if (Interface.lerOpcao(2) == 2) {
+                        Interface.MostrarMensagem("\nVocê decide parar de caminhar por enquanto e permanece onde parou, rodeado de árvores e mato.");
+                        Interface.Pausa(2000);
+                        return;
+                    }
                 }
             } else {
                 Interface.MostrarMensagem("\nVocê caminhou os " + plano + " período(s) planejado(s) e resolve descansar por aqui por enquanto.");
@@ -119,8 +125,10 @@ public class TravessiaDaFloresta {
     }
 
     // Percorre um período da travessia (indoEmbora = afastando-se; false = voltando).
-    // Avança o tempo e, como ao explorar, há chance de encontro — porém sem achar recursos.
-    private static void percorrerUmTurno(FichaRpg ficha, boolean indoEmbora) {
+    // Avança o tempo. Voltando, sempre há um acontecimento (como ao explorar);
+    // indo mais fundo, há a mesma chance de encontro da exploração (30% de dia,
+    // 50% à noite), sem coletar recursos. Retorna true se algo aconteceu no caminho.
+    private static boolean percorrerUmTurno(FichaRpg ficha, boolean indoEmbora) {
         if (indoEmbora) {
             ficha.adicionarProfundidade(1);
         } else {
@@ -132,18 +140,30 @@ public class TravessiaDaFloresta {
                 : "\nVocê corta o mato de volta, refazendo o caminho por entre as árvores...");
         Interface.Pausa(2000);
 
-        // Mesma chance de encontro da exploração (30% de dia, 50% à noite), mas não coleta recurso
-        int chanceEncontro = ficha.isEhNoite() ? 50 : 30;
-        if (MecanicasRpg.rolarDado(100) <= chanceEncontro) {
+        boolean houveAcontecimento;
+        if (!indoEmbora) {
+            // Voltar para casa: como ao explorar, sempre há um acontecimento no caminho.
             Interface.MostrarMensagem("\nAlgo se agita entre as árvores...");
             Interface.Pausa(1500);
             Floresta.EventoAnimal(ficha);
+            houveAcontecimento = true;
         } else {
-            Interface.MostrarMensagem("\nNada acontece por aqui. O vento frio sopra entre os galhos e você segue em frente.");
-            Interface.Pausa(1500);
+            // Indo além: mesma chance de encontro da exploração (30% de dia, 50% à noite)
+            int chanceEncontro = ficha.isEhNoite() ? 50 : 30;
+            if (MecanicasRpg.rolarDado(100) <= chanceEncontro) {
+                Interface.MostrarMensagem("\nAlgo se agita entre as árvores...");
+                Interface.Pausa(1500);
+                Floresta.EventoAnimal(ficha);
+                houveAcontecimento = true;
+            } else {
+                Interface.MostrarMensagem("\nNada acontece por aqui. O vento frio sopra entre os galhos e você segue em frente.");
+                Interface.Pausa(1500);
+                houveAcontecimento = false;
+            }
         }
 
         Floresta.avancarTempoComMensagens(ficha, 1);
+        return houveAcontecimento;
     }
 
     // Chegou na borda da floresta: sorteia a cidade de destino (e a mantém na ficha).

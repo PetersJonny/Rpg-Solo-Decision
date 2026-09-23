@@ -32,7 +32,7 @@ public class Mago extends ClasseRpg {
         ));
 
         this.escolhasNivel.put(10, java.util.List.of(
-            new habilidades.ativas.HabilidadeExplosaoDePoder("Explosão de Poder", "Você escolhe quanto de mana quer gastar: cada 2 de mana causa 2d12 de dano do seu elemento em TODOS os inimigos.", 0)
+            new habilidades.ativas.HabilidadeExplosaoDePoder("Explosão de Poder", "Você escolhe quanto de mana quer gastar: cada 2 de mana causa 2d12 de dano do seu elemento em TODOS os inimigos.", 2)
         ));
     }
 
