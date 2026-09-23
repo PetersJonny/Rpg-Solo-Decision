@@ -99,30 +99,26 @@ public class TravessiaDaFloresta {
         Interface.Pausa(2000);
     }
 
-    // "Voltar para as construções": sair do vilarejo e retornar direto à floresta,
-    // no ponto das construções (o mais adiantado na travessia), num salto narrativo.
-    // Dali o jogador decide se quer caminhar até cada construção (menu de Construção).
-    public static void VoltarParaConstrucoes(FichaRpg ficha) {
-        int alvo = ficha.getProfundidadeConstrucaoMaisProxima();
-        int distancia = ficha.getProfundidadeFloresta() - alvo;
-        if (distancia <= 0) return;
+    // "Voltar para a floresta": sair do vilarejo e retornar à floresta de Freijord,
+    // na margem dela (o ponto mais afastado da travessia, por onde se saiu). Dali o
+    // jogador pode explorar, buscar recursos e caminhar até as construções como sempre
+    // fez — e, para voltar ao vilarejo, basta tentar sair da floresta outra vez.
+    public static void VoltarParaFloresta(FichaRpg ficha) {
+        if (!ficha.isNoVilarejo()) return;
 
-        Interface.MostrarMensagem("\nVocê decide voltar para as suas construções.");
-        Interface.Pausa(2000);
-        Interface.MostrarMensagem("Você retoma a trilha marcada na ida e percorre o caminho de volta pela mata sem demora, deixando a estrada do vilarejo para trás.");
+        Interface.MostrarMensagem("\nVocê decide voltar para a floresta.");
+        Interface.MostrarMensagem("Você vira as costas para a estrada do vilarejo e entra de volta na mata, parando bem na margem dela — os campos abertos ainda são visíveis por entre os troncos.");
         Interface.Pausa(2500);
 
-        // O retorno acontece num salto narrativo: chega-se direto ao ponto das
-        // construções, sem períodos extras nem acontecimentos no caminho.
-        ficha.reduzirProfundidade(distancia);
+        // O retorno deixa o jogador na margem da floresta (um passo antes de sair),
+        // conservando o ponto mais distante da travessia em vez de mandá-lo de volta
+        // para as construções. Dali ele decide quando e para onde caminhar.
+        ficha.reduzirProfundidade(ficha.getProfundidadeFloresta() - (FichaRpg.PROFUNDIDADE_PARA_SAIR - 1));
 
-        Interface.MostrarMensagem("\nAos poucos a vegetação fica conhecida de novo... suas construções aparecem entre as árvores!");
-        if (ficha.podeUsarCabana()) {
-            Interface.MostrarMensagem("Você entra em sua cabana, aliviado por estar de volta a um lugar seguro.");
-        } else if (alvo == 0) {
-            Interface.MostrarMensagem("Você está de volta ao ponto de partida, onde a mata vai se tornando familiar.");
+        if (ficha.podeUsarCabana() || ficha.podeUsarSalaTreino() || ficha.podeUsarMesaMagias()) {
+            Interface.MostrarMensagem("\nSuas construções estão exatamente neste ponto da mata, erguidas ali.");
         } else {
-            Interface.MostrarMensagem("Você está no ponto mais adiantado das suas construções. Dali, você decide se quer caminhar até cada uma delas pelo menu de Construção.");
+            Interface.MostrarMensagem("\nVocê está na margem da floresta, longe das suas construções. Dali pode explorar, buscar recursos e caminhar até elas pelo menu de Construção.");
         }
         Interface.Pausa(2500);
     }
