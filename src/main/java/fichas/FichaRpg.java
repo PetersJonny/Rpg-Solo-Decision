@@ -109,6 +109,15 @@ public class FichaRpg implements java.io.Serializable {
     private boolean labirintoEncontrado = false;
     private estruturas.Labirinto labirinto = null; // grade salva junto da ficha
 
+    // Travessia para fora da floresta: profundidade oculta ao jogador.
+    // 0 = perto das construções; 20 = fora da floresta (em uma cidade).
+    private int profundidadeFloresta = 0;
+
+    public static final int PROFUNDIDADE_PARA_SAIR = 20;
+
+    // Cidade para além da floresta onde o andarilho parou (sorteada na chegada; null = ainda não saiu)
+    private String cidadeAtual = null;
+
     // Tesouros raros do Labirinto (cada um só pode ser encontrado 1 vez)
     private boolean olhoDemonicoEncontrado = false;
     private boolean espadaMajestralEncontrada = false;
@@ -554,6 +563,28 @@ public class FichaRpg implements java.io.Serializable {
     // começa em 1% e aumenta +1% a cada dia que passa (dia 1 = 1%, dia 2 = 2%...), até no máximo 100%.
     public int getLabirintoChanceDescoberta() {
         return Math.min(diaAtual, 100);
+    }
+
+    // ==================== TRAVESSIA PARA FORA DA FLORESTA ====================
+
+    // Quão longe das construções o jogador está (0 = perto delas; PROFUNDIDADE_PARA_SAIR = fora).
+    // O valor é oculto para o jogador.
+    public int getProfundidadeFloresta() { return profundidadeFloresta; }
+
+    // Estar "no vilarejo" = ter atravessado a floresta inteira e saído dela.
+    public boolean isNoVilarejo() { return profundidadeFloresta >= PROFUNDIDADE_PARA_SAIR; }
+
+    public String getCidadeAtual() { return cidadeAtual; }
+    public void setCidadeAtual(String cidadeAtual) { this.cidadeAtual = cidadeAtual; }
+
+    // Aprofunda a travessia (1 unidade = 1/3 do período); no máximo sai da floresta.
+    public void adicionarProfundidade(int unidades) {
+        profundidadeFloresta = Math.min(PROFUNDIDADE_PARA_SAIR, profundidadeFloresta + Math.max(0, unidades));
+    }
+
+    // Reduz a profundidade ao voltar para as construções (nunca abaixo de 0).
+    public void reduzirProfundidade(int unidades) {
+        profundidadeFloresta = Math.max(0, profundidadeFloresta - Math.max(0, unidades));
     }
 
     // Sair da cabana para explorar/colher recursos (também sai da sala e da mesa)

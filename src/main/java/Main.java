@@ -192,54 +192,77 @@ public class Main {
         boolean encerrouJogo = false;
 
         while (jogando) {
-            int escolhaAventura = Interface.MenuPrincipalAventura(ficha);
             int[] ops = Interface.opcoesMenuFloresta(ficha);
 
-            if (escolhaAventura == 1) {
-                Interface.MostrarFicha(ficha);
-                boolean naFicha = true;
-                while (naFicha) {
-                    int acaoFicha = Interface.MenuFicha();
-                    if (acaoFicha == 1) {
-                        Interface.InspecionarHabilidades(ficha);
-                    } else if (acaoFicha == 2) {
-                        Interface.InspecionarInventario(ficha);
-                    } else if (acaoFicha == 3) {
-                        naFicha = false;
-                    } else {
-                        Interface.ExibirErro("Opção inválida!");
+            if (ficha.isNoVilarejo()) {
+                // ==================== VILAREJO (fora da floresta) ====================
+                int escolhaVilarejo = Interface.MenuVilarejo(ficha);
+
+                if (escolhaVilarejo == 1) {
+                    abrirFicha(ficha);
+                } else if (escolhaVilarejo == 2) {
+                    eventos.VilarejoDeScarbor.OlharEmVolta(ficha);
+                } else if (escolhaVilarejo == 3) {
+                    eventos.TravessiaDaFloresta.VoltarParaConstrucoes(ficha);
+                    if (ficha.getVidaPersonagem() <= 0) {
+                        personagemFaleceu = true;
                     }
+                } else if (escolhaVilarejo == 4) {
+                    salvarJogo(ficha);
+                } else if (escolhaVilarejo == 5) {
+                    encerrarJogo(ficha);
+                    jogando = false;
+                    encerrouJogo = true;
+                } else {
+                    Interface.ExibirErro("Opção inválida!");
                 }
-            } else if (escolhaAventura == 2) {
-                eventos.Floresta.Explorar(ficha);
-                if (ficha.getVidaPersonagem() <= 0) {
-                    personagemFaleceu = true;
-                }
-            } else if (escolhaAventura == 3) {
-                eventos.Floresta.BuscarRecursos(ficha);
-                if (ficha.getVidaPersonagem() <= 0) {
-                    personagemFaleceu = true;
-                }
-            } else if (escolhaAventura == 4) {
-                eventos.Floresta.MenuConstrucao(ficha);
-                if (ficha.getVidaPersonagem() <= 0) {
-                    personagemFaleceu = true;
-                }
-            } else if (escolhaAventura == ops[0]) {
-                estruturas.LabirintoDoMinotauro.MenuLabirinto(ficha);
-                if (ficha.getVidaPersonagem() <= 0) {
-                    personagemFaleceu = true;
-                }
-            } else if (escolhaAventura == ops[1]) {
-                eventos.Floresta.ConversarComCompanheiro(ficha);
-            } else if (escolhaAventura == ops[2]) {
-                salvarJogo(ficha);
-            } else if (escolhaAventura == ops[3]) {
-                encerrarJogo(ficha);
-                jogando = false;
-                encerrouJogo = true;
             } else {
-                Interface.ExibirErro("Opção inválida!");
+                // ==================== FLORESTA DE FREIJORD ====================
+                int escolhaAventura = Interface.MenuPrincipalAventura(ficha);
+
+                if (escolhaAventura == 1) {
+                    abrirFicha(ficha);
+                } else if (escolhaAventura == 2) {
+                    eventos.Floresta.Explorar(ficha);
+                    if (ficha.getVidaPersonagem() <= 0) {
+                        personagemFaleceu = true;
+                    }
+                } else if (escolhaAventura == 3) {
+                    eventos.Floresta.BuscarRecursos(ficha);
+                    if (ficha.getVidaPersonagem() <= 0) {
+                        personagemFaleceu = true;
+                    }
+                } else if (escolhaAventura == 4) {
+                    eventos.Floresta.MenuConstrucao(ficha);
+                    if (ficha.getVidaPersonagem() <= 0) {
+                        personagemFaleceu = true;
+                    }
+                } else if (escolhaAventura == ops[0]) {
+                    eventos.TravessiaDaFloresta.TentarSairDaFloresta(ficha);
+                    if (ficha.getVidaPersonagem() <= 0) {
+                        personagemFaleceu = true;
+                    }
+                } else if (ops[1] > 0 && escolhaAventura == ops[1]) {
+                    eventos.TravessiaDaFloresta.VoltarParaConstrucoes(ficha);
+                    if (ficha.getVidaPersonagem() <= 0) {
+                        personagemFaleceu = true;
+                    }
+                } else if (ops[2] > 0 && escolhaAventura == ops[2]) {
+                    estruturas.LabirintoDoMinotauro.MenuLabirinto(ficha);
+                    if (ficha.getVidaPersonagem() <= 0) {
+                        personagemFaleceu = true;
+                    }
+                } else if (ops[3] > 0 && escolhaAventura == ops[3]) {
+                    eventos.Floresta.ConversarComCompanheiro(ficha);
+                } else if (escolhaAventura == ops[4]) {
+                    salvarJogo(ficha);
+                } else if (escolhaAventura == ops[5]) {
+                    encerrarJogo(ficha);
+                    jogando = false;
+                    encerrouJogo = true;
+                } else {
+                    Interface.ExibirErro("Opção inválida!");
+                }
             }
 
             if (personagemFaleceu) {
@@ -268,6 +291,24 @@ public class Main {
         }
 
         return encerrouJogo;
+    }
+
+    // Fluxo de "Ver ficha": mostra a ficha e permite navegar pelas suas telas
+    private static void abrirFicha(FichaRpg ficha) {
+        Interface.MostrarFicha(ficha);
+        boolean naFicha = true;
+        while (naFicha) {
+            int acaoFicha = Interface.MenuFicha();
+            if (acaoFicha == 1) {
+                Interface.InspecionarHabilidades(ficha);
+            } else if (acaoFicha == 2) {
+                Interface.InspecionarInventario(ficha);
+            } else if (acaoFicha == 3) {
+                naFicha = false;
+            } else {
+                Interface.ExibirErro("Opção inválida!");
+            }
+        }
     }
 
     // Fluxo de "Salvar Jogo": escolhe o slot e salva

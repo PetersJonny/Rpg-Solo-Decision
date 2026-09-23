@@ -295,7 +295,9 @@ O hub do jogo é o menu **"FLORESTA DE FREIJORD"**:
 2. **Explorar a Floresta** — sempre gera um encontro (1/3 de período)
 3. **Buscar Recursos na Floresta** — coleta materiais (1/3 de período)
 4. **Construção (Dormir)** — construir/dormir
-5. **Conversar com o companheiro** / **Salvar Jogo** / **Encerrar jogo** (os números variam se você tem um companheiro)
+5. **Tentar sair da floresta** — percorre a estrada antiga em busca de um caminho para fora (veja a seção Travessia)
+6. **Voltar para as construções** — aparece quando você já se afastou pelas estradas (veja a seção Travessia)
+7. **Conversar com o companheiro** / **Salvar Jogo** / **Encerrar jogo** (os números variam se você tem um companheiro ou já encontrou o Labirinto)
 
 ### Tempo
 
@@ -328,6 +330,22 @@ Coletar recursos (ou voltar para a cabana) tem **30% de chance de gerar um encon
 2. **10%** — Vendedor ambulante
 3. **20%** — encontro secreto raro (veja o aviso de spoiler na seção de Criaturas)
 4. Senão — **uma criatura da floresta** (a tabela com os nomes é spoiler; veja a seção de Criaturas)
+
+---
+
+## Travessia (Sair da Floresta)
+
+Dizem que quem segue a **estrada antiga** por tempo suficiente acaba saindo da floresta gélida de Freijord:
+
+- A opção **"Tentar sair da floresta"** (menu principal da floresta) faz você caminhar pela estrada. Você escolhe **quantos períodos caminhar por vez** (de **1 a 3**, cada um gasta 1/3 do período) e, **após cada período**, decide se **continua caminhando ou para por aqui**.
+- Leva **20 períodos no total** para sair da floresta — mas esse **contador é oculto**: você nunca sabe o quanto falta.
+- Cada período de caminhada tem **a mesma chance de encontro da exploração** (30% de dia, 50% à noite) — só que **sem encontrar recursos**.
+- Um período gasto indo é **um período para voltar**: a opção **"Voltar para as construções"** (que aparece enquanto você está na estrada) refaz o caminho de volta na mesma quantidade de períodos.
+- Ao sair da floresta, o jogador chega a uma **cidade para além dela** (o destino é sorteado). O primeiro destino disponível é o **Vilarejo de Scarbor**. Enquanto estiver na estrada ou no vilarejo, **não dá para construir, treinar ou dormir** — é preciso voltar para as construções.
+
+### Vilarejo (fora da floresta)
+
+- O menu do vilarejo permite **Ver ficha**, **Olhar em volta** (por enquanto não há nada para descobrir lá), **Voltar para a floresta** (refaz todo o caminho de volta até as construções), **Salvar Jogo** e **Encerrar jogo**.
 
 ---
 
@@ -522,6 +540,8 @@ A melhor armadura é equipada automaticamente; as demais ficam na mochila sem ef
 │   ├── fichas/ModoDificuldade.java# Normal e Difícil
 │   ├── criaturas/                 # Criatura e CriaturaFactory (monstros e drops)
 │   ├── eventos/Floresta.java      # Exploração, encontros, construção e vendedor
+│   ├── eventos/TravessiaDaFloresta.java  # Sair da floresta pela estrada antiga
+│   ├── eventos/VilarejoDeScarbor.java    # Vila além da floresta (destino da travessia)
 │   ├── mecanicas/                 # MotorDeCombate e MecanicasRpg (dados, fórmulas)
 │   ├── habilidades/               # Habilidade e Magia
 │   ├── habilidades/ativas/        # Implementações das habilidades ativas (Command)

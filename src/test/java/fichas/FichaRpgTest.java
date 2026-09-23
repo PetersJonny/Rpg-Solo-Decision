@@ -179,4 +179,46 @@ class FichaRpgTest {
         assertTrue(ficha.isCoroaReiEncontrada());
         assertTrue(ficha.isReiDasCriaturas());
     }
+
+    @Test
+    void travessiaComecaNaProfundidadeZero() {
+        assertEquals(0, ficha.getProfundidadeFloresta());
+        assertFalse(ficha.isNoVilarejo());
+        assertNull(ficha.getCidadeAtual());
+    }
+
+    @Test
+    void adicionarProfundidadeAcumulaAteSairDaFloresta() {
+        ficha.adicionarProfundidade(5);
+        assertEquals(5, ficha.getProfundidadeFloresta());
+        assertFalse(ficha.isNoVilarejo());
+    }
+
+    @Test
+    void profundidadeMaximaLevaAoVilarejo() {
+        ficha.adicionarProfundidade(FichaRpg.PROFUNDIDADE_PARA_SAIR);
+        assertTrue(ficha.isNoVilarejo());
+        ficha.adicionarProfundidade(1);
+        assertEquals(FichaRpg.PROFUNDIDADE_PARA_SAIR, ficha.getProfundidadeFloresta(),
+                "A profundidade não pode passar do limite (fora da floresta)");
+    }
+
+    @Test
+    void reduzirProfundidadeVoltaAsConstrucoes() {
+        ficha.adicionarProfundidade(FichaRpg.PROFUNDIDADE_PARA_SAIR);
+        assertTrue(ficha.isNoVilarejo());
+        ficha.reduzirProfundidade(FichaRpg.PROFUNDIDADE_PARA_SAIR);
+        assertEquals(0, ficha.getProfundidadeFloresta());
+        assertFalse(ficha.isNoVilarejo());
+        ficha.reduzirProfundidade(10);
+        assertEquals(0, ficha.getProfundidadeFloresta(),
+                "A profundidade não pode ficar negativa");
+    }
+
+    @Test
+    void cidadeAtualEhSalvaNaFicha() {
+        assertNull(ficha.getCidadeAtual());
+        ficha.setCidadeAtual("Vilarejo de Scarbor");
+        assertEquals("Vilarejo de Scarbor", ficha.getCidadeAtual());
+    }
 }

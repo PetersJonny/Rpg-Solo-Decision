@@ -19,7 +19,7 @@ public class Floresta {
     private static final String AMARELO = Interface.AMARELO;
 
     // Avança o tempo e mostra o que aconteceu com o período (dia/noite) e o cansaço
-    private static void avancarTempoComMensagens(FichaRpg ficha, int unidades) {
+    static void avancarTempoComMensagens(FichaRpg ficha, int unidades) {
         boolean virou = ficha.avancarTempo(unidades);
         if (!virou) {
             if (ficha.getProgressoPeriodo() >= 2) {
@@ -137,6 +137,14 @@ public class Floresta {
     // ==================== CONSTRUÇÃO ====================
 
     public static void MenuConstrucao(FichaRpg ficha) {
+        // Longe da cabana e das construções (no meio da estrada para fora da floresta)
+        if (ficha.getProfundidadeFloresta() > 0) {
+            Interface.MostrarMensagem("\nVocê está distante das suas construções, no meio do caminho.");
+            Interface.MostrarMensagem("Volte pelo menu principal (Voltar para as construções) antes de construir, treinar ou dormir.");
+            Interface.Pausa(2500);
+            return;
+        }
+
         while (true) {
             Interface.cabecalhoMenu("C O N S T R U Ç Ã O");
 
@@ -581,7 +589,7 @@ public class Floresta {
 
     // ==================== SORTEIO DE ENCONTRO ====================
 
-    private static void EventoAnimal(FichaRpg ficha) {
+    static void EventoAnimal(FichaRpg ficha) {
         Interface.MostrarMensagem("\nAlgo se move por entre as árvores...");
         Interface.Pausa(2500);
 

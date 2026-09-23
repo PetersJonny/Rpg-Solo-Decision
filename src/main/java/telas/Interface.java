@@ -341,16 +341,20 @@ public class Interface {
         return lerOpcao(2) == 1;
     }
 
-    // Números das opções dinâmicas do menu da floresta: {Labirinto, Conversar, Salvar, Encerrar}.
+    // Números das opções dinâmicas do menu da floresta:
+    // {Viajar, VoltarP/Construções, Labirinto, Conversar, Salvar, Encerrar}.
     // É a única fonte da numeração, usada tanto para imprimir quanto para o Main interpretar a escolha.
     public static int[] opcoesMenuFloresta(FichaRpg ficha) {
         int num = 5;
+        int opViajar = num++; // sempre disponível: "Tentar sair da floresta" (ou continuar, se já estiver na estrada)
+        int opVoltar = -1;
+        if (ficha.getProfundidadeFloresta() > 0) opVoltar = num++;
         int opLabirinto = -1, opConversar = -1;
         if (ficha.isLabirintoDisponivel()) opLabirinto = num++;
         if (ficha.temCompanheiro()) opConversar = num++;
         int opSalvar = num++;
         int opEncerrar = num++;
-        return new int[]{opLabirinto, opConversar, opSalvar, opEncerrar};
+        return new int[]{opViajar, opVoltar, opLabirinto, opConversar, opSalvar, opEncerrar};
     }
 
     public static int MenuPrincipalAventura(FichaRpg ficha) {
@@ -372,16 +376,47 @@ public class Interface {
         System.out.println("  2. Explorar a Floresta");
         System.out.println("  3. Buscar Recursos na Floresta");
         System.out.println("  4. Construção (Dormir)");
-        if (ops[0] > 0) {
-            System.out.println("  " + ops[0] + ". Labirinto");
+        if (ficha.getProfundidadeFloresta() > 0) {
+            System.out.println("  " + ops[0] + ". Continuar tentando sair da floresta");
+        } else {
+            System.out.println("  " + ops[0] + ". Tentar sair da floresta");
         }
         if (ops[1] > 0) {
-            System.out.println("  " + ops[1] + ". Conversar com " + ficha.getCompanheiro().getNome());
+            System.out.println("  " + ops[1] + ". Voltar para as construções");
         }
-        System.out.println("  " + ops[2] + ". Salvar Jogo");
-        System.out.println("  " + ops[3] + ". Encerrar jogo");
+        if (ops[2] > 0) {
+            System.out.println("  " + ops[2] + ". Labirinto");
+        }
+        if (ops[3] > 0) {
+            System.out.println("  " + ops[3] + ". Conversar com " + ficha.getCompanheiro().getNome());
+        }
+        System.out.println("  " + ops[4] + ". Salvar Jogo");
+        System.out.println("  " + ops[5] + ". Encerrar jogo");
         System.out.println("\n  " + VERDE + "Digite a opção:" + RESET);
-        return lerOpcao(1, ops[3]);
+        return lerOpcao(1, ops[5]);
+    }
+
+    // Menu do vilarejo (para além da floresta). Por enquanto é um lugar sem
+    // eventos: olhar em volta não encontra nada, e é preciso voltar à floresta.
+    public static int MenuVilarejo(FichaRpg ficha) {
+        System.out.println("\n");
+        String cidade = ficha.getCidadeAtual() != null ? ficha.getCidadeAtual().toUpperCase() : "VILAREJO DE SCARBOR";
+        cabecalhoMenu(cidade);
+
+        String periodo = ficha.getPeriodoDescritivoMaiusculo();
+        System.out.println("\n  Período: " + AMARELO + periodo + RESET + "  (" + (3 - ficha.getProgressoPeriodo()) + "/3 para virar)" + (ficha.isCansado() ? "  |  " + AMARELO + "CANSADO (-1 em testes até dormir)" + RESET : ""));
+        if (ficha.temCompanheiro()) {
+            System.out.println("  Companheiro(a): " + CIANO + ficha.getCompanheiro().getNome() + RESET + " (" + ficha.getCompanheiro().getClasseNome() + ", Nível " + ficha.getCompanheiro().getFicha().getNivel() + ")");
+        }
+        System.out.println("\n  O que você deseja fazer?\n");
+
+        System.out.println("  1. Ver ficha");
+        System.out.println("  2. Olhar em volta");
+        System.out.println("  3. Voltar para a floresta (de volta às construções)");
+        System.out.println("  4. Salvar Jogo");
+        System.out.println("  5. Encerrar jogo");
+        System.out.println("\n  " + VERDE + "Digite a opção:" + RESET);
+        return lerOpcao(1, 5);
     }
 
     // Interação com a Ficha
