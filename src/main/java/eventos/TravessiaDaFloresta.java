@@ -99,35 +99,37 @@ public class TravessiaDaFloresta {
         Interface.Pausa(2000);
     }
 
-    // "Voltar para as construções": percorre de volta até a construção mais
-    // adiantada na travessia (a mais próxima de quem volta de fora da floresta).
+    // "Voltar para as construções": sair do vilarejo e retornar direto à floresta,
+    // no ponto das construções (o mais adiantado na travessia), num salto narrativo.
+    // Dali o jogador decide se quer caminhar até cada construção (menu de Construção).
     public static void VoltarParaConstrucoes(FichaRpg ficha) {
         int alvo = ficha.getProfundidadeConstrucaoMaisProxima();
-        int tempo = ficha.getProfundidadeFloresta() - alvo;
-        if (tempo <= 0) return;
+        int distancia = ficha.getProfundidadeFloresta() - alvo;
+        if (distancia <= 0) return;
 
         Interface.MostrarMensagem("\nVocê decide voltar para as suas construções.");
-        Interface.MostrarMensagem("Será preciso gastar " + tempo + " período(s) de caminhada para chegar lá.");
+        Interface.Pausa(2000);
+        Interface.MostrarMensagem("Você retoma a trilha marcada na ida e percorre o caminho de volta pela mata sem demora, deixando a estrada do vilarejo para trás.");
         Interface.Pausa(2500);
 
-        while (ficha.getProfundidadeFloresta() > alvo && ficha.getVidaPersonagem() > 0) {
-            percorrerUmTurno(ficha, false);
-        }
-        if (ficha.getVidaPersonagem() <= 0) return;
+        // O retorno acontece num salto narrativo: chega-se direto ao ponto das
+        // construções, sem períodos extras nem acontecimentos no caminho.
+        ficha.reduzirProfundidade(distancia);
 
         Interface.MostrarMensagem("\nAos poucos a vegetação fica conhecida de novo... suas construções aparecem entre as árvores!");
         if (ficha.podeUsarCabana()) {
             Interface.MostrarMensagem("Você entra em sua cabana, aliviado por estar de volta a um lugar seguro.");
+        } else if (alvo == 0) {
+            Interface.MostrarMensagem("Você está de volta ao ponto de partida, onde a mata vai se tornando familiar.");
         } else {
-            Interface.MostrarMensagem("Você está de volta ao ponto das suas construções.");
+            Interface.MostrarMensagem("Você está no ponto mais adiantado das suas construções. Dali, você decide se quer caminhar até cada uma delas pelo menu de Construção.");
         }
         Interface.Pausa(2500);
     }
 
     // Percorre um período da travessia (indoEmbora = afastando-se; false = voltando).
-    // Avança o tempo. Voltando, sempre há um acontecimento (como ao explorar);
-    // indo mais fundo, há a mesma chance de encontro da exploração (30% de dia,
-    // 50% à noite), sem coletar recursos. Retorna true se algo aconteceu no caminho.
+    // Avança o tempo. Nos dois sentidos há a mesma chance de encontro da exploração
+    // (30% de dia, 50% à noite), sem coletar recursos. Retorna true se algo aconteceu.
     private static boolean percorrerUmTurno(FichaRpg ficha, boolean indoEmbora) {
         if (indoEmbora) {
             ficha.adicionarProfundidade(1);
@@ -140,26 +142,18 @@ public class TravessiaDaFloresta {
                 : "\nVocê corta o mato de volta, refazendo o caminho por entre as árvores...");
         Interface.Pausa(2000);
 
+        // Mesma chance de encontro da exploração (30% de dia, 50% à noite), nos dois sentidos
         boolean houveAcontecimento;
-        if (!indoEmbora) {
-            // Voltar para casa: como ao explorar, sempre há um acontecimento no caminho.
+        int chanceEncontro = ficha.isEhNoite() ? 50 : 30;
+        if (MecanicasRpg.rolarDado(100) <= chanceEncontro) {
             Interface.MostrarMensagem("\nAlgo se agita entre as árvores...");
             Interface.Pausa(1500);
             Floresta.EventoAnimal(ficha);
             houveAcontecimento = true;
         } else {
-            // Indo além: mesma chance de encontro da exploração (30% de dia, 50% à noite)
-            int chanceEncontro = ficha.isEhNoite() ? 50 : 30;
-            if (MecanicasRpg.rolarDado(100) <= chanceEncontro) {
-                Interface.MostrarMensagem("\nAlgo se agita entre as árvores...");
-                Interface.Pausa(1500);
-                Floresta.EventoAnimal(ficha);
-                houveAcontecimento = true;
-            } else {
-                Interface.MostrarMensagem("\nNada acontece por aqui. O vento frio sopra entre os galhos e você segue em frente.");
-                Interface.Pausa(1500);
-                houveAcontecimento = false;
-            }
+            Interface.MostrarMensagem("\nNada acontece por aqui. O vento frio sopra entre os galhos e você segue em frente.");
+            Interface.Pausa(1500);
+            houveAcontecimento = false;
         }
 
         Floresta.avancarTempoComMensagens(ficha, 1);
@@ -176,7 +170,12 @@ public class TravessiaDaFloresta {
         if (ficha.getCidadeAtual() == null) {
             ficha.setCidadeAtual(sortearDestino());
         }
-        Interface.MostrarMensagem("\nVocê chega ao " + CIANO + ficha.getCidadeAtual() + RESET + ".");
+
+        // A chegada é anunciada por um grande letreiro na entrada, descrito na
+        // narração (sem renderizar um letreiro literal na tela).
+        Interface.MostrarMensagem("\nVocê segue pela estrada de terra até a entrada do lugar. Na beira do caminho, um grande letreiro de madeira ergue-se do mato, com letras firmes gravadas no tronco envelhecido.");
+        Interface.Pausa(2000);
+        Interface.MostrarMensagem("O letreiro anuncia o nome da cidade: " + CIANO + ficha.getCidadeAtual() + RESET + ". Você chegou.");
         Interface.Pausa(2500);
     }
 
