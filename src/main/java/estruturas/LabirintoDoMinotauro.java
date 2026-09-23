@@ -79,6 +79,9 @@ public class LabirintoDoMinotauro {
             return;
         }
 
+        // Vir ao labirinto conta como ter saído da cabana/sala/mesa em que estava
+        ficha.sairDaCabana();
+
         while (true) {
             Interface.cabecalhoMenu("LABIRINTO");
 

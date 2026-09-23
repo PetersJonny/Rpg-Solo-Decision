@@ -100,6 +100,10 @@ public class FichaRpg implements java.io.Serializable {
     // Mesa de Magias
     private boolean temMesaMagias = false;
     private int magiaBonusPeriodosRestantes = 0;
+    private boolean naMesaMagias = false; // se o jogador está junto da mesa
+    private boolean mesaJuntoCabana = false; // se a mesa foi construída estando na cabana
+    private boolean mesaJuntoSala = false; // se a mesa foi construída estando na sala de treino
+    private boolean salaJuntoMesa = false; // se a sala foi construída estando na mesa de magias
 
     // Estruturas encontradas na floresta (só podem ser descobertas explorando)
     private boolean labirintoEncontrado = false;
@@ -460,6 +464,61 @@ public class FichaRpg implements java.io.Serializable {
     public boolean isTemMesaMagias() { return temMesaMagias; }
     public int getMagiaBonusPeriodosRestantes() { return magiaBonusPeriodosRestantes; }
     public boolean isMagiaBonusAtivo() { return magiaBonusPeriodosRestantes > 0; }
+    public boolean isNaMesaMagias() { return naMesaMagias; }
+    public boolean isMesaJuntoCabana() { return mesaJuntoCabana; }
+    public boolean isMesaJuntoSala() { return mesaJuntoSala; }
+    public boolean isSalaJuntoMesa() { return salaJuntoMesa; }
+
+    // Localização (id) em que o jogador está: 0 = cabana, 1 = local da sala de
+    // treino, 2 = local da mesa de magias, 3 = floresta. Estruturas construídas
+    // no mesmo local compartilham o id: estando em uma delas, as vizinhas ficam
+    // acessíveis sem novo deslocamento.
+    public int getLocalizacaoAtual() {
+        if (naMesaMagias) return getLocalizacaoMesa();
+        if (naSalaTreino) return getLocalizacaoSala();
+        if (naCabana) return 0;
+        return 3;
+    }
+
+    // Localização da sala de treino (0 = junto à cabana; ou o local da mesa,
+    // se ela foi construída na mesa; ou o local próprio dela).
+    public int getLocalizacaoSala() {
+        if (salaJuntoCabana) return 0;
+        if (salaJuntoMesa) return getLocalizacaoMesaDireta();
+        return 1;
+    }
+
+    // Localização da mesa de magias (0 = junto à cabana; ou o local da sala,
+    // se ela foi construída na sala; ou o local próprio dela).
+    public int getLocalizacaoMesa() {
+        if (mesaJuntoCabana) return 0;
+        if (mesaJuntoSala) return getLocalizacaoSalaDireta();
+        return 2;
+    }
+
+    private int getLocalizacaoSalaDireta() {
+        if (salaJuntoCabana) return 0;
+        if (salaJuntoMesa) {
+            if (mesaJuntoCabana) return 0;
+            if (mesaJuntoSala) return 1;
+            return 2;
+        }
+        return 1;
+    }
+
+    private int getLocalizacaoMesaDireta() {
+        if (mesaJuntoCabana) return 0;
+        if (mesaJuntoSala) {
+            if (salaJuntoCabana) return 0;
+            if (salaJuntoMesa) return 2;
+            return 1;
+        }
+        return 2;
+    }
+
+    public boolean podeUsarCabana() { return temCabana && getLocalizacaoAtual() == 0; }
+    public boolean podeUsarSalaTreino() { return temSalaTreino && getLocalizacaoAtual() == getLocalizacaoSala(); }
+    public boolean podeUsarMesaMagias() { return temMesaMagias && getLocalizacaoAtual() == getLocalizacaoMesa(); }
 
     public boolean isLabirintoEncontrado() { return labirintoEncontrado; }
     public void setLabirintoEncontrado(boolean labirintoEncontrado) { this.labirintoEncontrado = labirintoEncontrado; }
@@ -497,12 +556,13 @@ public class FichaRpg implements java.io.Serializable {
         return Math.min(diaAtual, 100);
     }
 
-    // Sair da cabana para explorar/colher recursos (também sai da sala de treino)
+    // Sair da cabana para explorar/colher recursos (também sai da sala e da mesa)
     public void sairDaCabana() {
         if (temCabana) {
             naCabana = false;
         }
         naSalaTreino = false;
+        naMesaMagias = false;
     }
 
     // Voltar para a cabana (custa 1/3 do período)
@@ -511,6 +571,23 @@ public class FichaRpg implements java.io.Serializable {
             naCabana = true;
         }
         naSalaTreino = false;
+        naMesaMagias = false;
+    }
+
+    // Ir até a sala de treino (custa 1/3 do período): quem está nela passa a
+    // estar no local da sala (que pode ser junto à cabana, se for o caso).
+    public void irParaSalaTreino() {
+        naSalaTreino = true;
+        naMesaMagias = false;
+        naCabana = salaJuntoCabana;
+    }
+
+    // Ir até a mesa de magias (custa 1/3 do período): quem está nela passa a
+    // estar no local da mesa (que pode ser junto à cabana, se for o caso).
+    public void irParaMesaMagias() {
+        naMesaMagias = true;
+        naSalaTreino = false;
+        naCabana = mesaJuntoCabana;
     }
 
     // Avança o tempo do período (dia ou noite); a cada 3 unidades o período vira.
@@ -562,6 +639,7 @@ public class FichaRpg implements java.io.Serializable {
         diaAtual++;
         diasSemDormir = 0;
         cansado = false;
+        naMesaMagias = false;
         registrarDormidaDoCompanheiro();
         return true;
     }
@@ -579,6 +657,7 @@ public class FichaRpg implements java.io.Serializable {
         temCabana = true;
         naCabana = true;
         naSalaTreino = false;
+        naMesaMagias = false;
         return true;
     }
 
@@ -596,7 +675,9 @@ public class FichaRpg implements java.io.Serializable {
         removerItem("Couro", 4);
         temSalaTreino = true;
         salaJuntoCabana = naCabana;
+        salaJuntoMesa = !naCabana && naMesaMagias && temMesaMagias;
         naSalaTreino = true;
+        naMesaMagias = false;
         return true;
     }
 
@@ -604,6 +685,7 @@ public class FichaRpg implements java.io.Serializable {
     // o jogador continua considerado "na cabana"; caso contrário, ela fica longe.
     public void entrarSalaTreino() {
         naSalaTreino = true;
+        naMesaMagias = false;
         if (salaJuntoCabana) {
             naCabana = true;
         } else {
@@ -620,6 +702,7 @@ public class FichaRpg implements java.io.Serializable {
     // Depois de treinar o período inteiro: se a sala for junto da cabana,
     // o jogador permanece na cabana; caso contrário, continua na sala.
     public void terminarTreino() {
+        naMesaMagias = false;
         if (salaJuntoCabana) {
             naCabana = true;
             naSalaTreino = false;
@@ -641,6 +724,15 @@ public class FichaRpg implements java.io.Serializable {
         removerItem("Pedra", 4);
         removerItem("Pó da Fada", 1);
         temMesaMagias = true;
+        mesaJuntoCabana = naCabana;
+        mesaJuntoSala = !naCabana && naSalaTreino && temSalaTreino;
+        naMesaMagias = true;
+        naSalaTreino = false;
+        if (mesaJuntoCabana) {
+            naCabana = true;
+        } else {
+            naCabana = false;
+        }
         return true;
     }
 

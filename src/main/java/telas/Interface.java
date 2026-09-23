@@ -542,8 +542,14 @@ public class Interface {
         System.out.println("    Cabana: " + cabanaStatus + " | Dias sem dormir: " + ficha.getDiasSemDormir() + (ficha.isCansado() ? " (CANSADO: -1 em testes)" : ""));
         String salaStatus = !ficha.isTemSalaTreino()
                 ? "Não construída"
-                : (ficha.isSalaJuntoCabana() ? "Construída (junto à cabana)" : "Construída (longe da cabana)");
+                : (ficha.isSalaJuntoCabana() ? "Construída (junto à cabana)"
+                    : ficha.isSalaJuntoMesa() ? "Construída (junto à mesa)" : "Construída (longe da cabana)");
         System.out.println("    Sala de Treino: " + salaStatus + (ficha.isNaSalaTreino() ? " (você está nela)" : "") + (ficha.getTreinoBonusPeriodosRestantes() > 0 ? " | Bônus de treino: +2 em " + ficha.getTreinoBonusAtributo() + " (restam " + ficha.getTreinoBonusPeriodosRestantes() + " períodos)" : ""));
+        String mesaStatus = !ficha.isTemMesaMagias()
+                ? "Não construída"
+                : (ficha.isMesaJuntoCabana() ? "Construída (junto à cabana)"
+                    : ficha.isMesaJuntoSala() ? "Construída (junto à sala)" : "Construída (longe da cabana)");
+        System.out.println("    Mesa de Magias: " + mesaStatus + (ficha.isNaMesaMagias() ? " (você está nela)" : "") + (ficha.getMagiaBonusPeriodosRestantes() > 0 ? " | Bônus de estudo: +1 dado de dano (restam " + ficha.getMagiaBonusPeriodosRestantes() + " períodos)" : ""));
 
         System.out.println("\n  " + CIANO + "[ INVENTÁRIO ]" + RESET);
         if (ficha.getInventario().isEmpty()) {

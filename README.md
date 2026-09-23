@@ -338,16 +338,19 @@ Coletar recursos (ou voltar para a cabana) tem **30% de chance de gerar um encon
 - **Custo:** 7 Madeira + 10 Folha + 4 Pedra (2/3 de período)
 - Permite **dormir à noite** (recupera **metade da vida e metade da mana**) e zera o cansaço.
 - É o pré-requisito para receber visitas (veja a seção de Companheiros).
+- Sair da cabana para a floresta (explorar/recursos) ou **ir ao Labirinto** conta como **não estar mais nela** — voltar para ela custa 1/3 de período.
 
 ### Sala de Treino
 
 - **Custo:** 10 Madeira + 15 Folha + 5 Pedra + 4 **Couro** (2/3 de período; o Couro vem de criaturas — veja spoiler na seção de Criaturas)
 - **Treinar:** gasta o período restante e dá **+2 em Força ou Destreza por 2 períodos** (reativa a cada novo treino). O bônus vale para dano, acerto, iniciativa e testes.
+- **Localização:** a sala fica **junto à cabana** se for construída estando nela (ou **junto à mesa de magias**, se for construída estando nela). Caso contrário ela fica em **um local separado** — para treinar é preciso **ir até a sala** (1/3 de período), não dá para usar de longe. Estando em um local que também tenha a mesa, as duas ficam acessíveis sem novo deslocamento.
 
 ### Mesa de Magias
 
 - **Custo:** 5 Madeira + 4 Folha + 4 Pedra + 1 **Pó da Fada** (2/3 de período; o Pó da Fada vem de um encontro secreto — veja spoiler na seção de Criaturas)
 - **Estudar:** gasta o período restante e dá **+1 dado de dano em TODAS as habilidades de dano por 2 períodos** (magias, Estrondo, Giro e Explosão de Poder). O efeito vale os 2 períodos seguintes ao estudo (estudou de dia → vale na noite + no dia seguinte; estudou de noite → vale no dia + na noite seguinte). Não dá para estudar de novo enquanto o bônus estiver ativo.
+- **Localização:** a mesa fica **junto à cabana** se for construída estando nela, ou **junto à sala de treino** se for construída estando nela. Caso contrário ela fica em **um local separado** — para estudar é preciso **ir até a mesa** (1/3 de período), não dá para usar de longe. Estando em um local que também tenha a sala, as duas ficam acessíveis sem novo deslocamento.
 
 ---
 
@@ -357,6 +360,7 @@ Coletar recursos (ou voltar para a cabana) tem **30% de chance de gerar um encon
 
 - **Como encontrar:** apenas **explorando a floresta**. A chance começa em **1%** por exploração e aumenta **+1% a cada dia** que passa (até 100%). Uma vez encontrado, não é sorteado de novo.
 - Ao descobrir a entrada, o jogador escolhe **entrar agora** ou **não entrar** — se não entrar, o local fica acessível pelo menu principal (como as construções), na opção **Labirinto**.
+- Ir ao labirinto (pelo menu) conta como **ter saído** da cabana/sala/mesa em que se estava — ao voltar, o jogador está na floresta.
 - Ao entrar, a interface vira sobre o labirinto (apenas **ver a ficha** continua disponível).
 - **O caminho é randomizado na descoberta e salvo na ficha** — ao voltar depois, continua exatamente de onde parou (células visitadas permanecem iluminadas).
 - **Navegação:** a tela mostra apenas a grade ao redor do personagem — as **laterais/paredes** onde você está (`##`) e os corredores vizinhos (`.`) — mais o que **já foi percorrido** (iluminado `·`) e sua posição (`@`). O resto do labirinto fica escuro, inclusive o centro (visível apenas enquanto se explora). Movimento via **W/A/S/D ou as setas do teclado** (↑ ↓ ← →) — executa no momento da tecla, **sem Enter**; qualquer outra tecla (número, caractere etc.) não faz nada. Uma câmera acompanha o personagem para que o labirinto (grade 31x31, bem maior) caiba na tela.

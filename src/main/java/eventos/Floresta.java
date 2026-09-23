@@ -145,8 +145,13 @@ public class Floresta {
             System.out.println("\n  Período: " + AMARELO + periodo + RESET + "  (" + (3 - ficha.getProgressoPeriodo()) + "/3 para virar)");
 
             String local;
-            if (ficha.isNaSalaTreino()) {
-                String tipoSala = ficha.isSalaJuntoCabana() ? "junto à cabana" : "longe da cabana";
+            if (ficha.isNaMesaMagias()) {
+                String tipoMesa = ficha.isMesaJuntoCabana() ? "junto à cabana"
+                        : ficha.isMesaJuntoSala() ? "junto à sala de treino" : "longe da cabana";
+                local = "NA MESA DE MAGIAS (" + tipoMesa + ")";
+            } else if (ficha.isNaSalaTreino()) {
+                String tipoSala = ficha.isSalaJuntoCabana() ? "junto à cabana"
+                        : ficha.isSalaJuntoMesa() ? "junto à mesa de magias" : "longe da cabana";
                 local = "NA SALA DE TREINO (" + tipoSala + ")";
             } else if (ficha.isNaCabana() && ficha.isTemCabana()) {
                 local = "NA CABANA";
@@ -179,6 +184,10 @@ public class Floresta {
                     + ficha.getQuantidadeDe("Couro") + "/4x Couro");
             if (!ficha.isTemSalaTreino()) {
                 System.out.println("  Informação: Gasta 2/3 do período para montar.");
+            } else {
+                String localSala = ficha.isSalaJuntoCabana() ? "junto à cabana"
+                        : ficha.isSalaJuntoMesa() ? "junto à mesa de magias" : "longe da cabana";
+                System.out.println("  Localização: " + localSala + " — só usa estando nela (ou vá até ela)");
             }
 
             // ===================== MESA DE MAGIAS =====================
@@ -190,6 +199,10 @@ public class Floresta {
                     + ficha.getQuantidadeDe("Pó da Fada") + "/1x Pó da Fada");
             if (!ficha.isTemMesaMagias()) {
                 System.out.println("  Informação: Gasta 2/3 do período para montar.");
+            } else {
+                String localMesa = ficha.isMesaJuntoCabana() ? "junto à cabana"
+                        : ficha.isMesaJuntoSala() ? "junto à sala de treino" : "longe da cabana";
+                System.out.println("  Localização: " + localMesa + " — só usa estando nela (ou vá até ela)");
             }
 
             if (ficha.getTreinoBonusPeriodosRestantes() > 0) {
@@ -218,24 +231,30 @@ public class Floresta {
             if (!ficha.isTemSalaTreino()) {
                 System.out.println("  " + num + ". Montar Sala de Treino  (10x Madeira, 15x Folha, 5x Pedra, 4x Couro — 2/3 do período)");
                 opSala = num++;
-            } else if (ficha.getTreinoBonusPeriodosRestantes() <= 0) {
+            } else if (ficha.getTreinoBonusPeriodosRestantes() > 0) {
+                System.out.println("  " + AMARELO + "  • Treinando... (faltam " + ficha.getTreinoBonusPeriodosRestantes() + " períodos para treinar novamente)" + RESET);
+            } else if (ficha.podeUsarSalaTreino()) {
                 System.out.println("  " + num + ". Treinar na Sala de Treino  (período inteiro; +2 em Força ou Destreza por 2 períodos)");
                 opSala = num++;
             } else {
-                System.out.println("  " + AMARELO + "  • Treinando... (faltam " + ficha.getTreinoBonusPeriodosRestantes() + " períodos para treinar novamente)" + RESET);
+                System.out.println("  " + num + ". Ir para a Sala de Treino  (1/3 do período)");
+                opSala = num++;
             }
 
             if (!ficha.isTemMesaMagias()) {
                 System.out.println("  " + num + ". Montar Mesa de Magias  (5x Madeira, 4x Folha, 4x Pedra, 1x Pó da Fada — 2/3 do período)");
                 opMesa = num++;
-            } else if (ficha.getMagiaBonusPeriodosRestantes() <= 0) {
+            } else if (ficha.getMagiaBonusPeriodosRestantes() > 0) {
+                System.out.println("  " + AMARELO + "  • Estudando... (faltam " + ficha.getMagiaBonusPeriodosRestantes() + " períodos para estudar novamente)" + RESET);
+            } else if (ficha.podeUsarMesaMagias()) {
                 System.out.println("  " + num + ". Estudar na Mesa de Magias  (período inteiro; +1 dado de dano em habilidades por 2 períodos)");
                 opMesa = num++;
             } else {
-                System.out.println("  " + AMARELO + "  • Estudando... (faltam " + ficha.getMagiaBonusPeriodosRestantes() + " períodos para estudar novamente)" + RESET);
+                System.out.println("  " + num + ". Ir para a Mesa de Magias  (1/3 do período)");
+                opMesa = num++;
             }
 
-            if (ficha.isTemCabana()) {
+            if (ficha.isTemCabana() && ficha.isNaCabana()) {
                 System.out.println("  " + num + ". Dormir  (só à noite, na cabana; recupera metade da vida e mana)");
                 opDormir = num++;
             }
@@ -283,8 +302,10 @@ public class Floresta {
                         Interface.MostrarMensagem("\nVocê constrói sua SALA DE TREINO, gastando 10 madeiras, 15 folhas, 5 pedras e 4 couros!");
                         if (ficha.isSalaJuntoCabana()) {
                             Interface.MostrarMensagem("A sala ficou junto à sua cabana — estar nela não conta como ter saído.");
+                        } else if (ficha.isSalaJuntoMesa()) {
+                            Interface.MostrarMensagem("A sala ficou no mesmo local da sua mesa de magias — você usa as duas sem novo deslocamento.");
                         } else {
-                            Interface.MostrarMensagem("A sala ficou em um local separado da cabana.");
+                            Interface.MostrarMensagem("A sala ficou em um local separado da cabana — para usá-la você precisa ir até lá.");
                         }
                         Interface.Pausa(2500);
                         avancarTempoComMensagens(ficha, 2);
@@ -292,7 +313,7 @@ public class Floresta {
                         Interface.ExibirErro("Faltam materiais! Você precisa de 10 Madeiras, 15 Folhas, 5 Pedras e 4 Couros.");
                         Interface.Pausa(1500);
                     }
-                } else {
+                } else if (ficha.podeUsarSalaTreino()) {
                     // Treinar na Sala de Treino
                     if (ficha.getTreinoBonusPeriodosRestantes() > 0) {
                         Interface.ExibirErro("Você ainda está com o bônus de treino ativo! Aguarde os " + ficha.getTreinoBonusPeriodosRestantes() + " período(s) terminarem para treinar de novo.");
@@ -329,6 +350,21 @@ public class Floresta {
                     }
                     Interface.Pausa(2000);
                     ficha.terminarTreino();
+                } else {
+                    // Ir para a Sala de Treino (ela está longe daqui)
+                    Interface.MostrarMensagem("\nVocê segue pelo caminho que leva à sua sala de treino...");
+                    Interface.Pausa(1500);
+                    int chanceEncontro = ficha.isEhNoite() ? 50 : 30;
+                    if (MecanicasRpg.rolarDado(100) <= chanceEncontro) {
+                        Interface.MostrarMensagem("\nDurante o trajeto, algo se agita entre as árvores...");
+                        Interface.Pausa(1500);
+                        EventoAnimal(ficha);
+                        if (ficha.getVidaPersonagem() <= 0) return;
+                    }
+                    ficha.irParaSalaTreino();
+                    Interface.MostrarMensagem("\nVocê chega à sua sala de treino, levando 1/3 do período.");
+                    Interface.Pausa(2000);
+                    avancarTempoComMensagens(ficha, 1);
                 }
                 continue;
             }
@@ -339,14 +375,20 @@ public class Floresta {
                     // Montar Mesa de Magias
                     if (ficha.construirMesaMagias()) {
                         Interface.MostrarMensagem("\nVocê constrói sua MESA DE MAGIAS, gastando 5 madeiras, 4 folhas, 4 pedras e 1 Pó da Fada!");
-                        Interface.MostrarMensagem("Agora você pode estudar magia nela, gastando o período inteiro.");
+                        if (ficha.isMesaJuntoCabana()) {
+                            Interface.MostrarMensagem("A mesa ficou junto à sua cabana — estar nela não conta como ter saído.");
+                        } else if (ficha.isMesaJuntoSala()) {
+                            Interface.MostrarMensagem("A mesa ficou no mesmo local da sua sala de treino — você usa as duas sem novo deslocamento.");
+                        } else {
+                            Interface.MostrarMensagem("A mesa ficou em um local separado, longe da cabana — para usá-la você precisa ir até lá.");
+                        }
                         Interface.Pausa(2500);
                         avancarTempoComMensagens(ficha, 2);
                     } else {
                         Interface.ExibirErro("Faltam materiais! Você precisa de 5 Madeiras, 4 Folhas, 4 Pedras e 1 Pó da Fada.");
                         Interface.Pausa(1500);
                     }
-                } else {
+                } else if (ficha.podeUsarMesaMagias()) {
                     // Estudar na Mesa de Magias
                     if (ficha.getMagiaBonusPeriodosRestantes() > 0) {
                         Interface.ExibirErro("Você ainda está sob o efeito da Mesa de Magias! Aguarde os " + ficha.getMagiaBonusPeriodosRestantes() + " período(s) terminarem para estudar de novo.");
@@ -363,6 +405,21 @@ public class Floresta {
                     Interface.MostrarMensagem("\nVocê sente suas habilidades mais afiadas! +1 dado de dano em TODAS as suas habilidades por 2 períodos.");
                     Interface.MostrarMensagem("O efeito vale a partir do próximo período, enquanto durar.");
                     Interface.Pausa(2000);
+                } else {
+                    // Ir para a Mesa de Magias (ela está longe daqui)
+                    Interface.MostrarMensagem("\nVocê segue pelo caminho que leva à sua mesa de magias...");
+                    Interface.Pausa(1500);
+                    int chanceEncontro = ficha.isEhNoite() ? 50 : 30;
+                    if (MecanicasRpg.rolarDado(100) <= chanceEncontro) {
+                        Interface.MostrarMensagem("\nDurante o trajeto, algo se agita entre as árvores...");
+                        Interface.Pausa(1500);
+                        EventoAnimal(ficha);
+                        if (ficha.getVidaPersonagem() <= 0) return;
+                    }
+                    ficha.irParaMesaMagias();
+                    Interface.MostrarMensagem("\nVocê chega à sua mesa de magias, levando 1/3 do período.");
+                    Interface.Pausa(2000);
+                    avancarTempoComMensagens(ficha, 1);
                 }
                 continue;
             }
