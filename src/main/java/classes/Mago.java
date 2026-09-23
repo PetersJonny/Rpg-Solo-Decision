@@ -57,7 +57,7 @@ public class Mago extends ClasseRpg {
         super.aplicarHabilidadesNivel(ficha, novoNivel);
         if (novoNivel == 3) {
             for (habilidades.Habilidade hab : ficha.getHabilidades()) {
-                if (hab instanceof habilidades.Magia && hab.getNome().startsWith("Bola Elementar")) {
+                if (hab instanceof habilidades.Magia && hab.getNome().startsWith("Pequena Magia")) {
                     ((habilidades.Magia) hab).setAtaqueArea(true);
                 }
             }

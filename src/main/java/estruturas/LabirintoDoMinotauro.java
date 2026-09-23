@@ -215,19 +215,35 @@ public class LabirintoDoMinotauro {
         desenhar(lab, false, ' '); // redesenha o labirinto depois do evento
     }
 
-    // RECOMPENSA: 80% ouro (7-19), 17% arma sorteada do vendedor e 3% de um dos
-    // tesouros raros (cada um só cai UMA vez por ficha).
+    // RECOMPENSA: ao achar, pergunta se o jogador quer pegar. Se ele quiser, sorteia:
+    // 80% ouro (7-19), 17% arma sorteada do vendedor e 3% de um dos tesouros raros
+    // (cada um só cai UMA vez por ficha). Tudo o que for pego mostra "Você pegou X".
+    // Recusar consome a casa: a recompensa fica para trás.
     private static void gerarRecompensa(FichaRpg ficha) {
+        Interface.MostrarMensagem("\nEntre as pedras do corredor, algo foi esquecido por alguém há muito tempo.");
+        Interface.Pausa(3000);
+
+        System.out.println("  O que deseja fazer?");
+        System.out.println("  1. Pegar a recompensa");
+        System.out.println("  2. Não pegar e seguir caminho");
+        int escolha = Interface.lerOpcao(2);
+
+        if (escolha == 2) {
+            Interface.MostrarMensagem("\nVocê deixa a recompensa para trás e segue pelos corredores.");
+            Interface.Pausa(2500);
+            return;
+        }
+
         int sorteio = MecanicasRpg.rolarDado(100);
         if (sorteio <= 80) {
             int ouro = MecanicasRpg.rolarEntre(7, 19);
             ficha.adicionarOuro(ouro);
-            Interface.MostrarMensagem(VERDE + "Você encontra um pote de moedas esquecidas! Coleta " + ouro + " de ouro." + RESET);
+            Interface.MostrarMensagem(VERDE + "Você pegou " + ouro + " de ouro de um pote de moedas esquecidas!" + RESET);
             Interface.Pausa(3000);
         } else if (sorteio <= 97) {
             itens.ItemRpg arma = loja.Vendedor.sortearArmaDoJogo();
             ficha.adicionarItem(arma);
-            Interface.MostrarMensagem(CIANO + "Entre os escombros, uma arma antiga e bem conservada: " + arma.getNome() + "!" + RESET);
+            Interface.MostrarMensagem(VERDE + "Você pegou a arma " + arma.getNome() + "!" + RESET);
             Interface.Pausa(3000);
         } else if (!ficha.isOlhoDemonicoEncontrado()) {
             encontrarOlhoDemonico(ficha);
@@ -238,7 +254,7 @@ public class LabirintoDoMinotauro {
         } else {
             int ouro = MecanicasRpg.rolarEntre(7, 19);
             ficha.adicionarOuro(ouro);
-            Interface.MostrarMensagem(VERDE + "Você encontra um pote de moedas esquecidas! Coleta " + ouro + " de ouro." + RESET);
+            Interface.MostrarMensagem(VERDE + "Você pegou " + ouro + " de ouro de um pote de moedas esquecidas!" + RESET);
             Interface.Pausa(3000);
         }
     }
@@ -286,6 +302,8 @@ public class LabirintoDoMinotauro {
         Interface.MostrarMensagem(AMARELO + "Sentada em um trono de pedra, uma coroa enferrujada aguarda. Perto dela, criaturas parecem hesitar em avançar." + RESET);
         Interface.Pausa(3500);
         ficha.adicionarItem(new itens.ItemRpg("Coroa do Rei", "A coroa do senhor do labirinto. Vale 300 moedas de ouro... e talvez guarde um segredo.", 1));
+        Interface.MostrarMensagem(VERDE + "Você pegou a Coroa do Rei!" + RESET);
+        Interface.Pausa(2500);
 
         Interface.pressionarParaTeste("Intelecto (Desvendar o segredo)");
         int dado = MecanicasRpg.rolarDado(20);

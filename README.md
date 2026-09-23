@@ -77,7 +77,7 @@ Depois de **2 noites sem dormir**, o personagem fica **cansado**: **−1 em todo
 - **Itens:** Cajado (1d4, CaC/mágico), Poção de Mana (+5 mana)
 - **Magias iniciais:** **Bola Elementar (3d10, 2 de mana)** e **Pequena Magia (2d8, grátis)**
 - **A cada nível:** vida +2 + Constituição | mana +3 + Presença
-- **Nível 3 (automático):** a Bola Elementar vira **ataque em área** (atinge também os inimigos adjacentes)
+- **Nível 3 (automático):** a Pequena Magia vira **ataque em área** (atinge também os inimigos adjacentes)
 
 | Nível | Escolha | Custo | Efeito |
 |---|---|---|---|
@@ -149,7 +149,7 @@ O excesso de XP é acumulado (não é desperdiçado ao subir de nível).
 
 ### Recompensas por nível
 
-- **Nível 3:** habilidade automática da classe (Guerreiro: Peso da Espada; Healer: Cura Reforçada; Mago: Bola Elementar vira área).
+- **Nível 3:** habilidade automática da classe (Guerreiro: Peso da Espada; Healer: Cura Reforçada; Mago: Pequena Magia vira área).
 - **Níveis 2, 4, 6 e 8:** **+1 ponto de atributo** (Constituição dá vida retroativa).
 - **Níveis 5, 7, 9 e 10:** **escolha 1 habilidade** entre as opções da sua classe (nesta e nas anteriores — o que você deixou para trás pode ser escolhido depois).
 
@@ -360,7 +360,7 @@ Coletar recursos (ou voltar para a cabana) tem **30% de chance de gerar um encon
 - Ao entrar, a interface vira sobre o labirinto (apenas **ver a ficha** continua disponível).
 - **O caminho é randomizado na descoberta e salvo na ficha** — ao voltar depois, continua exatamente de onde parou (células visitadas permanecem iluminadas).
 - **Navegação:** a tela mostra apenas a grade ao redor do personagem — as **laterais/paredes** onde você está (`##`) e os corredores vizinhos (`.`) — mais o que **já foi percorrido** (iluminado `·`) e sua posição (`@`). O resto do labirinto fica escuro, inclusive o centro (visível apenas enquanto se explora). Movimento via **W/A/S/D ou as setas do teclado** (↑ ↓ ← →) — executa no momento da tecla, **sem Enter**; qualquer outra tecla (número, caractere etc.) não faz nada. Uma câmera acompanha o personagem para que o labirinto (grade 31x31, bem maior) caiba na tela.
-- Há **apenas uma entrada**. **Casas especiais:** em algumas casas aleatórias há **encontros** (8 por labirinto) e em outras há **recompensas** (6 por labirinto) — cada casa especial é sorteada na geração e ativa uma única vez. **Encontros:** 40% Esqueleto, 40% Zumbi e 20% Baú. **Recompensas:** **80%** ouro (7–19), **17%** uma arma sorteada entre as armas do vendedor e **3%** um dos **tesouros raros** (Olho Demoníaco, Espada Majestral e Coroa do Rei — cada um só cai **uma vez** por ficha; detalhes no spoiler abaixo). Ao perceber um monstro, dá para **Lutar** ou **Tentar Fugir** com um **Teste de Destreza** (a dificuldade é por criatura — veja o spoiler abaixo). Ao pisar na **primeira casa do centro**, o **Minotauro** enfrenta você — **a porta se fecha e não dá para fugir** do combate. **Vencendo o Minotauro**, o labirinto **desmorona**: o jogador foge correndo, volta à floresta e o labirinto se **fecha para sempre** — a opção **Labirinto** some do menu.
+- Há **apenas uma entrada**. **Casas especiais:** em algumas casas aleatórias há **encontros** (8 por labirinto) e em outras há **recompensas** (6 por labirinto) — cada casa especial é sorteada na geração e ativa uma única vez. **Encontros:** 40% Esqueleto, 40% Zumbi e 20% Baú. **Recompensas:** ao achar, o jogo pergunta **"quer pegar?"** — escolher **sim** sorteia: **80%** ouro (7–19), **17%** uma arma sorteada entre as armas do vendedor e **3%** um dos **tesouros raros** (Olho Demoníaco, Espada Majestral e Coroa do Rei — cada um só cai **uma vez** por ficha; detalhes no spoiler abaixo) e mostra **"Você pegou X"**; escolher **não** consuma a casa e deixa a recompensa para trás. Ao perceber um monstro, dá para **Lutar** ou **Tentar Fugir** com um **Teste de Destreza** (a dificuldade é por criatura — veja o spoiler abaixo). Ao pisar na **primeira casa do centro**, o **Minotauro** enfrenta você — **a porta se fecha e não dá para fugir** do combate. **Vencendo o Minotauro**, o labirinto **desmorona**: o jogador foge correndo, volta à floresta e o labirinto se **fecha para sempre** — a opção **Labirinto** some do menu.
   <details>
   <summary>⚠️ <b>Spoiler: o Minotauro (chefe do centro)</b> — clique para revelar</summary>
 
