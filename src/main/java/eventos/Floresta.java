@@ -617,7 +617,7 @@ public static void MenuConstrucao(FichaRpg ficha) {
         for (int i = 0; i < ficha.getInventario().size(); i++) {
             ItemRpg item = ficha.getInventario().get(i);
             if (item.getNome().equals("Kit Médico")) {
-                item.setQuantidade(item.getQuantidade() - 1);
+                ficha.consumirItem(item, 1);
                 if (item.getQuantidade() <= 0) {
                     ficha.getInventario().remove(i);
                     Interface.MostrarMensagem("Seu Kit Médico acabou.");

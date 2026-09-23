@@ -186,7 +186,7 @@ public class Main {
 
     // Loop da aventura. Retorna true se o jogador encerrou o jogo de vez
     // (voltando ao menu principal quando o personagem falece, por exemplo).
-    private static boolean jogarPartida(FichaRpg ficha) {
+    public static boolean jogarPartida(FichaRpg ficha) {
         boolean jogando = true;
         boolean personagemFaleceu = false;
         boolean encerrouJogo = false;
@@ -203,7 +203,7 @@ public class Main {
                 } else if (escolhaVilarejo == 2) {
                     eventos.VilarejoDeScarbor.OlharEmVolta(ficha);
                 } else if (escolhaVilarejo == 3) {
-                    eventos.TravessiaDaFloresta.VoltarParaConstrucoes(ficha);
+                    eventos.TravessiaDaFloresta.VoltarParaFloresta(ficha);
                     if (ficha.getVidaPersonagem() <= 0) {
                         personagemFaleceu = true;
                     }

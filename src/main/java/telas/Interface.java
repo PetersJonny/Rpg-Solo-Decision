@@ -407,7 +407,7 @@ public class Interface {
 
         System.out.println("  1. Ver ficha");
         System.out.println("  2. Olhar em volta");
-        System.out.println("  3. Voltar para a floresta (de volta às construções)");
+        System.out.println("  3. Voltar para a floresta");
         System.out.println("  4. Salvar Jogo");
         System.out.println("  5. Encerrar jogo");
         System.out.println("\n  " + VERDE + "Digite a opção:" + RESET);
@@ -551,8 +551,9 @@ public class Interface {
             .append(" | Tipo: ").append(socoTipo).append(")");
 
         System.out.println("\n  Nome: " + CIANO + ficha.getNomePersonagem() + RESET + "        Nível: " + ficha.getNivel() + (ficha.getNivel() < 10 ? "  (XP: " + ficha.getXp() + "/" + fichas.FichaRpg.getXpNecessaria(ficha.getNivel()) + ")" : "  (XP: " + ficha.getXp() + " - Nível máximo)"));
+        String modoFicha = ficha.isModoDificil() ? AMARELO + "Difícil" : VERDE + "Normal";
         String modoLabel = ficha.isModoDificil() ? " [DIFÍCIL]" : " [Normal]";
-        System.out.println("  Dono da ficha: " + ficha.getNomePessoa() + "      Classe: " + nomeDaClasse + "      Modo: " + (ficha.isModoDificil() ? AMARELO + "Difícil" : VERDE + "Normal") + RESET + modoLabel);
+        System.out.println("  Dono da ficha: " + ficha.getNomePessoa() + "      Classe: " + nomeDaClasse + "      Modo: " + modoFicha + RESET + modoLabel);
         System.out.println("  Vida: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima() + "        Mana: " + ficha.getManaPersonagem() + "/" + ficha.getManaMaxima());
         System.out.println("  Ouro: " + ficha.getOuro());
 

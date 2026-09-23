@@ -1081,7 +1081,7 @@ public class MotorDeCombate {
         for (int i = 0; i < ficha.getInventario().size(); i++) {
             ItemRpg item = ficha.getInventario().get(i);
             if (item.getNome().equals("Flechas")) {
-                item.setQuantidade(item.getQuantidade() - 1);
+                ficha.consumirItem(item, 1);
                 Interface.MostrarMensagem("-> Flecha utilizada! Restam " + item.getQuantidade() + " flechas.");
                 if (item.getQuantidade() <= 0) {
                     ficha.getInventario().remove(i);
@@ -1800,7 +1800,7 @@ public class MotorDeCombate {
                 return false;
         }
 
-        item.setQuantidade(item.getQuantidade() - qtd);
+        ficha.consumirItem(item, qtd);
         if (item.getQuantidade() <= 0) {
             ficha.getInventario().remove(item);
             Interface.MostrarMensagem("O item foi consumido e removido do inventário.");
@@ -1982,7 +1982,7 @@ public class MotorDeCombate {
             }
         }
 
-        itemEscolhido.setQuantidade(itemEscolhido.getQuantidade() - 1);
+        ficha.consumirItem(itemEscolhido, 1);
         if (itemEscolhido.getQuantidade() <= 0) {
             ficha.getInventario().remove(itemEscolhido);
             Interface.MostrarMensagem("O item foi consumido e removido do inventário.");

@@ -245,9 +245,11 @@ public class FichaRpg implements java.io.Serializable {
     }
     public void setModoDificuldade(ModoDificuldade modoDificuldade) { this.modoDificuldade = modoDificuldade; }
     public boolean isModoDificil() { return getModoDificuldade() == ModoDificuldade.DIFICIL; }
+
     public int getSlotAtual() { return slotAtual; }
     public void setSlotAtual(int slotAtual) { this.slotAtual = slotAtual; }
     public int getNivel() { return nivel; }
+    public void setNivel(int nivel) { this.nivel = nivel; }
     public int getOuro() { return ouro; }
     public int getVidaPersonagem() { return vidaPersonagem; }
     public int getManaPersonagem() { return manaPersonagem; }
@@ -337,6 +339,7 @@ public class FichaRpg implements java.io.Serializable {
     }
 
     public int getXp() { return xp; }
+    public void setXp(int xp) { this.xp = xp; }
 
     // Adicionar item ao inventário, empilhando se já existir
     public void adicionarItem(ItemRpg novoItem) {
@@ -349,7 +352,7 @@ public class FichaRpg implements java.io.Serializable {
         inventario.add(novoItem);
     }
 
-    // Remove itens do inventário; se a arma equipada for vendida, ela é desequipada
+    // Remove itens do inventário; se a arma equipada for vendida, ela é desequipada.
     public boolean removerItem(String nome, int quantidade) {
         for (ItemRpg item : inventario) {
             if (item.getNome().equals(nome)) {
@@ -371,6 +374,14 @@ public class FichaRpg implements java.io.Serializable {
             }
         }
         return false;
+    }
+
+    // Consome unidades de um item (usar poções, flechas, kit médico...).
+    // Conteúdo compartilhado entre o menu de inventário e o combate.
+    public void consumirItem(ItemRpg item, int quantidade) {
+        if (item != null) {
+            item.setQuantidade(item.getQuantidade() - Math.max(0, quantidade));
+        }
     }
 
     // Equipa a armadura de maior bônus do inventário; a que estava equipada volta para a mochila
