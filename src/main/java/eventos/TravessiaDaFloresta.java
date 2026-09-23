@@ -18,8 +18,8 @@ public class TravessiaDaFloresta {
     // A profundidade oculta (até sair) fica na ficha e nunca é revelada na tela.
     public static void TentarSairDaFloresta(FichaRpg ficha) {
         Interface.cabecalhoMenu("TENTAR SAIR DA FLORESTA");
-        Interface.MostrarMensagem("\nHá uma estrada antiga que some entre as árvores, afastando-se das suas construções.");
-        Interface.MostrarMensagem("Dizem que quem a segue por tempo suficiente acaba saindo da floresta... mas ninguém sabe dizer quanto.");
+        Interface.MostrarMensagem("\nVocê se prepara para caminhar adentrando a mata, em busca de algo além de árvores e mato.");
+        Interface.MostrarMensagem("Dizem que quem vagueia por tempo suficiente na direção certa acaba saindo da floresta... mas ninguém sabe dizer quanto.");
         Interface.Pausa(2500);
 
         System.out.println("\n  Quantos períodos deseja caminhar agora? (cada período = 1/3 do dia)");
@@ -31,18 +31,18 @@ public class TravessiaDaFloresta {
         int plano = Interface.lerOpcao(1, 4);
         if (plano == 4) return;
 
-        // Sair pela estrada significa ter deixado a cabana/sala/mesa
+        // Sair rumo ao desconhecido significa ter deixado a cabana/sala/mesa
         if (ficha.isTemCabana() && ficha.isNaCabana()) {
             ficha.sairDaCabana();
-            Interface.MostrarMensagem("\nVocê deixa sua cabana para trás e pisa na estrada antiga.");
+            Interface.MostrarMensagem("\nVocê deixa sua cabana para trás e se embrenha no mato, em busca de algo além de árvores.");
             Interface.Pausa(1500);
         } else if (ficha.isNaSalaTreino()) {
             ficha.sairDaCabana();
-            Interface.MostrarMensagem("\nVocê deixa sua sala de treino para trás e pisa na estrada antiga.");
+            Interface.MostrarMensagem("\nVocê deixa sua sala de treino para trás e se embrenha no mato, em busca de algo além de árvores.");
             Interface.Pausa(1500);
         } else if (ficha.isNaMesaMagias()) {
             ficha.sairDaCabana();
-            Interface.MostrarMensagem("\nVocê deixa sua mesa de magias para trás e pisa na estrada antiga.");
+            Interface.MostrarMensagem("\nVocê deixa sua mesa de magias para trás e se embrenha no mato, em busca de algo além de árvores.");
             Interface.Pausa(1500);
         }
 
@@ -63,7 +63,7 @@ public class TravessiaDaFloresta {
                 System.out.println("  2. Parar por aqui");
                 System.out.println("\n  " + VERDE + "Digite a opção:" + RESET);
                 if (Interface.lerOpcao(2) == 2) {
-                    Interface.MostrarMensagem("\nVocê decide parar de seguir a estrada por enquanto e permanece onde ela te deixou.");
+                    Interface.MostrarMensagem("\nVocê decide parar de caminhar por enquanto e permanece onde parou, rodeado de árvores e mato.");
                     Interface.Pausa(2000);
                     return;
                 }
@@ -77,7 +77,7 @@ public class TravessiaDaFloresta {
     // "Voltar para as construções": percorre a mesma quantidade de períodos gastos para
     // se afastar (a profundidade oculta volta a zero até chegar perto das construções).
     public static void VoltarParaConstrucoes(FichaRpg ficha) {
-        Interface.MostrarMensagem("\nVocê se vira e começa a refazer o caminho em direção às suas construções...");
+        Interface.MostrarMensagem("\nVocê se vira e começa a refazer o caminho, cortando de volta o mato em direção às suas construções...");
         Interface.Pausa(2000);
 
         while (ficha.getProfundidadeFloresta() > 0 && ficha.getVidaPersonagem() > 0) {
@@ -104,8 +104,8 @@ public class TravessiaDaFloresta {
         }
 
         Interface.MostrarMensagem(indoEmbora
-                ? "\nVocê segue pela estrada antiga, se afastando das construções..."
-                : "\nVocê segue pela estrada antiga, de volta para as construções...");
+                ? "\nVocê adentra o mato, se afastando das construções em busca de algo além de árvores..."
+                : "\nVocê corta o mato de volta, na direção das suas construções...");
         Interface.Pausa(2000);
 
         // Mesma chance de encontro da exploração (30% de dia, 50% à noite), mas não coleta recurso
@@ -126,7 +126,7 @@ public class TravessiaDaFloresta {
     private static void chegarForaDaFloresta(FichaRpg ficha) {
         Interface.MostrarMensagem("\nDiante de você, as árvores se abrem... A floresta de Freijord fica para trás!");
         Interface.Pausa(2500);
-        Interface.MostrarMensagem("Uma estrada larga segue por campos abertos até um vilarejo. Você finalmente saiu da floresta!");
+        Interface.MostrarMensagem("Depois de tanto mato, seus olhos avistam campos abertos e, ao longe, um vilarejo. Você finalmente saiu da floresta!");
         Interface.Pausa(2000);
 
         if (ficha.getCidadeAtual() == null) {

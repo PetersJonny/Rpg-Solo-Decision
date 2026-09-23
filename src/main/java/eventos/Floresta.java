@@ -137,7 +137,7 @@ public class Floresta {
     // ==================== CONSTRUÇÃO ====================
 
     public static void MenuConstrucao(FichaRpg ficha) {
-        // Longe da cabana e das construções (no meio da estrada para fora da floresta)
+        // Longe da cabana e das construções (no meio da mata, buscando algo além de árvores)
         if (ficha.getProfundidadeFloresta() > 0) {
             Interface.MostrarMensagem("\nVocê está distante das suas construções, no meio do caminho.");
             Interface.MostrarMensagem("Volte pelo menu principal (Voltar para as construções) antes de construir, treinar ou dormir.");

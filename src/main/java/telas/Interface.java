@@ -346,7 +346,7 @@ public class Interface {
     // É a única fonte da numeração, usada tanto para imprimir quanto para o Main interpretar a escolha.
     public static int[] opcoesMenuFloresta(FichaRpg ficha) {
         int num = 5;
-        int opViajar = num++; // sempre disponível: "Tentar sair da floresta" (ou continuar, se já estiver na estrada)
+        int opViajar = num++; // sempre disponível: "Tentar sair da floresta" (ou continuar, se já estiver caminhando)
         int opVoltar = -1;
         if (ficha.getProfundidadeFloresta() > 0) opVoltar = num++;
         int opLabirinto = -1, opConversar = -1;
