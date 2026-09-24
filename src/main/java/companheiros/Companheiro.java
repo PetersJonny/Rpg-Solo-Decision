@@ -72,6 +72,23 @@ public class Companheiro implements java.io.Serializable {
             f.setClasse(new Healer());
         }
 
+        int racaSorteada = MecanicasRpg.rolarDado(7);
+        if (racaSorteada == 1) {
+            f.setRaca(new racas.HumanoRaca());
+        } else if (racaSorteada == 2) {
+            f.setRaca(new racas.ElfoDaFlorestaRaca());
+        } else if (racaSorteada == 3) {
+            f.setRaca(new racas.VigiaDoCrepusculoRaca());
+        } else if (racaSorteada == 4) {
+            f.setRaca(new racas.MeioFadaRaca());
+        } else if (racaSorteada == 5) {
+            f.setRaca(new racas.DraconicoRaca());
+        } else if (racaSorteada == 6) {
+            f.setRaca(new racas.MeioOrqueRaca());
+        } else {
+            f.setRaca(new racas.GnomoRaca());
+        }
+
         if (nivel == 2) {
             f.adicionarXp(100); // sobe para o nível 2 (aplica bônus de vida/mana/habilidades)
         }

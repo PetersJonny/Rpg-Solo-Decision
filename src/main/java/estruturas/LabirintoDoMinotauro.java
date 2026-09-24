@@ -314,6 +314,17 @@ public class LabirintoDoMinotauro {
         Interface.MostrarMensagem("-> Teste de Intelecto: " + dado + " (Dado) + " + ficha.getIntelectoTeste() + " (Atributo) = " + total + " (Dificuldade: 18)");
         Interface.Pausa(3000);
 
+        if (total < 18 && ficha.podeUsarMenteAfiada()) {
+            Interface.MostrarMensagem("\n(Mente Afiada!) Sua mente aguçada permite reavaliar as runas... Deseja rolar novamente?");
+            if (Interface.lerOpcao(2) == 1) {
+                ficha.marcarMenteAfiadaUsada();
+                dado = MecanicasRpg.rolarDado(20);
+                total = dado + ficha.getIntelectoTeste();
+                Interface.MostrarMensagem("-> Nova tentativa (Intelecto): " + dado + " (Dado) + " + ficha.getIntelectoTeste() + " (Atributo) = " + total + " (Dificuldade: 18)");
+                Interface.Pausa(3000);
+            }
+        }
+
         if (total >= 18) {
             ficha.setReiDasCriaturas(true);
             Interface.MostrarMensagem(AMARELO + "Você decifra as runas esculpidas sob o aro da coroa... e sente o título de Rei das Criaturas pulsar em seu peito!" + RESET);

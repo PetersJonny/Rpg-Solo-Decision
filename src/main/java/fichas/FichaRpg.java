@@ -4,6 +4,7 @@ import classes.ClasseRpg;
 import itens.Arma;
 import itens.ItemRpg;
 import telas.Interface;
+import racas.Raca;
 import java.util.ArrayList;
 import java.util.List;
 import mecanicas.MecanicasRpg;
@@ -27,6 +28,14 @@ public class FichaRpg implements java.io.Serializable {
     
     // Atributos Base
     private int constituicaoBase, destrezaBase, forcaBase, sabedoriaBase, intelectoBase, presencaBase;
+
+    // Raça (gera +1 num atributo e uma passiva). Humano escolhe o atributo.
+    private racas.Raca raca = null;
+    private String atributoRacialHumano = null; // "+1" escolhido pelo Humano (ex.: "Força")
+
+    // Passivas diárias (resetadas a cada novo dia)
+    private boolean sobrevivenciaUsada = false; // Vontade de Viver (Humano): 1x/dia
+    private boolean menteAfiadaUsada = false;  // Mente Afiada (Gnomo): 1x/dia
     
     // Atributos Finais (Base + Modificadores)
     private int constituicao, destreza, forca, sabedoria, intelecto, presenca;
@@ -187,7 +196,16 @@ public class FichaRpg implements java.io.Serializable {
         if (classeDoPersonagem == null) {
             this.vidaPersonagem = 0;
             this.manaPersonagem = 0;
-            this.defesa = 10 + this.destreza + bonusDeDefesa;
+            // Raça ainda dá atributos/defesa mesmo sem classe escolhida
+            if (raca != null) {
+                this.constituicao += raca.getBonusConstituicao();
+                this.forca += raca.getBonusForca();
+                this.destreza += raca.getBonusDestreza();
+                this.sabedoria += raca.getBonusSabedoria();
+                this.intelecto += raca.getBonusIntelecto();
+                this.presenca += raca.getBonusPresenca();
+            }
+            this.defesa = 10 + this.destreza + bonusDeDefesa + (raca != null ? raca.getBonusDefesa() : 0);
             return;
         }
 
@@ -203,7 +221,19 @@ public class FichaRpg implements java.io.Serializable {
         this.intelecto += classeDoPersonagem.getBonusIntelecto();
         this.presenca += classeDoPersonagem.getBonusPresenca();
         
-        this.defesa = 10 + this.destreza + bonusDeDefesa;
+        // Bônus racial (+1 no atributo da raça; defesa/vida extras p/ Dracônico)
+        if (raca != null) {
+            this.constituicao += raca.getBonusConstituicao();
+            this.forca += raca.getBonusForca();
+            this.destreza += raca.getBonusDestreza();
+            this.sabedoria += raca.getBonusSabedoria();
+            this.intelecto += raca.getBonusIntelecto();
+            this.presenca += raca.getBonusPresenca();
+        }
+        
+        // Bônus racial (+1 no atributo da raça + bônus permanentes de defesa/vida)
+        this.defesa = 10 + this.destreza + bonusDeDefesa + (raca != null ? raca.getBonusDefesa() : 0);
+        this.vidaMaxima += (raca != null ? raca.getBonusVidaMaxima() : 0);
 
         // Ficha ganha a arma e os itens da classe
         this.armaEquipada = classeDoPersonagem.getArmaPrincipal();
@@ -262,6 +292,15 @@ public class FichaRpg implements java.io.Serializable {
     public int getDefesa() { return defesa + (armaduraEquipada != null ? armaduraEquipada.getBonusDefesa() : 0) + bonusDefesaTemporario + (defesaAbsolutaAtiva ? 5 : 0); }
     public itens.Armadura getArmaduraEquipada() { return armaduraEquipada; }
     public ClasseRpg getClasseDoPersonagem() { return classeDoPersonagem; }
+    public racas.Raca getRaca() { return raca; }
+    public void setRaca(racas.Raca raca) { this.raca = raca; }
+
+    // Passivas diárias (1x por dia): Vontade de Viver (Humano) e Mente Afiada (Gnomo)
+    public boolean isSobrevivenciaUsada() { return sobrevivenciaUsada; }
+    public void marcarSobrevivenciaUsada() { this.sobrevivenciaUsada = true; }
+    public boolean isMenteAfiadaUsada() { return menteAfiadaUsada; }
+    public void marcarMenteAfiadaUsada() { this.menteAfiadaUsada = true; }
+    public boolean podeUsarMenteAfiada() { return raca != null && raca.podeRerrolarTeste() && !menteAfiadaUsada; }
     public Arma getArmaEquipada() { return armaEquipada; }
     public List<ItemRpg> getInventario() { return inventario; }
     public List<habilidades.Habilidade> getHabilidades() { return habilidades; }
@@ -604,6 +643,23 @@ public class FichaRpg implements java.io.Serializable {
         naMesaMagias = temMesaMagias && profundidadeFloresta == profundidadeMesaMagias;
     }
 
+    // Entra na construção que fica NO ponto indicado (distância 0): corrige o
+    // estado "expulso" que acontecia quando o jogador saía da cabana (sairDaCabana)
+    // ou caminhava de volta sem mudar de profundidade — o menu de construção
+    // voltava a mostrar "Ir para a Cabana (0 período(s))" para sempre, e a opção
+    // "Dormir" nunca mais aparecia. Agora, estando no ponto, ele volta a ficar NELA.
+    public void entrarNaConstrucao(int profundidadeAlvo) {
+        if (temCabana && profundidadeCabana == profundidadeAlvo) {
+            naCabana = true;
+        }
+        if (temSalaTreino && profundidadeSalaTreino == profundidadeAlvo) {
+            naSalaTreino = true;
+        }
+        if (temMesaMagias && profundidadeMesaMagias == profundidadeAlvo) {
+            naMesaMagias = true;
+        }
+    }
+
     // Recalcula os flags de "junto": duas estruturas ficam juntas quando foram
     // montadas na MESMA profundidade (mesmo ponto da mata).
     private void recomputarAdjacencias() {
@@ -665,6 +721,9 @@ public class FichaRpg implements java.io.Serializable {
                     registrarDormidaDoCompanheiro();
                 }
             }
+            // Passivas diárias (Vontade de Viver e Mente Afiada) renovam a cada novo dia
+            sobrevivenciaUsada = false;
+            menteAfiadaUsada = false;
             // Decrementa bônus de treino a cada período que se inicia
             if (treinoBonusPeriodosRestantes > 0) {
                 treinoBonusPeriodosRestantes--;
@@ -697,6 +756,8 @@ public class FichaRpg implements java.io.Serializable {
         diasSemDormir = 0;
         cansado = false;
         naMesaMagias = false;
+        sobrevivenciaUsada = false;
+        menteAfiadaUsada = false;
         registrarDormidaDoCompanheiro();
         return true;
     }
@@ -874,12 +935,16 @@ public class FichaRpg implements java.io.Serializable {
 
     // Getters usados em TESTES de atributo: quando cansado, -1 em testes.
     // Não afeta vida, mana, defesa nem dano.
-    public int getDestrezaTeste() { return getDestreza() - (cansado ? 1 : 0); }
-    public int getPresencaTeste() { return presenca - (cansado ? 1 : 0); }
-    public int getSabedoriaTeste() { return sabedoria - (cansado ? 1 : 0); }
-    public int getForcaTeste() { return getForca() - (cansado ? 1 : 0); }
-    public int getIntelectoTeste() { return intelecto - (cansado ? 1 : 0); }
-    public int getConstituicaoTeste() { return constituicao - (cansado ? 1 : 0); }
+    // Visão na Penumbra (Vigia do Crepúsculo): +2 em testes durante a noite.
+    private int bonusTestesNoturnos() {
+        return ehNoite && raca != null && raca.temBonusTestesNoturnos() ? 2 : 0;
+    }
+    public int getDestrezaTeste() { return getDestreza() - (cansado ? 1 : 0) + bonusTestesNoturnos(); }
+    public int getPresencaTeste() { return presenca - (cansado ? 1 : 0) + bonusTestesNoturnos(); }
+    public int getSabedoriaTeste() { return sabedoria - (cansado ? 1 : 0) + bonusTestesNoturnos(); }
+    public int getForcaTeste() { return getForca() - (cansado ? 1 : 0) + bonusTestesNoturnos(); }
+    public int getIntelectoTeste() { return intelecto - (cansado ? 1 : 0) + bonusTestesNoturnos(); }
+    public int getConstituicaoTeste() { return constituicao - (cansado ? 1 : 0) + bonusTestesNoturnos(); }
 
     // Reseta os efeitos temporários antes de um novo combate
     public void resetarEfeitosCombate() {
@@ -999,6 +1064,14 @@ public class FichaRpg implements java.io.Serializable {
             }
         } else {
             vidaPersonagem = Math.max(0, vidaPersonagem - dano);
+        }
+
+        // Vontade de Viver (Humano): ao cair a 0, sobrevive com 1 PV (1x/dia)
+        if (vidaPersonagem <= 0 && raca != null && raca.podeSobreviverCom1AoCair0() && !sobrevivenciaUsada) {
+            sobrevivenciaUsada = true;
+            vidaPersonagem = 1;
+            telas.Interface.MostrarMensagem("\n(Vontade de Viver!) Você resiste à morte e permanece de pé com 1 de vida!");
+            telas.Interface.Pausa(1500);
         }
     }
 }

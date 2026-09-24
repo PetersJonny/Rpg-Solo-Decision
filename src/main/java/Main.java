@@ -128,6 +128,27 @@ public class Main {
                         break;
 
                     case 4:
+                        int escolhaRaca = Interface.MenuEscolherRaca();
+                        switch (escolhaRaca) {
+                            case 0: break;
+                            case 1:
+                                int atributoHumano = Interface.MenuEscolherAtributoHumano();
+                                if (atributoHumano == 0) break;
+                                String[] atributosHumano = {"", "Constituição", "Destreza", "Força", "Sabedoria", "Intelecto", "Presença"};
+                                ficha.setRaca(new racas.HumanoRaca(atributosHumano[atributoHumano]));
+                                break;
+                            case 2: ficha.setRaca(new racas.ElfoDaFlorestaRaca()); break;
+                            case 3: ficha.setRaca(new racas.VigiaDoCrepusculoRaca()); break;
+                            case 4: ficha.setRaca(new racas.MeioFadaRaca()); break;
+                            case 5: ficha.setRaca(new racas.DraconicoRaca()); break;
+                            case 6: ficha.setRaca(new racas.MeioOrqueRaca()); break;
+                            case 7: ficha.setRaca(new racas.GnomoRaca()); break;
+                            default: Interface.ExibirErro("Opção inválida!");
+                        }
+                        ficha.aplicarBonus();
+                        break;
+
+                    case 5:
                         int escolhaDificuldade = Interface.MenuEscolherDificuldade();
                         switch (escolhaDificuldade) {
                             case 0: break;
@@ -145,11 +166,11 @@ public class Main {
                         Interface.Pausa(1200);
                         break;
 
-                    case 5:
+                    case 6:
                         Interface.MostrarFicha(ficha);
                         break;
 
-                    case 6:
+                    case 7:
                         if (ficha.isFichaCompleta()) {
                             criandoFicha = false;
                         } else {
@@ -157,7 +178,7 @@ public class Main {
                         }
                         break;
 
-                    case 7:
+                    case 8:
                         jogoAberto = false;
                         criandoFicha = false;
                         Interface.MostrarMensagem("\nEncerrando o jogo... Até a próxima aventura!");

@@ -1318,6 +1318,12 @@ public class MotorDeCombate {
                 Interface.MostrarMensagem("(Espada Afiada! +" + bonusAfiada + " de dano)");
                 Interface.Pausa(1500);
             }
+            if (ficha.getRaca() != null && ficha.getRaca().temBonusDanoVidaBaixa()
+                    && ficha.getVidaPersonagem() <= ficha.getVidaMaxima() * 0.30) {
+                dano += 2;
+                Interface.MostrarMensagem("(Fúria Sombria! Com a vida baixa, você golpeia com +2 de dano)");
+                Interface.Pausa(1500);
+            }
             aplicarDanoCriatura(inimigo, dano);
             Interface.MostrarMensagem(rotuloCriatura(inimigos, inimigo) + " agora tem " + Math.max(0, inimigo.getVida()) + " de vida.");
             Interface.Pausa(2000);
@@ -1657,6 +1663,17 @@ public class MotorDeCombate {
         int total = dado + ficha.getIntelectoTeste();
         Interface.MostrarMensagem("-> Teste de Intelecto: " + dado + " (Dado) + " + ficha.getIntelectoTeste() + " (Intelecto) = " + total + " (Dificuldade: 15)");
         Interface.Pausa(1500);
+
+        if (total < 15 && ficha.podeUsarMenteAfiada()) {
+            Interface.MostrarMensagem("\n(Mente Afiada!) Sua mente aguçada reavalia as criaturas... Deseja rolar novamente?");
+            if (Interface.lerOpcao(2) == 1) {
+                ficha.marcarMenteAfiadaUsada();
+                dado = MecanicasRpg.rolarDado(20);
+                total = dado + ficha.getIntelectoTeste();
+                Interface.MostrarMensagem("-> Nova tentativa (Intelecto): " + dado + " (Dado) + " + ficha.getIntelectoTeste() + " (Intelecto) = " + total + " (Dificuldade: 15)");
+                Interface.Pausa(1500);
+            }
+        }
 
         if (total < 15) {
             Interface.MostrarMensagem("As mentes das criaturas são densas demais... Você não encontrou nada útil.");

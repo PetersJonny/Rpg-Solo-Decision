@@ -125,6 +125,12 @@ public class Floresta {
     private static boolean coletarRecurso(FichaRpg ficha, String nome, int chance, String descricao) {
         if (MecanicasRpg.rolarDado(100) > chance) return false;
         int quantidade = MecanicasRpg.rolarEntre(1, 3);
+        if (ficha.getRaca() != null && ficha.getRaca().temBonusBuscaRecursos()) {
+            int extra = Math.max(1, (int) Math.round(quantidade * 0.30f));
+            quantidade += extra;
+            Interface.MostrarMensagem("(Toque da Mata! Você coletou " + extra + "x extra de " + nome + ")");
+            Interface.Pausa(800);
+        }
         ItemRpg item = nome.equals("Frutas")
                 ? new Consumivel(nome, descricao, quantidade)
                 : new ItemRpg(nome, descricao, quantidade);
@@ -647,8 +653,9 @@ public static void MenuConstrucao(FichaRpg ficha) {
             return;
         }
 
-        // 20% de chance de encontrar uma Fada (apenas uma vez por personagem)
-        if (!ficha.isFadaEncontrada() && MecanicasRpg.rolarDado(100) <= 20) {
+        // 20% de chance de encontrar uma Fada (Meio-Fada: 40%) — apenas uma vez por personagem
+        int chanceFada = ficha.getRaca() != null && ficha.getRaca().dobraChanceEncontrarFada() ? 40 : 20;
+        if (!ficha.isFadaEncontrada() && MecanicasRpg.rolarDado(100) <= chanceFada) {
             ficha.setFadaEncontrada(true);
             EncontrarFada(ficha);
             return;
@@ -738,6 +745,17 @@ public static void MenuConstrucao(FichaRpg ficha) {
             int totalSabedoria = dadoSabedoria + ficha.getSabedoriaTeste();
             Interface.MostrarMensagem("-> Teste de Sabedoria (Conversa): " + dadoSabedoria + " (Dado) + " + ficha.getSabedoriaTeste() + " (Atributo) = " + totalSabedoria + " (Dificuldade: 14)");
             Interface.Pausa(2500);
+
+            if (totalSabedoria < 14 && ficha.podeUsarMenteAfiada()) {
+                Interface.MostrarMensagem("\n(Mente Afiada!) Sua mente aguçada permite reavaliar a situação... Deseja rolar novamente?");
+                if (Interface.lerOpcao(2) == 1) {
+                    ficha.marcarMenteAfiadaUsada();
+                    dadoSabedoria = MecanicasRpg.rolarDado(20);
+                    totalSabedoria = dadoSabedoria + ficha.getSabedoriaTeste();
+                    Interface.MostrarMensagem("-> Nova tentativa (Sabedoria): " + dadoSabedoria + " (Dado) + " + ficha.getSabedoriaTeste() + " (Atributo) = " + totalSabedoria + " (Dificuldade: 14)");
+                    Interface.Pausa(2500);
+                }
+            }
 
             if (totalSabedoria >= 14) {
                 String atributoAumentado = ficha.aumentarAtributoAleatorio();

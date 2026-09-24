@@ -84,7 +84,16 @@ public class TravessiaDaFloresta {
     // a ida/fim custam a distância entre os pontos (turno a turno, como a travessia).
     public static void CaminharAteConstrucao(FichaRpg ficha, int profundidadeAlvo, String nomeConstrucao) {
         int distancia = ficha.getDistanciaAte(profundidadeAlvo);
-        if (distancia == 0) return;
+        if (distancia == 0) {
+            // Já estamos NA profundidade da construção: entra nela em vez de
+            // simplesmente retornar. Antes, isto deixava o jogador "fora" do ponto
+            // (naCabana/naSalaTreino = false) mesmo estando parado nela, e a opção
+            // "Dormir" (e o uso da sala/mesa) nunca ficava disponível.
+            ficha.entrarNaConstrucao(profundidadeAlvo);
+            Interface.MostrarMensagem("\nVocê já está no mesmo ponto de " + nomeConstrucao + " e se acomoda nela.");
+            Interface.Pausa(1500);
+            return;
+        }
 
         Interface.MostrarMensagem("\nVocê se prepara para ir até " + nomeConstrucao + ".");
         Interface.MostrarMensagem("Será preciso gastar " + distancia + " período(s) de caminhada para chegar lá.");
