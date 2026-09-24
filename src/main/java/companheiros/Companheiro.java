@@ -133,11 +133,16 @@ public class Companheiro implements java.io.Serializable {
         return ficha.getClasseDoPersonagem().getNome();
     }
 
+    public String getRacaNome() {
+        if (ficha.getRaca() == null) return "Nenhuma";
+        return ficha.getRaca().getNome();
+    }
+
     // ==================== EXIBIÇÃO (CONVERSAR) ====================
 
     public void mostrarResumo() {
         Interface.MostrarMensagem("\n  Nome: " + nome + " " + sobrenome);
-        Interface.MostrarMensagem("  Classe: " + getClasseNome() + " | Nível: " + ficha.getNivel());
+        Interface.MostrarMensagem("  Classe: " + getClasseNome() + " | Raça: " + getRacaNome() + " | Nível: " + ficha.getNivel());
         Interface.MostrarMensagem("  Vida: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima() + " | Mana: " + ficha.getManaPersonagem() + "/" + ficha.getManaMaxima());
         if (dormiuPrimeiraVez) {
             Interface.MostrarMensagem("  Pretende ficar mais " + diasRestantes + " dia(s) contigo.");

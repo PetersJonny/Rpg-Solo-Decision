@@ -322,24 +322,20 @@ public class MotorDeCombate {
     }
 
     public static boolean tentarResgate(FichaRpg salvador, String nomeSalvador, FichaRpg vitima, String nomeVitima) {
-        if (salvador.getIntelecto() >= 14) {
-            Interface.MostrarMensagem("  " + nomeSalvador + " tem Intelecto suficiente (14+) para tentar salvamento! Precisa tirar 16 ou mais no d20!\n");
-            Interface.Pausa(1000);
+        Interface.MostrarMensagem("  " + nomeSalvador + " tenta estabilizar " + nomeVitima + "...\n");
+        Interface.Pausa(1000);
 
-            int dado = MecanicasRpg.rolarDado(20);
-            Interface.MostrarMensagem("    Dado rolado: " + dado + "  (Necessário: 16+)");
-            Interface.Pausa(1500);
+        int dado = MecanicasRpg.rolarDado(20);
+        int total = dado + salvador.getIntelectoTeste();
+        Interface.MostrarMensagem("-> Teste de Intelecto (Resgate): " + dado + " (Dado) + " + salvador.getIntelectoTeste() + " (Atributo) = " + total + " (Dificuldade: 14)");
+        Interface.Pausa(1500);
 
-            if (dado >= 16) {
-                vitima.setVidaPersonagem(1);
-                Interface.MostrarMensagem("\n  " + nomeSalvador + " consegue estabilizar " + nomeVitima + " a tempo! " + nomeVitima + " acorda com 1 de vida.");
-                return true;
-            } else {
-                Interface.MostrarMensagem("\n  " + nomeSalvador + " falha em estabilizar " + nomeVitima + "...");
-                return false;
-            }
+        if (total > 14) {
+            vitima.setVidaPersonagem(1);
+            Interface.MostrarMensagem("\n  " + nomeSalvador + " consegue estabilizar " + nomeVitima + " a tempo! " + nomeVitima + " acorda com 1 de vida.");
+            return true;
         } else {
-            Interface.MostrarMensagem("\n  " + nomeSalvador + " não possui Intelecto suficiente (14+) para saber como salvar " + nomeVitima + "...");
+            Interface.MostrarMensagem("\n  " + nomeSalvador + " falha em estabilizar " + nomeVitima + "...");
             return false;
         }
     }
