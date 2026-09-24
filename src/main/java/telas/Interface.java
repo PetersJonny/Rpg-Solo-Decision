@@ -581,7 +581,12 @@ public class Interface {
         System.out.println("\n  Nome: " + CIANO + ficha.getNomePersonagem() + RESET + "        Nível: " + ficha.getNivel() + (ficha.getNivel() < 10 ? "  (XP: " + ficha.getXp() + "/" + fichas.FichaRpg.getXpNecessaria(ficha.getNivel()) + ")" : "  (XP: " + ficha.getXp() + " - Nível máximo)"));
         String modoFicha = ficha.isModoDificil() ? AMARELO + "Difícil" : VERDE + "Normal";
         String modoLabel = ficha.isModoDificil() ? " [DIFÍCIL]" : " [Normal]";
-        System.out.println("  Dono da ficha: " + ficha.getNomePessoa() + "      Classe: " + nomeDaClasse + "      Modo: " + modoFicha + RESET + modoLabel);
+        System.out.println("  Dono da ficha: " + ficha.getNomePessoa() + "      Classe: " + nomeDaClasse + "      Raça: " + (ficha.getRaca() != null ? ficha.getRaca().getNome() : "Nenhuma") + "      Modo: " + modoFicha + RESET + modoLabel);
+        if (ficha.getRaca() != null) {
+            racas.Raca raca = ficha.getRaca();
+            System.out.println("  " + CIANO + "[ RAÇA — " + raca.getNome() + " ]" + RESET + "   " + raca.getBonusDescricao());
+            System.out.println("    Passiva: " + AMARELO + raca.getPassiva() + RESET + " — " + raca.getPassivaDescricao());
+        }
         System.out.println("  Vida: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima() + "        Mana: " + ficha.getManaPersonagem() + "/" + ficha.getManaMaxima());
         System.out.println("  Ouro: " + ficha.getOuro());
 
