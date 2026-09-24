@@ -95,7 +95,9 @@ public class MotorDeCombate {
             Interface.Pausa(1500);
         }
 
-        while (ficha.getVidaPersonagem() > 0 && !inimigosVivos(inimigos).isEmpty()) {
+        while ((ficha.getVidaPersonagem() > 0
+                || (ficha.getCompanheiro() != null && ficha.getCompanheiro().getFicha().getVidaPersonagem() > 0))
+                && !inimigosVivos(inimigos).isEmpty()) {
             Interface.cabecalhoMenu("COMBATE");
             Interface.MostrarMensagem("  Sua Vida: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima() + " | Mana: " + ficha.getManaPersonagem() + "/" + ficha.getManaMaxima());
             if (ficha.getCuraAbsolutaBonus() > 0) {
@@ -122,7 +124,7 @@ public class MotorDeCombate {
                 ficha.receberDano(danoInfecao);
                 Interface.MostrarMensagem("\nSua infecção zumbi corrói as feridas! Dano: " + danoInfecao + " (Vida: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima() + ")");
                 Interface.Pausa(2000);
-                if (ficha.getVidaPersonagem() <= 0 && !tentarReviver(ficha)) break;
+                if (ficha.getVidaPersonagem() <= 0 && !companheiroEmPe(ficha)) break;
                 if (inimigosVivos(inimigos).isEmpty()) break;
             }
 
@@ -134,13 +136,15 @@ public class MotorDeCombate {
                 Interface.Pausa(1500);
             }
 
-            if (ficha.getVidaPersonagem() <= 0 && !tentarReviver(ficha)) break;
+            if (ficha.getVidaPersonagem() <= 0 && !companheiroEmPe(ficha)) break;
             if (inimigosVivos(inimigos).isEmpty()) break;
 
             // O jogador escolhe a ação da rodada ANTES de qualquer ataque acontecer.
             // Após o Estrondo, ele não pode usar habilidades no próximo turno.
             boolean semHabilidades = ficha.getRodadasSemHabilidade() > 0;
-            ComandoCombate acaoDeclarada = declararAcao(ficha, inimigos, cascaGrossaAtiva, semHabilidades);
+            ComandoCombate acaoDeclarada = ficha.getVidaPersonagem() > 0
+                    ? declararAcao(ficha, inimigos, cascaGrossaAtiva, semHabilidades)
+                    : new ComandoAguardar();
 
             // Registra inimigos que já atacaram nesta rodada (ex.: reação à fuga)
             Set<Criatura> jaAtacouNaRodada = new HashSet<>();
@@ -169,11 +173,12 @@ public class MotorDeCombate {
             // As ações são resolvidas na ORDEM REAL da iniciativa:
             // se um inimigo tem iniciativa maior que a sua, ele age antes de você executar
             for (int[] token : ordem) {
-                if (ficha.getVidaPersonagem() <= 0 && !tentarReviver(ficha)) break;
+                if (ficha.getVidaPersonagem() <= 0 && !companheiroEmPe(ficha)) break;
                 if (inimigosVivos(inimigos).isEmpty()) break;
 
                 if (token[1] == 0) {
                     if (acaoResolvida) continue;
+                    if (ficha.getVidaPersonagem() <= 0) continue;
                     int resultado = acaoDeclarada.executar(ficha, inimigos, cascaGrossaAtiva, tentativasFuga, jaAtacouNaRodada);
                     if (resultado == 0) {
                         Interface.MostrarMensagem("\nVocê conseguiu escapar da floresta!");
@@ -219,11 +224,12 @@ public class MotorDeCombate {
                         Interface.MostrarMensagem("\n" + rotuloCriatura(inimigos, c) + " avança para atacar!");
                         Interface.Pausa(1500);
 
-                        // O inimigo escolhe aleatoriamente entre atacar você ou o companheiro
+                        // O inimigo escolhe aleatoriamente entre atacar você ou o companheiro.
+                        // Se você caiu, ele só pode mirar no companheiro.
                         companheiros.Companheiro comp2 = ficha.getCompanheiro();
                         boolean atacarCompanheiro = comp2 != null
                                 && comp2.getFicha().getVidaPersonagem() > 0
-                                && MecanicasRpg.rolarDado(2) == 1;
+                                && (ficha.getVidaPersonagem() <= 0 || MecanicasRpg.rolarDado(2) == 1);
                         if (atacarCompanheiro) {
                             Interface.MostrarMensagem(rotuloCriatura(inimigos, c) + " mira em " + comp2.getNomeCompleto() + "!");
                             Interface.Pausa(1500);
@@ -247,65 +253,71 @@ public class MotorDeCombate {
             }
         }
 
-        // Após o combate, tentativas de resgate (DT 14, teste de Intelecto)
+        // Após o combate, tentativas de resgate (DT 14, teste de Intelecto).
+        // Só é possível reviver quem caiu se o grupo venceu (todos os monstros morreram).
         companheiros.Companheiro comp = ficha.getCompanheiro();
+        boolean grupoVenceu = inimigosVivos(inimigos).isEmpty();
 
-        // Caso 1: Companheiro morreu — jogador tenta salvá-lo
-        if (comp != null) {
-            FichaRpg cf = comp.getFicha();
-            if (cf.getVidaPersonagem() <= 0) {
-                Interface.cabecalhoMenu("RESGATE DO COMPANHEIRO");
-                Interface.MostrarMensagem("\n  " + comp.getNomeCompleto() + " cai no chão, sem vida...");
-                Interface.Pausa(1500);
-
-                boolean salvo = tentarResgate(ficha, "Você", cf, comp.getNomeCompleto());
-
-                if (!salvo) {
-                    Interface.MostrarMensagem("\n  Ele(a) parte em silêncio.");
+        if (grupoVenceu) {
+            // Caso 1: Companheiro morreu — jogador (se de pé) tenta salvá-lo
+            if (comp != null && ficha.getVidaPersonagem() > 0) {
+                FichaRpg cf = comp.getFicha();
+                if (cf.getVidaPersonagem() <= 0) {
+                    Interface.cabecalhoMenu("RESGATE DO COMPANHEIRO");
+                    Interface.MostrarMensagem("\n  " + comp.getNomeCompleto() + " cai no chão, sem vida...");
                     Interface.Pausa(1500);
 
-                    // Transfere os itens do companheiro para o jogador
-                    List<ItemRpg> itensComp = new ArrayList<>(cf.getInventario());
-                    for (ItemRpg item : itensComp) {
-                        ficha.adicionarItem(item);
-                    }
-                    int ouroComp = cf.getOuro();
-                    if (ouroComp > 0) {
-                        ficha.adicionarOuro(ouroComp);
-                    }
+                    boolean salvo = tentarResgate(ficha, "Você", cf, comp.getNomeCompleto());
 
-                    if (!itensComp.isEmpty() || ouroComp > 0) {
-                        Interface.MostrarMensagem("\n  Você recolhe os pertences de " + comp.getNomeCompleto() + ".");
+                    if (!salvo) {
+                        Interface.MostrarMensagem("\n  Ele(a) parte em silêncio.");
+                        Interface.Pausa(1500);
+
+                        // Transfere os itens do companheiro para o jogador
+                        List<ItemRpg> itensComp = new ArrayList<>(cf.getInventario());
                         for (ItemRpg item : itensComp) {
-                            Interface.MostrarMensagem("    + " + item.getNome() + " (" + item.getQuantidade() + ")");
+                            ficha.adicionarItem(item);
                         }
+                        int ouroComp = cf.getOuro();
                         if (ouroComp > 0) {
-                            Interface.MostrarMensagem("    + " + ouroComp + " de ouro");
+                            ficha.adicionarOuro(ouroComp);
                         }
+
+                        if (!itensComp.isEmpty() || ouroComp > 0) {
+                            Interface.MostrarMensagem("\n  Você recolhe os pertences de " + comp.getNomeCompleto() + ".");
+                            for (ItemRpg item : itensComp) {
+                                Interface.MostrarMensagem("    + " + item.getNome() + " (" + item.getQuantidade() + ")");
+                            }
+                            if (ouroComp > 0) {
+                                Interface.MostrarMensagem("    + " + ouroComp + " de ouro");
+                            }
+                        }
+
+                        ficha.removerCompanheiro();
+                        comp = null;
                     }
-
-                    ficha.removerCompanheiro();
-                    comp = null;
+                    Interface.Pausa(2000);
+                } else if (cf.getVidaPersonagem() < cf.getVidaMaxima() * 0.3) {
+                    // Companheiro sobreviveu, mas muito ferido: respira fundo e se recupera um pouco
+                    Interface.MostrarMensagem("\n" + comp.getNomeCompleto() + " respira fundo e se recupera um pouco após o combate.");
+                    cf.setVidaPersonagem(Math.max((int) (cf.getVidaMaxima() * 0.5), 1));
+                    Interface.Pausa(2000);
                 }
-                Interface.Pausa(2000);
-            } else if (cf.getVidaPersonagem() < cf.getVidaMaxima() * 0.3) {
-                // Companheiro sobreviveu, mas muito ferido: respira fundo e se recupera um pouco
-                Interface.MostrarMensagem("\n" + comp.getNomeCompleto() + " respira fundo e se recupera um pouco após o combate.");
-                cf.setVidaPersonagem(Math.max((int) (cf.getVidaMaxima() * 0.5), 1));
-                Interface.Pausa(2000);
             }
-        }
 
-        // Caso 2: Jogador morreu — companheiro tenta salvá-lo
-        if (ficha.getVidaPersonagem() <= 0 && comp != null) {
-            FichaRpg cf = comp.getFicha();
-            Interface.cabecalhoMenu("RESGATE DO JOGADOR");
-            Interface.MostrarMensagem("\n  Você cai... " + comp.getNomeCompleto() + " se joga ao seu lado!");
-            Interface.Pausa(1500);
+            // Caso 2: Jogador morreu — tenta a Cura Total; se não, companheiro (se de pé) tenta salvá-lo
+            if (ficha.getVidaPersonagem() <= 0) {
+                if (!tentarReviver(ficha) && companheiroEmPe(ficha)) {
+                    FichaRpg cf = comp.getFicha();
+                    Interface.cabecalhoMenu("RESGATE DO JOGADOR");
+                    Interface.MostrarMensagem("\n  Você cai... " + comp.getNomeCompleto() + " se joga ao seu lado!");
+                    Interface.Pausa(1500);
 
-            tentarResgate(cf, comp.getNomeCompleto(), ficha, "você");
-            
-            Interface.Pausa(2000);
+                    tentarResgate(cf, comp.getNomeCompleto(), ficha, "você");
+
+                    Interface.Pausa(2000);
+                }
+            }
         }
 
         Interface.cabecalhoMenu("FIM DO COMBATE");
@@ -976,6 +988,12 @@ public class MotorDeCombate {
             }
         }
         return vivos;
+    }
+
+    // O companheiro está de pé (presente e com vida > 0)?
+    public static boolean companheiroEmPe(FichaRpg ficha) {
+        companheiros.Companheiro comp = ficha.getCompanheiro();
+        return comp != null && comp.getFicha().getVidaPersonagem() > 0;
     }
 
     public static String rotuloCriatura(List<Criatura> inimigos, Criatura alvo) {
