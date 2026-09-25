@@ -487,35 +487,78 @@ public class Interface {
             System.out.println("  Descrição: " + itemEscolhido.getDescricao());
             System.out.println(CIANO + "  -----------------------" + RESET);
 
-            if (mecanicas.MotorDeCombate.ehItemConsumivel(itemEscolhido)) {
-                System.out.println("\n  Deseja usar este item?");
-                System.out.println("  1. Sim");
-                System.out.println("  2. Não usar");
-                int usar = lerOpcao(2);
-
-                if (usar == 1) {
-                    String nomeItem = itemEscolhido.getNome();
-                    boolean cheio = false;
-                    if ((nomeItem.equals("Frutas") || nomeItem.equals("Kit Médico")) && ficha.getVidaPersonagem() >= ficha.getVidaMaxima() && !(nomeItem.equals("Kit Médico") && ficha.isInfectado())) {
-                        ExibirErro("Sua vida já está no máximo!");
-                        cheio = true;
-                    } else if ((nomeItem.equals("Poção de Mana") || nomeItem.equals("Poção Grande de Mana")) && ficha.getManaPersonagem() >= ficha.getManaMaxima()) {
-                        ExibirErro("Sua mana já está no máximo!");
-                        cheio = true;
-                    }
-                    if (!cheio) {
-                        int quantidade = 1;
-                        if (itemEscolhido.getQuantidade() > 1) {
-                            System.out.println("  Quantidade para usar (1 a " + itemEscolhido.getQuantidade() + "): ");
-                            int qtd = lerInteiro();
-                            if (qtd > 0 && qtd <= itemEscolhido.getQuantidade()) {
-                                quantidade = qtd;
-                            }
-                        }
-                        mecanicas.MotorDeCombate.usarItemForaDeCombate(ficha, itemEscolhido, quantidade);
-                    }
-                }
+            boolean consumivel = mecanicas.MotorDeCombate.ehItemConsumivel(itemEscolhido);
+            int opcaoAcao;
+            if (consumivel) {
+                System.out.println("\n  O que deseja fazer?");
+                System.out.println("  1. Usar este item");
+                System.out.println("  2. Dropar este item");
+                System.out.println("  3. Voltar");
+                opcaoAcao = lerOpcao(3);
+            } else {
+                System.out.println("\n  O que deseja fazer?");
+                System.out.println("  1. Dropar este item");
+                System.out.println("  2. Voltar");
+                opcaoAcao = lerOpcao(2);
             }
+
+            if (consumivel && opcaoAcao == 1) {
+                String nomeItem = itemEscolhido.getNome();
+                boolean cheio = false;
+                if ((nomeItem.equals("Frutas") || nomeItem.equals("Kit Médico")) && ficha.getVidaPersonagem() >= ficha.getVidaMaxima() && !(nomeItem.equals("Kit Médico") && ficha.isInfectado())) {
+                    ExibirErro("Sua vida já está no máximo!");
+                    cheio = true;
+                } else if ((nomeItem.equals("Poção de Mana") || nomeItem.equals("Poção Grande de Mana")) && ficha.getManaPersonagem() >= ficha.getManaMaxima()) {
+                    ExibirErro("Sua mana já está no máximo!");
+                    cheio = true;
+                }
+                if (!cheio) {
+                    int quantidade = 1;
+                    if (itemEscolhido.getQuantidade() > 1) {
+                        System.out.println("  Quantidade para usar (1 a " + itemEscolhido.getQuantidade() + "): ");
+                        int qtd = lerInteiro();
+                        if (qtd > 0 && qtd <= itemEscolhido.getQuantidade()) {
+                            quantidade = qtd;
+                        }
+                    }
+                    mecanicas.MotorDeCombate.usarItemForaDeCombate(ficha, itemEscolhido, quantidade);
+                }
+            } else if (consumivel ? opcaoAcao == 2 : opcaoAcao == 1) {
+                droparItemDoInventario(ficha, itemEscolhido);
+            }
+        }
+    }
+
+    // Dropar (descartar) um item do inventário, escolhendo a quantidade
+    private static void droparItemDoInventario(FichaRpg ficha, ItemRpg item) {
+        int qtdAtual = item.getQuantidade();
+        System.out.println("\n  Você tem " + qtdAtual + "x " + item.getNome() + ".");
+        System.out.println("  Quantidade para dropar (1 a " + qtdAtual + ", 0 para cancelar): ");
+        int qtd = lerInteiro();
+        if (qtd <= 0) {
+            System.out.println(AMARELO + "  Descarte cancelado." + RESET);
+            return;
+        }
+        if (qtd > qtdAtual) {
+            ExibirErro("Quantidade inválida! Você só tem " + qtdAtual + "x.");
+            return;
+        }
+
+        System.out.println("  Tem certeza que deseja dropar " + qtd + "x " + item.getNome() + "?");
+        System.out.println("  1. Sim, dropar");
+        System.out.println("  2. Não, cancelar");
+        int confirmar = lerOpcao(2);
+
+        if (confirmar != 1) {
+            System.out.println(AMARELO + "  Descarte cancelado." + RESET);
+            return;
+        }
+
+        double pesoDropado = item.getPeso() * qtd;
+        ficha.removerItem(item.getNome(), qtd);
+        System.out.println(VERDE + "  Você dropou " + qtd + "x " + item.getNome() + "." + RESET);
+        if (pesoDropado > 0) {
+            System.out.println("  Espaço liberado: " + String.format("%.1f", pesoDropado) + " (mochila: " + String.format("%.1f", ficha.getPesoTotalMochila()) + "/" + String.format("%.1f", ficha.getCapacidadeMochila()) + ")");
         }
     }
 
