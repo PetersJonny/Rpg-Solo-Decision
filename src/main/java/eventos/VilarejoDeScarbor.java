@@ -219,8 +219,14 @@ public class VilarejoDeScarbor {
         if (draconico) {
             Interface.MostrarMensagem("\"Você é dracônico\", rosna o líder, apertando a adaga. \"Então já sabe muito bem o que sua gente fez com a nossa. E não vai ter perdão da nossa parte.\"");
             Interface.Pausa(2000);
-            Interface.MostrarMensagem("Você conhece essa história de cor — e o goblin percebe isso no seu olhar. Sem mais conversa.");
+
+            Interface.MostrarMensagem("\nEnquanto ele fala, a memória vem à tona, nítida, como se você tivesse lido ontem...");
             Interface.Pausa(2000);
+            Interface.MostrarMensagem("A história dos " + AMARELO + "goblins e de suas minas de ouro" + RESET + ". Auditores dracônicos desceram sobre os territórios deles e tomaram as minas sob a bandeira do avanço da própria espécie — o bem mais valioso que aquela gente possuía, arrancado em nome do progresso.");
+            Interface.Pausa(2600);
+            Interface.MostrarMensagem("Agora você entende por que eles vieram buscar o ouro de volta — mesmo que seja do bolso de outros.");
+            Interface.Pausa(2200);
+
             comandoLutarOuFugir(ficha, goblins, 10, false);
             return;
         }
