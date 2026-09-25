@@ -195,7 +195,7 @@ public class Interface {
         System.out.println("  1. " + CIANO + "Humano" + RESET + " — +1 em um atributo à sua escolha e Vontade de Viver (sobrevive com 1 PV).");
         System.out.println("  2. " + CIANO + "Elfo da Floresta" + RESET + " — +1 Destreza e Toque da Mata (+30% de material ao coletar recursos).");
         System.out.println("  3. " + CIANO + "Vigia do Crepúsculo" + RESET + " — +1 Sabedoria e Visão na Penumbra (+2 em testes noturnos).");
-        System.out.println("  4. " + CIANO + "Meio-Fada" + RESET + " — +1 Presença e Encanto Feérico (dobra a chance de encontrar fadas).");
+        System.out.println("  4. " + CIANO + "Meio-Fada" + RESET + " — +1 Presença e Encanto Feérico (dobra a chance de encontrar fadas e reduz em 1 o custo de mana, nunca abaixo de 1).");
         System.out.println("  5. " + CIANO + "Dracônico" + RESET + " — +1 Constituição e Escamas de Dragão (+2 defesa e +2 vida máx).");
         System.out.println("  6. " + CIANO + "Meio-Orque" + RESET + " — +1 Força e Fúria Sombria (+2 de dano com vida abaixo de 30%).");
         System.out.println("  7. " + CIANO + "Gnomo" + RESET + " — +1 Intelecto e Mente Afiada (pode rolar novamente um teste mental).\n");

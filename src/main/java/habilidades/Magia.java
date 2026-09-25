@@ -41,7 +41,7 @@ public class Magia extends Habilidade {
         }
         ficha.setManaPersonagem(ficha.getManaPersonagem() - custoPago);
         if (custoPago < getCustoMana()) {
-            Interface.MostrarMensagem("(Pequeno Grimório reduziu o custo da magia em 1!)");
+            Interface.MostrarMensagem("(Custo reduzido! Pagou " + custoPago + " em vez de " + getCustoMana() + " de mana.)");
             Interface.Pausa(1000);
         }
         

@@ -50,6 +50,7 @@ public abstract class Raca implements Serializable {
     public boolean temBonusBuscaRecursos() { return false; }     // Elfo (Toque da Mata)
     public boolean temBonusDanoVidaBaixa() { return false; }     // Meio-Orque (Fúria Sombria)
     public boolean temBonusTestesNoturnos() { return false; }    // Vigia do Crepúsculo
+    public boolean reduzCustoMana() { return false; }            // Meio-Fada
 
     // Texto completo para o menu de escolha (nome + bônus + passiva)
     public String getDescricaoCompleta() {

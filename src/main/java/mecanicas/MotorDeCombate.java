@@ -582,14 +582,14 @@ public class MotorDeCombate {
 
             int aleatorio = MecanicasRpg.rolarDado(100);
             habilidades.Magia magiaUsar = null;
-            if (bola != null && cf.getManaPersonagem() >= bola.getCustoMana() && aleatorio <= 60) {
+            if (bola != null && cf.getManaPersonagem() >= custoEfetivoMagia(cf, bola) && aleatorio <= 60) {
                 magiaUsar = bola;
             } else if (pequena != null && aleatorio <= 30) {
                 magiaUsar = pequena;
             }
 
             if (magiaUsar != null) {
-                cf.setManaPersonagem(cf.getManaPersonagem() - magiaUsar.getCustoMana());
+                cf.setManaPersonagem(cf.getManaPersonagem() - custoEfetivoMagia(cf, magiaUsar));
                 Interface.MostrarMensagem(comp.getNomeCompleto() + " conjura " + magiaUsar.getNome() + "!");
                 Interface.Pausa(1500);
                 int dano = 0;
@@ -815,15 +815,15 @@ public class MotorDeCombate {
 
     public static void tentarConhecimentoAvancado(FichaRpg ficha, List<Criatura> inimigos, int tipoAcao, int alvoIndex, int armaIndex, int habIndex) {
         for (habilidades.Habilidade hab : ficha.getHabilidades()) {
-            if (hab.getNome().equals("Conhecimento Avançado") && ficha.getManaPersonagem() >= hab.getCustoMana()) {
-                System.out.println("\nDeseja usar Conhecimento Avançado para rerrolar? (Custo: " + hab.getCustoMana() + " Mana)");
+            if (hab.getNome().equals("Conhecimento Avançado") && ficha.getManaPersonagem() >= custoEfetivoMagia(ficha, hab)) {
+                System.out.println("\nDeseja usar Conhecimento Avançado para rerrolar? (Custo: " + custoEfetivoMagia(ficha, hab) + " Mana)");
                 System.out.println("1. Sim");
                 System.out.println("2. Não");
                 int escolha = Interface.lerInteiro();
 
 
                 if (escolha == 1) {
-                    ficha.setManaPersonagem(ficha.getManaPersonagem() - hab.getCustoMana());
+                    ficha.setManaPersonagem(ficha.getManaPersonagem() - custoEfetivoMagia(ficha, hab));
                     Interface.MostrarMensagem("\nVocê foca seus conhecimentos e tenta novamente!");
                     Interface.Pausa(1500);
 
@@ -928,7 +928,7 @@ public class MotorDeCombate {
 
         if (acao[0] == 3) {
             habilidades.Habilidade hab = ficha.getHabilidades().get(acao[1]);
-            ficha.setManaPersonagem(ficha.getManaPersonagem() - hab.getCustoMana());
+            ficha.setManaPersonagem(ficha.getManaPersonagem() - custoEfetivoMagia(ficha, hab));
             aplicaPassiva(ficha, hab, cascaGrossaAtiva);
             Interface.MostrarMensagem("\nVocê ativa " + hab.getNome() + "!");
             Interface.MostrarMensagem(hab.getDescricao());
@@ -1404,8 +1404,8 @@ public class MotorDeCombate {
             return -1;
         }
 
-        if (ficha.getManaPersonagem() < habEscolhida.getCustoMana()) {
-            Interface.ExibirErro("Mana insuficiente! Precisa de " + habEscolhida.getCustoMana() + " de mana.");
+        if (ficha.getManaPersonagem() < custoEfetivoMagia(ficha, habEscolhida)) {
+            Interface.ExibirErro("Mana insuficiente! Precisa de " + custoEfetivoMagia(ficha, habEscolhida) + " de mana.");
             Interface.Pausa(1500);
             return -1;
         }
@@ -1413,12 +1413,20 @@ public class MotorDeCombate {
         return ficha.getHabilidades().indexOf(habEscolhida);
     }
 
-    // Custo de mana efetivo de uma habilidade (Pequeno Grimório reduz 1 no custo das magias pagas)
+    // Custo de mana efetivo de uma habilidade/magia.
+    // O Pequeno Grimório reduz 1 no custo das magias pagas; a Meio-Fada (Encanto
+    // Feérico) reduz 1 no custo de magias e habilidades. O custo nunca pode zerar:
+    // o mínimo é 1, a não ser que a própria habilidade tenha custo definido como 0.
     public static int custoEfetivoMagia(FichaRpg ficha, habilidades.Habilidade hab) {
-        if (hab instanceof habilidades.Magia && hab.getCustoMana() > 0 && ficha.temItem("Pequeno Grimório")) {
-            return Math.max(1, hab.getCustoMana() - 1);
-        }
-        return hab.getCustoMana();
+        int custo = hab.getCustoMana();
+        if (custo <= 0) return 0;
+
+        boolean meioFada = ficha.getRaca() != null && ficha.getRaca().reduzCustoMana();
+        boolean pequenoGrimorio = hab instanceof habilidades.Magia && ficha.temItem("Pequeno Grimório");
+
+        if (meioFada) custo--;
+        if (pequenoGrimorio) custo--;
+        return Math.max(1, custo);
     }
 
     public static boolean executarHabilidadeEscolhida(FichaRpg ficha, List<Criatura> inimigos, int alvoIndex, int habilidadeIndex) {
@@ -1490,7 +1498,7 @@ public class MotorDeCombate {
 
     // Estrondo do Guerreiro: 5 de mana, 7d10 em área e não pode usar habilidades no próximo turno
     public static boolean executarEstrondo(FichaRpg ficha, List<Criatura> inimigos, habilidades.Habilidade hab) {
-        ficha.setManaPersonagem(ficha.getManaPersonagem() - hab.getCustoMana());
+        ficha.setManaPersonagem(ficha.getManaPersonagem() - custoEfetivoMagia(ficha, hab));
         ficha.setRodadasSemHabilidade(2);
         Interface.MostrarMensagem("\nVocê golpeia o chão com toda a sua força! A terra se ergue ao seu redor!");
         Interface.Pausa(1500);
@@ -1532,7 +1540,7 @@ public class MotorDeCombate {
             return true;
         }
         Criatura alvo = inimigos.get(alvoIndex);
-        ficha.setManaPersonagem(ficha.getManaPersonagem() - hab.getCustoMana());
+        ficha.setManaPersonagem(ficha.getManaPersonagem() - custoEfetivoMagia(ficha, hab));
         ficha.setPrisaoAtiva(alvo);
         Interface.MostrarMensagem("\nVocê prende " + rotuloCriatura(inimigos, alvo) + " em uma prisão de energia!");
         Interface.MostrarMensagem("Na vez dele, ele precisa tirar 15 ou mais em um d20 para se libertar.");
@@ -1572,7 +1580,7 @@ public class MotorDeCombate {
             Interface.Pausa(1500);
             return true;
         }
-        ficha.setManaPersonagem(ficha.getManaPersonagem() - hab.getCustoMana());
+        ficha.setManaPersonagem(ficha.getManaPersonagem() - custoEfetivoMagia(ficha, hab));
         ficha.setPoderAbsolutoAtivo(true);
         Interface.MostrarMensagem("\nVocê se envolve na energia do seu elemento! Suas magias dobram de poder!");
         Interface.Pausa(2000);
@@ -1581,7 +1589,7 @@ public class MotorDeCombate {
 
     // Cura Absoluta do Healer (lvl 9): 10 de mana, cura total e vida bônus (dobra a vida, gasta-se primeiro)
     public static boolean executarCuraAbsoluta(FichaRpg ficha, habilidades.Habilidade hab) {
-        ficha.setManaPersonagem(ficha.getManaPersonagem() - hab.getCustoMana());
+        ficha.setManaPersonagem(ficha.getManaPersonagem() - custoEfetivoMagia(ficha, hab));
         if (ficha.getCuraAbsolutaBonus() == 0) {
             ficha.setCuraAbsolutaVidaOriginalMax(ficha.getVidaMaxima());
         }
@@ -1716,7 +1724,7 @@ public class MotorDeCombate {
             Interface.Pausa(1500);
             return true;
         }
-        ficha.setManaPersonagem(ficha.getManaPersonagem() - hab.getCustoMana());
+        ficha.setManaPersonagem(ficha.getManaPersonagem() - custoEfetivoMagia(ficha, hab));
         ficha.setProtecaoAbsolutaAtiva(true);
         ficha.setBonusDefesaTemporario(ficha.getBonusDefesaTemporario() + 3);
         Interface.MostrarMensagem("\nVocê se envolve no seu elemento! +3 de defesa e reflete 2d8 de dano a quem te acertar.");
@@ -1732,7 +1740,7 @@ public class MotorDeCombate {
             Interface.Pausa(1500);
             return true;
         }
-        ficha.setManaPersonagem(ficha.getManaPersonagem() - hab.getCustoMana());
+        ficha.setManaPersonagem(ficha.getManaPersonagem() - custoEfetivoMagia(ficha, hab));
         Criatura alvo = inimigos.get(alvoVeneno);
         ficha.setAlvoCuraParaMorte(alvo);
         ficha.setCuraParaMortePreparado(true);
@@ -2095,7 +2103,7 @@ public class MotorDeCombate {
             return true;
         }
         Criatura alvo = inimigos.get(alvoIndex);
-        ficha.setManaPersonagem(ficha.getManaPersonagem() - hab.getCustoMana());
+        ficha.setManaPersonagem(ficha.getManaPersonagem() - custoEfetivoMagia(ficha, hab));
         ficha.setPactoMortalAtivo(true);
         alvo.setEnfraquecido(true);
         Interface.MostrarMensagem("\nSeu olho demoníaco se volta para " + rotuloCriatura(inimigos, alvo) + " e o Pacto Mortal é selado!");
