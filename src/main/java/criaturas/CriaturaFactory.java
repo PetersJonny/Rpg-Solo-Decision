@@ -57,6 +57,18 @@ public class CriaturaFactory {
         return c;
     }
 
+    // Goblin: assaltante das tavernas. Nível 1, pequeno e ágil; presença +2.
+    public static Criatura criarGoblin() {
+        Criatura c = new Criatura("Goblin", 1, 8, 8, 3);
+        c.setBonusAcerto(2);
+        c.setTestePresenca(2);
+        c.setXpGanho(20);
+        c.adicionarAtaque("Adaga", "", 1, 4);
+        c.adicionarAtaque("Soco", "", 1, 3);
+        c.setOuroDrop(3, 9, 100);
+        return c;
+    }
+
     public static Criatura criarBandido() {
         Criatura c = new Criatura("Bandido", 2, 9, 12, 1);
         c.setBonusAcerto(2);
