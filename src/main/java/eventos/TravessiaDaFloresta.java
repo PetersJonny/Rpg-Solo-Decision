@@ -182,6 +182,8 @@ public class TravessiaDaFloresta {
         Interface.Pausa(2000);
         Interface.MostrarMensagem("O letreiro anuncia o nome da cidade: " + CIANO + ficha.getCidadeAtual() + RESET + ". Você chegou.");
         Interface.Pausa(2500);
+
+        VilarejoDeScarbor.ObservarCidade(ficha);
     }
 
     // Sorteia uma das cidades para além da floresta (por enquanto, só o Vilarejo de Scarbor).
