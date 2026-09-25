@@ -134,7 +134,6 @@ public class CriaturaFactory {
         Criatura c = new Criatura("Baú Monstruoso", 3, 25, 10, 4);
         c.setBonusAcerto(4);
         c.setDcFuga(12);
-        c.setMortoVivo(true);
         c.setXpGanho(50);
         c.adicionarAtaque("Mordida", "", 1, 8);
         c.setOuroDrop(4, 17, 100);
@@ -152,6 +151,7 @@ public class CriaturaFactory {
         c.setDcFuga(25);
         c.setSemFuga(true);
         c.setDropDeClasse(true);
+        c.setMortoVivo(true);
         c.setXpGanho(500);
         c.adicionarAtaque("Garras", "corte", 2, 6);
         c.adicionarAtaque("Chifre", "perfurante", 1, 12);

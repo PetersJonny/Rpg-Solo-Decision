@@ -112,7 +112,8 @@ class CriaturaFactoryTest {
     void criaturasDoLabirintoSaoMortosVivos() {
         assertTrue(CriaturaFactory.criarEsqueleto().isMortoVivo());
         assertTrue(CriaturaFactory.criarZumbi().isMortoVivo());
-        assertTrue(CriaturaFactory.criarBauMonstruoso().isMortoVivo());
+        assertTrue(CriaturaFactory.criarMinotauro().isMortoVivo(), "Minotauro conta como morto-vivo");
+        assertFalse(CriaturaFactory.criarBauMonstruoso().isMortoVivo(), "Baú Monstruoso não é morto-vivo");
         assertFalse(CriaturaFactory.criarLobo().isMortoVivo(), "Lobo é animal comum, não morto-vivo");
     }
 
@@ -138,7 +139,7 @@ class CriaturaFactoryTest {
         assertEquals(500, m.getXpGanho());
         assertTrue(m.isSemFuga(), "A porta se fecha: não há como fugir do Minotauro");
         assertTrue(m.isDropDeClasse(), "Minotauro concede a recompensa exclusiva da classe");
-        assertFalse(m.isMortoVivo(), "Minotauro é uma criatura viva, não um morto-vivo");
+        assertTrue(m.isMortoVivo(), "Minotauro conta como morto-vivo");
         assertEquals(2, m.getAtaques().size());
         assertEquals("Garras", m.getAtaques().get(0).nome);
         assertEquals(2, m.getAtaques().get(0).qtdDado);
