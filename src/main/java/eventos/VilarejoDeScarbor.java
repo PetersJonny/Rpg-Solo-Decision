@@ -15,7 +15,13 @@ public class VilarejoDeScarbor {
     public static void ObservarCidade(FichaRpg ficha) {
         Interface.MostrarMensagem("\nVocê atravessa a entrada e é recebido por uma visão que o faz parar no meio do caminho.");
         Interface.Pausa(2000);
-        Interface.MostrarMensagem("Por todos os lados, pessoas — mas nenhuma igual a você. " + CIANO + "Escamas sobre a pele, olhos de réptil, chifres e caudas grossas" + RESET + ". Aqui, os " + CIANO + "dracônicos" + RESET + " são maioria absoluta.");
+
+        boolean draconico = ficha.getRaca() != null && ficha.getRaca().getNome().equals("Dracônico");
+        if (draconico) {
+            Interface.MostrarMensagem("Por todos os lados, " + CIANO + "pessoas iguais a você" + RESET + ": " + CIANO + "escamas sobre a pele, olhos de réptil, chifres e caudas grossas" + RESET + ". Você está entre os seus — aqui, os " + CIANO + "dracônicos" + RESET + " são maioria absoluta.");
+        } else {
+            Interface.MostrarMensagem("Por todos os lados, pessoas — mas nenhuma igual a você. " + CIANO + "Escamas sobre a pele, olhos de réptil, chifres e caudas grossas" + RESET + ". Aqui, os " + CIANO + "dracônicos" + RESET + " são maioria absoluta.");
+        }
         Interface.Pausa(2200);
         Interface.MostrarMensagem("Mesmo assim, ninguém parece se importar com a sua presença: ferreiros batem o martelo, comerciantes gritam seus preços, crianças correm entre as pernas dos adultos. Cada um segue no seu próprio afazer, como se o mundo girasse normalmente.");
         Interface.Pausa(2200);
