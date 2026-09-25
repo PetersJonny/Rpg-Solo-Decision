@@ -732,6 +732,8 @@ public class MotorDeCombate {
         if (!temHabilidade(ficha, "Cura Incessante")) {
             ficha.getHabilidades().add(new habilidades.ativas.HabilidadeCuraIncessante("Cura Incessante", "Cura toda a sua vida. Pode ser usada apenas uma vez por combate.", 0));
         }
+        // Deus substitui a Semi Deus: ela some da lista de habilidades
+        ficha.getHabilidades().removeIf(h -> h.getNome().equals("Semi Deus"));
         Interface.MostrarMensagem("\nVocê se torna um Deus! A forma de Semi Deus fica permanentemente ativa.");
         Interface.MostrarMensagem("Vida máxima aumentada em " + bonusVida + " e você ganhou a habilidade Cura Incessante!");
         Interface.Pausa(2500);
