@@ -141,8 +141,8 @@ class FichaRpgTest {
         assertFalse(ficha.isEhNoite());
         assertEquals(3, ficha.getDiaAtual());
         assertEquals(0, ficha.getDiasSemDormir());
-        assertEquals(60, ficha.getVidaPersonagem()); // 10 + 50 (metade)
-        assertEquals(30, ficha.getManaPersonagem()); // 5 + 25 (metade)
+        assertEquals(43, ficha.getVidaPersonagem()); // 10 + 33 (1/3 de 100)
+        assertEquals(21, ficha.getManaPersonagem()); // 5 + 16 (1/3 de 50)
     }
 
     @Test

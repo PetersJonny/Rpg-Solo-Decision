@@ -228,7 +228,7 @@ public static void MenuConstrucao(FichaRpg ficha) {
                 System.out.println("  " + num + ". Montar Cabana aqui  (7x Madeira, 10x Folha, 4x Pedra — 2/3 do período)");
                 opMontarCabana = num++;
             } else if (ficha.podeUsarCabana()) {
-                System.out.println("  " + num + ". Dormir  (só à noite; recupera metade da vida e mana)");
+                System.out.println("  " + num + ". Dormir  (só à noite; recupera 1/3 da vida e da mana)");
                 opDormir = num++;
             } else {
                 System.out.println("  " + num + ". Ir para a Cabana  (" + ficha.getDistanciaAte(ficha.getProfundidadeCabana()) + " período(s) de caminhada)");

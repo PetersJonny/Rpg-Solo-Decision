@@ -100,9 +100,9 @@ public class Companheiro implements java.io.Serializable {
     // Chamado sempre que o companheiro dorme uma noite (na cabana).
     // A contagem de dias começa a partir da PRIMEIRA vez que ele dorme.
     public void aoDormir() {
-        // Dormir na cabana recupera metade da vida e da mana (como o jogador)
-        ficha.setVidaPersonagem(Math.min(ficha.getVidaPersonagem() + ficha.getVidaMaxima() / 2, ficha.getVidaMaxima()));
-        ficha.setManaPersonagem(Math.min(ficha.getManaPersonagem() + ficha.getManaMaxima() / 2, ficha.getManaMaxima()));
+        // Dormir na cabana recupera 1/3 da vida e da mana (como o jogador)
+        ficha.setVidaPersonagem(Math.min(ficha.getVidaPersonagem() + ficha.getVidaMaxima() / 3, ficha.getVidaMaxima()));
+        ficha.setManaPersonagem(Math.min(ficha.getManaPersonagem() + ficha.getManaMaxima() / 3, ficha.getManaMaxima()));
 
         if (!dormiuPrimeiraVez) {
             dormiuPrimeiraVez = true;

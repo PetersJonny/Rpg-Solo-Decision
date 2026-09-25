@@ -839,12 +839,12 @@ public class FichaRpg implements java.io.Serializable {
     }
 
     // Dormir: só de noite, estando NA cabana (não adianta estando longe na floresta).
-    // Recupera metade da vida máxima e metade da mana máxima e faz amanhecer.
+    // Recupera 1/3 da vida máxima e 1/3 da mana máxima e faz amanhecer.
     public boolean dormir() {
         if (!ehNoite) return false;
         if (!temCabana || !naCabana) return false;
-        int curaVida = vidaMaxima / 2;
-        int curaMana = manaMaxima / 2;
+        int curaVida = vidaMaxima / 3;
+        int curaMana = manaMaxima / 3;
         vidaPersonagem = Math.min(vidaPersonagem + curaVida, vidaMaxima);
         manaPersonagem = Math.min(manaPersonagem + curaMana, manaMaxima);
         ehNoite = false;
