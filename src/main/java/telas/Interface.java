@@ -17,32 +17,38 @@ public class Interface {
 
     // Entrada de Dados
     public static final Scanner scanner = new Scanner(System.in);
+    public static boolean modoTeste = false;
 
     // Aguarda o jogador apertar ENTER
     public static void esperarEnter() {
+        if (modoTeste) return;
         System.out.println("\nPressione ENTER para continuar...");
         scanner.nextLine();
     }
 
     public static void esperarEnter(String mensagem) {
+        if (modoTeste) return;
         System.out.println("\n" + mensagem);
         scanner.nextLine();
     }
 
     // Aguarda o ENTER do jogador antes de rolar dados (não retorna o valor rolado)
     public static void pressionarParaRolar() {
+        if (modoTeste) return;
         System.out.println("\nPressione ENTER para rolar os dados...");
         scanner.nextLine();
     }
 
     // Aguarda o ENTER antes de um teste, citando o atributo
     public static void pressionarParaTeste(String atributo) {
+        if (modoTeste) return;
         System.out.println("\nPressione ENTER para rodar um teste de " + atributo + "...");
         scanner.nextLine();
     }
 
     // Lê um número inteiro com validação (letras/caracteres mostram opção inválida e pedem novamente)
     public static int lerInteiro() {
+        if (modoTeste) return 1;
         while (true) {
             String entrada = scanner.nextLine();
             try {
@@ -55,6 +61,7 @@ public class Interface {
 
     // Lê uma opção garantida dentro de [min, max] (menus com opções fixas)
     public static int lerOpcao(int min, int max) {
+        if (modoTeste) return 1;
         while (true) {
             int escolha = lerInteiro();
             if (escolha >= min && escolha <= max) return escolha;
@@ -462,6 +469,7 @@ public class Interface {
             }
 
             cabecalhoMenu("SEU INVENTÁRIO");
+            System.out.println("  Espaço na mochila: " + CIANO + String.format("%.1f", ficha.getPesoTotalMochila()) + RESET + " / " + CIANO + String.format("%.1f", ficha.getCapacidadeMochila()) + RESET + " (Força " + ficha.getForca() + ")");
             System.out.println("\n  Escolha um item para ver a descrição:\n");
             for (int i = 0; i < ficha.getInventario().size(); i++) {
                 ItemRpg item = ficha.getInventario().get(i);

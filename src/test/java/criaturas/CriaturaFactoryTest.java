@@ -4,9 +4,21 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 class CriaturaFactoryTest {
+
+    @BeforeAll
+    static void antesDeTudo() {
+        telas.Interface.modoTeste = true;
+    }
+
+    @AfterAll
+    static void depoisDeTudo() {
+        telas.Interface.modoTeste = false;
+    }
 
     @Test
     void esqueletoComConfiguracaoCorreta() {

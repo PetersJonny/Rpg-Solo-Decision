@@ -391,6 +391,103 @@ public class FichaRpg implements java.io.Serializable {
         inventario.add(novoItem);
     }
 
+    // ==================== ESPAÇO DA MOCHILA ====================
+
+    // Capacidade de carga da mochila: 10 + 5 por ponto de Força
+    public double getCapacidadeMochila() {
+        return 10 + 5.0 * getForca();
+    }
+
+    // Peso total carregado (soma do peso de cada unidade do inventário)
+    public double getPesoTotalMochila() {
+        double total = 0;
+        for (ItemRpg item : inventario) {
+            total += item.getPeso() * item.getQuantidade();
+        }
+        return total;
+    }
+
+    // Quanto de espaço ainda resta na mochila
+    public double getEspacoLivreMochila() {
+        return getCapacidadeMochila() - getPesoTotalMochila();
+    }
+
+    // Tenta adicionar o item se houver espaço; retorna false e NÃO adiciona se estourar
+    public boolean tentarAdicionarItem(ItemRpg novoItem) {
+        double espacoNecessario = novoItem.getPeso() * novoItem.getQuantidade();
+        double espacoLivre = getEspacoLivreMochila();
+        if (espacoNecessario <= espacoLivre + 0.0001) {
+            adicionarItem(novoItem);
+            return true;
+        }
+        return false;
+    }
+
+    // Adiciona apenas a quantidade que couber na mochila (o item tem sua quantidade
+    // reduzida ao que foi guardado); retorna quantas unidades foram pegas.
+    public int adicionarItemLimitado(ItemRpg novoItem) {
+        double espacoLivre = getEspacoLivreMochila();
+        double pesoUnit = novoItem.getPeso();
+        int qtd = novoItem.getQuantidade();
+        if (pesoUnit <= 0 || espacoLivre <= 0) return 0;
+        int qtdCabe = (int) Math.floor(espacoLivre / pesoUnit);
+        int qtdPegar = Math.min(qtd, qtdCabe);
+        if (qtdPegar <= 0) return 0;
+        novoItem.setQuantidade(qtdPegar);
+        adicionarItem(novoItem);
+        return qtdPegar;
+    }
+
+    // Pergunta se o jogador quer pegar o item achado e quantos, respeitando o espaço
+    // da mochila. O que não couber ou for recusado fica para trás.
+    public void coletarItemEncontrado(ItemRpg item, String origem) {
+        double pesoUnit = item.getPeso();
+        double espacoLivre = getEspacoLivreMochila();
+        int qtd = item.getQuantidade();
+
+        int cabemDeFato = (pesoUnit > 0) ? (int) Math.floor(espacoLivre / pesoUnit) : qtd;
+        if (cabemDeFato < 0) cabemDeFato = 0;
+        cabemDeFato = Math.min(qtd, cabemDeFato);
+
+        if (cabemDeFato <= 0) {
+            Interface.MostrarMensagem(origem + " " + qtd + "x " + item.getNome() + ", mas não há espaço na mochila! (Peso: " + String.format("%.1f", pesoUnit) + " cada, livre: " + String.format("%.1f", espacoLivre) + ")");
+            Interface.Pausa(1500);
+            return;
+        }
+
+        Interface.MostrarMensagem("-> " + origem + " " + qtd + "x " + item.getNome() + " (peso " + String.format("%.1f", pesoUnit) + " cada, espaço livre: " + String.format("%.1f", espacoLivre) + "/" + String.format("%.1f", getCapacidadeMochila()) + ").");
+        Interface.Pausa(800);
+
+        System.out.println("  Deseja pegar?");
+        System.out.println("  1. Pegar tudo (" + cabemDeFato + "x)");
+        System.out.println("  2. Escolher a quantidade");
+        System.out.println("  3. Deixar para trás");
+        int escolha = Interface.lerOpcao(3);
+
+        int qtdPegar;
+        if (escolha == 1) {
+            qtdPegar = cabemDeFato;
+        } else if (escolha == 2) {
+            System.out.println("  Quantidade (1 a " + cabemDeFato + "):");
+            int qtdEscolhida = Interface.lerInteiro();
+            qtdPegar = Math.min(Math.max(0, qtdEscolhida), cabemDeFato);
+            if (qtdPegar <= 0) {
+                Interface.MostrarMensagem("-> Você não pegou nada.");
+                Interface.Pausa(1000);
+                return;
+            }
+        } else {
+            Interface.MostrarMensagem("-> Você deixou " + item.getNome() + " para trás.");
+            Interface.Pausa(1000);
+            return;
+        }
+
+        item.setQuantidade(qtdPegar);
+        adicionarItem(item);
+        Interface.MostrarMensagem("-> Você coletou " + qtdPegar + "x " + item.getNome() + " (peso: " + String.format("%.1f", pesoUnit * qtdPegar) + "/" + String.format("%.1f", getCapacidadeMochila()) + ").");
+        Interface.Pausa(1500);
+    }
+
     // Remove itens do inventário; se a arma equipada for vendida, ela é desequipada.
     public boolean removerItem(String nome, int quantidade) {
         for (ItemRpg item : inventario) {

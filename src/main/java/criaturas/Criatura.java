@@ -65,6 +65,12 @@ public class Criatura implements java.io.Serializable {
     // Ao morrer, concede a recompensa exclusiva da classe do jogador
     private boolean dropDeClasse;
 
+    // Toque de Midas (ex.: Goblin): sente o cheiro de ouro do jogador e, no próximo
+    // turno, ataca com +3 para acertar. Só funciona se o jogador tiver ouro.
+    private boolean temToqueDeMidas;
+    private boolean toqueDeMidasPreparado; // sentiu o ouro, o +3 vale no próximo turno
+    private int bonusToqueDeMidas;         // +3 aplicado no turno atual
+
     public Criatura(String nome, int nivel, int vida, int defesa, int iniciativa) {
         this.nome = nome;
         this.nivel = nivel;
@@ -131,6 +137,12 @@ public class Criatura implements java.io.Serializable {
     public void setDropDeClasse(boolean dropDeClasse) { this.dropDeClasse = dropDeClasse; }
     public boolean isDropDeClasse() { return dropDeClasse; }
 
+    // Toque de Midas (ex.: Goblin): o bônus só entra em ação se o alvo tiver ouro.
+    // Turno atual: sente o cheiro e prepara o ataque; próximo turno: +3 para acertar.
+    public void configurarToqueDeMidas() { this.temToqueDeMidas = true; }
+    public boolean isTemToqueDeMidas() { return temToqueDeMidas; }
+    public int getBonusAcertoEfetivo() { return bonusAcerto + bonusToqueDeMidas; }
+
     // Ataques e Drops
     public void adicionarAtaque(String nome, String tipoDano, int qtdDado, int ladosDado) {
         ataques.add(new Ataque(nome, tipoDano, qtdDado, ladosDado));
@@ -167,6 +179,25 @@ public class Criatura implements java.io.Serializable {
     // personagem principal (só ele pode ser infectado). Depois do ataque, se o ataque
     // usado for repetível, a criatura pode atacar novamente (cada repetição é um ataque novo).
     public Ataque atacarJogador(FichaRpg ficha, boolean cascaGrossaAtiva, boolean alvoJogadorPrincipal) {
+        bonusToqueDeMidas = 0;
+
+        // TOQUE DE MIDAS: se o jogador ainda tem ouro, no turno seguinte à detecção a
+        // criatura ataca com +3. Se o ouro acabar, a preparação é descartada.
+        if (temToqueDeMidas) {
+            if (toqueDeMidasPreparado && ficha.getOuro() > 0) {
+                bonusToqueDeMidas = 3;
+                toqueDeMidasPreparado = false;
+                Interface.MostrarMensagem("\n" + nome + " sente o cheiro do seu ouro e ataca com mais fúria! (+3 para acertar)");
+                Interface.Pausa(1500);
+            } else if (ficha.getOuro() > 0) {
+                toqueDeMidasPreparado = true;
+                Interface.MostrarMensagem("\n" + nome + " sente o cheiro de ouro vindo de você e fica obcecado... no próximo turno ele ataca com tudo!");
+                Interface.Pausa(1500);
+            } else {
+                toqueDeMidasPreparado = false;
+            }
+        }
+
         Ataque ataqueEscolhido = null;
         int repeticao = 0;
         while (true) {
@@ -219,14 +250,14 @@ public class Criatura implements java.io.Serializable {
         }
 
         int dadoAtaque = MecanicasRpg.rolarDado(20);
-        int totalAtaque = dadoAtaque + bonusAcerto;
+        int totalAtaque = dadoAtaque + getBonusAcertoEfetivo();
         if (enfraquecido) {
             totalAtaque -= 2;
             Interface.MostrarMensagem("(Pacto Mortal: " + nome + " tem -2 em suas rolagens)");
             Interface.Pausa(1000);
         }
         boolean critico = dadoAtaque == 20;
-        Interface.MostrarMensagem("-> Ataque do " + nome + " [" + ataqueEscolhido.nome + "]: " + dadoAtaque + " (Dado) + " + bonusAcerto + " (Bônus) = " + totalAtaque + (critico ? " [CRÍTICO!]" : ""));
+        Interface.MostrarMensagem("-> Ataque do " + nome + " [" + ataqueEscolhido.nome + "]: " + dadoAtaque + " (Dado) + " + getBonusAcertoEfetivo() + " (Bônus) = " + totalAtaque + (critico ? " [CRÍTICO!]" : ""));
         if (critico) {
             Interface.MostrarMensagem("Golpe crítico! O dano de dados será dobrado!");
         }
@@ -264,14 +295,14 @@ public class Criatura implements java.io.Serializable {
         int dadoJogador = MecanicasRpg.rolarDado(20);
         int totalJogador = dadoJogador + ficha.getDestrezaTeste();
         int dadoMonstro = MecanicasRpg.rolarDado(20);
-        int totalMonstro = dadoMonstro + bonusAcerto;
+        int totalMonstro = dadoMonstro + getBonusAcertoEfetivo();
         if (enfraquecido) {
             totalMonstro -= 2;
             Interface.MostrarMensagem("(Pacto Mortal: " + nome + " tem -2 em suas rolagens)");
             Interface.Pausa(1000);
         }
         Interface.MostrarMensagem("-> Investida! Você: " + dadoJogador + " (Dado) + " + ficha.getDestrezaTeste() + " (Destreza) = " + totalJogador);
-        Interface.MostrarMensagem("-> " + nome + ": " + dadoMonstro + " (Dado) + " + bonusAcerto + " (Bônus) = " + totalMonstro);
+        Interface.MostrarMensagem("-> " + nome + ": " + dadoMonstro + " (Dado) + " + getBonusAcertoEfetivo() + " (Bônus) = " + totalMonstro);
         Interface.Pausa(2000);
 
         if (totalJogador >= totalMonstro) {
@@ -342,9 +373,7 @@ public class Criatura implements java.io.Serializable {
                 ItemRpg item = criarItemDrop(drop.nomeItem);
                 if (item != null) {
                     item.setQuantidade(qtd);
-                    ficha.adicionarItem(item);
-                    Interface.MostrarMensagem("-> Você coletou " + qtd + "x " + drop.nomeItem + "!");
-                    Interface.Pausa(1500);
+                    ficha.coletarItemEncontrado(item, "Você achou");
                 }
             }
         }

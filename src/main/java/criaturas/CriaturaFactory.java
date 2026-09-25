@@ -57,15 +57,19 @@ public class CriaturaFactory {
         return c;
     }
 
-    // Goblin: assaltante das tavernas. Nível 1, pequeno e ágil; presença +2.
+    // Goblin: assaltante das tavernas. Nível 3, pequeno e ágil; presença +2.
+    // Toque de Midas: sente o cheiro de ouro do jogador e, no próximo turno,
+    // ataca com +3 para acertar (só funciona se o jogador tiver ouro).
     public static Criatura criarGoblin() {
-        Criatura c = new Criatura("Goblin", 1, 8, 8, 3);
+        Criatura c = new Criatura("Goblin", 3, 15, 12, 3);
         c.setBonusAcerto(2);
         c.setTestePresenca(2);
-        c.setXpGanho(20);
-        c.adicionarAtaque("Adaga", "", 1, 4);
+        c.setXpGanho(70);
+        c.adicionarAtaque("Facada", "", 1, 4);
         c.adicionarAtaque("Soco", "", 1, 3);
-        c.setOuroDrop(3, 9, 100);
+        c.configurarToqueDeMidas();
+        c.setOuroDrop(12, 20, 100);
+        c.adicionarDrop("Faca", 1, 1, 30);
         return c;
     }
 

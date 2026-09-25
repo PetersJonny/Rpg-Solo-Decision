@@ -134,9 +134,7 @@ public class Floresta {
         ItemRpg item = nome.equals("Frutas")
                 ? new Consumivel(nome, descricao, quantidade)
                 : new ItemRpg(nome, descricao, quantidade);
-        ficha.adicionarItem(item);
-        Interface.MostrarMensagem("Você encontrou " + quantidade + "x " + nome + "!");
-        Interface.Pausa(1200);
+        ficha.coletarItemEncontrado(item, "Você encontrou");
         return true;
     }
 

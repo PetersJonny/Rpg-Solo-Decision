@@ -171,6 +171,13 @@ public class Vendedor {
 
             // Mostra a descrição e pede confirmação antes da compra
             ItemRpg itemDetalhe = criarItem(nome);
+            double pesoItem = itemDetalhe != null ? itemDetalhe.getPeso() : 1.0;
+            double espacoNecessario = pesoItem * qtdComprar;
+            if (espacoNecessario > ficha.getEspacoLivreMochila() + 0.0001) {
+                Interface.ExibirErro("Sua mochila não tem espaço para " + qtdComprar + "x " + nome + "! (cabe " + (int) Math.floor(ficha.getEspacoLivreMochila() / pesoItem) + "x, livre: " + String.format("%.1f", ficha.getEspacoLivreMochila()) + ")");
+                Interface.Pausa(1500);
+                continue;
+            }
             System.out.println("\n  " + CIANO + "-- " + nome.toUpperCase() + " (x" + qtdComprar + ") --" + RESET);
             if (itemDetalhe != null) {
                 System.out.println("  Descrição: " + itemDetalhe.getDescricao());

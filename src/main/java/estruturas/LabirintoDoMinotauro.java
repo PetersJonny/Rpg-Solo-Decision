@@ -245,9 +245,8 @@ public class LabirintoDoMinotauro {
             Interface.Pausa(3000);
         } else if (sorteio <= 97) {
             itens.ItemRpg arma = loja.Vendedor.sortearArmaDoJogo();
-            ficha.adicionarItem(arma);
-            Interface.MostrarMensagem(VERDE + "Você pegou a arma " + arma.getNome() + "!" + RESET);
-            Interface.Pausa(3000);
+            arma.setQuantidade(1);
+            ficha.coletarItemEncontrado(arma, "Você pegou");
         } else if (!ficha.isOlhoDemonicoEncontrado()) {
             encontrarOlhoDemonico(ficha);
         } else if (!ficha.isEspadaMajestralEncontrada()) {
