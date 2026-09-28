@@ -42,7 +42,7 @@ public class CriaturaFactory {
         c.adicionarAtaque("Mordida", "", 1, 6);
         c.adicionarAtaque("Aranhão", "", 2, 4);
         c.adicionarDrop("Couro", 1, 2, 40);
-        c.adicionarDrop("Carne de Lobo", 1, 1, 60);
+        c.adicionarDrop("Carne de Lobo", 1, 2, 40);
         return c;
     }
 
@@ -55,7 +55,7 @@ public class CriaturaFactory {
         c.adicionarAtaque("Aranhão", "", 2, 8);
         c.adicionarDrop("Couro", 2, 4, 60);
         c.adicionarDrop("Dente de Urso", 1, 1, 20);
-        c.adicionarDrop("Carne de Urso", 1, 2, 80);
+        c.adicionarDrop("Carne de Urso", 1, 2, 40);
         return c;
     }
 
