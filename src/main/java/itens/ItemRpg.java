@@ -34,6 +34,10 @@ public class ItemRpg implements java.io.Serializable {
                 return 0.1;
             case "Poção de Mana", "Kit Médico":
                 return 0.3;
+            case "Sopa do Vilarejo", "Pão Quente com Manteiga", "Ovos Mexidos",
+                 "Caldo de Lobo", "Peixe Assado", "Estofado de Urso",
+                 "Torta de Frutas", "Hidromel":
+                return 0.3;
             case "Poção Grande de Mana":
                 return 0.6;
             case "Espada Pesada", "Machado de Guerra", "Martelo de Guerra",

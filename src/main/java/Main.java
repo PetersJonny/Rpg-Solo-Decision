@@ -224,13 +224,25 @@ public class Main {
                 } else if (escolhaVilarejo == 2) {
                     eventos.VilarejoDeScarbor.OlharEmVolta(ficha);
                 } else if (escolhaVilarejo == 3) {
-                    eventos.TravessiaDaFloresta.VoltarParaFloresta(ficha);
+                    eventos.Taverna.Taverna(ficha);
                     if (ficha.getVidaPersonagem() <= 0) {
                         personagemFaleceu = true;
                     }
                 } else if (escolhaVilarejo == 4) {
-                    salvarJogo(ficha);
+                    eventos.Ferreiro.Ferreiro(ficha);
+                    if (ficha.getVidaPersonagem() <= 0) {
+                        personagemFaleceu = true;
+                    }
                 } else if (escolhaVilarejo == 5) {
+                    missoes.QuadroDeMissoes.MissoesEmAndamento(ficha);
+                } else if (escolhaVilarejo == 6) {
+                    eventos.TravessiaDaFloresta.VoltarParaFloresta(ficha);
+                    if (ficha.getVidaPersonagem() <= 0) {
+                        personagemFaleceu = true;
+                    }
+                } else if (escolhaVilarejo == 7) {
+                    salvarJogo(ficha);
+                } else if (escolhaVilarejo == 8) {
                     encerrarJogo(ficha);
                     jogando = false;
                     encerrouJogo = true;

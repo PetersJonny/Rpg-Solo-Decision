@@ -327,8 +327,22 @@ public class Vendedor {
             case "Folha": return 4;
             case "Pedra": return 5;
             case "Frutas": return 5;
+            // Pratos da taverna (valor cheio; o vendedor ambulante não os vende, só compra)
+            case "Sopa do Vilarejo": return 6;
+            case "Pão Quente com Manteiga": return 4;
+            case "Ovos Mexidos": return 7;
+            case "Caldo de Lobo": return 9;
+            case "Peixe Assado": return 9;
+            case "Estofado de Urso": return 13;
+            case "Torta de Frutas": return 7;
+            case "Hidromel": return 8;
             default: return -1;
         }
+    }
+
+    // Acesso público ao preço base de um item (usado pelas lojas da vila, ex.: ferreiro)
+    public static int precoBase(String nome) {
+        return precoDeVenda(nome);
     }
 
     // Preço que o vendedor PAGA ao jogador: TODO item é comprado por 70% do valor
@@ -359,11 +373,27 @@ public class Vendedor {
         return valorCheio * 70 / 100;
     }
 
-    // Cria a instância do item para venda/compra
-    private static ItemRpg criarItem(String nome) {
+    // Pratos da taverna da vila (itens compráveis no cardápio e vendáveis depois)
+    public static ItemRpg criarItem(String nome) {
         switch (nome) {
             case "Faca":
                 return new Arma("Faca", "Uma faca afiada que causa 1d4 de dano corpo a corpo, usando Destreza.", "CaC", 4, 1, 1, "Destreza");
+            case "Sopa do Vilarejo":
+                return new Consumivel("Sopa do Vilarejo", "Uma sopa quente de legumes da vila. Cura 1d2 de vida e sacia a fome.", 1);
+            case "Pão Quente com Manteiga":
+                return new Consumivel("Pão Quente com Manteiga", "Um pão fresquinho com manteiga. Sacia a fome (não cura vida).", 1);
+            case "Ovos Mexidos":
+                return new Consumivel("Ovos Mexidos", "Ovos mexidos quentes. Cura 1d3 de vida e sacia a fome.", 1);
+            case "Caldo de Lobo":
+                return new Consumivel("Caldo de Lobo", "Um caldo encorpado de carne de lobo. Cura 1d4 de vida e sacia a fome.", 1);
+            case "Peixe Assado":
+                return new Consumivel("Peixe Assado", "Peixe do rio assado na brasa. Cura 1d4 de vida e sacia a fome.", 1);
+            case "Estofado de Urso":
+                return new Consumivel("Estofado de Urso", "Um estofado generoso de carne de urso. Cura 1d6 de vida e sacia a fome.", 1);
+            case "Torta de Frutas":
+                return new Consumivel("Torta de Frutas", "Uma torta doce de frutas. Cura 1d3 de vida e sacia a fome.", 1);
+            case "Hidromel":
+                return new Consumivel("Hidromel", "Uma bebida fermentada de mel. Restaura 1d4 de mana (não sacia a fome).", 1);
             case "Machado":
                 return new Arma("Machado", "Um machado robusto que causa 1d6 de dano, usando Força.", "CaC", 6, 1, 1);
             case "Machadinha":

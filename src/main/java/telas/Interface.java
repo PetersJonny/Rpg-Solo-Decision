@@ -430,8 +430,8 @@ public class Interface {
         return lerOpcao(1, ops[4]);
     }
 
-    // Menu do vilarejo (para além da floresta). Por enquanto é um lugar sem
-    // eventos: olhar em volta não encontra nada, e é preciso voltar à floresta.
+    // Menu do vilarejo (para além da floresta): taverna (com quadro de missões),
+    // ferreiro (arma/armadura), missões em andamento e o caminho de volta.
     public static int MenuVilarejo(FichaRpg ficha) {
         System.out.println("\n");
         String cidade = ficha.getCidadeAtual() != null ? ficha.getCidadeAtual().toUpperCase() : "VILAREJO DE SCARBOR";
@@ -448,13 +448,21 @@ public class Interface {
         }
         System.out.println("\n  O que você deseja fazer?\n");
 
+        int ativas = ficha.getMissoesAceitas().size();
         System.out.println("  1. Ver ficha");
         System.out.println("  2. Olhar em volta");
-        System.out.println("  3. Voltar para a floresta");
-        System.out.println("  4. Salvar Jogo");
-        System.out.println("  5. Encerrar jogo");
+        System.out.println("  3. Ir à " + CIANO + "taverna" + RESET + " (comida + quadro de missões)");
+        System.out.println("  4. Ir ao " + CIANO + "ferreiro" + RESET + " (armas e armaduras)");
+        if (ativas > 0) {
+            System.out.println("  5. Ver missões em andamento (" + ativas + ")");
+        } else {
+            System.out.println("  5. Ver missões em andamento (nenhuma)");
+        }
+        System.out.println("  6. Voltar para a floresta");
+        System.out.println("  7. Salvar Jogo");
+        System.out.println("  8. Encerrar jogo");
         System.out.println("\n  " + VERDE + "Digite a opção:" + RESET);
-        return lerOpcao(1, 5);
+        return lerOpcao(1, 8);
     }
 
     // Interação com a Ficha

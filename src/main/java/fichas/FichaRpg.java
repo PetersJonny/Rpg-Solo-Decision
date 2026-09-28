@@ -172,6 +172,23 @@ public class FichaRpg implements java.io.Serializable {
     // Minotauro: ao ser derrotado no coração do labirinto, ele não aparece de novo
     private boolean minotauroDerrotado = false;
 
+    // ==================== VILAREJO (TAVERNA E FERREIRO) ====================
+
+    // Goblins da taverna: resolvidos ao derrotar/expulsar o bando (libera o serviço da taverna)
+    private boolean goblinsResolvido = false;
+    // Dono da taverna (o dracônico de pele vermelha) já agradeceu pelo salvamento
+    private boolean donoDaTavernaAgradeceu = false;
+    // O dono ofereceu "a primeira comida por conta da casa" (quando o jogador estava faminto)
+    private boolean comidaPorContaDaCasa = false;
+    private boolean comidaDaCasaUsada = false;
+
+    // Ferreiro da vila: encomenda sob medida (+20% do preço), pronta após 1 dia completo
+    private String ferreiroOrdemItem = "";
+    private int ferreiroOrdemDia = 0;
+
+    // Missões aceitas no quadro da vila (nomes; podem ser várias ao mesmo tempo)
+    private List<String> missoesAceitas = new ArrayList<>();
+
     // Construtor
     public FichaRpg(String nomePessoa) {
         this.nomePessoa = nomePessoa;
@@ -741,6 +758,35 @@ public class FichaRpg implements java.io.Serializable {
 
     public boolean isMinotauroDerrotado() { return minotauroDerrotado; }
     public void setMinotauroDerrotado(boolean minotauroDerrotado) { this.minotauroDerrotado = minotauroDerrotado; }
+
+    // ==================== VILAREJO (TAVERNA E FERREIRO) ====================
+
+    public boolean isGoblinsResolvido() { return goblinsResolvido; }
+    public void setGoblinsResolvido(boolean goblinsResolvido) { this.goblinsResolvido = goblinsResolvido; }
+
+    public boolean isDonoDaTavernaAgradeceu() { return donoDaTavernaAgradeceu; }
+    public void setDonoDaTavernaAgradeceu(boolean donoDaTavernaAgradeceu) { this.donoDaTavernaAgradeceu = donoDaTavernaAgradeceu; }
+
+    public boolean isComidaPorContaDaCasa() { return comidaPorContaDaCasa; }
+    public void setComidaPorContaDaCasa(boolean comidaPorContaDaCasa) { this.comidaPorContaDaCasa = comidaPorContaDaCasa; }
+
+    public boolean isComidaDaCasaUsada() { return comidaDaCasaUsada; }
+    public void setComidaDaCasaUsada(boolean comidaDaCasaUsada) { this.comidaDaCasaUsada = comidaDaCasaUsada; }
+
+    public String getFerreiroOrdemItem() { return ferreiroOrdemItem; }
+    public void setFerreiroOrdemItem(String ferreiroOrdemItem) { this.ferreiroOrdemItem = ferreiroOrdemItem; }
+
+    public int getFerreiroOrdemDia() { return ferreiroOrdemDia; }
+    public void setFerreiroOrdemDia(int ferreiroOrdemDia) { this.ferreiroOrdemDia = ferreiroOrdemDia; }
+
+    public boolean isOrdemDoFerreiroPendente() { return !ferreiroOrdemItem.isEmpty(); }
+    public boolean isOrdemDoFerreiroPronta() { return !ferreiroOrdemItem.isEmpty() && diaAtual > ferreiroOrdemDia; }
+
+    public List<String> getMissoesAceitas() { return missoesAceitas; }
+    public boolean isMissaoAceita(String nome) { return missoesAceitas.contains(nome); }
+    public void aceitarMissao(String nome) {
+        if (!missoesAceitas.contains(nome)) missoesAceitas.add(nome);
+    }
 
     public boolean isPactoMortalAtivo() { return pactoMortalAtivo; }
     public void setPactoMortalAtivo(boolean pactoMortalAtivo) { this.pactoMortalAtivo = pactoMortalAtivo; }

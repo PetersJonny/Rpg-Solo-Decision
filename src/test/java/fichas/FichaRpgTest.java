@@ -521,4 +521,33 @@ class FichaRpgTest {
         assertEquals(4, ficha.getForca());
         assertEquals(30.0, ficha.getCapacidadeMochila());
     }
+
+    @Test
+    void flagsDaTavernaComecamDesligados() {
+        assertFalse(ficha.isGoblinsResolvido());
+        assertFalse(ficha.isDonoDaTavernaAgradeceu());
+        assertFalse(ficha.isComidaPorContaDaCasa());
+        assertFalse(ficha.isComidaDaCasaUsada());
+    }
+
+    @Test
+    void missaoAceitaNaoDuplica() {
+        assertFalse(ficha.isMissaoAceita("A Filha Perdida"));
+        ficha.aceitarMissao("A Filha Perdida");
+        ficha.aceitarMissao("A Filha Perdida");
+        assertEquals(1, ficha.getMissoesAceitas().size());
+        assertTrue(ficha.isMissaoAceita("A Filha Perdida"));
+    }
+
+    @Test
+    void encomendaDoFerreiroFicaProntaNoDiaSeguinte() {
+        assertFalse(ficha.isOrdemDoFerreiroPendente());
+        assertFalse(ficha.isOrdemDoFerreiroPronta());
+        ficha.setFerreiroOrdemItem("Espada Pesada");
+        ficha.setFerreiroOrdemDia(ficha.getDiaAtual());
+        assertTrue(ficha.isOrdemDoFerreiroPendente());
+        assertFalse(ficha.isOrdemDoFerreiroPronta(), "no mesmo dia ainda não está pronta");
+        ficha.avancarTempo(6); // vira para a noite e depois amanhece (dia seguinte)
+        assertTrue(ficha.isOrdemDoFerreiroPronta());
+    }
 }

@@ -64,6 +64,29 @@ public class VilarejoDeScarbor {
 
     // ==================== TAVERNA DOS GOBLINS ====================
 
+    // Envolve o combate com os goblins: se o jogador sobreviver e nenhum goblin
+    // ficar de pé, a taverna fica livre (goblinsResolvido = true).
+    private static void combateGoblins(FichaRpg ficha, List<Criatura> goblins, boolean furtivo) {
+        MotorDeCombate.IniciarCombate(ficha, goblins, furtivo);
+        if (ficha.getVidaPersonagem() <= 0) return;
+        for (Criatura g : goblins) {
+            if (g.getVida() > 0) return;
+        }
+        marcarGoblinsResolvido(ficha, false);
+    }
+
+    private static void marcarGoblinsResolvido(FichaRpg ficha, boolean porMedo) {
+        if (porMedo) {
+            Interface.MostrarMensagem("\nA porta dos fundos ainda balança depois da debandada. A taverna fica em silêncio... e então um " + CIANO + "suspiro coletivo" + RESET + " toma o salão. Ameaça encerrada!");
+        } else {
+            Interface.MostrarMensagem("\nO último goblin cai. A taverna fica em silêncio absoluto... e então um " + CIANO + "suspiro coletivo" + RESET + " toma o salão. Ameaça encerrada!");
+        }
+        Interface.Pausa(2200);
+        Interface.MostrarMensagem("Dracônicos se levantam, ajudando uns aos outros, e alguns acenam para você em agradecimento. " + AMARELO + "O caminho para a taverna está liberado." + RESET);
+        Interface.Pausa(2200);
+        ficha.setGoblinsResolvido(true);
+    }
+
     // Ao entrar na taverna, o jogador se depara com 4 goblins assaltando os clientes.
     public static void CenaDosGoblins(FichaRpg ficha) {
         List<Criatura> goblins = new ArrayList<>();
@@ -91,7 +114,7 @@ public class VilarejoDeScarbor {
         } else if (escolha == 2) {
             Interface.MostrarMensagem("\nVocê saca sua arma e avança, gritando! Os goblins se viram — o assalto agora tem um novo alvo.");
             Interface.Pausa(2000);
-            MotorDeCombate.IniciarCombate(ficha, goblins, false);
+            combateGoblins(ficha, goblins, false);
         } else if (escolha == 3) {
             conversarComOsGoblins(ficha, goblins);
         } else {
@@ -134,7 +157,7 @@ public class VilarejoDeScarbor {
         } else if (escolha == 2) {
             Interface.MostrarMensagem("\nVocê recusa e sua mão fecha no cabo da arma. Os goblins rosnam e se espalham em volta de você.");
             Interface.Pausa(2000);
-            MotorDeCombate.IniciarCombate(ficha, goblins, false);
+            combateGoblins(ficha, goblins, false);
         } else {
             boolean fugiu = testeDestreza(ficha, 15, "Fugir");
             if (fugiu) {
@@ -143,7 +166,7 @@ public class VilarejoDeScarbor {
             } else {
                 Interface.MostrarMensagem("\nEles cortam sua saída! Não há para onde correr — resta lutar.");
                 Interface.Pausa(2000);
-                MotorDeCombate.IniciarCombate(ficha, goblins, false);
+                combateGoblins(ficha, goblins, false);
             }
         }
     }
@@ -156,11 +179,11 @@ public class VilarejoDeScarbor {
             Interface.Pausa(2000);
             Interface.MostrarMensagem(CIANO + "Você surpreende os goblins! (+2 de Iniciativa)" + RESET);
             Interface.Pausa(1500);
-            MotorDeCombate.IniciarCombate(ficha, goblins, true);
+            combateGoblins(ficha, goblins, true);
         } else {
             Interface.MostrarMensagem("\nVocê tenta se aproximar nas sombras, mas um goblin se vira no momento exato e o flagra. Sem cerimônia: luta!");
             Interface.Pausa(2000);
-            MotorDeCombate.IniciarCombate(ficha, goblins, false);
+            combateGoblins(ficha, goblins, false);
         }
     }
 
@@ -204,10 +227,11 @@ public class VilarejoDeScarbor {
             Interface.Pausa(2000);
             Interface.MostrarMensagem(CIANO + "Tomados pelo medo, os goblins soltam o que carregam e saem correndo pela porta dos fundos!" + RESET);
             Interface.Pausa(2200);
+            marcarGoblinsResolvido(ficha, true);
         } else {
             Interface.MostrarMensagem("\nPor um instante de silêncio, mas então o líder ri alto. " + AMARELO + "\"Boa piada!\" " + RESET + "A ameaça não funcionou — e eles avançam furiosos.");
             Interface.Pausa(2000);
-            MotorDeCombate.IniciarCombate(ficha, goblins, false);
+            combateGoblins(ficha, goblins, false);
         }
     }
 
@@ -248,7 +272,7 @@ public class VilarejoDeScarbor {
         } else if (escolha == 2) {
             Interface.MostrarMensagem("\nBasta de histórias. Você ergue a arma — e a taverna inteira prende a respiração.");
             Interface.Pausa(2000);
-            MotorDeCombate.IniciarCombate(ficha, goblins, false);
+            combateGoblins(ficha, goblins, false);
         } else {
             boolean fugiu = testeDestreza(ficha, 15, "Fugir");
             if (fugiu) {
@@ -257,7 +281,7 @@ public class VilarejoDeScarbor {
             } else {
                 Interface.MostrarMensagem("\nEles cercam a porta! Sem como fugir — é luta.");
                 Interface.Pausa(2000);
-                MotorDeCombate.IniciarCombate(ficha, goblins, false);
+                combateGoblins(ficha, goblins, false);
             }
         }
     }
@@ -291,7 +315,7 @@ public class VilarejoDeScarbor {
         if (escolha == 1) {
             Interface.MostrarMensagem("\nVocê desenha a arma. Os goblins se espalham, prontos. A taverna se põe em silêncio.");
             Interface.Pausa(2000);
-            MotorDeCombate.IniciarCombate(ficha, goblins, false);
+            combateGoblins(ficha, goblins, false);
         } else {
             boolean fugiu = testeDestreza(ficha, dificuldade, "Fugir");
             if (fugiu) {
@@ -300,7 +324,7 @@ public class VilarejoDeScarbor {
             } else {
                 Interface.MostrarMensagem("\nSua hesitação o entrega. Os goblins avançam antes que você alcance a saída!");
                 Interface.Pausa(2000);
-                MotorDeCombate.IniciarCombate(ficha, goblins, false);
+                combateGoblins(ficha, goblins, false);
             }
         }
     }

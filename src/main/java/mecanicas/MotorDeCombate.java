@@ -1926,6 +1926,74 @@ public class MotorDeCombate {
                 ficha.comerCarnePodre();
                 break;
             }
+            // Pratos da taverna da vila: refeições que saciam a fome (Hidromel só mana)
+            case "Sopa do Vilarejo": {
+                int cura = 0;
+                for (int i = 0; i < qtd; i++) cura += MecanicasRpg.rolarDado(2);
+                int antes = ficha.getVidaPersonagem();
+                ficha.setVidaPersonagem(Math.min(ficha.getVidaPersonagem() + cura, ficha.getVidaMaxima()));
+                ficha.comerComidaBoa();
+                Interface.MostrarMensagem("Você tomou a Sopa do Vilarejo, recuperou " + (ficha.getVidaPersonagem() - antes) + " de vida e saciou a fome! Vida: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima());
+                break;
+            }
+            case "Pão Quente com Manteiga": {
+                ficha.comerComidaBoa();
+                Interface.MostrarMensagem("Você comeu o Pão Quente com Manteiga. Não cura vida, mas sua fome foi saciada.");
+                break;
+            }
+            case "Ovos Mexidos": {
+                int cura = 0;
+                for (int i = 0; i < qtd; i++) cura += MecanicasRpg.rolarDado(3);
+                int antes = ficha.getVidaPersonagem();
+                ficha.setVidaPersonagem(Math.min(ficha.getVidaPersonagem() + cura, ficha.getVidaMaxima()));
+                ficha.comerComidaBoa();
+                Interface.MostrarMensagem("Você comeu " + qtd + "x Ovos Mexidos, recuperou " + (ficha.getVidaPersonagem() - antes) + " de vida e saciou a fome! Vida: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima());
+                break;
+            }
+            case "Caldo de Lobo": {
+                int cura = 0;
+                for (int i = 0; i < qtd; i++) cura += MecanicasRpg.rolarDado(4);
+                int antes = ficha.getVidaPersonagem();
+                ficha.setVidaPersonagem(Math.min(ficha.getVidaPersonagem() + cura, ficha.getVidaMaxima()));
+                ficha.comerComidaBoa();
+                Interface.MostrarMensagem("Você tomou o Caldo de Lobo, recuperou " + (ficha.getVidaPersonagem() - antes) + " de vida e saciou a fome! Vida: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima());
+                break;
+            }
+            case "Peixe Assado": {
+                int cura = 0;
+                for (int i = 0; i < qtd; i++) cura += MecanicasRpg.rolarDado(4);
+                int antes = ficha.getVidaPersonagem();
+                ficha.setVidaPersonagem(Math.min(ficha.getVidaPersonagem() + cura, ficha.getVidaMaxima()));
+                ficha.comerComidaBoa();
+                Interface.MostrarMensagem("Você comeu o Peixe Assado, recuperou " + (ficha.getVidaPersonagem() - antes) + " de vida e saciou a fome! Vida: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima());
+                break;
+            }
+            case "Estofado de Urso": {
+                int cura = 0;
+                for (int i = 0; i < qtd; i++) cura += MecanicasRpg.rolarDado(6);
+                int antes = ficha.getVidaPersonagem();
+                ficha.setVidaPersonagem(Math.min(ficha.getVidaPersonagem() + cura, ficha.getVidaMaxima()));
+                ficha.comerComidaBoa();
+                Interface.MostrarMensagem("Você comeu o Estofado de Urso, recuperou " + (ficha.getVidaPersonagem() - antes) + " de vida e saciou a fome! Vida: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima());
+                break;
+            }
+            case "Torta de Frutas": {
+                int cura = 0;
+                for (int i = 0; i < qtd; i++) cura += MecanicasRpg.rolarDado(3);
+                int antes = ficha.getVidaPersonagem();
+                ficha.setVidaPersonagem(Math.min(ficha.getVidaPersonagem() + cura, ficha.getVidaMaxima()));
+                ficha.comerComidaBoa();
+                Interface.MostrarMensagem("Você comeu a Torta de Frutas, recuperou " + (ficha.getVidaPersonagem() - antes) + " de vida e saciou a fome! Vida: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima());
+                break;
+            }
+            case "Hidromel": {
+                int cura = 0;
+                for (int i = 0; i < qtd; i++) cura += MecanicasRpg.rolarDado(4);
+                int antes = ficha.getManaPersonagem();
+                ficha.setManaPersonagem(Math.min(ficha.getManaPersonagem() + cura, ficha.getManaMaxima()));
+                Interface.MostrarMensagem("Você bebeu " + qtd + "x Hidromel e recuperou " + (ficha.getManaPersonagem() - antes) + " de mana! Mana: " + ficha.getManaPersonagem() + "/" + ficha.getManaMaxima());
+                break;
+            }
             case "Poção de Mana": {
                 int antes = ficha.getManaPersonagem();
                 ficha.setManaPersonagem(Math.min(ficha.getManaPersonagem() + 5 * qtd, ficha.getManaMaxima()));
@@ -2021,6 +2089,22 @@ public class MotorDeCombate {
                     descExibida = "Carne COZIDA na fogueira: cura 1d3 de vida, sem risco de estragar. Carnes restantes: " + itemEscolhido.getQuantidade();
                 } else if (itemEscolhido.getNome().equals("Carne de Urso Cozida")) {
                     descExibida = "Carne COZIDA na fogueira: cura 1d4 de vida, sem risco de estragar. Carnes restantes: " + itemEscolhido.getQuantidade();
+                } else if (itemEscolhido.getNome().equals("Sopa do Vilarejo")) {
+                    descExibida = "Pratos da taverna da vila. Cura 1d2 de vida e sacia a fome. Restam: " + itemEscolhido.getQuantidade();
+                } else if (itemEscolhido.getNome().equals("Pão Quente com Manteiga")) {
+                    descExibida = "Sacia a fome (não cura vida). Restam: " + itemEscolhido.getQuantidade();
+                } else if (itemEscolhido.getNome().equals("Ovos Mexidos")) {
+                    descExibida = "Pratos da taverna da vila. Cura 1d3 de vida e sacia a fome. Restam: " + itemEscolhido.getQuantidade();
+                } else if (itemEscolhido.getNome().equals("Caldo de Lobo")) {
+                    descExibida = "Pratos da taverna da vila. Cura 1d4 de vida e sacia a fome. Restam: " + itemEscolhido.getQuantidade();
+                } else if (itemEscolhido.getNome().equals("Peixe Assado")) {
+                    descExibida = "Pratos da taverna da vila. Cura 1d4 de vida e sacia a fome. Restam: " + itemEscolhido.getQuantidade();
+                } else if (itemEscolhido.getNome().equals("Estofado de Urso")) {
+                    descExibida = "Pratos da taverna da vila. Cura 1d6 de vida e sacia a fome. Restam: " + itemEscolhido.getQuantidade();
+                } else if (itemEscolhido.getNome().equals("Torta de Frutas")) {
+                    descExibida = "Pratos da taverna da vila. Cura 1d3 de vida e sacia a fome. Restam: " + itemEscolhido.getQuantidade();
+                } else if (itemEscolhido.getNome().equals("Hidromel")) {
+                    descExibida = "Restaura 1d4 de mana (não sacia a fome). Restam: " + itemEscolhido.getQuantidade();
                 }
                 System.out.println("\n" + itemEscolhido.getNome() + ": " + descExibida);
                 Interface.Pausa(1000);
@@ -2120,6 +2204,43 @@ public class MotorDeCombate {
         } else if (itemEscolhido.getNome().equals("Carne Podre")) {
             ficha.comerCarnePodre();
             Interface.MostrarMensagem("Você não recupera vida, mas sua fome é saciada (e você fica enjoado).");
+        } else if (itemEscolhido.getNome().equals("Sopa do Vilarejo")) {
+            int cura = MecanicasRpg.rolarDado(2);
+            ficha.setVidaPersonagem(Math.min(ficha.getVidaPersonagem() + cura, ficha.getVidaMaxima()));
+            ficha.comerComidaBoa();
+            Interface.MostrarMensagem("Você tomou a Sopa do Vilarejo e recuperou " + cura + " de vida! Vida atual: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima());
+        } else if (itemEscolhido.getNome().equals("Pão Quente com Manteiga")) {
+            ficha.comerComidaBoa();
+            Interface.MostrarMensagem("Você comeu o Pão Quente com Manteiga e saciou a fome.");
+        } else if (itemEscolhido.getNome().equals("Ovos Mexidos")) {
+            int cura = MecanicasRpg.rolarDado(3);
+            ficha.setVidaPersonagem(Math.min(ficha.getVidaPersonagem() + cura, ficha.getVidaMaxima()));
+            ficha.comerComidaBoa();
+            Interface.MostrarMensagem("Você comeu os Ovos Mexidos e recuperou " + cura + " de vida! Vida atual: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima());
+        } else if (itemEscolhido.getNome().equals("Caldo de Lobo")) {
+            int cura = MecanicasRpg.rolarDado(4);
+            ficha.setVidaPersonagem(Math.min(ficha.getVidaPersonagem() + cura, ficha.getVidaMaxima()));
+            ficha.comerComidaBoa();
+            Interface.MostrarMensagem("Você tomou o Caldo de Lobo e recuperou " + cura + " de vida! Vida atual: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima());
+        } else if (itemEscolhido.getNome().equals("Peixe Assado")) {
+            int cura = MecanicasRpg.rolarDado(4);
+            ficha.setVidaPersonagem(Math.min(ficha.getVidaPersonagem() + cura, ficha.getVidaMaxima()));
+            ficha.comerComidaBoa();
+            Interface.MostrarMensagem("Você comeu o Peixe Assado e recuperou " + cura + " de vida! Vida atual: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima());
+        } else if (itemEscolhido.getNome().equals("Estofado de Urso")) {
+            int cura = MecanicasRpg.rolarDado(6);
+            ficha.setVidaPersonagem(Math.min(ficha.getVidaPersonagem() + cura, ficha.getVidaMaxima()));
+            ficha.comerComidaBoa();
+            Interface.MostrarMensagem("Você comeu o Estofado de Urso e recuperou " + cura + " de vida! Vida atual: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima());
+        } else if (itemEscolhido.getNome().equals("Torta de Frutas")) {
+            int cura = MecanicasRpg.rolarDado(3);
+            ficha.setVidaPersonagem(Math.min(ficha.getVidaPersonagem() + cura, ficha.getVidaMaxima()));
+            ficha.comerComidaBoa();
+            Interface.MostrarMensagem("Você comeu a Torta de Frutas e recuperou " + cura + " de vida! Vida atual: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima());
+        } else if (itemEscolhido.getNome().equals("Hidromel")) {
+            int cura = MecanicasRpg.rolarDado(4);
+            ficha.setManaPersonagem(Math.min(ficha.getManaPersonagem() + cura, ficha.getManaMaxima()));
+            Interface.MostrarMensagem("Você bebeu Hidromel e recuperou " + cura + " de mana! Mana atual: " + ficha.getManaPersonagem() + "/" + ficha.getManaMaxima());
         } else if (itemEscolhido.getNome().equals("Kit Médico")) {
             // Pode usar o Kit em si ou no companheiro (se estiver ferido);
             // com vida cheia, ainda pode usar em você mesmo para curar uma infecção
