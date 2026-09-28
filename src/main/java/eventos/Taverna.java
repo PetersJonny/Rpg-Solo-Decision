@@ -28,7 +28,11 @@ public class Taverna {
 
     public static void Taverna(FichaRpg ficha) {
         Interface.cabecalhoMenu("TAVERNA DA VILA");
-        Interface.MostrarMensagem("\nA taverna exala cheiro de madeira velha, fumaça de lareira e comida. Um " + VERMELHO + "dracônico de pele vermelha" + RESET + " limpa um copo de metal atrás do balcão.");
+        if (ficha.isDonoDaTavernaAgradeceu()) {
+            Interface.MostrarMensagem("\nA taverna exala cheiro de madeira velha, fumaça de lareira e comida. " + VERMELHO + "Draven" + RESET + ", o dracônico de pele vermelha, limpa um copo de metal atrás do balcão.");
+        } else {
+            Interface.MostrarMensagem("\nA taverna exala cheiro de madeira velha, fumaça de lareira e comida. Um " + VERMELHO + "dracônico de pele vermelha" + RESET + " limpa um copo de metal atrás do balcão.");
+        }
 
         if (!ficha.isGoblinsResolvido()) {
             Interface.MostrarMensagem("\n\"Bem-vindo, forasteiro. Mas... cuidado. Pra esses lados o vilarejo est\u00e1 cheio de problemas.\"");
@@ -53,6 +57,8 @@ public class Taverna {
     private static void CenaDoDono(FichaRpg ficha) {
         Interface.MostrarMensagem("\nO dracônico de pele vermelha vira para você e um largo sorriso surge em seu rosto escamado.");
         Interface.Pausa(1800);
+        Interface.MostrarMensagem("Ele se recompõe, encosta ambas as mãos no balcão e fala, com um ar de apresentação: " + CIANO + "\"Draven Moreau. Dono desta casa.\"" + RESET + " Que ela nunca mais caia em mãos erradas.");
+        Interface.Pausa(2200);
         Interface.MostrarMensagem("\"" + AMARELO + "Você e seus companheiros livraram minha taverna daqueles goblins! Eu não saberia como agradecer..." + RESET + "\"");
         Interface.Pausa(2000);
         Interface.MostrarMensagem("\nEle puxa um saquinho e coloca no balcão. " + AMARELO + "30 moedas de ouro" + RESET + ".");

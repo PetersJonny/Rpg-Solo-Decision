@@ -66,10 +66,19 @@ public class Ferreiro {
 
     public static void Ferreiro(FichaRpg ficha) {
         Interface.cabecalhoMenu("FERREIRO DA VILA");
-        Interface.MostrarMensagem("\nNa oficina aquecida pelo braseiro, um " + VERMELHO + "dracônico enorme" + RESET + " levanta o martelo em sua direção. É grande, parrudo, com grossos braços de escamas vermelho-escuras — cada golpe no aço faz o ar estremecer.");
-        Interface.Pausa(2200);
-        Interface.MostrarMensagem("\"Precisa de uma boa lâmina ou armadura, forasteiro? Aqui eu forjo os melhores aços da vila.\"");
-        Interface.Pausa(1800);
+
+        if (!ficha.isFerreiroSeApresentou()) {
+            Interface.MostrarMensagem("\nNa oficina aquecida pelo braseiro, um " + VERMELHO + "dracônico enorme" + RESET + " levanta o martelo em sua direção. É grande, parrudo, com grossos braços de escamas vermelho-escuras — cada golpe no aço faz o ar estremecer.");
+            Interface.Pausa(2200);
+            Interface.MostrarMensagem("Ele larga o martelo na bigorna, limpa as mãos num avental de couro ressecado e estende uma mão calejada: " + CIANO + "\"Gorak Vieira.\" " + RESET + "— e seu nome ecoa na oficina como uma pancada.");
+            Interface.Pausa(2000);
+            Interface.MostrarMensagem("\"Precisa de uma boa lâmina ou armadura, forasteiro? Aqui eu forjo os melhores aços da vila.\"");
+            Interface.Pausa(1800);
+            ficha.setFerreiroSeApresentou(true);
+        } else {
+            Interface.MostrarMensagem("\nGorak Vieira levanta o martelo em saudação: \"De volta? A bigorna tá quente e não vai esperar.\"");
+            Interface.Pausa(1500);
+        }
 
         while (true) {
             Interface.cabecalhoMenu("FERREIRO");

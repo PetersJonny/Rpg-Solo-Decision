@@ -185,6 +185,8 @@ public class FichaRpg implements java.io.Serializable {
     // Ferreiro da vila: encomenda sob medida (+20% do preço), pronta após 1 dia completo
     private String ferreiroOrdemItem = "";
     private int ferreiroOrdemDia = 0;
+    // O ferreiro (Gorak Vieira) só se apresenta pelo nome completo na primeira visita
+    private boolean ferreiroSeApresentou = false;
 
     // Missões aceitas no quadro da vila (nomes; podem ser várias ao mesmo tempo)
     private List<String> missoesAceitas = new ArrayList<>();
@@ -778,6 +780,9 @@ public class FichaRpg implements java.io.Serializable {
 
     public int getFerreiroOrdemDia() { return ferreiroOrdemDia; }
     public void setFerreiroOrdemDia(int ferreiroOrdemDia) { this.ferreiroOrdemDia = ferreiroOrdemDia; }
+
+    public boolean isFerreiroSeApresentou() { return ferreiroSeApresentou; }
+    public void setFerreiroSeApresentou(boolean ferreiroSeApresentou) { this.ferreiroSeApresentou = ferreiroSeApresentou; }
 
     public boolean isOrdemDoFerreiroPendente() { return !ferreiroOrdemItem.isEmpty(); }
     public boolean isOrdemDoFerreiroPronta() { return !ferreiroOrdemItem.isEmpty() && diaAtual > ferreiroOrdemDia; }
