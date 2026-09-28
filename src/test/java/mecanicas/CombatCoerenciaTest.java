@@ -104,14 +104,24 @@ class CombatCoerenciaTest {
 
     @Test
     void furiaSombriaSobeUmDegrauNoDadoDaArma() {
-        // 1d4 → 1d6, 1d8 → 1d10, e assim por diante
+        // 1d2→1d3→1d4→1d6→1d8→1d10→1d12 (1d12 é o maior dado de dano)
+        assertEquals(3, MotorDeCombate.proximoDadoDeDano(2));
+        assertEquals(4, MotorDeCombate.proximoDadoDeDano(3));
         assertEquals(6, MotorDeCombate.proximoDadoDeDano(4));
         assertEquals(8, MotorDeCombate.proximoDadoDeDano(6));
         assertEquals(10, MotorDeCombate.proximoDadoDeDano(8));
         assertEquals(12, MotorDeCombate.proximoDadoDeDano(10));
-        assertEquals(20, MotorDeCombate.proximoDadoDeDano(12));
-        assertEquals(4, MotorDeCombate.proximoDadoDeDano(3)); // Soco 1d3 também sobe
         // Dado fora do padrão fica como está
         assertEquals(7, MotorDeCombate.proximoDadoDeDano(7));
+    }
+
+    @Test
+    void furiaSombriaEmD12Acrescenta1d4() {
+        // Arma em 1d12 (máximo de dano): a passiva vira 1d12 + 1d4 (1 extra por dado)
+        assertEquals(1, MotorDeCombate.dadosExtrasFuria(12, 1));
+        assertEquals(2, MotorDeCombate.dadosExtrasFuria(12, 2)); // ex.: 2d12 + 2d4
+        // Arma abaixo do máximo sobe de degrau, sem dados extras
+        assertEquals(0, MotorDeCombate.dadosExtrasFuria(10, 1));
+        assertEquals(0, MotorDeCombate.dadosExtrasFuria(4, 1));
     }
 }

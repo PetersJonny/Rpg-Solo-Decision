@@ -1265,13 +1265,22 @@ public class MotorDeCombate {
                 nomeAtributo = atributo;
             }
 
-            // Fúria Sombria (Meio-Orque): com 30% ou menos de vida, o dado de dano
-            // da arma sobe um degrau (1d4→1d6, 1d6→1d8, 1d8→1d10...) no lugar do antigo +2.
-            int dadoDanoEfetivo = armaEscolhida.getDadoDanoArma();
+            // Fúria Sombria (Meio-Orque): com 30% ou menos de vida, o dado de dano da arma
+            // sobe um degrau (1d2→1d3→1d4→1d6→1d8→1d10→1d12); se a arma já usa 1d12
+            // (o maior dado de dano), a passiva acrescenta +1d4 extra por dado rolado.
+            int qtyDados = armaEscolhida.getQuantidadeDanoArma();
+            int dadoDano = armaEscolhida.getDadoDanoArma();
             boolean furiaSombria = ficha.getRaca() != null && ficha.getRaca().temBonusDanoVidaBaixa()
                     && ficha.getVidaPersonagem() <= ficha.getVidaMaxima() * 0.30;
+            int dadosFuria = 0;
+            int ladoFuria = 0;
             if (furiaSombria) {
-                dadoDanoEfetivo = proximoDadoDeDano(dadoDanoEfetivo);
+                dadosFuria = dadosExtrasFuria(dadoDano, qtyDados);
+                if (dadosFuria > 0) {
+                    ladoFuria = 4; // 1d12 + 1d4 por dado
+                } else {
+                    dadoDano = proximoDadoDeDano(dadoDano);
+                }
             }
 
             Interface.pressionarParaRolar();
@@ -1288,26 +1297,39 @@ public class MotorDeCombate {
                 Interface.MostrarMensagem("-> Acertou! (defesa do alvo: " + inimigo.getDefesa() + ")" + (critico ? " CRÍTICO sempre acerta." : ""));
                 Interface.Pausa(1500);
 
-                int dadosTotais = armaEscolhida.getQuantidadeDanoArma() * (critico ? 2 : 1);
+                int dadosTotais = qtyDados * (critico ? 2 : 1);
                 boolean semiDeusBonus = ficha.isSemiDeusAtivo() && armaEscolhida.getTipoArma().contains("CaC");
                 if (semiDeusBonus) {
                     dadosTotais += 4;
                     Interface.MostrarMensagem("(Semi Deus! +4 dados de dano)");
                     Interface.Pausa(1000);
                 }
+                if (dadosFuria > 0) {
+                    dadosFuria *= (critico ? 2 : 1); // +1d4 extra também dobra no crítico
+                }
                 StringBuilder roladas = new StringBuilder();
                 Interface.pressionarParaRolar();
                 for (int i = 0; i < dadosTotais; i++) {
-                    int dado = MecanicasRpg.rolarDado(dadoDanoEfetivo);
+                    int dado = MecanicasRpg.rolarDado(dadoDano);
                     dano += dado;
                     if (roladas.length() > 0) roladas.append(" + ");
                     roladas.append(dado);
                 }
-                dano += atributoBonus;
-                if (furiaSombria) {
-                    Interface.MostrarMensagem("(Fúria Sombria! Com a vida baixa, o dado da arma sobe um degrau para " + dadosTotais + "d" + armaEscolhida.getDadoDanoArma() + " → " + dadosTotais + "d" + dadoDanoEfetivo + ")");
+                for (int i = 0; i < dadosFuria; i++) {
+                    int dado = MecanicasRpg.rolarDado(ladoFuria);
+                    dano += dado;
+                    roladas.append(" + ");
+                    roladas.append(dado);
                 }
-                Interface.MostrarMensagem("-> Dados Rolados: " + roladas + " = " + dano + " (Dano: " + dadosTotais + "d" + dadoDanoEfetivo + " + " + nomeAtributo + ": " + atributoBonus + ")");
+                dano += atributoBonus;
+                String resumoDados = dadosTotais + "d" + dadoDano
+                        + (dadosFuria > 0 ? " + " + dadosFuria + "d" + ladoFuria : "");
+                if (furiaSombria) {
+                    Interface.MostrarMensagem("(Fúria Sombria! Com a vida baixa, " + (dadosFuria > 0
+                            ? "sua arma 1d" + armaEscolhida.getDadoDanoArma() + " recebe +" + dadosFuria + "d" + ladoFuria + " extras"
+                            : "o dado da arma sobe um degrau para " + dadosTotais + "d" + dadoDano) + ")");
+                }
+                Interface.MostrarMensagem("-> Dados Rolados: " + roladas + " = " + dano + " (Dano: " + resumoDados + " + " + nomeAtributo + ": " + atributoBonus + ")");
                 Interface.Pausa(2000);
 
                 // Espada Majestral: banhada em ouro e magia, causa +1d4 de dano de luz
@@ -1355,18 +1377,27 @@ public class MotorDeCombate {
         return dano;
     }
 
-    // Próximo dado no padrão (1 degrau acima): 1d3→1d4→1d6→1d8→1d10→1d12→1d20.
-    // Usado pela Fúria Sombria (Meio-Orque) com 30% ou menos de vida.
+    // Próximo dado de dano no padrão (1 degrau acima): 1d2→1d3→1d4→1d6→1d8→1d10→
+// 1d12 (1d12 é o maior dado de dano; 1d20 é só para testes). Usado pela Fúria
+// Sombria (Meio-Orque) com 30% ou menos de vida.
     static int proximoDadoDeDano(int dado) {
         switch (dado) {
+            case 2: return 3;
             case 3: return 4;
             case 4: return 6;
             case 6: return 8;
             case 8: return 10;
             case 10: return 12;
-            case 12: return 20;
+            case 12: return 12;
             default: return dado;
         }
+    }
+
+    // Fúria Sombria com a arma já no dado máximo de dano (1d12): em vez de subir
+    // de degrau, a passiva acrescenta +1d4 por cada dado 1d12 da arma (ex.: 1d12
+    // vira 1d12 + 1d4). Retorna quantos dados extra essa arma receberia.
+    static int dadosExtrasFuria(int dadoDano, int qtyDados) {
+        return dadoDano >= 12 ? qtyDados : 0;
     }
 
     // ==================== HABILIDADES ====================
