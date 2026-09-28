@@ -449,27 +449,23 @@ class FichaRpgTest {
     }
 
     @Test
-    void cozinharCarneGasta2MadeirasEConverteACarne() {
+    void cozinharTodasAsCarnesGasta2MadeirasEConverteTudo() {
         ficha.adicionarItem(new itens.ItemRpg("Madeira", "", 10));
         ficha.adicionarItem(new itens.ItemRpg("Folha", "", 5));
         ficha.adicionarItem(new itens.Consumivel("Carne de Lobo", "", 1));
         ficha.adicionarItem(new itens.Consumivel("Carne de Urso", "", 2));
         assertTrue(ficha.montarFogueira()); // gasta 4 madeiras: ficam 6
 
-        assertTrue(ficha.cozinharCarne("Carne de Lobo"));
-        assertEquals(4, ficha.getQuantidadeDe("Madeira")); // 6 - 2
+        assertTrue(ficha.cozinharTodasAsCarnes()); // gasta 2 madeiras: ficam 4
+        assertEquals(4, ficha.getQuantidadeDe("Madeira"));
         assertEquals(0, ficha.getQuantidadeDe("Carne de Lobo"));
         assertEquals(1, ficha.getQuantidadeDe("Carne de Lobo Cozida"));
-        assertEquals(2, ficha.getQuantidadeDe("Carne de Urso"));
-
-        assertTrue(ficha.cozinharCarne("Carne de Urso"));
-        assertEquals(2, ficha.getQuantidadeDe("Madeira"));
-        assertEquals(1, ficha.getQuantidadeDe("Carne de Urso"));
-        assertEquals(1, ficha.getQuantidadeDe("Carne de Urso Cozida"));
+        assertEquals(0, ficha.getQuantidadeDe("Carne de Urso"));
+        assertEquals(2, ficha.getQuantidadeDe("Carne de Urso Cozida"));
     }
 
     @Test
-    void cozinharCarneRequerEstarJuntoDaFogueira() {
+    void cozinharTodasAsCarnesRequerEstarJuntoDaFogueira() {
         ficha.adicionarItem(new itens.ItemRpg("Madeira", "", 10));
         ficha.adicionarItem(new itens.ItemRpg("Folha", "", 5));
         ficha.adicionarItem(new itens.Consumivel("Carne de Lobo", "", 1));
@@ -478,21 +474,30 @@ class FichaRpgTest {
 
         ficha.adicionarProfundidade(5); // se afasta do ponto da fogueira
         assertFalse(ficha.podeUsarFogueira());
-        assertFalse(ficha.cozinharCarne("Carne de Lobo"));
+        assertFalse(ficha.cozinharTodasAsCarnes());
 
         ficha.reduzirProfundidade(5); // volta ao ponto 0
         assertTrue(ficha.podeUsarFogueira());
-        assertTrue(ficha.cozinharCarne("Carne de Lobo"));
+        assertTrue(ficha.cozinharTodasAsCarnes());
     }
 
     @Test
-    void cozinharCarneSem2MadeirasFalha() {
+    void cozinharTodasAsCarnesSem2MadeirasFalha() {
         ficha.adicionarItem(new itens.ItemRpg("Madeira", "", 5));
         ficha.adicionarItem(new itens.ItemRpg("Folha", "", 5));
         ficha.adicionarItem(new itens.Consumivel("Carne de Urso", "", 1));
         ficha.montarFogueira(); // gasta 4 madeiras: fica 1
         assertEquals(1, ficha.getQuantidadeDe("Madeira"));
-        assertFalse(ficha.cozinharCarne("Carne de Urso"));
+        assertFalse(ficha.cozinharTodasAsCarnes());
         assertEquals(1, ficha.getQuantidadeDe("Carne de Urso"));
+    }
+
+    @Test
+    void cozinharTodasAsCarnesSemCarneNaoGastaMadeira() {
+        ficha.adicionarItem(new itens.ItemRpg("Madeira", "", 10));
+        ficha.adicionarItem(new itens.ItemRpg("Folha", "", 5));
+        ficha.montarFogueira(); // gasta 4 madeiras: ficam 6
+        assertFalse(ficha.cozinharTodasAsCarnes()); // sem carne crua
+        assertEquals(6, ficha.getQuantidadeDe("Madeira"));
     }
 }

@@ -222,7 +222,7 @@ public static void MenuConstrucao(FichaRpg ficha) {
                 System.out.println("  Informação: Gasta 2/3 do período para montar.");
             } else {
                 System.out.println("  Localização: " + descreverPonto(ficha, ficha.getProfundidadeFogueira())
-                        + " — cozinha 1 carne crua por uso (2x Madeira), deixando-a segura");
+                        + " — cozinha TODAS as carnes cruas de uma vez (2x Madeira), deixando-as seguras");
             }
 
             if (ficha.getTreinoBonusPeriodosRestantes() > 0) {
@@ -295,7 +295,7 @@ public static void MenuConstrucao(FichaRpg ficha) {
                 System.out.println("  " + num + ". Montar Fogueira aqui  (4x Madeira, 3x Folha — 2/3 do período)");
                 opMontarFogueira = num++;
             } else if (ficha.podeUsarFogueira()) {
-                System.out.println("  " + num + ". Cozinhar carne na Fogueira  (2x Madeira por carne; deixa a carne segura)");
+                System.out.println("  " + num + ". Cozinhar TODAS as carnes na Fogueira  (2x Madeira; deixa as carnes seguras)");
                 opCozinhar = num++;
             } else {
                 System.out.println("  " + num + ". Ir para a Fogueira  (" + ficha.getDistanciaAte(ficha.getProfundidadeFogueira()) + " período(s) de caminhada)");
@@ -479,7 +479,7 @@ public static void MenuConstrucao(FichaRpg ficha) {
                 }
                 if (ficha.montarFogueira()) {
                     Interface.MostrarMensagem("\nVocê acende uma FOGUEIRA, gastando 4 madeiras e 3 folhas!");
-                    Interface.MostrarMensagem("Agora você pode cozinhar carne crua aqui (2x Madeira por carne) — a carne cozida não estraga.");
+                    Interface.MostrarMensagem("Agora você pode cozinhar suas carnes cruas aqui (2x Madeira) — as cozidas não estragam.");
                     Interface.Pausa(2500);
                     avancarTempoComMensagens(ficha, 2);
                     continue;
@@ -587,64 +587,36 @@ public static void MenuConstrucao(FichaRpg ficha) {
         return "a " + distancia + " período(s) de caminhada daqui";
     }
 
-    // Submenu de cozinhar carne na fogueira: cada uso gasta 2 Madeiras e
-    // transforma 1 carne crua na versão cozida (que não estraga ao comer).
+    // Cozinhar TODAS as carnes cruas na fogueira de uma vez: gasta 2 Madeiras e
+    // transforma toda a Carne de Lobo/Urso do inventário nas versões cozidas.
     private static void cozinharNaFogueira(FichaRpg ficha) {
-        while (true) {
-            Interface.cabecalhoMenu("COZINHAR NA FOGUEIRA");
+        int madeiras = ficha.getQuantidadeDe("Madeira");
+        int lobos = ficha.getQuantidadeDe("Carne de Lobo");
+        int ursos = ficha.getQuantidadeDe("Carne de Urso");
+        if (madeiras < 2) {
+            Interface.ExibirErro("Faltam 2 Madeiras para esquentar a fogueira!");
+            Interface.Pausa(1500);
+            return;
+        }
+        if (lobos == 0 && ursos == 0) {
+            Interface.ExibirErro("Você não tem nenhuma carne crua para cozinhar.");
+            Interface.Pausa(1500);
+            return;
+        }
+        Interface.cabecalhoMenu("COZINHAR TODAS AS CARNES");
+        System.out.println("\n  Madeira: " + AMARELO + madeiras + RESET + " (gasta 2 ao cozinhar)");
+        if (lobos > 0) System.out.println("  Carne de Lobo ×" + lobos + " → Carne de Lobo Cozida");
+        if (ursos > 0) System.out.println("  Carne de Urso ×" + ursos + " → Carne de Urso Cozida");
+        System.out.println("\n  Cozinhar todas agora?  " + VERDE + "1. Sim" + RESET + "  " + AMARELO + "0. Voltar" + RESET);
+        if (Interface.lerOpcao(0, 1) != 1) return;
 
-            boolean temLobo = ficha.getQuantidadeDe("Carne de Lobo") > 0;
-            boolean temUrso = ficha.getQuantidadeDe("Carne de Urso") > 0;
-            int madeiras = ficha.getQuantidadeDe("Madeira");
-
-            System.out.println("\n  Madeira: " + AMARELO + madeiras + RESET + " (2x por carne cozida)");
-            System.out.println("  -----------------------------------------------");
-            int opLobo = 0, opUrso = 0;
-            int num = 1;
-            if (temLobo) {
-                System.out.println("  " + num + ". Cozinhar 1x " + CIANO + "Carne de Lobo" + RESET + " (" + ficha.getQuantidadeDe("Carne de Lobo") + " restante(s))");
-                opLobo = num++;
-            } else {
-                System.out.println("  " + AMARELO + "  • Sem Carne de Lobo." + RESET);
-            }
-            if (temUrso) {
-                System.out.println("  " + num + ". Cozinhar 1x " + CIANO + "Carne de Urso" + RESET + " (" + ficha.getQuantidadeDe("Carne de Urso") + " restante(s))");
-                opUrso = num++;
-            } else {
-                System.out.println("  " + AMARELO + "  • Sem Carne de Urso." + RESET);
-            }
-            if (!temLobo && !temUrso) {
-                System.out.println("  Você não tem nenhuma carne crua para cozinhar.");
-            }
-            System.out.println("  " + VERDE + "0. Voltar" + RESET);
-
-            int escolha = Interface.lerOpcao(0, Math.max(0, num - 1));
-            if (escolha == 0) return;
-
-            String carne = "";
-            String cozida = "";
-            if (escolha == opLobo) { carne = "Carne de Lobo"; cozida = "Carne de Lobo Cozida"; }
-            else if (escolha == opUrso) { carne = "Carne de Urso"; cozida = "Carne de Urso Cozida"; }
-            else {
-                Interface.ExibirErro("Opção inválida!");
-                Interface.Pausa(1500);
-                continue;
-            }
-
-            if (madeiras < 2) {
-                Interface.ExibirErro("Faltam 2 Madeiras para esquentar a fogueira e cozinhar!");
-                Interface.Pausa(1500);
-                continue;
-            }
-            if (ficha.cozinharCarne(carne)) {
-                Interface.MostrarMensagem("\nVocê assa a carne na fogueira até ficar bem passada: +1x " + cozida + "!");
-                Interface.MostrarMensagem("Agora ela está segura para comer (não estraga).");
-                Interface.Pausa(2000);
-            } else {
-                Interface.ExibirErro("Não foi possível cozinhar. Verifique se tem carne crua e 2 Madeiras.");
-                Interface.Pausa(1500);
-                continue;
-            }
+        if (ficha.cozinharTodasAsCarnes()) {
+            Interface.MostrarMensagem("\nVocê atiça a fogueira e assa TODAS as carnes: " + (lobos > 0 ? lobos + "x Carne de Lobo Cozida " : "") + (ursos > 0 ? ursos + "x Carne de Urso Cozida" : "") + "!");
+            Interface.MostrarMensagem("Agora todas estão seguras para comer (não estragam).");
+            Interface.Pausa(2200);
+        } else {
+            Interface.ExibirErro("Não foi possível cozinhar agora. Verifique se tem carne crua e 2 Madeiras.");
+            Interface.Pausa(1500);
         }
     }
 

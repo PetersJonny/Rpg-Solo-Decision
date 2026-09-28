@@ -1129,24 +1129,29 @@ public class FichaRpg implements java.io.Serializable {
         return true;
     }
 
-    // Cozinhar carne crua na fogueira: gasta 2 madeiras (a lenha queima) e
-    // transforma 1 carne crua (de Lobo ou de Urso) na versão cozida, que não
-    // tem risco de estragar ao ser comida. Só funciona estando junto da fogueira.
-    public boolean cozinharCarne(String nomeCarneCrua) {
+    // Cozinhar TODAS as carnes cruas na fogueira: gasta 2 madeiras (a lenha queima)
+    // e transforma TODAS as carnes cruas do inventário (de Lobo e de Urso) nas
+    // versões cozidas, que não têm risco de estragar ao serem comidas. Só funciona
+    // estando junto da fogueira.
+    public boolean cozinharTodasAsCarnes() {
         if (!podeUsarFogueira()) return false;
         if (getQuantidadeDe("Madeira") < 2) return false;
-        String cozida = null;
-        if (nomeCarneCrua.equals("Carne de Lobo")) {
-            cozida = "Carne de Lobo Cozida";
-        } else if (nomeCarneCrua.equals("Carne de Urso")) {
-            cozida = "Carne de Urso Cozida";
-        }
-        if (cozida == null) return false;
-        if (getQuantidadeDe(nomeCarneCrua) < 1) return false;
+        int lobos = getQuantidadeDe("Carne de Lobo");
+        int ursos = getQuantidadeDe("Carne de Urso");
+        if (lobos == 0 && ursos == 0) return false;
         removerItem("Madeira", 2);
-        removerItem(nomeCarneCrua, 1);
-        adicionarItem(criaturas.Criatura.criarItemDrop(cozida));
+        cozinharTipoCarne("Carne de Lobo", "Carne de Lobo Cozida", lobos);
+        cozinharTipoCarne("Carne de Urso", "Carne de Urso Cozida", ursos);
         return true;
+    }
+
+    // Converte `qtd` unidades da carne crua na versão cozida (sem gastar madeira).
+    private void cozinharTipoCarne(String crua, String cozida, int qtd) {
+        if (qtd <= 0) return;
+        removerItem(crua, qtd);
+        ItemRpg cozido = criaturas.Criatura.criarItemDrop(cozida);
+        cozido.setQuantidade(qtd);
+        adicionarItem(cozido);
     }
 
     // Mover (montar uma nova) construção no ponto atual, gastando a mesma matéria-prima.
