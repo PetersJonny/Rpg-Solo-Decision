@@ -500,4 +500,21 @@ class FichaRpgTest {
         assertFalse(ficha.cozinharTodasAsCarnes()); // sem carne crua
         assertEquals(6, ficha.getQuantidadeDe("Madeira"));
     }
+
+    @Test
+    void mochilaComForcaNegativaFicaFixaEm10() {
+        ficha.adicionarAtributo(3, -6); // Força negativa
+        ficha.aplicarBonus();
+        assertEquals(-6, ficha.getForca());
+        assertEquals(10.0, ficha.getCapacidadeMochila());
+        assertEquals(10.0, ficha.getEspacoLivreMochila());
+    }
+
+    @Test
+    void mochilaEscalaComForcaPositiva() {
+        ficha.adicionarAtributo(3, 4); // Força 4
+        ficha.aplicarBonus();
+        assertEquals(4, ficha.getForca());
+        assertEquals(30.0, ficha.getCapacidadeMochila());
+    }
 }

@@ -413,9 +413,10 @@ public class FichaRpg implements java.io.Serializable {
 
     // ==================== ESPAÇO DA MOCHILA ====================
 
-    // Capacidade de carga da mochila: 10 + 5 por ponto de Força
+    // Capacidade de carga da mochila: 10 + 5 por ponto de Força; com Força
+    // negativa, fica fixa em 10 (o mínimo de carregar o básico).
     public double getCapacidadeMochila() {
-        return 10 + 5.0 * getForca();
+        return Math.max(10, 10 + 5.0 * getForca());
     }
 
     // Peso total carregado (soma do peso de cada unidade do inventário)
