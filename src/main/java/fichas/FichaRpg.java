@@ -254,6 +254,8 @@ public class FichaRpg implements java.io.Serializable {
         // Bônus racial (+1 no atributo da raça + bônus permanentes de defesa/vida)
         this.defesa = 10 + this.destreza + bonusDeDefesa + (raca != null ? raca.getBonusDefesa() : 0);
         this.vidaMaxima += (raca != null ? raca.getBonusVidaMaxima() : 0);
+        // A vida atual acompanha o máximo: começa cheia com o bônus de vida da raça
+        this.vidaPersonagem += (raca != null ? raca.getBonusVidaMaxima() : 0);
 
         // Ficha ganha a arma e os itens da classe
         this.armaEquipada = classeDoPersonagem.getArmaPrincipal();

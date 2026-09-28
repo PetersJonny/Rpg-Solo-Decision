@@ -80,6 +80,7 @@ class RacasTest {
 
         assertEquals(vidaBase + 2, ficha.getVidaMaxima(), "+2 de vida máxima do Dracônico");
         assertEquals(defesaBase + 2, ficha.getDefesa(), "+2 de defesa do Dracônico");
+        assertEquals(ficha.getVidaMaxima(), ficha.getVidaPersonagem(), "A vida atual começa cheia (12/12) com o bônus do Dracônico");
     }
 
     @Test
