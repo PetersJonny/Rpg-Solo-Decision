@@ -101,4 +101,17 @@ class CombatCoerenciaTest {
         Criatura lobo = new Criatura("Lobo", 20, 10, 4, 1);
         assertFalse(MotorDeCombate.temBossSemFuga(java.util.List.of(lobo)));
     }
+
+    @Test
+    void furiaSombriaSobeUmDegrauNoDadoDaArma() {
+        // 1d4 → 1d6, 1d8 → 1d10, e assim por diante
+        assertEquals(6, MotorDeCombate.proximoDadoDeDano(4));
+        assertEquals(8, MotorDeCombate.proximoDadoDeDano(6));
+        assertEquals(10, MotorDeCombate.proximoDadoDeDano(8));
+        assertEquals(12, MotorDeCombate.proximoDadoDeDano(10));
+        assertEquals(20, MotorDeCombate.proximoDadoDeDano(12));
+        assertEquals(4, MotorDeCombate.proximoDadoDeDano(3)); // Soco 1d3 também sobe
+        // Dado fora do padrão fica como está
+        assertEquals(7, MotorDeCombate.proximoDadoDeDano(7));
+    }
 }

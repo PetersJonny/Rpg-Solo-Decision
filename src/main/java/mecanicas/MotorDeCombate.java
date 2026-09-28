@@ -1265,6 +1265,15 @@ public class MotorDeCombate {
                 nomeAtributo = atributo;
             }
 
+            // Fúria Sombria (Meio-Orque): com 30% ou menos de vida, o dado de dano
+            // da arma sobe um degrau (1d4→1d6, 1d6→1d8, 1d8→1d10...) no lugar do antigo +2.
+            int dadoDanoEfetivo = armaEscolhida.getDadoDanoArma();
+            boolean furiaSombria = ficha.getRaca() != null && ficha.getRaca().temBonusDanoVidaBaixa()
+                    && ficha.getVidaPersonagem() <= ficha.getVidaMaxima() * 0.30;
+            if (furiaSombria) {
+                dadoDanoEfetivo = proximoDadoDeDano(dadoDanoEfetivo);
+            }
+
             Interface.pressionarParaRolar();
             dadoAtaque = MecanicasRpg.rolarDado(20);
             totalAtaque = dadoAtaque + atributoBonus;
@@ -1289,13 +1298,16 @@ public class MotorDeCombate {
                 StringBuilder roladas = new StringBuilder();
                 Interface.pressionarParaRolar();
                 for (int i = 0; i < dadosTotais; i++) {
-                    int dado = MecanicasRpg.rolarDado(armaEscolhida.getDadoDanoArma());
+                    int dado = MecanicasRpg.rolarDado(dadoDanoEfetivo);
                     dano += dado;
                     if (roladas.length() > 0) roladas.append(" + ");
                     roladas.append(dado);
                 }
                 dano += atributoBonus;
-                Interface.MostrarMensagem("-> Dados Rolados: " + roladas + " = " + dano + " (Dano: " + dadosTotais + "d" + armaEscolhida.getDadoDanoArma() + " + " + nomeAtributo + ": " + atributoBonus + ")");
+                if (furiaSombria) {
+                    Interface.MostrarMensagem("(Fúria Sombria! Com a vida baixa, o dado da arma sobe um degrau para " + dadosTotais + "d" + armaEscolhida.getDadoDanoArma() + " → " + dadosTotais + "d" + dadoDanoEfetivo + ")");
+                }
+                Interface.MostrarMensagem("-> Dados Rolados: " + roladas + " = " + dano + " (Dano: " + dadosTotais + "d" + dadoDanoEfetivo + " + " + nomeAtributo + ": " + atributoBonus + ")");
                 Interface.Pausa(2000);
 
                 // Espada Majestral: banhada em ouro e magia, causa +1d4 de dano de luz
@@ -1334,12 +1346,6 @@ public class MotorDeCombate {
                 Interface.MostrarMensagem("(Espada Afiada! +" + bonusAfiada + " de dano)");
                 Interface.Pausa(1500);
             }
-            if (ficha.getRaca() != null && ficha.getRaca().temBonusDanoVidaBaixa()
-                    && ficha.getVidaPersonagem() <= ficha.getVidaMaxima() * 0.30) {
-                dano += 2;
-                Interface.MostrarMensagem("(Fúria Sombria! Com a vida baixa, você golpeia com +2 de dano)");
-                Interface.Pausa(1500);
-            }
             aplicarDanoCriatura(inimigo, dano);
             Interface.MostrarMensagem(rotuloCriatura(inimigos, inimigo) + " agora tem " + Math.max(0, inimigo.getVida()) + " de vida.");
             Interface.Pausa(2000);
@@ -1347,6 +1353,20 @@ public class MotorDeCombate {
 
         aplicarVenenoCuraParaMorte(ficha, inimigos, alvoIndex);
         return dano;
+    }
+
+    // Próximo dado no padrão (1 degrau acima): 1d3→1d4→1d6→1d8→1d10→1d12→1d20.
+    // Usado pela Fúria Sombria (Meio-Orque) com 30% ou menos de vida.
+    static int proximoDadoDeDano(int dado) {
+        switch (dado) {
+            case 3: return 4;
+            case 4: return 6;
+            case 6: return 8;
+            case 8: return 10;
+            case 10: return 12;
+            case 12: return 20;
+            default: return dado;
+        }
     }
 
     // ==================== HABILIDADES ====================
