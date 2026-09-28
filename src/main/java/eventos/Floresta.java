@@ -20,7 +20,9 @@ public class Floresta {
 
     // Avança o tempo e mostra o que aconteceu com o período (dia/noite) e o cansaço
     static void avancarTempoComMensagens(FichaRpg ficha, int unidades) {
+        int vidaAntesFome = ficha.getVidaPersonagem();
         boolean virou = ficha.avancarTempo(unidades);
+        int perdaFome = vidaAntesFome - ficha.getVidaPersonagem();
         if (!virou) {
             if (ficha.getProgressoPeriodo() >= 2) {
                 String proximo = ficha.isEhNoite() ? "dia" : "noite";
@@ -28,6 +30,10 @@ public class Floresta {
                 Interface.Pausa(1000);
             }
             return;
+        }
+        if (perdaFome > 0) {
+            Interface.MostrarMensagem("\n(A fome cobra seu preço: você perde " + perdaFome + " de vida! " + ficha.getDiasSemComer() + " dias sem comer)");
+            Interface.Pausa(1500);
         }
         Interface.Pausa(1000);
         if (ficha.isEhNoite()) {
@@ -228,7 +234,7 @@ public static void MenuConstrucao(FichaRpg ficha) {
                 System.out.println("  " + num + ". Montar Cabana aqui  (7x Madeira, 10x Folha, 4x Pedra — 2/3 do período)");
                 opMontarCabana = num++;
             } else if (ficha.podeUsarCabana()) {
-                System.out.println("  " + num + ". Dormir  (só à noite; recupera 1/3 da vida e da mana)");
+                System.out.println("  " + num + ". Dormir  (só à noite; recupera 1/3 da vida e da mana — 1/2 se comeu hoje)");
                 opDormir = num++;
             } else {
                 System.out.println("  " + num + ". Ir para a Cabana  (" + ficha.getDistanciaAte(ficha.getProfundidadeCabana()) + " período(s) de caminhada)");
@@ -465,12 +471,16 @@ public static void MenuConstrucao(FichaRpg ficha) {
                     Interface.Pausa(1500);
                     continue;
                 }
+                int perdaFomeDormir = ficha.getPerdaVidaPorFome();
                 int vidaAntes = ficha.getVidaPersonagem();
                 int manaAntes = ficha.getManaPersonagem();
                 ficha.dormir();
                 int curaVida = ficha.getVidaPersonagem() - vidaAntes;
                 int curaMana = ficha.getManaPersonagem() - manaAntes;
                 Interface.MostrarMensagem("\nVocê dorme profundamente em sua cabana...");
+                if (perdaFomeDormir > 0) {
+                    Interface.MostrarMensagem("\n(A fome cobra seu preço: você perde " + perdaFomeDormir + " de vida! " + ficha.getDiasSemComer() + " dias sem comer)");
+                }
                 if (ficha.temCompanheiro()) {
                     Interface.MostrarMensagem(ficha.getCompanheiro().getNome() + " também descansa na cabana ao seu lado.");
                 }

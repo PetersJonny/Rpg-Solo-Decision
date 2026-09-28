@@ -395,7 +395,11 @@ public class Interface {
         cabecalhoMenu("FLORESTA DE FREIJORD");
 
         String periodo = ficha.getPeriodoDescritivoMaiusculo();
+        String statusFome = ficha.descreverFome();
         System.out.println("\n  Período: " + AMARELO + periodo + RESET + "  (" + (3 - ficha.getProgressoPeriodo()) + "/3 para virar)" + (ficha.isCansado() ? "  |  " + AMARELO + "CANSADO (-1 em testes até dormir)" + RESET : ""));
+        if (!statusFome.isEmpty()) {
+            System.out.println("  " + VERMELHO + statusFome + RESET);
+        }
         if (ficha.temCompanheiro()) {
             System.out.println("  Companheiro(a): " + CIANO + ficha.getCompanheiro().getNome() + RESET + " (" + ficha.getCompanheiro().getClasseNome() + ", Nível " + ficha.getCompanheiro().getFicha().getNivel() + ")");
         }
@@ -434,7 +438,11 @@ public class Interface {
         cabecalhoMenu(cidade);
 
         String periodo = ficha.getPeriodoDescritivoMaiusculo();
+        String statusFome = ficha.descreverFome();
         System.out.println("\n  Período: " + AMARELO + periodo + RESET + "  (" + (3 - ficha.getProgressoPeriodo()) + "/3 para virar)" + (ficha.isCansado() ? "  |  " + AMARELO + "CANSADO (-1 em testes até dormir)" + RESET : ""));
+        if (!statusFome.isEmpty()) {
+            System.out.println("  " + VERMELHO + statusFome + RESET);
+        }
         if (ficha.temCompanheiro()) {
             System.out.println("  Companheiro(a): " + CIANO + ficha.getCompanheiro().getNome() + RESET + " (" + ficha.getCompanheiro().getClasseNome() + ", Nível " + ficha.getCompanheiro().getFicha().getNivel() + ")");
         }
@@ -505,13 +513,15 @@ public class Interface {
             if (consumivel && opcaoAcao == 1) {
                 String nomeItem = itemEscolhido.getNome();
                 boolean cheio = false;
-                if ((nomeItem.equals("Frutas") || nomeItem.equals("Kit Médico")) && ficha.getVidaPersonagem() >= ficha.getVidaMaxima() && !(nomeItem.equals("Kit Médico") && ficha.isInfectado())) {
+                boolean eComida = nomeItem.equals("Frutas") || nomeItem.equals("Carne de Lobo") || nomeItem.equals("Carne de Urso");
+                if (nomeItem.equals("Kit Médico") && ficha.getVidaPersonagem() >= ficha.getVidaMaxima() && !ficha.isInfectado()) {
                     ExibirErro("Sua vida já está no máximo!");
                     cheio = true;
                 } else if ((nomeItem.equals("Poção de Mana") || nomeItem.equals("Poção Grande de Mana")) && ficha.getManaPersonagem() >= ficha.getManaMaxima()) {
                     ExibirErro("Sua mana já está no máximo!");
                     cheio = true;
                 }
+                // Comida pode ser comida mesmo com vida cheia, pois resetam a fome.
                 if (!cheio) {
                     int quantidade = 1;
                     if (itemEscolhido.getQuantidade() > 1) {

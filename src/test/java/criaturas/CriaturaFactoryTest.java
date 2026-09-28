@@ -79,10 +79,35 @@ class CriaturaFactoryTest {
     void criarItemDropCobreOsNovosItens() {
         assertNotNull(Criatura.criarItemDrop("Osso"));
         assertNotNull(Criatura.criarItemDrop("Carne Podre"));
+        assertNotNull(Criatura.criarItemDrop("Carne de Lobo"));
+        assertNotNull(Criatura.criarItemDrop("Carne de Urso"));
         assertNotNull(Criatura.criarItemDrop("Arco"));
         assertNotNull(Criatura.criarItemDrop("Flechas"));
         assertEquals("Arco", Criatura.criarItemDrop("Arco").getNome());
         assertEquals("Flechas", Criatura.criarItemDrop("Flechas").getNome());
+        // As carnes são consumíveis (podem ser comidas)
+        assertTrue(Criatura.criarItemDrop("Carne Podre") instanceof itens.Consumivel);
+        assertTrue(Criatura.criarItemDrop("Carne de Lobo") instanceof itens.Consumivel);
+        assertTrue(Criatura.criarItemDrop("Carne de Urso") instanceof itens.Consumivel);
+    }
+
+    @Test
+    void loboEOUrsoDropamCarne() {
+        Criatura lobo = CriaturaFactory.criarLobo();
+        Criatura urso = CriaturaFactory.criarUrso();
+        assertTrue(dropa(lobo, "Carne de Lobo"), "Lobo deve dropar Carne de Lobo");
+        assertFalse(dropa(lobo, "Carne de Urso"), "Lobo não droga Carne de Urso");
+        assertTrue(dropa(urso, "Carne de Urso"), "Urso deve dropar Carne de Urso");
+        assertFalse(dropa(urso, "Carne de Lobo"), "Urso não droga Carne de Lobo");
+    }
+
+    private boolean dropa(Criatura c, String nome) {
+        for (Criatura.Drop d : c.getDrops()) {
+            if (d.nomeItem.equals(nome)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Test

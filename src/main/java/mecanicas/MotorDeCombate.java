@@ -1807,7 +1807,32 @@ public class MotorDeCombate {
                 int antes = ficha.getVidaPersonagem();
                 ficha.setVidaPersonagem(Math.min(ficha.getVidaPersonagem() + cura, ficha.getVidaMaxima()));
                 int curaReal = ficha.getVidaPersonagem() - antes;
+                ficha.comerComidaBoa();
                 Interface.MostrarMensagem("Você comeu " + qtd + "x Frutas e recuperou " + curaReal + " de vida! Vida: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima());
+                break;
+            }
+            case "Carne de Lobo": {
+                int cura = 0;
+                for (int i = 0; i < qtd; i++) cura += MecanicasRpg.rolarDado(3);
+                int antes = ficha.getVidaPersonagem();
+                ficha.setVidaPersonagem(Math.min(ficha.getVidaPersonagem() + cura, ficha.getVidaMaxima()));
+                int curaReal = ficha.getVidaPersonagem() - antes;
+                ficha.comerComidaBoa();
+                Interface.MostrarMensagem("Você comeu " + qtd + "x Carne de Lobo e recuperou " + curaReal + " de vida! Vida: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima());
+                break;
+            }
+            case "Carne de Urso": {
+                int cura = 0;
+                for (int i = 0; i < qtd; i++) cura += MecanicasRpg.rolarDado(4);
+                int antes = ficha.getVidaPersonagem();
+                ficha.setVidaPersonagem(Math.min(ficha.getVidaPersonagem() + cura, ficha.getVidaMaxima()));
+                int curaReal = ficha.getVidaPersonagem() - antes;
+                ficha.comerComidaBoa();
+                Interface.MostrarMensagem("Você comeu " + qtd + "x Carne de Urso e recuperou " + curaReal + " de vida! Vida: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima());
+                break;
+            }
+            case "Carne Podre": {
+                ficha.comerCarnePodre();
                 break;
             }
             case "Poção de Mana": {
@@ -1897,6 +1922,10 @@ public class MotorDeCombate {
                     descExibida = "Restaura 7 pontos de mana. Usos restantes: " + itemEscolhido.getQuantidade();
                 } else if (itemEscolhido.getNome().equals("Frutas")) {
                     descExibida = "Cada fruta cura 1d2 de vida. Frutas restantes: " + itemEscolhido.getQuantidade();
+                } else if (itemEscolhido.getNome().equals("Carne de Lobo")) {
+                    descExibida = "Cada carne cura 1d3 de vida. Carnes restantes: " + itemEscolhido.getQuantidade();
+                } else if (itemEscolhido.getNome().equals("Carne de Urso")) {
+                    descExibida = "Cada carne cura 1d4 de vida. Carnes restantes: " + itemEscolhido.getQuantidade();
                 }
                 System.out.println("\n" + itemEscolhido.getNome() + ": " + descExibida);
                 Interface.Pausa(1000);
@@ -1912,11 +1941,13 @@ public class MotorDeCombate {
                         Interface.Pausa(1500);
                         continue;
                     }
-                    if ((itemEscolhido.getNome().equals("Kit Médico") || itemEscolhido.getNome().equals("Frutas")) && ficha.getVidaPersonagem() >= ficha.getVidaMaxima()) {
+                    if (itemEscolhido.getNome().equals("Kit Médico") && ficha.getVidaPersonagem() >= ficha.getVidaMaxima()) {
                         Interface.MostrarMensagem("Sua vida já está no máximo!");
                         Interface.Pausa(1500);
                         continue;
                     }
+                    // Comida (frutas e carnes) pode ser comida mesmo com vida cheia,
+                    // pois resetam a fome.
 
                     System.out.println("\nDeseja usar este item? (Usará sua ação quando chegar sua vez)");
                     System.out.println("1. Sim");
@@ -1963,7 +1994,21 @@ public class MotorDeCombate {
         } else if (itemEscolhido.getNome().equals("Frutas")) {
             int cura = MecanicasRpg.rolarDado(2);
             ficha.setVidaPersonagem(Math.min(ficha.getVidaPersonagem() + cura, ficha.getVidaMaxima()));
+            ficha.comerComidaBoa();
             Interface.MostrarMensagem("Você comeu uma fruta e recuperou " + cura + " de vida! Vida atual: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima());
+        } else if (itemEscolhido.getNome().equals("Carne de Lobo")) {
+            int cura = MecanicasRpg.rolarDado(3);
+            ficha.setVidaPersonagem(Math.min(ficha.getVidaPersonagem() + cura, ficha.getVidaMaxima()));
+            ficha.comerComidaBoa();
+            Interface.MostrarMensagem("Você comeu carne de lobo e recuperou " + cura + " de vida! Vida atual: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima());
+        } else if (itemEscolhido.getNome().equals("Carne de Urso")) {
+            int cura = MecanicasRpg.rolarDado(4);
+            ficha.setVidaPersonagem(Math.min(ficha.getVidaPersonagem() + cura, ficha.getVidaMaxima()));
+            ficha.comerComidaBoa();
+            Interface.MostrarMensagem("Você comeu carne de urso e recuperou " + cura + " de vida! Vida atual: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima());
+        } else if (itemEscolhido.getNome().equals("Carne Podre")) {
+            ficha.comerCarnePodre();
+            Interface.MostrarMensagem("Você não recupera vida, mas sua fome é saciada (e você fica enjoado).");
         } else if (itemEscolhido.getNome().equals("Kit Médico")) {
             // Pode usar o Kit em si ou no companheiro (se estiver ferido);
             // com vida cheia, ainda pode usar em você mesmo para curar uma infecção

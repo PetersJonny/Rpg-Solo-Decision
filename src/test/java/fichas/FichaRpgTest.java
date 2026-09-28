@@ -221,4 +221,156 @@ class FichaRpgTest {
         ficha.setCidadeAtual("Vilarejo de Scarbor");
         assertEquals("Vilarejo de Scarbor", ficha.getCidadeAtual());
     }
+
+    @Test
+    void fomeComecaComPenalidadeZero() {
+        assertEquals(0, ficha.getDiasSemComer());
+        assertEquals(0, ficha.getPenalidadeFome());
+        assertFalse(ficha.isEnjoado());
+        assertEquals(0, ficha.getPerdaVidaPorFome());
+    }
+
+    @Test
+    void fomeExigeComecarNoDiaSeguinte() {
+        // Dia 1 para Noite 1: ainda não vira dia, sem penalidade
+        ficha.avancarTempo(3);
+        assertEquals(0, ficha.getDiasSemComer());
+        // Noite 1 para Dia 2: não comeu no dia 1
+        ficha.avancarTempo(3);
+        assertEquals(1, ficha.getDiasSemComer());
+        assertEquals(1, ficha.getPenalidadeFome());
+        assertEquals(ficha.getDestreza() - 1, ficha.getDestrezaTeste());
+        assertEquals(ficha.getForca() - 1, ficha.getForcaTeste());
+    }
+
+    @Test
+    void tresDiasSemComerDaPenalidadeDois() {
+        // Simula 3 dias sem comer: vira Dia 4
+        ficha.avancarTempo(3);
+        ficha.avancarTempo(3);
+        ficha.avancarTempo(3);
+        ficha.avancarTempo(3);
+        ficha.avancarTempo(3);
+        ficha.avancarTempo(3);
+        assertEquals(4, ficha.getDiaAtual());
+        assertEquals(3, ficha.getDiasSemComer());
+        assertEquals(2, ficha.getPenalidadeFome());
+    }
+
+    @Test
+    void cincoDiasSemComerComecaPerderVidaPorPeriodo() {
+        ficha.setVidaMaxima(100);
+        ficha.setVidaPersonagem(100);
+        int vidaBase = ficha.getVidaPersonagem();
+        // Avança até Dia 6 (5 dias sem comer acumulados)
+        for (int i = 0; i < 10; i++) {
+            ficha.avancarTempo(3);
+        }
+        assertEquals(6, ficha.getDiaAtual());
+        assertEquals(5, ficha.getDiasSemComer());
+        assertEquals(1, ficha.getPerdaVidaPorFome());
+        // A perda já foi aplicada em cada virada (dia e noite): espera-se que tenha perdido vida
+        assertTrue(ficha.getVidaPersonagem() < vidaBase);
+    }
+
+    @Test
+    void comerComidaBoaResetAFomeEEnjoo() {
+        ficha.avancarTempo(3);
+        ficha.avancarTempo(3); // Dia 2, 1 dia sem comer
+        assertEquals(1, ficha.getPenalidadeFome());
+        ficha.comerCarnePodre(); // fica enjoado
+        assertTrue(ficha.isEnjoado());
+        assertEquals(1, ficha.getPenalidadeFome());
+        ficha.comerComidaBoa();
+        assertEquals(0, ficha.getDiasSemComer());
+        assertEquals(0, ficha.getPenalidadeFome());
+        assertFalse(ficha.isEnjoado());
+        assertTrue(ficha.isComeuHoje());
+    }
+
+    @Test
+    void carnePodreMantemDebuffDeForcaEDestreza() {
+        ficha.avancarTempo(3);
+        ficha.avancarTempo(3);
+        assertEquals(1, ficha.getPenalidadeFome());
+        int destrezaBase = ficha.getDestreza();
+        int forcaBase = ficha.getForca();
+        int destrezaTesteAntes = ficha.getDestrezaTeste();
+        int forcaTesteAntes = ficha.getForcaTeste();
+        ficha.comerCarnePodre();
+        // Continua com -1 nos testes mesmo resetando a contagem
+        assertEquals(0, ficha.getDiasSemComer());
+        assertEquals(1, ficha.getPenalidadeFome());
+        assertEquals(destrezaTesteAntes, ficha.getDestrezaTeste());
+        assertEquals(forcaTesteAntes, ficha.getForcaTeste());
+        assertEquals(destrezaBase - 1, ficha.getDestrezaTeste());
+        assertEquals(forcaBase - 1, ficha.getForcaTeste());
+    }
+
+    @Test
+    void comerCarnePodreSemDebuffAnteriorGanhaMenosUm() {
+        ficha.comerCarnePodre();
+        assertEquals(0, ficha.getDiasSemComer());
+        assertTrue(ficha.isEnjoado());
+        assertEquals(1, ficha.getPenalidadeFome());
+        assertEquals(ficha.getDestreza() - 1, ficha.getDestrezaTeste());
+        assertEquals(ficha.getForca() - 1, ficha.getForcaTeste());
+    }
+
+    @Test
+    void comerNoDiaEvitaFraquezaNoDiaSeguinte() {
+        ficha.comerComidaBoa();
+        ficha.avancarTempo(3); // Dia 1 -> Noite 1
+        ficha.avancarTempo(3); // Noite 1 -> Dia 2
+        assertEquals(0, ficha.getDiasSemComer());
+        assertEquals(0, ficha.getPenalidadeFome());
+        // Mas não comeu no dia 2 -> Dia 3 fica fraco
+        ficha.avancarTempo(3);
+        ficha.avancarTempo(3);
+        assertEquals(1, ficha.getDiasSemComer());
+        assertEquals(1, ficha.getPenalidadeFome());
+    }
+
+    @Test
+    void dormirRecuperaMetadeSeComeuNoDia() {
+        ficha.adicionarItem(new itens.ItemRpg("Madeira", "", 10));
+        ficha.adicionarItem(new itens.ItemRpg("Folha", "", 10));
+        ficha.adicionarItem(new itens.ItemRpg("Pedra", "", 5));
+        ficha.montarCabana();
+        ficha.avancarTempo(3); // Noite 1
+        assertTrue(ficha.isEhNoite());
+        ficha.setVidaMaxima(100);
+        ficha.setVidaPersonagem(10);
+        ficha.setManaMaxima(50);
+        ficha.setManaPersonagem(5);
+        ficha.comerComidaBoa(); // comeu no dia
+        assertTrue(ficha.dormir());
+        // 1/2 de 100 = 50 de cura (vida vira 60); 1/2 de 50 = 25 (mana vira 30)
+        assertEquals(60, ficha.getVidaPersonagem());
+        assertEquals(30, ficha.getManaPersonagem());
+    }
+
+    @Test
+    void comidaBoaPodeSerUsadaComVidaCheia() {
+        ficha.setVidaMaxima(100);
+        ficha.setVidaPersonagem(100);
+        ficha.avancarTempo(3);
+        ficha.avancarTempo(3); // 1 dia sem comer
+        assertTrue(mecanicas.MotorDeCombate.usarItemForaDeCombate(ficha,
+                new itens.Consumivel("Frutas", "", 1), 1));
+        assertEquals(0, ficha.getDiasSemComer());
+        assertEquals(100, ficha.getVidaPersonagem());
+    }
+
+    @Test
+    void carneDeLoboCuraEDaAzVidaFome() {
+        ficha.avancarTempo(3);
+        ficha.avancarTempo(3); // 1 dia sem comer
+        ficha.setVidaMaxima(50);
+        ficha.setVidaPersonagem(20);
+        assertTrue(mecanicas.MotorDeCombate.usarItemForaDeCombate(ficha,
+                new itens.Consumivel("Carne de Lobo", "", 1), 1));
+        assertEquals(0, ficha.getDiasSemComer());
+        assertTrue(ficha.getVidaPersonagem() >= 21 && ficha.getVidaPersonagem() <= 23);
+    }
 }

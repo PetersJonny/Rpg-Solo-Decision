@@ -92,6 +92,14 @@ public class FichaRpg implements java.io.Serializable {
     private boolean temCabana = false;
     private boolean naCabana = false;
 
+    // Sistema de fome: quantos dias consecutivos sem comer; comeuHoje marca se
+    // comeu no dia que passou (usado no virar do dia e no bônus de dormir);
+    // enjoado = comeu carne podre (mantém/ganha -1 em testes de Destreza e Força).
+    private int diasSemComer = 0;
+    private boolean comeuHoje = false;
+    private boolean enjoado = false;
+    private int penalidadeEnjoado = 0;
+
     // Companheiro (pessoa perdida que o jogador acolheu)
     private companheiros.Companheiro companheiro = null;
 
@@ -813,6 +821,7 @@ public class FichaRpg implements java.io.Serializable {
                 diasSemDormir++;
             } else {
                 diaAtual++;
+                registrarNovoDiaFome();
                 if (eraNoite && companheiro != null) {
                     // A noite terminou: o companheiro dormiu na cabana
                     registrarDormidaDoCompanheiro();
@@ -832,6 +841,8 @@ public class FichaRpg implements java.io.Serializable {
             if (magiaBonusPeriodosRestantes > 0) {
                 magiaBonusPeriodosRestantes--;
             }
+            // A fome cobra vida a cada período (dia e noite) a partir de 5 dias sem comer
+            aplicarPerdaVidaPorFome();
             virou = true;
         }
         cansado = diasSemDormir > 2;
@@ -839,17 +850,21 @@ public class FichaRpg implements java.io.Serializable {
     }
 
     // Dormir: só de noite, estando NA cabana (não adianta estando longe na floresta).
-    // Recupera 1/3 da vida máxima e 1/3 da mana máxima e faz amanhecer.
+    // Se comeu no mesmo dia, recupera 1/2 da vida máxima e 1/2 da mana máxima;
+    // caso contrário, recupera 1/3 de cada. Faz amanhecer.
     public boolean dormir() {
         if (!ehNoite) return false;
         if (!temCabana || !naCabana) return false;
-        int curaVida = vidaMaxima / 3;
-        int curaMana = manaMaxima / 3;
+        aplicarPerdaVidaPorFome();
+        int divisor = comeuHoje ? 2 : 3;
+        int curaVida = vidaMaxima / divisor;
+        int curaMana = manaMaxima / divisor;
         vidaPersonagem = Math.min(vidaPersonagem + curaVida, vidaMaxima);
         manaPersonagem = Math.min(manaPersonagem + curaMana, manaMaxima);
         ehNoite = false;
         progressoPeriodo = 0;
         diaAtual++;
+        registrarNovoDiaFome();
         diasSemDormir = 0;
         cansado = false;
         naMesaMagias = false;
@@ -857,6 +872,69 @@ public class FichaRpg implements java.io.Serializable {
         menteAfiadaUsada = false;
         registrarDormidaDoCompanheiro();
         return true;
+    }
+
+    // ==================== FOME ====================
+
+    // Número de dias sem comer (a fome é resetada ao comer)
+    public int getDiasSemComer() { return diasSemComer; }
+    // Se o personagem comeu no dia atual (usado para o bônus de dormir)
+    public boolean isComeuHoje() { return comeuHoje; }
+    // Se está enjoado (comer carne podre mantém o debuff de status)
+    public boolean isEnjoado() { return enjoado; }
+
+    // Descrição do estado de fome para exibir nos menus. Retorna "" se tudo bem.
+    public String descreverFome() {
+        if (enjoado) {
+            return "FAMINTO? " + getDiasSemComer() + " dias sem comer | ENJOADO (-" + penalidadeEnjoado + " em testes de Destreza e Força)";
+        }
+        if (diasSemComer >= 5) {
+            return "FAMINTO " + getDiasSemComer() + " dias (-" + getPenalidadeFome() + " em testes; perde " + getPerdaVidaPorFome() + " por período)";
+        }
+        if (diasSemComer >= 1) {
+            return "FAMINTO " + getDiasSemComer() + " dias (-" + getPenalidadeFome() + " em testes de Destreza e Força)";
+        }
+        return "";
+    }
+
+    // Encerra o dia que passou: se não comeu, soma mais um dia de fome e
+    // a perda de vida é aplicada a cada período que se inicia.
+    private void registrarNovoDiaFome() {
+        if (!comeuHoje) {
+            diasSemComer++;
+        }
+        comeuHoje = false;
+    }
+
+    // Aplica a perda de vida por fome (a cada período, dia e noite) a partir
+    // de 5 dias sem comer: 1, dobrando a cada 5 dias (10→2, 15→4, 20→8...).
+    // Retorna o valor de vida perdido (0 se não aplicou).
+    private int aplicarPerdaVidaPorFome() {
+        int perda = getPerdaVidaPorFome();
+        if (perda <= 0) return 0;
+        vidaPersonagem = Math.max(0, vidaPersonagem - perda);
+        return perda;
+    }
+
+    // Comer comida boa (frutas ou carnes frescas): zera a fome, cura o enjoo e
+    // marca que comeu hoje.
+    public void comerComidaBoa() {
+        diasSemComer = 0;
+        comeuHoje = true;
+        enjoado = false;
+        penalidadeEnjoado = 0;
+    }
+
+    // Comer carne podre: zera a contagem de dias sem comer, mas o personagem
+    // fica enjoado — continua com o debuff de status que já tinha (se tiver) ou
+    // ganha o debuff de -1 nos testes de Destreza e Força (se não tinha).
+    // O enjoo passa até comer comida boa.
+    public void comerCarnePodre() {
+        int penalidadeAnterior = getPenalidadeFome();
+        diasSemComer = 0;
+        comeuHoje = true;
+        enjoado = true;
+        penalidadeEnjoado = Math.max(penalidadeAnterior, 1);
     }
 
     // Montar a cabana: gasta 7 madeiras, 10 folhas e 4 pedras (só a primeira vez).
@@ -1036,10 +1114,23 @@ public class FichaRpg implements java.io.Serializable {
     private int bonusTestesNoturnos() {
         return ehNoite && raca != null && raca.temBonusTestesNoturnos() ? 2 : 0;
     }
-    public int getDestrezaTeste() { return getDestreza() - (cansado ? 1 : 0) + bonusTestesNoturnos(); }
+    // Fome: -1 em testes de Força e Destreza quando sem comer no dia anterior,
+    // -2 quando há 3+ dias sem comer. Carne podre (enjoado) mantém o debuff.
+    public int getPenalidadeFome() {
+        int penalidade = diasSemComer >= 3 ? 2 : diasSemComer >= 1 ? 1 : 0;
+        if (enjoado) penalidade = Math.max(penalidade, penalidadeEnjoado);
+        return penalidade;
+    }
+    // Perda de vida por período (dia e noite) por fome: a partir de 5 dias sem
+    // comer perde 1, dobra a cada 5 dias (10→2, 15→4, 20→8...).
+    public int getPerdaVidaPorFome() {
+        if (diasSemComer < 5) return 0;
+        return 1 << ((diasSemComer - 5) / 5);
+    }
+    public int getDestrezaTeste() { return getDestreza() - (cansado ? 1 : 0) - getPenalidadeFome() + bonusTestesNoturnos(); }
     public int getPresencaTeste() { return presenca - (cansado ? 1 : 0) + bonusTestesNoturnos(); }
     public int getSabedoriaTeste() { return sabedoria - (cansado ? 1 : 0) + bonusTestesNoturnos(); }
-    public int getForcaTeste() { return getForca() - (cansado ? 1 : 0) + bonusTestesNoturnos(); }
+    public int getForcaTeste() { return getForca() - (cansado ? 1 : 0) - getPenalidadeFome() + bonusTestesNoturnos(); }
     public int getIntelectoTeste() { return intelecto - (cansado ? 1 : 0) + bonusTestesNoturnos(); }
     public int getConstituicaoTeste() { return constituicao - (cansado ? 1 : 0) + bonusTestesNoturnos(); }
 

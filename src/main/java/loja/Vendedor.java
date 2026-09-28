@@ -347,6 +347,8 @@ public class Vendedor {
             case "Dente de Urso": valorCheio = 14; break;
             case "Pó da Fada": valorCheio = 75; break;
             case "Osso": valorCheio = 23; break; // preço cheio de raridade
+            case "Carne de Lobo": valorCheio = 10; break;
+            case "Carne de Urso": valorCheio = 18; break;
             case "Carne Podre": valorCheio = 15; break;
             case "Coroa do Rei": valorCheio = 300; break; // fortuna real, só pode ser encontrada 1 vez
             case "Chifre de Minotauro": valorCheio = 100; break; // troféu do boss do labirinto

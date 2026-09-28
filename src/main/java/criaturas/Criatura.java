@@ -2,6 +2,7 @@ package criaturas;
 
 import fichas.FichaRpg;
 import itens.Arma;
+import itens.Consumivel;
 import itens.ItemRpg;
 import java.util.ArrayList;
 import java.util.List;
@@ -177,6 +178,9 @@ public class Criatura implements java.io.Serializable {
     public int getXpGanho() { return xpGanho; }
 
     public void setVida(int vida) { this.vida = vida; }
+
+    // Lista de drops possíveis da criatura (nome, quantidade e chance)
+    public List<Drop> getDrops() { return drops; }
 
     // Ataque da criatura contra o jogador. `alvoJogadorPrincipal` indica se o alvo é o
     // personagem principal (só ele pode ser infectado). Depois do ataque, se o ataque
@@ -432,8 +436,12 @@ public class Criatura implements java.io.Serializable {
                 return new Arma("Faca", "Uma faca afiada que causa 1d4 de dano corpo a corpo, usando Destreza.", "CaC", 4, 1, 1, "Destreza");
             case "Osso":
                 return new ItemRpg("Osso", "Ossos antigos retirados de criaturas do labirinto, valiosos para artesãos e alquimistas.", 1);
+            case "Carne de Lobo":
+                return new Consumivel("Carne de Lobo", "Carne fresca de lobo selvagem. Sacia a fome e cura 1d3 de vida.", 1);
+            case "Carne de Urso":
+                return new Consumivel("Carne de Urso", "Carne farto de urso. Sacia a fome e cura 1d4 de vida.", 1);
             case "Carne Podre":
-                return new ItemRpg("Carne Podre", "Carne em decomposição que exala um odor insuportável. Poucos compradores aceitam isso.", 1);
+                return new Consumivel("Carne Podre", "Carne em decomposição que exala um odor insuportável. Comê-la sacia a fome, mas deixa enjoado. Poucos compradores aceitam isso.", 1);
             case "Arco":
                 return new Arma("Arco", "Um arco de madeira que dispara flechas, causando 1d6 de dano à distância. Consome flechas.", "LA", 6, 1, 1);
             case "Flechas":
