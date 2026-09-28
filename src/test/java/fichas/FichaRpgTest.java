@@ -170,6 +170,7 @@ class FichaRpgTest {
         assertFalse(ficha.isEspadaMajestralEncontrada());
         assertFalse(ficha.isCoroaReiEncontrada());
         assertFalse(ficha.isReiDasCriaturas());
+        assertFalse(ficha.isOlhoDemonicoFundido());
         ficha.setOlhoDemonicoEncontrado(true);
         ficha.setEspadaMajestralEncontrada(true);
         ficha.setCoroaReiEncontrada(true);
@@ -178,6 +179,9 @@ class FichaRpgTest {
         assertTrue(ficha.isEspadaMajestralEncontrada());
         assertTrue(ficha.isCoroaReiEncontrada());
         assertTrue(ficha.isReiDasCriaturas());
+        assertFalse(ficha.isOlhoDemonicoFundido(), "Aceitar o chamado é separado de apenas encontrar o olho");
+        ficha.setOlhoDemonicoFundido(true);
+        assertTrue(ficha.isOlhoDemonicoFundido());
     }
 
     @Test

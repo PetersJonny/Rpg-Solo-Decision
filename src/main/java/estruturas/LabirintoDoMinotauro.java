@@ -261,8 +261,9 @@ public class LabirintoDoMinotauro {
         }
     }
 
-    // Tesouro raro: Olho Demoníaco. Aceitar o chamado concede o item e a
-    // habilidade Pacto Mortal; recusar dá nada, mas o item já conta como achado.
+    // Tesouro raro: Olho Demoníaco. Aceitar o chamado funde o olho ao corpo do
+    // jogador (não é um item de inventário) e concede a habilidade Pacto Mortal
+    // para sempre; recusar dá nada, mas o item já conta como achado.
     private static void encontrarOlhoDemonico(FichaRpg ficha) {
         ficha.setOlhoDemonicoEncontrado(true);
         Interface.MostrarMensagem(VERMELHO + "Nas trevas, algo a observa com um olho único e pulsante..." + RESET);
@@ -276,10 +277,11 @@ public class LabirintoDoMinotauro {
         int escolha = Interface.lerOpcao(2);
 
         if (escolha == 1) {
-            ficha.adicionarItem(new itens.ItemRpg("Olho Demoníaco", "Um olho de pedra que pulsa com energia sombria. Permite usar a habilidade Pacto Mortal em combate.", 1));
+            ficha.setOlhoDemonicoFundido(true);
             ficha.getHabilidades().add(new habilidades.ativas.HabilidadePactoMortal());
-            Interface.MostrarMensagem(VERMELHO + "O olho se fixa à sua mão, e o conhecimento do Pacto Mortal flui por seus veios." + RESET);
-            Interface.Pausa(3000);
+            Interface.MostrarMensagem(VERMELHO + "O olho desliza pelo seu corpo até seu rosto e se funde à sua própria carne. Ele agora é PARTE de você... para sempre." + RESET);
+            Interface.MostrarMensagem("O conhecimento do Pacto Mortal flui pelos seus veios.");
+            Interface.Pausa(3500);
         } else {
             Interface.MostrarMensagem("\nVocê vira as costas ao olho pulsante, que se dissolve em pó por trás de você.");
             Interface.Pausa(2500);

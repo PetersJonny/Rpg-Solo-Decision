@@ -159,6 +159,10 @@ public class FichaRpg implements java.io.Serializable {
     private boolean espadaMajestralEncontrada = false;
     private boolean coroaReiEncontrada = false;
 
+    // Olho Demoníaco: quem aceita o chamado tem o olho fundido ao próprio corpo,
+    // para sempre (não é um item de inventário).
+    private boolean olhoDemonicoFundido = false;
+
     // Coroa do Rei: quem decifra seu segredo (teste de Intelecto 18+) vira o Rei das Criaturas
     private boolean reiDasCriaturas = false;
 
@@ -722,6 +726,9 @@ public class FichaRpg implements java.io.Serializable {
 
     public boolean isOlhoDemonicoEncontrado() { return olhoDemonicoEncontrado; }
     public void setOlhoDemonicoEncontrado(boolean olhoDemonicoEncontrado) { this.olhoDemonicoEncontrado = olhoDemonicoEncontrado; }
+
+    public boolean isOlhoDemonicoFundido() { return olhoDemonicoFundido; }
+    public void setOlhoDemonicoFundido(boolean olhoDemonicoFundido) { this.olhoDemonicoFundido = olhoDemonicoFundido; }
 
     public boolean isEspadaMajestralEncontrada() { return espadaMajestralEncontrada; }
     public void setEspadaMajestralEncontrada(boolean espadaMajestralEncontrada) { this.espadaMajestralEncontrada = espadaMajestralEncontrada; }

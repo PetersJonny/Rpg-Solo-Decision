@@ -1408,7 +1408,7 @@ public class MotorDeCombate {
             if (!hab.isPassiva()
                     && !hab.getNome().equals("Cura Reforçada")
                     && !hab.getNome().equals("Magia Proibida")
-                    && !(hab.getNome().equals("Pacto Mortal") && !ficha.temItem("Olho Demoníaco"))) {
+                    && !(hab.getNome().equals("Pacto Mortal") && !ficha.isOlhoDemonicoFundido())) {
                 ativas.add(hab);
             }
         }
@@ -2250,8 +2250,8 @@ public class MotorDeCombate {
     // Pacto Mortal (Olho Demoníaco): gasta 4 de mana. Até o fim do combate o alvo tem
     // -2 nas rolagens e +5 de dano demoníaco, mas VOCÊ sofre +3 em todo dano recebido.
     public static boolean usarPactoMortal(FichaRpg ficha, List<Criatura> inimigos, int alvoIndex, habilidades.Habilidade hab) {
-        if (!ficha.temItem("Olho Demoníaco")) {
-            Interface.ExibirErro("Você precisa do Olho Demoníaco para usar o Pacto Mortal!");
+        if (!ficha.isOlhoDemonicoFundido()) {
+            Interface.ExibirErro("Você precisa ter aceitado o Olho Demoníaco para usar o Pacto Mortal!");
             Interface.Pausa(1500);
             return true;
         }
