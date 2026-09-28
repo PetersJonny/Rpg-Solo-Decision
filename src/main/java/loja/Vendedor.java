@@ -20,9 +20,12 @@ public class Vendedor {
     private static final String CIANO = Interface.CIANO;
 
     // Categorias (usadas só pela loja; não aparecem no jogo)
+    // O vendedor ambulante só revende suprimentos básicos: armaduras e itens
+    // específicos de classe (PESADO/AGIL/MAGICO) saem daqui e só serão
+    // vendidos na vila.
     private static final List<String> GERAL = List.of(
             "Faca", "Machado", "Machadinha", "Martelo", "Mangual", "Arco", "Flechas", "Lança",
-            "Armadura Leve", "Poção de Mana", "Kit Médico",
+            "Poção de Mana", "Kit Médico",
             "Madeira", "Folha", "Pedra", "Frutas"
     );
     private static final List<String> PESADO = List.of(
@@ -103,17 +106,11 @@ public class Vendedor {
         }
     }
 
-    // Estoque: 5 itens aleatórios entre os gerais + os da categoria da classe do jogador,
-    // cada um com uma quantidade aleatória.
+    // Estoque: 5 itens aleatórios entre os gerais, cada um com uma quantidade
+    // aleatória. (Antes o estoque incluía armaduras e itens da categoria da
+    // classe do jogador; estes agora só são vendidos na vila.)
     private static Map<String, Integer> montarEstoque(FichaRpg ficha) {
         List<String> pool = new ArrayList<>(GERAL);
-        if (ficha.getClasseDoPersonagem() instanceof classes.Guerreiro) {
-            pool.addAll(PESADO);
-        } else if (ficha.getClasseDoPersonagem() instanceof classes.Healer) {
-            pool.addAll(AGIL);
-        } else if (ficha.getClasseDoPersonagem() instanceof classes.Mago) {
-            pool.addAll(MAGICO);
-        }
         Collections.shuffle(pool);
 
         Map<String, Integer> estoque = new LinkedHashMap<>();
@@ -140,7 +137,7 @@ public class Vendedor {
             for (int i = 0; i < nomes.size(); i++) {
                 String nome = nomes.get(i);
                 int qtd = estoque.get(nome);
-                String preco = nome.equals("Flechas") ? "3 ouro/un." : precoDeVenda(nome) + " ouro";
+                String preco = nome.equals("Flechas") ? precoDeVenda(nome) + " ouro/un." : precoDeVenda(nome) + " ouro";
                 System.out.println("  " + (i + 1) + ". " + nome + " - " + preco + " (estoque: " + qtd + ")");
             }
             System.out.println("\n  Escolha um item para comprar (ou " + CIANO + "0" + RESET + " para Voltar):");
@@ -150,7 +147,7 @@ public class Vendedor {
 
             String nome = nomes.get(escolha - 1);
             int qtdEstoque = estoque.get(nome);
-            int preco = nome.equals("Flechas") ? 3 : precoDeVenda(nome);
+            int preco = precoDeVenda(nome);
             if (preco < 0) {
                 Interface.ExibirErro("Esse item não está disponível!");
                 continue;
@@ -257,10 +254,7 @@ public class Vendedor {
             List<ItemRpg> vendaveis = new ArrayList<>();
             for (ItemRpg item : ficha.getInventario()) {
                 if (item.getQuantidade() > 0
-                        && !item.getNome().equals("Olho Demoníaco")
-                        && !item.getNome().equals("Espada Majestral")
-                        && !item.getNome().equals("Espada do Minotauro")
-                        && !item.getNome().equals("Cajado de Sangue")) {
+                        && !item.getNome().equals("Olho Demoníaco")) {
                     vendaveis.add(item);
                 }
             }
@@ -304,30 +298,30 @@ public class Vendedor {
     // Preço de venda do vendedor (valor cheio, usado quando o jogador COMPRA)
     private static int precoDeVenda(String nome) {
         switch (nome) {
-            case "Faca": return 20;
-            case "Machado": return 35;
-            case "Machadinha": return 20;
-            case "Martelo": return 50;
-            case "Mangual": return 35;
-            case "Arco": return 40;
-            case "Flechas": return 3;
-            case "Lança": return 50;
-            case "Armadura Leve": return 60;
-            case "Poção de Mana": return 15;
-            case "Kit Médico": return 20;
-            case "Espada": return 40;
-            case "Espada Pesada": return 70;
-            case "Machado de Guerra": return 90;
-            case "Martelo de Guerra": return 90;
-            case "Armadura Pesada": return 100;
-            case "Bisturi": return 25;
-            case "Arco Refinado": return 60;
-            case "Nunchako": return 45;
-            case "Foice": return 55;
-            case "Cajado": return 30;
-            case "Chapéu Mágico": return 50;
-            case "Poção Grande de Mana": return 25;
-            case "Pequeno Grimório": return 60;
+            case "Faca": return 30;
+            case "Machado": return 55;
+            case "Machadinha": return 30;
+            case "Martelo": return 80;
+            case "Mangual": return 55;
+            case "Arco": return 65;
+            case "Flechas": return 5;
+            case "Lança": return 80;
+            case "Armadura Leve": return 230;
+            case "Poção de Mana": return 18;
+            case "Kit Médico": return 25;
+            case "Espada": return 65;
+            case "Espada Pesada": return 110;
+            case "Machado de Guerra": return 140;
+            case "Martelo de Guerra": return 140;
+            case "Armadura Pesada": return 450;
+            case "Bisturi": return 40;
+            case "Arco Refinado": return 95;
+            case "Nunchako": return 70;
+            case "Foice": return 85;
+            case "Cajado": return 50;
+            case "Chapéu Mágico": return 70;
+            case "Poção Grande de Mana": return 30;
+            case "Pequeno Grimório": return 90;
             // Materiais coletáveis da floresta
             case "Madeira": return 6;
             case "Folha": return 4;
@@ -352,8 +346,12 @@ public class Vendedor {
             case "Carne de Lobo Cozida": valorCheio = 14; break;
             case "Carne de Urso Cozida": valorCheio = 24; break;
             case "Carne Podre": valorCheio = 15; break;
-            case "Coroa do Rei": valorCheio = 300; break; // fortuna real, só pode ser encontrada 1 vez
-            case "Chifre de Minotauro": valorCheio = 100; break; // troféu do boss do labirinto
+            case "Coroa do Rei": valorCheio = 1000; break; // fortuna real, só pode ser encontrada 1 vez
+            case "Chifre de Minotauro": valorCheio = 150; break; // troféu do boss do labirinto
+            // Troféus de classe (só podem ser VENDIDOS, nunca comprados)
+            case "Espada do Minotauro": valorCheio = 1250; break;
+            case "Espada Majestral": valorCheio = 700; break;
+            case "Cajado de Sangue": valorCheio = 1500; break;
             default:
                 int preco = precoDeVenda(nome);
                 valorCheio = preco < 0 ? 1 : preco;
