@@ -164,6 +164,8 @@ public static void MenuConstrucao(FichaRpg ficha) {
                 local = "NA SALA DE TREINO";
             } else if (ficha.podeUsarMesaMagias()) {
                 local = "NA MESA DE MAGIAS";
+            } else if (ficha.podeUsarFogueira()) {
+                local = "NA FOGUEIRA";
             } else {
                 local = "NO MEIO DA MATA";
             }
@@ -211,6 +213,18 @@ public static void MenuConstrucao(FichaRpg ficha) {
                         + " — só usa estando nela (ou vá até o ponto dela)");
             }
 
+            // ===================== FOGUEIRA =====================
+            String statusFogueira = ficha.isTemFogueira() ? VERDE + "construída" + RESET : AMARELO + "não construída" + RESET;
+            System.out.println("\n  " + CIANO + "[ FOGUEIRA ]" + RESET + "  Status: " + statusFogueira);
+            System.out.println("  Custo:    " + ficha.getQuantidadeDe("Madeira") + "/4x Madeira | "
+                    + ficha.getQuantidadeDe("Folha") + "/3x Folha");
+            if (!ficha.isTemFogueira()) {
+                System.out.println("  Informação: Gasta 2/3 do período para montar.");
+            } else {
+                System.out.println("  Localização: " + descreverPonto(ficha, ficha.getProfundidadeFogueira())
+                        + " — cozinha 1 carne crua por uso (2x Madeira), deixando-a segura");
+            }
+
             if (ficha.getTreinoBonusPeriodosRestantes() > 0) {
                 System.out.println("\n  " + VERDE + "+2 em " + ficha.getTreinoBonusAtributo() + " ativo" + RESET + " (restam " + ficha.getTreinoBonusPeriodosRestantes() + " períodos)");
             }
@@ -225,6 +239,7 @@ public static void MenuConstrucao(FichaRpg ficha) {
             int opMontarCabana = 0, opIrCabana = 0, opDormir = 0;
             int opMontarSala = 0, opIrSala = 0, opTreinar = 0;
             int opMontarMesa = 0, opIrMesa = 0, opEstudar = 0;
+            int opMontarFogueira = 0, opIrFogueira = 0, opCozinhar = 0;
             int num = 1;
 
             System.out.println("\n  O que deseja fazer?");
@@ -273,6 +288,20 @@ public static void MenuConstrucao(FichaRpg ficha) {
                 opIrMesa = num++;
                 System.out.println("  " + num + ". Montar Mesa de Magias aqui  (novo ponto; 5x Madeira, 4x Folha, 4x Pedra, 1x Pó da Fada — 2/3 do período)");
                 opMontarMesa = num++;
+            }
+
+            // =================== FOGUEIRA ===================
+            if (!ficha.isTemFogueira()) {
+                System.out.println("  " + num + ". Montar Fogueira aqui  (4x Madeira, 3x Folha — 2/3 do período)");
+                opMontarFogueira = num++;
+            } else if (ficha.podeUsarFogueira()) {
+                System.out.println("  " + num + ". Cozinhar carne na Fogueira  (2x Madeira por carne; deixa a carne segura)");
+                opCozinhar = num++;
+            } else {
+                System.out.println("  " + num + ". Ir para a Fogueira  (" + ficha.getDistanciaAte(ficha.getProfundidadeFogueira()) + " período(s) de caminhada)");
+                opIrFogueira = num++;
+                System.out.println("  " + num + ". Montar Fogueira aqui  (novo ponto; 4x Madeira, 3x Folha — 2/3 do período)");
+                opMontarFogueira = num++;
             }
 
             System.out.println("  " + VERDE + "0. Voltar para a floresta" + RESET);
@@ -434,6 +463,60 @@ public static void MenuConstrucao(FichaRpg ficha) {
                 continue;
             }
 
+            // =================== MONTAR FOGUEIRA ===================
+            if (escolha == opMontarFogueira) {
+                if (ficha.isTemFogueira()) {
+                    if (ficha.moverFogueira()) {
+                        Interface.MostrarMensagem("\nVocê constrói uma NOVA fogueira bem aqui, gastando 4 madeiras e 3 folhas!");
+                        Interface.MostrarMensagem("Ela agora é o ponto da construção — a antiga fica para trás.");
+                        Interface.Pausa(2500);
+                        avancarTempoComMensagens(ficha, 2);
+                        continue;
+                    }
+                    Interface.ExibirErro("Faltam materiais! Você precisa de 4 Madeiras e 3 Folhas.");
+                    Interface.Pausa(1500);
+                    continue;
+                }
+                if (ficha.montarFogueira()) {
+                    Interface.MostrarMensagem("\nVocê acende uma FOGUEIRA, gastando 4 madeiras e 3 folhas!");
+                    Interface.MostrarMensagem("Agora você pode cozinhar carne crua aqui (2x Madeira por carne) — a carne cozida não estraga.");
+                    Interface.Pausa(2500);
+                    avancarTempoComMensagens(ficha, 2);
+                    continue;
+                }
+                Interface.ExibirErro("Faltam materiais! Você precisa de 4 Madeiras e 3 Folhas.");
+                Interface.Pausa(1500);
+                continue;
+            }
+
+            // =================== IR PARA A FOGUEIRA ===================
+            if (escolha == opIrFogueira) {
+                if (!ficha.isTemFogueira()) {
+                    Interface.ExibirErro("Você ainda não tem uma fogueira!");
+                    Interface.Pausa(1500);
+                    continue;
+                }
+                TravessiaDaFloresta.CaminharAteConstrucao(ficha, ficha.getProfundidadeFogueira(), "sua FOGUEIRA");
+                if (ficha.getVidaPersonagem() <= 0) return;
+                continue;
+            }
+
+            // =================== COZINHAR NA FOGUEIRA ===================
+            if (escolha == opCozinhar) {
+                if (!ficha.isTemFogueira()) {
+                    Interface.ExibirErro("Você ainda não tem uma fogueira!");
+                    Interface.Pausa(1500);
+                    continue;
+                }
+                if (!ficha.podeUsarFogueira()) {
+                    Interface.ExibirErro("Você precisa estar junto da fogueira para cozinhar!");
+                    Interface.Pausa(1500);
+                    continue;
+                }
+                cozinharNaFogueira(ficha);
+                continue;
+            }
+
             // =================== ESTUDAR ===================
             if (escolha == opEstudar) {
                 if (ficha.getMagiaBonusPeriodosRestantes() > 0) {
@@ -502,6 +585,67 @@ public static void MenuConstrucao(FichaRpg ficha) {
             return VERDE + "você está aqui" + RESET;
         }
         return "a " + distancia + " período(s) de caminhada daqui";
+    }
+
+    // Submenu de cozinhar carne na fogueira: cada uso gasta 2 Madeiras e
+    // transforma 1 carne crua na versão cozida (que não estraga ao comer).
+    private static void cozinharNaFogueira(FichaRpg ficha) {
+        while (true) {
+            Interface.cabecalhoMenu("COZINHAR NA FOGUEIRA");
+
+            boolean temLobo = ficha.getQuantidadeDe("Carne de Lobo") > 0;
+            boolean temUrso = ficha.getQuantidadeDe("Carne de Urso") > 0;
+            int madeiras = ficha.getQuantidadeDe("Madeira");
+
+            System.out.println("\n  Madeira: " + AMARELO + madeiras + RESET + " (2x por carne cozida)");
+            System.out.println("  -----------------------------------------------");
+            int opLobo = 0, opUrso = 0;
+            int num = 1;
+            if (temLobo) {
+                System.out.println("  " + num + ". Cozinhar 1x " + CIANO + "Carne de Lobo" + RESET + " (" + ficha.getQuantidadeDe("Carne de Lobo") + " restante(s))");
+                opLobo = num++;
+            } else {
+                System.out.println("  " + AMARELO + "  • Sem Carne de Lobo." + RESET);
+            }
+            if (temUrso) {
+                System.out.println("  " + num + ". Cozinhar 1x " + CIANO + "Carne de Urso" + RESET + " (" + ficha.getQuantidadeDe("Carne de Urso") + " restante(s))");
+                opUrso = num++;
+            } else {
+                System.out.println("  " + AMARELO + "  • Sem Carne de Urso." + RESET);
+            }
+            if (!temLobo && !temUrso) {
+                System.out.println("  Você não tem nenhuma carne crua para cozinhar.");
+            }
+            System.out.println("  " + VERDE + "0. Voltar" + RESET);
+
+            int escolha = Interface.lerOpcao(0, Math.max(0, num - 1));
+            if (escolha == 0) return;
+
+            String carne = "";
+            String cozida = "";
+            if (escolha == opLobo) { carne = "Carne de Lobo"; cozida = "Carne de Lobo Cozida"; }
+            else if (escolha == opUrso) { carne = "Carne de Urso"; cozida = "Carne de Urso Cozida"; }
+            else {
+                Interface.ExibirErro("Opção inválida!");
+                Interface.Pausa(1500);
+                continue;
+            }
+
+            if (madeiras < 2) {
+                Interface.ExibirErro("Faltam 2 Madeiras para esquentar a fogueira e cozinhar!");
+                Interface.Pausa(1500);
+                continue;
+            }
+            if (ficha.cozinharCarne(carne)) {
+                Interface.MostrarMensagem("\nVocê assa a carne na fogueira até ficar bem passada: +1x " + cozida + "!");
+                Interface.MostrarMensagem("Agora ela está segura para comer (não estraga).");
+                Interface.Pausa(2000);
+            } else {
+                Interface.ExibirErro("Não foi possível cozinhar. Verifique se tem carne crua e 2 Madeiras.");
+                Interface.Pausa(1500);
+                continue;
+            }
+        }
     }
 
     // Mensagens de localização ao montar a sala de treino.

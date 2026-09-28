@@ -437,9 +437,13 @@ public class Criatura implements java.io.Serializable {
             case "Osso":
                 return new ItemRpg("Osso", "Ossos antigos retirados de criaturas do labirinto, valiosos para artesãos e alquimistas.", 1);
             case "Carne de Lobo":
-                return new Consumivel("Carne de Lobo", "Carne fresca de lobo selvagem. Sacia a fome e cura 1d3 de vida.", 1);
+                return new Consumivel("Carne de Lobo", "Carne crua de lobo selvagem. Cozinhe em uma fogueira para ficar segura: crua, pode estar estragada. Sacia a fome e cura 1d3 de vida (se estiver boa).", 1);
             case "Carne de Urso":
-                return new Consumivel("Carne de Urso", "Carne farto de urso. Sacia a fome e cura 1d4 de vida.", 1);
+                return new Consumivel("Carne de Urso", "Carne crua de urso. Cozinhe em uma fogueira para ficar segura: crua, pode estar estragada. Sacia a fome e cura 1d4 de vida (se estiver boa).", 1);
+            case "Carne de Lobo Cozida":
+                return new Consumivel("Carne de Lobo Cozida", "Carne de lobo preparada na fogueira. Segura e saborosa: sacia a fome e cura 1d3 de vida.", 1);
+            case "Carne de Urso Cozida":
+                return new Consumivel("Carne de Urso Cozida", "Carne de urso preparada na fogueira. Segura e saborosa: sacia a fome e cura 1d4 de vida.", 1);
             case "Carne Podre":
                 return new Consumivel("Carne Podre", "Carne em decomposição que exala um odor insuportável. Comê-la sacia a fome, mas deixa enjoado. Poucos compradores aceitam isso.", 1);
             case "Arco":

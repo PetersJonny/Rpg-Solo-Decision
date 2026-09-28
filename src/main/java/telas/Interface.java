@@ -675,6 +675,12 @@ public class Interface {
                 : (ficha.isMesaJuntoCabana() ? "Construída (junto à cabana)"
                     : ficha.isMesaJuntoSala() ? "Construída (junto à sala)" : "Construída (longe da cabana)");
         System.out.println("    Mesa de Magias: " + mesaStatus + (ficha.isNaMesaMagias() ? " (você está nela)" : "") + (ficha.getMagiaBonusPeriodosRestantes() > 0 ? " | Bônus de estudo: +1 dado de dano (restam " + ficha.getMagiaBonusPeriodosRestantes() + " períodos)" : ""));
+        String fogueiraStatus = !ficha.isTemFogueira()
+                ? "Não construída"
+                : (ficha.isFogueiraJuntoCabana() ? "Construída (junto à cabana)"
+                    : ficha.isFogueiraJuntoSala() ? "Construída (junto à sala)"
+                    : ficha.isFogueiraJuntoMesa() ? "Construída (junto à mesa)" : "Construída (longe da cabana)");
+        System.out.println("    Fogueira: " + fogueiraStatus + (ficha.isNaFogueira() ? " (você está nela)" : "") + " | Cozinha carne crua (2x Madeira por 1 carne)");
 
         System.out.println("\n  " + CIANO + "[ INVENTÁRIO ]" + RESET);
         if (ficha.getInventario().isEmpty()) {

@@ -356,21 +356,143 @@ class FichaRpgTest {
         ficha.setVidaPersonagem(100);
         ficha.avancarTempo(3);
         ficha.avancarTempo(3); // 1 dia sem comer
+        // 1 fruta é lanche: cura, mas NÃO zera a fome (precisa 3 no dia)
         assertTrue(mecanicas.MotorDeCombate.usarItemForaDeCombate(ficha,
                 new itens.Consumivel("Frutas", "", 1), 1));
+        assertEquals(1, ficha.getDiasSemComer());
+        assertEquals(100, ficha.getVidaPersonagem());
+        // Mais 2 frutas completam a refeição do dia
+        assertTrue(mecanicas.MotorDeCombate.usarItemForaDeCombate(ficha,
+                new itens.Consumivel("Frutas", "", 2), 2));
         assertEquals(0, ficha.getDiasSemComer());
         assertEquals(100, ficha.getVidaPersonagem());
     }
 
     @Test
-    void carneDeLoboCuraEDaAzVidaFome() {
+    void frutasPrecisamDeTresNoDiaParaContarComoRefeicao() {
+        // Dois usos de frutas (1 + 2) no MESMO dia viram comida completa
+        ficha.avancarTempo(3);
+        ficha.avancarTempo(3); // 1 dia sem comer
+        ficha.comerFrutas(1);
+        assertEquals(1, ficha.getDiasSemComer());
+        assertFalse(ficha.isComeuHoje());
+        ficha.comerFrutas(2);
+        assertEquals(0, ficha.getDiasSemComer());
+        assertTrue(ficha.isComeuHoje());
+        // O contador reseta ao virar o dia
+        ficha.avancarTempo(3); // Dia 2 -> Noite 2
+        ficha.avancarTempo(3); // Noite 2 -> Dia 3
+        assertEquals(0, ficha.getFrutasComidasHoje());
+        assertEquals(0, ficha.getDiasSemComer()); // comeu no dia 2
+    }
+
+    @Test
+    void carneDeLoboCozidaCuraSempreEliDandoFome() {
         ficha.avancarTempo(3);
         ficha.avancarTempo(3); // 1 dia sem comer
         ficha.setVidaMaxima(50);
         ficha.setVidaPersonagem(20);
         assertTrue(mecanicas.MotorDeCombate.usarItemForaDeCombate(ficha,
-                new itens.Consumivel("Carne de Lobo", "", 1), 1));
+                new itens.Consumivel("Carne de Lobo Cozida", "", 1), 1));
         assertEquals(0, ficha.getDiasSemComer());
         assertTrue(ficha.getVidaPersonagem() >= 21 && ficha.getVidaPersonagem() <= 23);
+        assertFalse(ficha.isEnjoado());
+    }
+
+    @Test
+    void carneCruaSempreZeraAFomeCurandoOuNao() {
+        // Carne crua: 30% de chance de estragar. Em QUALQUER caso zera a fome
+        // e marca comeuHoje (se estragou, não cura; se boa, cura 1d3).
+        ficha.avancarTempo(3);
+        ficha.avancarTempo(3); // 1 dia sem comer
+        assertEquals(1, ficha.getDiasSemComer());
+        for (int i = 0; i < 20; i++) {
+            ficha.comerCarneCrua();
+            assertEquals(0, ficha.getDiasSemComer());
+            assertTrue(ficha.isComeuHoje());
+            // Deixa passar 2 dias (4 períodos) sem comer para voltar a 1 dia
+            for (int j = 0; j < 4; j++) {
+                ficha.avancarTempo(3);
+            }
+            assertEquals(1, ficha.getDiasSemComer());
+        }
+    }
+
+    @Test
+    void montarFogueiraGasta4MadeiraE3Folha() {
+        ficha.adicionarItem(new itens.ItemRpg("Madeira", "", 5));
+        ficha.adicionarItem(new itens.ItemRpg("Folha", "", 4));
+        assertTrue(ficha.montarFogueira());
+        assertTrue(ficha.isTemFogueira());
+        assertTrue(ficha.podeUsarFogueira());
+        assertEquals(1, ficha.getQuantidadeDe("Madeira"));
+        assertEquals(1, ficha.getQuantidadeDe("Folha"));
+    }
+
+    @Test
+    void montarFogueiraSemMateriaisFalha() {
+        assertFalse(ficha.montarFogueira());
+        assertFalse(ficha.isTemFogueira());
+    }
+
+    @Test
+    void montarFogueiraEMoverParaOutroPonto() {
+        ficha.adicionarItem(new itens.ItemRpg("Madeira", "", 10));
+        ficha.adicionarItem(new itens.ItemRpg("Folha", "", 10));
+        ficha.montarFogueira(); // ponto 0
+        assertTrue(ficha.podeUsarFogueira());
+        ficha.adicionarProfundidade(3); // ponto 3
+        assertFalse(ficha.podeUsarFogueira());
+        assertTrue(ficha.moverFogueira()); // move para o ponto atual (3)
+        assertTrue(ficha.isNaFogueira());
+        assertTrue(ficha.podeUsarFogueira());
+    }
+
+    @Test
+    void cozinharCarneGasta2MadeirasEConverteACarne() {
+        ficha.adicionarItem(new itens.ItemRpg("Madeira", "", 10));
+        ficha.adicionarItem(new itens.ItemRpg("Folha", "", 5));
+        ficha.adicionarItem(new itens.Consumivel("Carne de Lobo", "", 1));
+        ficha.adicionarItem(new itens.Consumivel("Carne de Urso", "", 2));
+        assertTrue(ficha.montarFogueira()); // gasta 4 madeiras: ficam 6
+
+        assertTrue(ficha.cozinharCarne("Carne de Lobo"));
+        assertEquals(4, ficha.getQuantidadeDe("Madeira")); // 6 - 2
+        assertEquals(0, ficha.getQuantidadeDe("Carne de Lobo"));
+        assertEquals(1, ficha.getQuantidadeDe("Carne de Lobo Cozida"));
+        assertEquals(2, ficha.getQuantidadeDe("Carne de Urso"));
+
+        assertTrue(ficha.cozinharCarne("Carne de Urso"));
+        assertEquals(2, ficha.getQuantidadeDe("Madeira"));
+        assertEquals(1, ficha.getQuantidadeDe("Carne de Urso"));
+        assertEquals(1, ficha.getQuantidadeDe("Carne de Urso Cozida"));
+    }
+
+    @Test
+    void cozinharCarneRequerEstarJuntoDaFogueira() {
+        ficha.adicionarItem(new itens.ItemRpg("Madeira", "", 10));
+        ficha.adicionarItem(new itens.ItemRpg("Folha", "", 5));
+        ficha.adicionarItem(new itens.Consumivel("Carne de Lobo", "", 1));
+        ficha.montarFogueira(); // ponto 0
+        assertTrue(ficha.podeUsarFogueira());
+
+        ficha.adicionarProfundidade(5); // se afasta do ponto da fogueira
+        assertFalse(ficha.podeUsarFogueira());
+        assertFalse(ficha.cozinharCarne("Carne de Lobo"));
+
+        ficha.reduzirProfundidade(5); // volta ao ponto 0
+        assertTrue(ficha.podeUsarFogueira());
+        assertTrue(ficha.cozinharCarne("Carne de Lobo"));
+    }
+
+    @Test
+    void cozinharCarneSem2MadeirasFalha() {
+        ficha.adicionarItem(new itens.ItemRpg("Madeira", "", 5));
+        ficha.adicionarItem(new itens.ItemRpg("Folha", "", 5));
+        ficha.adicionarItem(new itens.Consumivel("Carne de Urso", "", 1));
+        ficha.montarFogueira(); // gasta 4 madeiras: fica 1
+        assertEquals(1, ficha.getQuantidadeDe("Madeira"));
+        assertFalse(ficha.cozinharCarne("Carne de Urso"));
+        assertEquals(1, ficha.getQuantidadeDe("Carne de Urso"));
     }
 }

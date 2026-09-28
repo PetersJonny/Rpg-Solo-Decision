@@ -29,7 +29,7 @@ public class ItemRpg implements java.io.Serializable {
     private static double pesoPadraoDoNome(String nome) {
         switch (nome) {
             case "Couro", "Dente de Urso", "Pó da Fada", "Osso", "Carne Podre",
-                 "Carne de Lobo", "Carne de Urso",
+                 "Carne de Lobo", "Carne de Urso", "Carne de Lobo Cozida", "Carne de Urso Cozida",
                  "Flechas", "Madeira", "Folha", "Pedra", "Frutas", "Chifre de Minotauro":
                 return 0.1;
             case "Poção de Mana", "Kit Médico":

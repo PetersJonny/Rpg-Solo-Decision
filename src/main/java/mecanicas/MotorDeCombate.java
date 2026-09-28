@@ -1807,28 +1807,68 @@ public class MotorDeCombate {
                 int antes = ficha.getVidaPersonagem();
                 ficha.setVidaPersonagem(Math.min(ficha.getVidaPersonagem() + cura, ficha.getVidaMaxima()));
                 int curaReal = ficha.getVidaPersonagem() - antes;
-                ficha.comerComidaBoa();
+                ficha.comerFrutas(qtd);
                 Interface.MostrarMensagem("Você comeu " + qtd + "x Frutas e recuperou " + curaReal + " de vida! Vida: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima());
                 break;
             }
             case "Carne de Lobo": {
+                int cura = 0;
+                boolean estragou = false;
+                for (int i = 0; i < qtd; i++) {
+                    if (ficha.comerCarneCrua()) {
+                        estragou = true;
+                    } else {
+                        cura += MecanicasRpg.rolarDado(3);
+                    }
+                }
+                int antes = ficha.getVidaPersonagem();
+                ficha.setVidaPersonagem(Math.min(ficha.getVidaPersonagem() + cura, ficha.getVidaMaxima()));
+                int curaReal = ficha.getVidaPersonagem() - antes;
+                if (estragou) {
+                    Interface.MostrarMensagem("A carne de lobo estava ESTRAGADA, mas você come assim mesmo: " + (curaReal > 0 ? "só recuperou " + curaReal + " de vida e " : "não recupera vida e ") + "fica enjoado! Vida: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima());
+                } else {
+                    Interface.MostrarMensagem("Você comeu " + qtd + "x Carne de Lobo (bem fresca!) e recuperou " + curaReal + " de vida! Vida: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima());
+                }
+                break;
+            }
+            case "Carne de Urso": {
+                int cura = 0;
+                boolean estragou = false;
+                for (int i = 0; i < qtd; i++) {
+                    if (ficha.comerCarneCrua()) {
+                        estragou = true;
+                    } else {
+                        cura += MecanicasRpg.rolarDado(4);
+                    }
+                }
+                int antes = ficha.getVidaPersonagem();
+                ficha.setVidaPersonagem(Math.min(ficha.getVidaPersonagem() + cura, ficha.getVidaMaxima()));
+                int curaReal = ficha.getVidaPersonagem() - antes;
+                if (estragou) {
+                    Interface.MostrarMensagem("A carne de urso estava ESTRAGADA, mas você come assim mesmo: " + (curaReal > 0 ? "só recuperou " + curaReal + " de vida e " : "não recupera vida e ") + "fica enjoado! Vida: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima());
+                } else {
+                    Interface.MostrarMensagem("Você comeu " + qtd + "x Carne de Urso (bem fresca!) e recuperou " + curaReal + " de vida! Vida: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima());
+                }
+                break;
+            }
+            case "Carne de Lobo Cozida": {
                 int cura = 0;
                 for (int i = 0; i < qtd; i++) cura += MecanicasRpg.rolarDado(3);
                 int antes = ficha.getVidaPersonagem();
                 ficha.setVidaPersonagem(Math.min(ficha.getVidaPersonagem() + cura, ficha.getVidaMaxima()));
                 int curaReal = ficha.getVidaPersonagem() - antes;
                 ficha.comerComidaBoa();
-                Interface.MostrarMensagem("Você comeu " + qtd + "x Carne de Lobo e recuperou " + curaReal + " de vida! Vida: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima());
+                Interface.MostrarMensagem("Você comeu " + qtd + "x Carne de Lobo Cozida e recuperou " + curaReal + " de vida! Vida: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima());
                 break;
             }
-            case "Carne de Urso": {
+            case "Carne de Urso Cozida": {
                 int cura = 0;
                 for (int i = 0; i < qtd; i++) cura += MecanicasRpg.rolarDado(4);
                 int antes = ficha.getVidaPersonagem();
                 ficha.setVidaPersonagem(Math.min(ficha.getVidaPersonagem() + cura, ficha.getVidaMaxima()));
                 int curaReal = ficha.getVidaPersonagem() - antes;
                 ficha.comerComidaBoa();
-                Interface.MostrarMensagem("Você comeu " + qtd + "x Carne de Urso e recuperou " + curaReal + " de vida! Vida: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima());
+                Interface.MostrarMensagem("Você comeu " + qtd + "x Carne de Urso Cozida e recuperou " + curaReal + " de vida! Vida: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima());
                 break;
             }
             case "Carne Podre": {
@@ -1921,11 +1961,15 @@ public class MotorDeCombate {
                 } else if (itemEscolhido.getNome().equals("Poção Grande de Mana")) {
                     descExibida = "Restaura 7 pontos de mana. Usos restantes: " + itemEscolhido.getQuantidade();
                 } else if (itemEscolhido.getNome().equals("Frutas")) {
-                    descExibida = "Cada fruta cura 1d2 de vida. Frutas restantes: " + itemEscolhido.getQuantidade();
+                    descExibida = "Cada fruta cura 1d2 de vida; comer 3 no dia conta como refeição completa (zera a fome). Frutas restantes: " + itemEscolhido.getQuantidade();
                 } else if (itemEscolhido.getNome().equals("Carne de Lobo")) {
-                    descExibida = "Cada carne cura 1d3 de vida. Carnes restantes: " + itemEscolhido.getQuantidade();
+                    descExibida = "Carne CRUA: cura 1d3 de vida, mas pode estar estragada (30%). Cozinhe na fogueira para ficar segura. Carnes restantes: " + itemEscolhido.getQuantidade();
                 } else if (itemEscolhido.getNome().equals("Carne de Urso")) {
-                    descExibida = "Cada carne cura 1d4 de vida. Carnes restantes: " + itemEscolhido.getQuantidade();
+                    descExibida = "Carne CRUA: cura 1d4 de vida, mas pode estar estragada (30%). Cozinhe na fogueira para ficar segura. Carnes restantes: " + itemEscolhido.getQuantidade();
+                } else if (itemEscolhido.getNome().equals("Carne de Lobo Cozida")) {
+                    descExibida = "Carne COZIDA na fogueira: cura 1d3 de vida, sem risco de estragar. Carnes restantes: " + itemEscolhido.getQuantidade();
+                } else if (itemEscolhido.getNome().equals("Carne de Urso Cozida")) {
+                    descExibida = "Carne COZIDA na fogueira: cura 1d4 de vida, sem risco de estragar. Carnes restantes: " + itemEscolhido.getQuantidade();
                 }
                 System.out.println("\n" + itemEscolhido.getNome() + ": " + descExibida);
                 Interface.Pausa(1000);
@@ -1994,18 +2038,34 @@ public class MotorDeCombate {
         } else if (itemEscolhido.getNome().equals("Frutas")) {
             int cura = MecanicasRpg.rolarDado(2);
             ficha.setVidaPersonagem(Math.min(ficha.getVidaPersonagem() + cura, ficha.getVidaMaxima()));
-            ficha.comerComidaBoa();
+            ficha.comerFrutas(1);
             Interface.MostrarMensagem("Você comeu uma fruta e recuperou " + cura + " de vida! Vida atual: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima());
         } else if (itemEscolhido.getNome().equals("Carne de Lobo")) {
+            if (ficha.comerCarneCrua()) {
+                Interface.MostrarMensagem("Você morde a carne de lobo e sente um gosto estranho... a carne estava ESTRAGADA! Não recupera vida e fica enjoado.");
+            } else {
+                int cura = MecanicasRpg.rolarDado(3);
+                ficha.setVidaPersonagem(Math.min(ficha.getVidaPersonagem() + cura, ficha.getVidaMaxima()));
+                Interface.MostrarMensagem("Você comeu carne de lobo e recuperou " + cura + " de vida! Vida atual: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima());
+            }
+        } else if (itemEscolhido.getNome().equals("Carne de Urso")) {
+            if (ficha.comerCarneCrua()) {
+                Interface.MostrarMensagem("Você morde a carne de urso e sente um gosto estranho... a carne estava ESTRAGADA! Não recupera vida e fica enjoado.");
+            } else {
+                int cura = MecanicasRpg.rolarDado(4);
+                ficha.setVidaPersonagem(Math.min(ficha.getVidaPersonagem() + cura, ficha.getVidaMaxima()));
+                Interface.MostrarMensagem("Você comeu carne de urso e recuperou " + cura + " de vida! Vida atual: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima());
+            }
+        } else if (itemEscolhido.getNome().equals("Carne de Lobo Cozida")) {
             int cura = MecanicasRpg.rolarDado(3);
             ficha.setVidaPersonagem(Math.min(ficha.getVidaPersonagem() + cura, ficha.getVidaMaxima()));
             ficha.comerComidaBoa();
-            Interface.MostrarMensagem("Você comeu carne de lobo e recuperou " + cura + " de vida! Vida atual: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima());
-        } else if (itemEscolhido.getNome().equals("Carne de Urso")) {
+            Interface.MostrarMensagem("Você comeu carne de lobo cozida e recuperou " + cura + " de vida! Vida atual: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima());
+        } else if (itemEscolhido.getNome().equals("Carne de Urso Cozida")) {
             int cura = MecanicasRpg.rolarDado(4);
             ficha.setVidaPersonagem(Math.min(ficha.getVidaPersonagem() + cura, ficha.getVidaMaxima()));
             ficha.comerComidaBoa();
-            Interface.MostrarMensagem("Você comeu carne de urso e recuperou " + cura + " de vida! Vida atual: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima());
+            Interface.MostrarMensagem("Você comeu carne de urso cozida e recuperou " + cura + " de vida! Vida atual: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima());
         } else if (itemEscolhido.getNome().equals("Carne Podre")) {
             ficha.comerCarnePodre();
             Interface.MostrarMensagem("Você não recupera vida, mas sua fome é saciada (e você fica enjoado).");

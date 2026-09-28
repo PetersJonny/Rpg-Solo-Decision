@@ -94,11 +94,15 @@ public class FichaRpg implements java.io.Serializable {
 
     // Sistema de fome: quantos dias consecutivos sem comer; comeuHoje marca se
     // comeu no dia que passou (usado no virar do dia e no bônus de dormir);
-    // enjoado = comeu carne podre (mantém/ganha -1 em testes de Destreza e Força).
+    // enjoado = comeu comida estragada (mantém/ganha -1 em testes de Destreza e Força).
+    // Frutas só contam como "comida completa" ao comer 3+ no dia; carne conta 1x.
     private int diasSemComer = 0;
     private boolean comeuHoje = false;
     private boolean enjoado = false;
     private int penalidadeEnjoado = 0;
+    private int frutasComidasHoje = 0;
+    private static final int FRUTAS_PARA_REFEICAO = 3;
+    private static final int CHANCE_CARNE_ESTRAGADA = 30;
 
     // Companheiro (pessoa perdida que o jogador acolheu)
     private companheiros.Companheiro companheiro = null;
@@ -122,12 +126,20 @@ public class FichaRpg implements java.io.Serializable {
     private boolean mesaJuntoSala = false; // se a mesa foi construída estando na sala de treino
     private boolean salaJuntoMesa = false; // se a sala foi construída estando na mesa de magias
 
+    // Fogueira (para cozinhar carne crua e deixá-la segura)
+    private boolean temFogueira = false;
+    private boolean naFogueira = false; // se o jogador está junto da fogueira
+    private boolean fogueiraJuntoCabana = false; // se a fogueira foi construída estando na cabana
+    private boolean fogueiraJuntoSala = false; // se a fogueira foi construída estando na sala de treino
+    private boolean fogueiraJuntoMesa = false; // se a fogueira foi construída estando na mesa de magias
+
     // Profundidade da travessia em que cada construção foi montada (o "ponto" dela).
     // Montar de novo em outro lugar move o ponto; a distância entre duas construções
     // é a diferença entre as profundidades onde cada uma está.
     private int profundidadeCabana = 0;
     private int profundidadeSalaTreino = 0;
     private int profundidadeMesaMagias = 0;
+    private int profundidadeFogueira = 0;
 
     // Estruturas encontradas na floresta (só podem ser descobertas explorando)
     private boolean labirintoEncontrado = false;
@@ -643,6 +655,9 @@ public class FichaRpg implements java.io.Serializable {
     public int getProfundidadeCabana() { return profundidadeCabana; }
     public int getProfundidadeSalaTreino() { return profundidadeSalaTreino; }
     public int getProfundidadeMesaMagias() { return profundidadeMesaMagias; }
+    public boolean isTemFogueira() { return temFogueira; }
+    public boolean isNaFogueira() { return naFogueira; }
+    public int getProfundidadeFogueira() { return profundidadeFogueira; }
 
     // Distância (em períodos de caminhada) entre o ponto atual e uma profundidade qualquer.
     public int getDistanciaAte(int profundidadeAlvo) {
@@ -650,12 +665,13 @@ public class FichaRpg implements java.io.Serializable {
     }
 
     // Localização (id) em que o jogador está: 0 = ponto da cabana, 1 = ponto da sala
-    // de treino, 2 = ponto da mesa de magias, 3 = meio da mata. Duas estruturas
-    // montadas na MESMA profundidade ficam no mesmo ponto.
+    // de treino, 2 = ponto da mesa de magias, 3 = meio da mata, 4 = ponto próprio da
+    // fogueira. Duas estruturas montadas na MESMA profundidade ficam no mesmo ponto.
     public int getLocalizacaoAtual() {
         if (naCabana) return 0;
         if (naSalaTreino) return getLocalizacaoSala();
         if (naMesaMagias) return getLocalizacaoMesa();
+        if (naFogueira) return getLocalizacaoFogueira();
         return 3;
     }
 
@@ -674,11 +690,26 @@ public class FichaRpg implements java.io.Serializable {
         return 2;
     }
 
+    // Ponto onde a fogueira fica (0 = ponto da cabana; 1 = ponto da sala;
+    // 2 = ponto da mesa; 4 = ponto próprio).
+    public int getLocalizacaoFogueira() {
+        if (!temFogueira) return 4;
+        if (profundidadeFogueira == profundidadeCabana) return 0;
+        if (profundidadeFogueira == profundidadeSalaTreino) return 1;
+        if (profundidadeFogueira == profundidadeMesaMagias) return 2;
+        return 4;
+    }
+
     // Uma construção só pode ser usada quando o jogador está no ponto dela
     // (o ponto em que ela foi montada).
     public boolean podeUsarCabana() { return temCabana && getLocalizacaoAtual() == 0; }
     public boolean podeUsarSalaTreino() { return temSalaTreino && getLocalizacaoAtual() == getLocalizacaoSala(); }
     public boolean podeUsarMesaMagias() { return temMesaMagias && getLocalizacaoAtual() == getLocalizacaoMesa(); }
+    public boolean podeUsarFogueira() { return temFogueira && getLocalizacaoAtual() == getLocalizacaoFogueira(); }
+
+    public boolean isFogueiraJuntoCabana() { return fogueiraJuntoCabana; }
+    public boolean isFogueiraJuntoSala() { return fogueiraJuntoSala; }
+    public boolean isFogueiraJuntoMesa() { return fogueiraJuntoMesa; }
 
     public boolean isLabirintoEncontrado() { return labirintoEncontrado; }
     public void setLabirintoEncontrado(boolean labirintoEncontrado) { this.labirintoEncontrado = labirintoEncontrado; }
@@ -746,6 +777,7 @@ public class FichaRpg implements java.io.Serializable {
         naCabana = temCabana && profundidadeFloresta == profundidadeCabana;
         naSalaTreino = temSalaTreino && profundidadeFloresta == profundidadeSalaTreino;
         naMesaMagias = temMesaMagias && profundidadeFloresta == profundidadeMesaMagias;
+        naFogueira = temFogueira && profundidadeFloresta == profundidadeFogueira;
     }
 
     // Entra na construção que fica NO ponto indicado (distância 0): corrige o
@@ -763,6 +795,9 @@ public class FichaRpg implements java.io.Serializable {
         if (temMesaMagias && profundidadeMesaMagias == profundidadeAlvo) {
             naMesaMagias = true;
         }
+        if (temFogueira && profundidadeFogueira == profundidadeAlvo) {
+            naFogueira = true;
+        }
     }
 
     // Recalcula os flags de "junto": duas estruturas ficam juntas quando foram
@@ -772,6 +807,9 @@ public class FichaRpg implements java.io.Serializable {
         salaJuntoMesa = temSalaTreino && temMesaMagias && profundidadeSalaTreino == profundidadeMesaMagias;
         mesaJuntoCabana = temMesaMagias && temCabana && profundidadeMesaMagias == profundidadeCabana;
         mesaJuntoSala = temMesaMagias && temSalaTreino && profundidadeMesaMagias == profundidadeSalaTreino;
+        fogueiraJuntoCabana = temFogueira && temCabana && profundidadeFogueira == profundidadeCabana;
+        fogueiraJuntoSala = temFogueira && temSalaTreino && profundidadeFogueira == profundidadeSalaTreino;
+        fogueiraJuntoMesa = temFogueira && temMesaMagias && profundidadeFogueira == profundidadeMesaMagias;
     }
 
     // Sair da cabana para explorar/colher recursos (também sai da sala e da mesa)
@@ -781,6 +819,7 @@ public class FichaRpg implements java.io.Serializable {
         }
         naSalaTreino = false;
         naMesaMagias = false;
+        naFogueira = false;
     }
 
     // Voltar para a cabana (custa 1/3 do período)
@@ -790,6 +829,11 @@ public class FichaRpg implements java.io.Serializable {
         }
         naSalaTreino = false;
         naMesaMagias = false;
+        if (fogueiraJuntoCabana) {
+            naFogueira = true;
+        } else {
+            naFogueira = false;
+        }
     }
 
     // Ir até a sala de treino (custa 1/3 do período): quem está nela passa a
@@ -798,6 +842,7 @@ public class FichaRpg implements java.io.Serializable {
         naSalaTreino = true;
         naMesaMagias = false;
         naCabana = salaJuntoCabana;
+        naFogueira = fogueiraJuntoSala;
     }
 
     // Ir até a mesa de magias (custa 1/3 do período): quem está nela passa a
@@ -806,6 +851,16 @@ public class FichaRpg implements java.io.Serializable {
         naMesaMagias = true;
         naSalaTreino = false;
         naCabana = mesaJuntoCabana;
+        naFogueira = fogueiraJuntoMesa;
+    }
+
+    // Ir até a fogueira (custa 1/3 do período): quem está nela passa a estar
+    // no local da fogueira (que pode ser junto à cabana/sala/mesa, se for o caso).
+    public void irParaFogueira() {
+        naFogueira = true;
+        naSalaTreino = false;
+        naMesaMagias = false;
+        naCabana = fogueiraJuntoCabana;
     }
 
     // Avança o tempo do período (dia ou noite); a cada 3 unidades o período vira.
@@ -904,6 +959,7 @@ public class FichaRpg implements java.io.Serializable {
             diasSemComer++;
         }
         comeuHoje = false;
+        frutasComidasHoje = 0;
     }
 
     // Aplica a perda de vida por fome (a cada período, dia e noite) a partir
@@ -936,6 +992,30 @@ public class FichaRpg implements java.io.Serializable {
         enjoado = true;
         penalidadeEnjoado = Math.max(penalidadeAnterior, 1);
     }
+
+    // Comer carne crua (de Lobo ou de Urso): ela pode estar estragada. Com
+    // CHANCE_CARNE_ESTRAGADA de dar o efeito da Carne Podre — zera a contagem de
+    // fome mas NÃO recupera vida e deixa enjoado. Retorna true se estragou.
+    public boolean comerCarneCrua() {
+        if (MecanicasRpg.rolarDado(100) <= CHANCE_CARNE_ESTRAGADA) {
+            comerCarnePodre();
+            return true;
+        }
+        comerComidaBoa();
+        return false;
+    }
+
+    // Frutas: cada fruta é um lanche (cura 1d2, tratado no MotorDeCombate), mas
+    // só viram UMA "comida completa" quando somam 3 no dia. O contador reseta
+    // a cada novo dia (registrarNovoDiaFome).
+    public void comerFrutas(int qtd) {
+        frutasComidasHoje += Math.max(1, qtd);
+        if (frutasComidasHoje >= FRUTAS_PARA_REFEICAO) {
+            comerComidaBoa();
+        }
+    }
+
+    public int getFrutasComidasHoje() { return frutasComidasHoje; }
 
     // Montar a cabana: gasta 7 madeiras, 10 folhas e 4 pedras (só a primeira vez).
     // Retorna true se conseguiu construir.
@@ -987,6 +1067,7 @@ public class FichaRpg implements java.io.Serializable {
         } else {
             naCabana = false;
         }
+        naFogueira = fogueiraJuntoSala;
     }
 
     // Aplica o bônus de treino (+2 em Força ou Destreza) que dura os 2 períodos seguintes
@@ -1006,6 +1087,7 @@ public class FichaRpg implements java.io.Serializable {
             naCabana = false;
             naSalaTreino = true;
         }
+        naFogueira = fogueiraJuntoSala;
     }
 
     // Montar a mesa de magias: gasta 5 madeiras, 4 folhas, 4 pedras e 1 Pó da Fada.
@@ -1025,6 +1107,45 @@ public class FichaRpg implements java.io.Serializable {
         naMesaMagias = true;
         naSalaTreino = false;
         naCabana = mesaJuntoCabana;
+        return true;
+    }
+
+    // Montar a fogueira: gasta 4 madeiras e 3 folhas. Ela fica ancorada no ponto
+    // da mata onde for construída, exatamente como as outras construções.
+    public boolean montarFogueira() {
+        if (temFogueira) return false;
+        if (getQuantidadeDe("Madeira") < 4 || getQuantidadeDe("Folha") < 3) {
+            return false;
+        }
+        removerItem("Madeira", 4);
+        removerItem("Folha", 3);
+        temFogueira = true;
+        profundidadeFogueira = profundidadeFloresta;
+        recomputarAdjacencias();
+        naFogueira = true;
+        naSalaTreino = false;
+        naMesaMagias = false;
+        naCabana = fogueiraJuntoCabana;
+        return true;
+    }
+
+    // Cozinhar carne crua na fogueira: gasta 2 madeiras (a lenha queima) e
+    // transforma 1 carne crua (de Lobo ou de Urso) na versão cozida, que não
+    // tem risco de estragar ao ser comida. Só funciona estando junto da fogueira.
+    public boolean cozinharCarne(String nomeCarneCrua) {
+        if (!podeUsarFogueira()) return false;
+        if (getQuantidadeDe("Madeira") < 2) return false;
+        String cozida = null;
+        if (nomeCarneCrua.equals("Carne de Lobo")) {
+            cozida = "Carne de Lobo Cozida";
+        } else if (nomeCarneCrua.equals("Carne de Urso")) {
+            cozida = "Carne de Urso Cozida";
+        }
+        if (cozida == null) return false;
+        if (getQuantidadeDe(nomeCarneCrua) < 1) return false;
+        removerItem("Madeira", 2);
+        removerItem(nomeCarneCrua, 1);
+        adicionarItem(criaturas.Criatura.criarItemDrop(cozida));
         return true;
     }
 
@@ -1080,6 +1201,22 @@ public class FichaRpg implements java.io.Serializable {
         return true;
     }
 
+    public boolean moverFogueira() {
+        if (!temFogueira) return false;
+        if (getQuantidadeDe("Madeira") < 4 || getQuantidadeDe("Folha") < 3) {
+            return false;
+        }
+        removerItem("Madeira", 4);
+        removerItem("Folha", 3);
+        profundidadeFogueira = profundidadeFloresta;
+        naFogueira = true;
+        naSalaTreino = false;
+        naMesaMagias = false;
+        recomputarAdjacencias();
+        naCabana = fogueiraJuntoCabana;
+        return true;
+    }
+
     // Profundidade da construção mais adiantada na travessia (a mais próxima da
     // borda da floresta). Usado quando se volta de uma cidade para as construções.
     public int getProfundidadeConstrucaoMaisProxima() {
@@ -1087,6 +1224,7 @@ public class FichaRpg implements java.io.Serializable {
         if (temCabana) p = Math.max(p, profundidadeCabana);
         if (temSalaTreino) p = Math.max(p, profundidadeSalaTreino);
         if (temMesaMagias) p = Math.max(p, profundidadeMesaMagias);
+        if (temFogueira) p = Math.max(p, profundidadeFogueira);
         return p;
     }
 
