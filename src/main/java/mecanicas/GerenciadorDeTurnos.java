@@ -25,6 +25,27 @@ import static mecanicas.MotorDeCombate.*;
 
 public class GerenciadorDeTurnos {
 
+    static void verificarDesercao(List<Criatura> inimigos) {
+        int total = 0, fora = 0;
+        boolean grupo = false;
+        for (Criatura c : inimigos) {
+            if (!c.isDesertaEmGrupo()) continue;
+            grupo = true;
+            total++;
+            if (c.getVida() <= 0 || c.isFugiu()) fora++;
+        }
+        if (!grupo || total == 0 || fora * 2 <= total || fora >= total) return;
+        Interface.MostrarMensagem("\nVendo a力地 o que aconteceu, os bandidos restantes jogam fora as armas e se dispersam no mato!");
+        Interface.Pausa(2500);
+        for (Criatura c : inimigos) {
+            if (c.isDesertaEmGrupo() && c.getVida() > 0 && !c.isFugiu()) {
+                c.setFugiu(true);
+                Interface.MostrarMensagem(c.getNome() + " foge para o fundo da mata.");
+            }
+        }
+        Interface.Pausa(2000);
+    }
+
     public static void RodadasDeCombate(FichaRpg ficha, List<Criatura> inimigos, List<int[]> ordem) {
         boolean[] cascaGrossaAtiva = {false};
         int[] tentativasFuga = {0};
@@ -40,6 +61,15 @@ public class GerenciadorDeTurnos {
         while ((ficha.getVidaPersonagem() > 0
                 || (ficha.getCompanheiro() != null && ficha.getCompanheiro().getFicha().getVidaPersonagem() > 0))
                 && !inimigosVivos(inimigos).isEmpty()) {
+            for (Criatura c : inimigos) {
+                if (c.getVida() > 0 && c.isSangrando() && !c.isFugiu()) {
+                    int dano = MecanicasRpg.rolarDado(6);
+                    c.setVida(c.getVida() - dano);
+                    Interface.MostrarMensagem("\n" + c.getNome() + " sangra profusamente! Dano: " + dano + " (Vida: " + Math.max(0, c.getVida()) + ")");
+                    Interface.Pausa(1500);
+                }
+            }
+            if (inimigosVivos(inimigos).isEmpty()) break;
             Interface.cabecalhoMenu("COMBATE");
             Interface.MostrarMensagem("  Sua Vida: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima() + " | Mana: " + ficha.getManaPersonagem() + "/" + ficha.getManaMaxima());
             if (ficha.getCuraAbsolutaBonus() > 0) {
@@ -64,6 +94,15 @@ public class GerenciadorDeTurnos {
                 int danoInfecao = MecanicasRpg.rolarDado(4);
                 ficha.receberDano(danoInfecao);
                 Interface.MostrarMensagem("\nSua infecção zumbi corrói as feridas! Dano: " + danoInfecao + " (Vida: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima() + ")");
+                Interface.Pausa(2000);
+                if (ficha.getVidaPersonagem() <= 0 && !companheiroEmPe(ficha)) break;
+                if (inimigosVivos(inimigos).isEmpty()) break;
+            }
+
+            if (ficha.isSangrando() && ficha.getVidaPersonagem() > 0) {
+                int danoSangramento = MecanicasRpg.rolarDado(6);
+                ficha.receberDano(danoSangramento);
+                Interface.MostrarMensagem("\nVocê está sangrando! O ferimento não para: " + danoSangramento + " de dano (Vida: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima() + ")");
                 Interface.Pausa(2000);
                 if (ficha.getVidaPersonagem() <= 0 && !companheiroEmPe(ficha)) break;
                 if (inimigosVivos(inimigos).isEmpty()) break;
@@ -173,6 +212,7 @@ public class GerenciadorDeTurnos {
                         }
 
                         processarMortes(inimigos, mortesProcessadas, ficha);
+                    verificarDesercao(inimigos);
                     }
                 }
             }

@@ -153,12 +153,17 @@ public class Interface {
                 public static int[] opcoesMenuFloresta(FichaRpg ficha) {
         int num = 5;
         int opViajar = num++;
-        int opLabirinto = -1, opConversar = -1;
+        int opLabirinto = -1, opConversar = -1, opNeta = -1;
         if (ficha.isLabirintoDisponivel()) opLabirinto = num++;
         if (ficha.temCompanheiro()) opConversar = num++;
+        if (checarMissaoNeta(ficha)) opNeta = num++;
         int opSalvar = num++;
         int opEncerrar = num++;
-        return new int[]{opViajar, opLabirinto, opConversar, opSalvar, opEncerrar};
+        return new int[]{opViajar, opLabirinto, opConversar, opNeta, opSalvar, opEncerrar};
+    }
+
+    public static boolean checarMissaoNeta(FichaRpg ficha) {
+        return ficha.isMissaoAceita("A Neta Perdida") && !ficha.isNetaEncontrada();
     }
 
     public static int MenuPrincipalAventura(FichaRpg ficha) {
@@ -192,13 +197,16 @@ public class Interface {
         if (ops[1] > 0) {
             System.out.println("  " + ops[1] + ". Labirinto");
         }
+        if (ops[3] > 0) {
+            System.out.println("  " + ops[3] + ". " + AMARELO + "Procurar a netinha da velhinha" + RESET + " na mata da entrada");
+        }
         if (ops[2] > 0) {
             System.out.println("  " + ops[2] + ". Conversar com " + ficha.getCompanheiro().getNome());
         }
-        System.out.println("  " + ops[3] + ". Salvar Jogo");
-        System.out.println("  " + ops[4] + ". Encerrar jogo");
+        System.out.println("  " + ops[4] + ". Salvar Jogo");
+        System.out.println("  " + ops[5] + ". Encerrar jogo");
         System.out.println("\n  " + VERDE + "Digite a opção:" + RESET);
-        return lerOpcao(1, ops[4]);
+        return lerOpcao(1, ops[5]);
     }
 
                 public static int[] opcoesMenuVilarejo(FichaRpg ficha) {

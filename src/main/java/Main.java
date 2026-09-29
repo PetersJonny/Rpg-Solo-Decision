@@ -285,9 +285,14 @@ public class Main {
                     }
                 } else if (ops[2] > 0 && escolhaAventura == ops[2]) {
                     eventos.Floresta.ConversarComCompanheiro(ficha);
-                } else if (escolhaAventura == ops[3]) {
-                    salvarJogo(ficha);
+                } else if (ops[3] > 0 && escolhaAventura == ops[3]) {
+                    eventos.TrilhaDaNeta.MenuNeta(ficha);
+                    if (ficha.getVidaPersonagem() <= 0) {
+                        personagemFaleceu = true;
+                    }
                 } else if (escolhaAventura == ops[4]) {
+                    salvarJogo(ficha);
+                } else if (escolhaAventura == ops[5]) {
                     encerrarJogo(ficha);
                     jogando = false;
                     encerrouJogo = true;

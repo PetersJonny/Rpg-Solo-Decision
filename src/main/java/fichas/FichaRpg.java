@@ -50,6 +50,7 @@ public class FichaRpg implements java.io.Serializable {
     criaturas.Criatura alvoCuraParaMorte;
     boolean curaTotalUsada;
     boolean infectado;
+    boolean sangrando;
         boolean defesaAbsolutaAtiva;
     int rodadasSemHabilidade;
     boolean magiaProibidaUsada;
@@ -143,8 +144,24 @@ public class FichaRpg implements java.io.Serializable {
         private boolean alfaiatariaConhecida = false;
         private boolean caveConhecida = false;
         private boolean velhinhaEncontrada = false;
-        private boolean filhaEncontrada = false;
-        private boolean netaEncontrada = false;
+    private boolean filhaEncontrada = false;
+    private boolean netaEncontrada = false;
+
+    private int diaAceitouNeta = 0;
+    private boolean netaMorta = false;
+    private boolean trilhaIniciada = false;
+    private boolean pegadasEncontradas = false;
+    private boolean bandoVencido = false;
+    private boolean gaiolaVasculhada = false;
+    private boolean magicoMacabroDerrotado = false;
+    private boolean cabanaVisitada = false;
+    private boolean netaSeguindo = false;
+    private boolean missaoNetaEncerrada = false;
+    private boolean presencaNetaPassou = false;
+    private boolean acampamentoAlcancado = false;
+    private boolean cabanaAlcancada = false;
+    private boolean netaCorpoLevado = false;
+    private int turnosParaVoltar = 3;
 
         public FichaRpg(String nomePessoa) {
         this.nomePessoa = nomePessoa;
@@ -397,6 +414,38 @@ public class FichaRpg implements java.io.Serializable {
     public void setFilhaEncontrada(boolean filhaEncontrada) { this.filhaEncontrada = filhaEncontrada; }
     public boolean isNetaEncontrada() { return netaEncontrada; }
     public void setNetaEncontrada(boolean netaEncontrada) { this.netaEncontrada = netaEncontrada; }
+    public int getDiaAceitouNeta() { return diaAceitouNeta; }
+    public void setDiaAceitouNeta(int diaAceitouNeta) { this.diaAceitouNeta = diaAceitouNeta; }
+    public boolean isNetaMorta() { return netaMorta; }
+    public void setNetaMorta(boolean netaMorta) { this.netaMorta = netaMorta; }
+    public boolean isTrilhaIniciada() { return trilhaIniciada; }
+    public void setTrilhaIniciada(boolean trilhaIniciada) { this.trilhaIniciada = trilhaIniciada; }
+    public boolean isPegadasEncontradas() { return pegadasEncontradas; }
+    public void setPegadasEncontradas(boolean pegadasEncontradas) { this.pegadasEncontradas = pegadasEncontradas; }
+    public boolean isBandoVencido() { return bandoVencido; }
+    public void setBandoVencido(boolean bandoVencido) { this.bandoVencido = bandoVencido; }
+    public boolean isGaiolaVasculhada() { return gaiolaVasculhada; }
+    public void setGaiolaVasculhada(boolean gaiolaVasculhada) { this.gaiolaVasculhada = gaiolaVasculhada; }
+    public boolean isMagicoMacabroDerrotado() { return magicoMacabroDerrotado; }
+    public void setMagicoMacabroDerrotado(boolean v) { this.magicoMacabroDerrotado = v; }
+    public boolean isCabanaVisitada() { return cabanaVisitada; }
+    public void setCabanaVisitada(boolean v) { this.cabanaVisitada = v; }
+    public boolean isNetaSeguindo() { return netaSeguindo; }
+    public void setNetaSeguindo(boolean v) { this.netaSeguindo = v; }
+    public boolean isAcampamentoAlcancado() { return acampamentoAlcancado; }
+    public void setAcampamentoAlcancado(boolean v) { this.acampamentoAlcancado = v; }
+    public boolean isCabanaAlcancada() { return cabanaAlcancada; }
+    public void setCabanaAlcancada(boolean v) { this.cabanaAlcancada = v; }
+    public boolean isNetaCorpoLevado() { return netaCorpoLevado; }
+    public void setNetaCorpoLevado(boolean v) { this.netaCorpoLevado = v; }
+    public boolean isPresencaNetaPassou() { return presencaNetaPassou; }
+    public void setPresencaNetaPassou(boolean v) { this.presencaNetaPassou = v; }
+    public boolean isMissaoNetaEncerrada() { return missaoNetaEncerrada; }
+    public void setMissaoNetaEncerrada(boolean v) { this.missaoNetaEncerrada = v; }
+    public int getTurnosParaVoltar() { return turnosParaVoltar; }
+    public void setTurnosParaVoltar(int v) { this.turnosParaVoltar = v; }
+    public static final int PRAZO_MISSAO_NETA = 7;
+    public boolean isPrazoNetaEstourado() { return diaAceitouNeta > 0 && (diaAtual - diaAceitouNeta) >= PRAZO_MISSAO_NETA; }
 
     public boolean isPactoMortalAtivo() { return pactoMortalAtivo; }
     public void setPactoMortalAtivo(boolean pactoMortalAtivo) { this.pactoMortalAtivo = pactoMortalAtivo; }
@@ -522,6 +571,8 @@ public class FichaRpg implements java.io.Serializable {
 
     public boolean isInfectado() { return infectado; }
     public void setInfectado(boolean infectado) { this.infectado = infectado; }
+    public boolean isSangrando() { return sangrando; }
+    public void setSangrando(boolean sangrando) { this.sangrando = sangrando; }
 
     public boolean isDefesaAbsolutaAtiva() { return defesaAbsolutaAtiva; }
     public void setDefesaAbsolutaAtiva(boolean defesaAbsolutaAtiva) { this.defesaAbsolutaAtiva = defesaAbsolutaAtiva; }

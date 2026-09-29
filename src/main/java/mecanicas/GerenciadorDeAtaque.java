@@ -103,6 +103,7 @@ public class GerenciadorDeAtaque {
         }
 
         int dadoAtaque, totalAtaque, dano = 0;
+        String nomeArmaUsada = null;
         boolean golpeCaC = false, golpeLA = false;
         int atributoBonus;
         String nomeAtributo;
@@ -159,6 +160,7 @@ public class GerenciadorDeAtaque {
             }
         } else if (armaIndex >= 0 && armaIndex < ficha.getInventario().size()) {
             Arma armaEscolhida = (Arma) ficha.getInventario().get(armaIndex);
+            nomeArmaUsada = armaEscolhida.getNome();
             golpeCaC = armaEscolhida.getTipoArma().contains("CaC");
             golpeLA = armaEscolhida.getTipoArma().contains("LA");
             String atributo = armaEscolhida.getAtributoAtaque();
@@ -282,6 +284,11 @@ public class GerenciadorDeAtaque {
                 Interface.Pausa(1500);
             }
             aplicarDanoCriatura(inimigo, dano);
+            if ("Cutelo".equals(nomeArmaUsada) && inimigo.getVida() > 0 && !inimigo.isSangrando()) {
+                inimigo.setSangrando(true);
+                Interface.MostrarMensagem("(O Cutelo! O corte de " + inimigo.getNome() + " não para de sangrar: 1d6 de dano por rodada)");
+                Interface.Pausa(1500);
+            }
             Interface.MostrarMensagem(rotuloCriatura(inimigos, inimigo) + " agora tem " + Math.max(0, inimigo.getVida()) + " de vida.");
             Interface.Pausa(2000);
         }

@@ -81,6 +81,40 @@ public class CriaturaFactory {
         return c;
     }
 
+    public static List<Criatura> criarBandoDaNeta() {
+        List<Criatura> grupo = new ArrayList<>();
+        for (int i = 0; i < 7; i++) {
+            grupo.add(criarBandidoAcampamento());
+        }
+        return grupo;
+    }
+
+    public static Criatura criarBandidoAcampamento() {
+        Criatura c = new Criatura("Bandido", 4, 16, 11, 2);
+        c.setBonusAcerto(2);
+        c.setTestePresenca(15);
+        c.setDesertaEmGrupo(true);
+        c.setXpGanho(30);
+        c.adicionarAtaque("Facada", "", 1, 4);
+        c.adicionarAtaque("Soco", "", 1, 3);
+        c.setOuroDrop(4, 17, 100);
+        c.adicionarDrop("Faca", 1, 1, 35);
+        return c;
+    }
+
+    public static Criatura criarMagoMacabro() {
+        Criatura c = new Criatura("Mago Macabro", 5, 80, 14, 4);
+        c.setTestePresenca(12);
+        c.setXpGanho(100);
+        c.setSemFuga(true);
+        c.adicionarAtaque("Cutelo", "corte", 2, 8);
+        c.configurarSangramento("Cutelo", 30);
+        c.adicionarAtaque("Soco", "", 1, 6);
+        c.configurarMagiaCura("Sede de Carne e Planta", 20, 3, 4, 5);
+        c.adicionarDrop("Cutelo", 1, 1, 15);
+        return c;
+    }
+
     public static Criatura criarFada() {
         Criatura c = new Criatura("Fada", 1, 4, 14, 0);
         c.setAcertoAutomatico(true);

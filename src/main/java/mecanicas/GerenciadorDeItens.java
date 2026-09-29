@@ -18,6 +18,9 @@ import static mecanicas.MotorDeCombate.*;
 
 public class GerenciadorDeItens {
 
+    private static final String AMARELO = Interface.AMARELO;
+    private static final String RESET = Interface.RESET;
+
     public static boolean ehItemConsumivel(ItemRpg item) {
         if (!(item instanceof Consumivel)) return false;
         return !item.getNome().equals("Flechas");
@@ -253,7 +256,20 @@ public class GerenciadorDeItens {
                     ficha.setInfectado(false);
                     Interface.MostrarMensagem("Os curativos do Kit Médico expulsam a infecção! Você está curado.");
                 }
+                if (ficha.isSangrando()) {
+                    ficha.setSangrando(false);
+                    Interface.MostrarMensagem("Os curativos do Kit Médico estancam o sangramento! Você está tratado.");
+                }
                 break;
+            }
+            case "Fruta do Diabo": {
+                Interface.MostrarMensagem("\nVocê encara a " + AMARELO + "Fruta do Diabo" + RESET + ". Ela parece pulsar de um jeito errado...");
+                Interface.Pausa(2000);
+                Interface.MostrarMensagem("A velhinha disse que só deve ser usada em momento de extrema urgência. Ninguém sabe o que ela faz.");
+                Interface.Pausa(2400);
+                System.out.println("  [O poder da Fruta do Diabo ainda não foi definido.]");
+                Interface.Pausa(1500);
+                return false;
             }
             default:
                 return false;

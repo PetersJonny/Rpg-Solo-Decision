@@ -280,6 +280,8 @@ public class Vendedor {
         private static int precoDeVenda(String nome) {
         switch (nome) {
             case "Faca": return 30;
+            case "Cutelo": return 260;
+            case "Fruta do Diabo": return 500;
             case "Machado": return 55;
             case "Machadinha": return 30;
             case "Martelo": return 80;
@@ -368,6 +370,8 @@ switch (nome) {
         switch (nome) {
             case "Faca":
                 return new Arma("Faca", "Uma faca afiada que causa 1d4 de dano corpo a corpo, usando Destreza.", "CaC", 4, 1, 1, "Destreza");
+            case "Cutelo":
+                return new Arma("Cutelo", "O cutelo do Mago Macabro. Causa 2d8 de dano usando Força e deixa o alvo sangrando (1d6 por rodada).", "CaC", 8, 2, 1, "Força");
             case "Sopa do Vilarejo":
                 return new Consumivel("Sopa do Vilarejo", "Uma sopa quente de legumes da vila. Cura 1d2 de vida e sacia a fome.", 1);
             case "Pão Quente com Manteiga":
@@ -424,6 +428,8 @@ switch (nome) {
                 return new Consumivel("Poção Grande de Mana", "Restaura 7 pontos de mana. É consumida após o uso.", 1);
             case "Kit Médico":
                 return new Consumivel("Kit Médico", "Pode ser usado para curar 1d4 de vida e acaba com uma infecção. Possui 5 usos.", 1);
+            case "Fruta do Diabo":
+                return new Consumivel("Fruta do Diabo", "Uma fruta proibida, dada pela velhinha em agradecimento. Só deve ser usada em momento de extrema urgência — e o que acontece quando ela é mordida, ninguém sabe.", 1);
             case "Chapéu Mágico":
                 return new ItemRpg("Chapéu Mágico", "Um chapéu encantado que aumenta o dano das suas magias em +3.", 1);
             case "Pequeno Grimório":

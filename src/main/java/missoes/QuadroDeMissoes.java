@@ -156,6 +156,9 @@ public class QuadroDeMissoes {
             System.out.println("  Local: " + m.onde);
             System.out.println("  Objetivo: " + m.objetivo);
             System.out.println("  Recompensa: " + m.recompensa);
+            if (ficha.isMissaoNetaEncerrada() && m.nome.equals("A Neta Perdida")) {
+                System.out.println("  " + VERDE + "Status: CONCLUÍDA" + RESET);
+            }
             Interface.MostrarMensagem(CIANO + "==============================" + RESET);
             exibirNovidades(ficha, m);
             ficha.marcarNovidadesVistas(m.nome);

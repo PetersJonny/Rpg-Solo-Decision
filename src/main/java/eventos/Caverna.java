@@ -61,6 +61,7 @@ public class Caverna {
 
         if (resposta == 1) {
             ficha.aceitarMissao("A Neta Perdida");
+            ficha.setDiaAceitouNeta(ficha.getDiaAtual());
             Interface.MostrarMensagem("\n\"Claro que ajudo\", você diz. O rosto da velhinha se ilumina.");
             Interface.Pausa(1600);
             Interface.MostrarMensagem("\n\"Graças a você!\" — ela enxuga os olhos. \"Ela sumiu enquanto colhiamos frutas na floresta, ali perto da entrada da vila, para fazer uma torta. Eu já procurei por toda parte e não sei mais o que fazer. Estou desesperada...\"");

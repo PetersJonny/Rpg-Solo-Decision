@@ -31,10 +31,14 @@ public class MotorDeCombate {
     public static final String AMARELO = "\u001B[33m";
 
     public static void IniciarCombate(FichaRpg ficha, List<Criatura> inimigos, boolean jogadorSurpreendeu) {
+        IniciarCombate(ficha, inimigos, jogadorSurpreendeu, jogadorSurpreendeu ? 2 : 0);
+    }
+
+    public static void IniciarCombate(FichaRpg ficha, List<Criatura> inimigos, boolean jogadorSurpreendeu, int bonusIniciativaExtra) {
         Interface.MostrarMensagem("\n================ COMBATE ================");
         Interface.Pausa(2500);
 
-        int bonusIniciativaJogador = jogadorSurpreendeu ? 2 : 0;
+        int bonusIniciativaJogador = bonusIniciativaExtra;
         Interface.pressionarParaTeste("Destreza");
         int dadoJogador = MecanicasRpg.rolarDado(20);
         int iniciativaJogador = dadoJogador + ficha.getDestrezaTeste() + bonusIniciativaJogador;

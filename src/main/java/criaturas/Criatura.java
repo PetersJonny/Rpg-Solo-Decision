@@ -19,6 +19,7 @@ public class Criatura implements java.io.Serializable {
     private String nome;
     private int nivel;
     private int vida;
+    private int vidaMaxima;
     private int defesa;
     private int iniciativa;
     private int bonusAcerto;
@@ -39,6 +40,13 @@ public class Criatura implements java.io.Serializable {
     private String ataqueInfeccioso;
     private int chanceInfeccao;
 
+    private String ataqueSangrante;
+    private int chanceSangramento;
+
+    private boolean sangrando;
+
+    private boolean desertaEmGrupo;
+
     private boolean mortoVivo;
 
     private boolean enfraquecido;
@@ -58,10 +66,29 @@ public class Criatura implements java.io.Serializable {
     private boolean toqueDeMidasPreparado;
     private int bonusToqueDeMidas;
 
+    private String magiaCuraNome;
+    private int chanceMagiaCura;
+    private int dadosMagiaCura;
+    private int ladosMagiaCura;
+    private int maxUsosMagiaCura;
+    private int usosMagiaCura;
+
+    public void configurarMagiaCura(String nome, int chance, int dados, int lados, int maxUsos) {
+        this.magiaCuraNome = nome;
+        this.chanceMagiaCura = chance;
+        this.dadosMagiaCura = dados;
+        this.ladosMagiaCura = lados;
+        this.maxUsosMagiaCura = maxUsos;
+        this.usosMagiaCura = 0;
+    }
+    public void setVidaMaxima(int vidaMaxima) { this.vidaMaxima = vidaMaxima; }
+    public int getVidaMaxima() { return vidaMaxima; }
+
     public Criatura(String nome, int nivel, int vida, int defesa, int iniciativa) {
         this.nome = nome;
         this.nivel = nivel;
         this.vida = vida;
+        this.vidaMaxima = vida;
         this.defesa = defesa;
         this.iniciativa = iniciativa;
         this.bonusAcerto = 0;
@@ -197,6 +224,19 @@ public class Criatura implements java.io.Serializable {
 
         Ataque ataqueEscolhido = ataques.get(MecanicasRpg.rolarDado(ataques.size()) - 1);
 
+        if (magiaCuraNome != null && usosMagiaCura < maxUsosMagiaCura
+                && vida < vidaMaxima && MecanicasRpg.rolarDado(100) <= chanceMagiaCura) {
+            usosMagiaCura++;
+            int cura = 0;
+            for (int i = 0; i < dadosMagiaCura; i++) cura += MecanicasRpg.rolarDado(ladosMagiaCura);
+            int antes = vida;
+            vida = Math.min(vidaMaxima, vida + cura);
+            Interface.MostrarMensagem("\n" + nome + " ergue os braços e drena a magia vital da carne e das plantas ao redor, curando " + (vida - antes) + " de vida!");
+            Interface.MostrarMensagem("  (" + magiaCuraNome + " — restam " + (maxUsosMagiaCura - usosMagiaCura) + " usos)");
+            Interface.Pausa(2000);
+            return null;
+        }
+
         String danoTipo = ataqueEscolhido.tipoDano == null || ataqueEscolhido.tipoDano.isEmpty()
                 ? "" : " de " + ataqueEscolhido.tipoDano;
 
@@ -241,6 +281,7 @@ public class Criatura implements java.io.Serializable {
                 refletirProtecaoAbsoluta();
             }
             aplicarInfeccao(ficha, alvoJogadorPrincipal, ataqueEscolhido);
+            aplicarSangramento(ficha, alvoJogadorPrincipal, ataqueEscolhido);
         } else {
             int danoQueCausaria = rolarDanoDoAtaque(ataqueEscolhido, false);
             Interface.MostrarMensagem("-> Errou! Dano que causaria: " + danoQueCausaria + danoTipo + " (defesa do jogador: " + ficha.getDefesa() + ")");
@@ -298,6 +339,29 @@ public class Criatura implements java.io.Serializable {
         if (MecanicasRpg.rolarDado(100) <= chanceInfeccao) {
             ficha.setInfectado(true);
             Interface.MostrarMensagem("A mordida abre uma ferida que infecciona! Você sofrerá 1d4 de dano por rodada.");
+            Interface.Pausa(2000);
+        }
+    }
+
+    public boolean isDesertaEmGrupo() { return desertaEmGrupo; }
+    public void setDesertaEmGrupo(boolean v) { this.desertaEmGrupo = v; }
+
+    public boolean isSangrando() { return sangrando; }
+    public void setSangrando(boolean sangrando) { this.sangrando = sangrando; }
+
+    public void configurarSangramento(String nomeAtaque, int chance) {
+        this.ataqueSangrante = nomeAtaque;
+        this.chanceSangramento = chance;
+    }
+
+    private void aplicarSangramento(FichaRpg ficha, boolean alvoJogadorPrincipal, Ataque ataque) {
+        if (!alvoJogadorPrincipal || ataqueSangrante == null || !ataque.nome.equals(ataqueSangrante)) {
+            return;
+        }
+        if (ficha.isSangrando()) return;
+        if (MecanicasRpg.rolarDado(100) <= chanceSangramento) {
+            ficha.setSangrando(true);
+            Interface.MostrarMensagem("O corte é profundo e não para de sangrar! Você sofrerá 1d6 de dano por rodada até se tratar.");
             Interface.Pausa(2000);
         }
     }
