@@ -1,7 +1,5 @@
 package racas;
 
-// Meio-Fada — +1 em Presença + Encanto Feérico (dobra a chance de encontrar a
-// Fada ao explorar e reduz em 1 o custo de mana de magias e habilidades).
 public class MeioFadaRaca extends Raca {
     private static final long serialVersionUID = 1L;
 

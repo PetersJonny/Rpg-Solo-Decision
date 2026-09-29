@@ -9,20 +9,17 @@ import java.util.Scanner;
 import salvamento.GerenciadorSaves;
 
 public class Interface {
-    // Códigos de Cores ANSI (públicos para outras telas usarem os mesmos aliases)
-    public static final String RESET = "\u001B[0m";
+        public static final String RESET = "\u001B[0m";
     public static final String AMARELO = "\u001B[33m";
     public static final String CIANO = "\u001B[36m";
     public static final String VERDE = "\u001B[32m";
     public static final String VERMELHO = "\u001B[31m";
     private static final String NEGRITO = "\u001B[1m";
 
-    // Entrada de Dados
-    public static final Scanner scanner = new Scanner(System.in);
+        public static final Scanner scanner = new Scanner(System.in);
     public static boolean modoTeste = false;
 
-    // Aguarda o jogador apertar ENTER
-    public static void esperarEnter() {
+        public static void esperarEnter() {
         if (modoTeste) return;
         System.out.println("\nPressione ENTER para continuar...");
         scanner.nextLine();
@@ -34,22 +31,19 @@ public class Interface {
         scanner.nextLine();
     }
 
-    // Aguarda o ENTER do jogador antes de rolar dados (não retorna o valor rolado)
-    public static void pressionarParaRolar() {
+        public static void pressionarParaRolar() {
         if (modoTeste) return;
         System.out.println("\nPressione ENTER para rolar os dados...");
         scanner.nextLine();
     }
 
-    // Aguarda o ENTER antes de um teste, citando o atributo
-    public static void pressionarParaTeste(String atributo) {
+        public static void pressionarParaTeste(String atributo) {
         if (modoTeste) return;
         System.out.println("\nPressione ENTER para rodar um teste de " + atributo + "...");
         scanner.nextLine();
     }
 
-    // Lê um número inteiro com validação (letras/caracteres mostram opção inválida e pedem novamente)
-    public static int lerInteiro() {
+        public static int lerInteiro() {
         if (modoTeste) return 1;
         while (true) {
             String entrada = scanner.nextLine();
@@ -61,8 +55,7 @@ public class Interface {
         }
     }
 
-    // Lê uma opção garantida dentro de [min, max] (menus com opções fixas)
-    public static int lerOpcao(int min, int max) {
+        public static int lerOpcao(int min, int max) {
         if (modoTeste) return 1;
         while (true) {
             int escolha = lerInteiro();
@@ -71,25 +64,22 @@ public class Interface {
         }
     }
 
-    // Lê uma opção garantida entre 1 e max
-    public static int lerOpcao(int max) {
+        public static int lerOpcao(int max) {
         return lerOpcao(1, max);
     }
 
-    // Pausa para leitura
-    public static void Pausa(int milisegundos) {
+        public static void Pausa(int milisegundos) {
         try { Thread.sleep(milisegundos); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
     }
 
-    // Menus e Telas
-    public static void ExibirBoasVindas() {
+        public static void ExibirBoasVindas() {
         System.out.println(CIANO + "==========================================================================================" + RESET);
-        System.out.println(AMARELO + NEGRITO + 
+        System.out.println(AMARELO + NEGRITO +
             " ____   ___   _       ___    ____  ____   ____   ____  _____ ____ ___ ____ ___ ___   _   _ \n" +
             "/ ___| / _ \\ | |     / _ \\  |  _ \\|  _ \\ / ___| |  _ \\| ____/ ___|_ _/ ___|_ _/ _ \\ | \\ | |\n" +
             "\\___ \\| | | || |    | | | | | |_) | |_) | |  _  | | | |  _|| |    | |\\___ \\ | | | | |  \\| |\n" +
             " ___) | |_| || |___ | |_| | |  _ <|  __/| |_| | | |_| | |__| |___ | | ___) || | |_| | |\\  |\n" +
-            "|____/ \\___/ |_____| \\___/  |_| \\_\\_|    \\____| |____/|_____\\____|___|____/___\\___/ |_| \\_|" 
+            "|____/ \\___/ |_____| \\___/  |_| \\_\\_|    \\____| |____/|_____\\____|___|____/___\\___/ |_| \\_|"
             + RESET);
         System.out.println(CIANO + "==========================================================================================" + RESET);
         System.out.println(NEGRITO + "                       SEJA BEM-VINDO AO MUNDO DE SOLORPGDECISION!" + RESET);
@@ -101,8 +91,7 @@ public class Interface {
         System.out.println(CIANO + "==========================================================================================" + RESET);
     }
 
-    // Título centralizado nas barras ciano (padrão dos menus)
-    public static void cabecalhoMenu(String titulo) {
+        public static void cabecalhoMenu(String titulo) {
         barraDivisoria();
         String texto = titulo.toUpperCase();
         int espacos = Math.max(0, (92 - texto.length()) / 2);
@@ -134,8 +123,7 @@ public class Interface {
         return lerNome();
     }
 
-    // Lê um nome com limite de 20 caracteres e bloqueia strings vazias
-    private static String lerNome() {
+        private static String lerNome() {
         while (true) {
             String nome = scanner.nextLine().trim();
             if (nome.isEmpty()) {
@@ -150,10 +138,7 @@ public class Interface {
         }
     }
 
-    // Escolha do modo de dificuldade (1 = Normal, 2 = Difícil). Retorna 0 se voltou.
-
-    // Menu exibido antes do nome: Novo/Carregar/Apagar/Fechar
-    public static int MenuInicial() {
+        public static int MenuInicial() {
         System.out.println("\n");
         cabecalhoMenu("MENU PRINCIPAL");
         System.out.println("\n  O que deseja fazer?\n");
@@ -165,22 +150,9 @@ public class Interface {
         return lerOpcao(4);
     }
 
-    // Tela para escolher qual save continuar. Retorna o slot (1 a 3),
-    // -1 se o jogador voltou, ou -2 se não existe nenhum save salvo.
-
-    // Tela para escolher em qual slot salvar (permite sobrescrever). Retorna o slot (1 a 3) ou -1.
-
-    // Tela para escolher qual save apagar (com confirmação). Retorna true se deletou.
-
-    // Pergunta se o jogador quer salvar antes de sair (1 = sim, 2 = não)
-
-    // Números das opções dinâmicas do menu da floresta:
-    // {Viajar, Labirinto, Conversar, Salvar, Encerrar}.
-    // É a única fonte da numeração, usada tanto para imprimir quanto para o Main interpretar a escolha.
-    public static int[] opcoesMenuFloresta(FichaRpg ficha) {
+                public static int[] opcoesMenuFloresta(FichaRpg ficha) {
         int num = 5;
-        int opViajar = num++; // sempre disponível: "Tentar sair da floresta" (ou continuar, se já estiver caminhando)
-        int opLabirinto = -1, opConversar = -1;
+        int opViajar = num++;         int opLabirinto = -1, opConversar = -1;
         if (ficha.isLabirintoDisponivel()) opLabirinto = num++;
         if (ficha.temCompanheiro()) opConversar = num++;
         int opSalvar = num++;
@@ -228,9 +200,19 @@ public class Interface {
         return lerOpcao(1, ops[4]);
     }
 
-    // Menu do vilarejo (para além da floresta): taverna (com quadro de missões),
-    // ferreiro (arma/armadura), missões em andamento e o caminho de volta.
-    public static int MenuVilarejo(FichaRpg ficha) {
+                public static int[] opcoesMenuVilarejo(FichaRpg ficha) {
+        int num = 5;
+        int opMissoes = num++;         int opAlfaiataria = -1, opBarraca = -1, opCaverna = -1;
+        if (ficha.isAlfaiatariaConhecida()) opAlfaiataria = num++;
+        if (ficha.isMissaoAceita("A Neta Perdida")) opBarraca = num++;
+        if (ficha.isCaveConhecida()) opCaverna = num++;
+        int opVoltar = num++;
+        int opSalvar = num++;
+        int opEncerrar = num++;
+        return new int[]{opMissoes, opAlfaiataria, opBarraca, opCaverna, opVoltar, opSalvar, opEncerrar};
+    }
+
+            public static int MenuVilarejo(FichaRpg ficha) {
         System.out.println("\n");
         String cidade = ficha.getCidadeAtual() != null ? ficha.getCidadeAtual().toUpperCase() : "VILAREJO DE SCARBOR";
         cabecalhoMenu(cidade);
@@ -246,27 +228,30 @@ public class Interface {
         }
         System.out.println("\n  O que você deseja fazer?\n");
 
+        int[] ops = opcoesMenuVilarejo(ficha);
         int ativas = ficha.getMissoesAceitas().size();
         System.out.println("  1. Ver ficha");
         System.out.println("  2. Olhar em volta");
         System.out.println("  3. Ir à " + CIANO + "taverna" + RESET + " (comida + quadro de missões)");
         System.out.println("  4. Ir ao " + CIANO + "ferreiro" + RESET + " (armas e armaduras)");
-        if (ativas > 0) {
-            System.out.println("  5. Ver missões em andamento (" + ativas + ")");
-        } else {
-            System.out.println("  5. Ver missões em andamento (nenhuma)");
+        System.out.println("  " + ops[0] + ". Ver missões em andamento (" + ativas + ")");
+        if (ops[1] > 0) {
+            System.out.println("  " + ops[1] + ". Ir à " + CIANO + "alfaiataria" + RESET + " (centro do comércio)");
         }
-        System.out.println("  6. Voltar para a floresta");
-        System.out.println("  7. Salvar Jogo");
-        System.out.println("  8. Encerrar jogo");
+        if (ops[2] > 0) {
+            System.out.println("  " + ops[2] + ". Ir à " + CIANO + "barraca de frutas" + RESET + " (entrada da vila)");
+        }
+        if (ops[3] > 0) {
+            System.out.println("  " + ops[3] + ". Ir para a " + CIANO + "caverna" + RESET + " (fundo da vila)");
+        }
+        System.out.println("  " + ops[4] + ". Voltar para a floresta");
+        System.out.println("  " + ops[5] + ". Salvar Jogo");
+        System.out.println("  " + ops[6] + ". Encerrar jogo");
         System.out.println("\n  " + VERDE + "Digite a opção:" + RESET);
-        return lerOpcao(1, 8);
+        return lerOpcao(1, ops[6]);
     }
 
-    // Interação com a Ficha
-
-    // Dropar (descartar) um item do inventário, escolhendo a quantidade
-    public static void droparItemDoInventario(FichaRpg ficha, ItemRpg item) {
+        public static void droparItemDoInventario(FichaRpg ficha, ItemRpg item) {
         int qtdAtual = item.getQuantidade();
         System.out.println("\n  Você tem " + qtdAtual + "x " + item.getNome() + ".");
         System.out.println("  Quantidade para dropar (1 a " + qtdAtual + ", 0 para cancelar): ");

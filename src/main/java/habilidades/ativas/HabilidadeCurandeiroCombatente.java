@@ -5,9 +5,6 @@ import fichas.FichaRpg;
 import criaturas.Criatura;
 import java.util.List;
 
-// Curandeiro Combatente (recompensa do Minotauro para o Healer): passiva. Em combate,
-// o ataque do Healer pode comprar ataques extras gastando mana (1 por ataque, máximo =
-// nível) e cada ataque que acertar cura metade do dano causado.
 public class HabilidadeCurandeiroCombatente extends Habilidade {
     public HabilidadeCurandeiroCombatente() {
         super("Curandeiro Combatente",

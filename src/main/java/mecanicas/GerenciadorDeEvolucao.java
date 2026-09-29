@@ -14,11 +14,9 @@ import comandos.*;
 import itens.Consumivel;
 import telas.Interface;
 
-
 import static mecanicas.MotorDeCombate.*;
 
 public class GerenciadorDeEvolucao {
-
 
     public static void escolherHabilidadeNivel(FichaRpg ficha, int nivel, List<habilidades.Habilidade> opcoes) {
         Interface.cabecalhoMenu("NOVA HABILIDADE - NÍVEL " + nivel);
@@ -48,14 +46,11 @@ public class GerenciadorDeEvolucao {
         aplicarConhecimentoAbsolutoSeAprendido(ficha, aprendida);
     }
 
-
     public static void aplicarDeusSeAprendido(FichaRpg ficha, habilidades.Habilidade aprendida) {
         if (!aprendida.getNome().equals("Deus")) return;
         if (ficha.isDeusAtivo()) return;
 
-        // Se a forma temporária de Semi Deus estava ativa, normaliza a vida máxima antes de aplicar
-        // o bônus permanente (evita somar duas vezes)
-        if (ficha.isSemiDeusAtivo() && ficha.getSemiDeusVidaOriginalMax() > 0) {
+                        if (ficha.isSemiDeusAtivo() && ficha.getSemiDeusVidaOriginalMax() > 0) {
             ficha.setVidaMaxima(ficha.getSemiDeusVidaOriginalMax());
             ficha.setSemiDeusVidaOriginalMax(0);
         }
@@ -67,13 +62,11 @@ public class GerenciadorDeEvolucao {
         if (!temHabilidade(ficha, "Cura Incessante")) {
             ficha.getHabilidades().add(new habilidades.ativas.HabilidadeCuraIncessante("Cura Incessante", "Cura toda a sua vida. Pode ser usada apenas uma vez por combate.", 0));
         }
-        // Deus substitui a Semi Deus: ela some da lista de habilidades
-        ficha.getHabilidades().removeIf(h -> h.getNome().equals("Semi Deus"));
+                ficha.getHabilidades().removeIf(h -> h.getNome().equals("Semi Deus"));
         Interface.MostrarMensagem("\nVocê se torna um Deus! A forma de Semi Deus fica permanentemente ativa.");
         Interface.MostrarMensagem("Vida máxima aumentada em " + bonusVida + " e você ganhou a habilidade Cura Incessante!");
         Interface.Pausa(2500);
     }
-
 
     public static void aplicarConhecimentoAbsolutoSeAprendido(FichaRpg ficha, habilidades.Habilidade aprendida) {
         if (!aprendida.getNome().equals("Conhecimento Absoluto")) return;
@@ -88,7 +81,6 @@ public class GerenciadorDeEvolucao {
         }
         Interface.Pausa(2500);
     }
-
 
     public static void aplicarArmaMentalSeAprendida(FichaRpg ficha, habilidades.Habilidade aprendida) {
         if (!aprendida.getNome().equals("Arma Mental")) return;
@@ -107,8 +99,6 @@ public class GerenciadorDeEvolucao {
         Interface.MostrarMensagem("\nArma Mental! Seu Bisturi agora causa 3d8 de dano!");
         Interface.Pausa(2000);
     }
-
-
 
     public static void escolherPontoAtributo(FichaRpg ficha) {
         while (true) {

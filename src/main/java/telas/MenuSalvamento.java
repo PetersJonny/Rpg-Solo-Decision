@@ -11,7 +11,6 @@ import static telas.Interface.*;
 
 public class MenuSalvamento {
 
-
     public static int MenuCarregarJogo() {
         while (true) {
             if (GerenciadorSaves.quantidadeSaves() == 0) {
@@ -40,7 +39,6 @@ public class MenuSalvamento {
         }
     }
 
-
     public static int MenuSalvarJogo(FichaRpg ficha) {
         while (true) {
             System.out.println("\n");
@@ -61,7 +59,6 @@ public class MenuSalvamento {
             return escolha;
         }
     }
-
 
     public static boolean MenuApagarSave() {
         while (true) {
@@ -89,8 +86,7 @@ public class MenuSalvamento {
                 continue;
             }
 
-            // Confirmação antes de apagar
-            System.out.println("\n  Tem certeza que deseja apagar o save " + escolha + "?\n");
+                        System.out.println("\n  Tem certeza que deseja apagar o save " + escolha + "?\n");
             System.out.println("  " + AMARELO + GerenciadorSaves.infoSlot(escolha) + RESET);
             System.out.println("\n  1. Sim, apagar");
             System.out.println("  2. Não, manter\n");
@@ -108,7 +104,6 @@ public class MenuSalvamento {
             }
         }
     }
-
 
     public static boolean PerguntarSalvarAntesDeSair() {
         System.out.println("\n  Deseja salvar o jogo antes de sair?\n");

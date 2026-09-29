@@ -15,15 +15,10 @@ import telas.Interface;
 
 public class Vendedor {
 
-    // Cores ANSI (aliases das usadas na Interface, para um único ponto de origem)
-    private static final String RESET = Interface.RESET;
+        private static final String RESET = Interface.RESET;
     private static final String CIANO = Interface.CIANO;
 
-    // Categorias (usadas só pela loja; não aparecem no jogo)
-    // O vendedor ambulante só revende suprimentos básicos: armaduras e itens
-    // específicos de classe (PESADO/AGIL/MAGICO) saem daqui e só serão
-    // vendidos na vila.
-    private static final List<String> GERAL = List.of(
+                    private static final List<String> GERAL = List.of(
             "Faca", "Machado", "Machadinha", "Martelo", "Mangual", "Arco", "Flechas", "Lança",
             "Poção de Mana", "Kit Médico",
             "Madeira", "Folha", "Pedra", "Frutas"
@@ -38,8 +33,7 @@ public class Vendedor {
             "Cajado", "Chapéu Mágico", "Poção Grande de Mana", "Pequeno Grimório"
     );
 
-    // Todas as armas do jogo (usadas no sorteio de 17% das recompensas do labirinto)
-    private static final List<String> ARMAS_DO_JOGO = List.of(
+        private static final List<String> ARMAS_DO_JOGO = List.of(
             "Faca", "Machado", "Machadinha", "Martelo", "Mangual", "Arco", "Lança", "Espada",
             "Espada Pesada", "Machado de Guerra", "Martelo de Guerra", "Bisturi", "Arco Refinado",
             "Nunchako", "Foice", "Cajado"
@@ -47,8 +41,7 @@ public class Vendedor {
 
     private static final int TAMANHO_ESTOQUE = 5;
 
-    // Sorteia uma das armas do jogo para a recompensa de 17% do labirinto
-    public static ItemRpg sortearArmaDoJogo() {
+        public static ItemRpg sortearArmaDoJogo() {
         String nome = ARMAS_DO_JOGO.get(MecanicasRpg.rolarDado(ARMAS_DO_JOGO.size()) - 1);
         ItemRpg item = criarItem(nome);
         if (item == null) return new Arma("Faca", "Uma faca afiada que causa 1d4 de dano corpo a corpo, usando Destreza.", "CaC", 4, 1, 1, "Destreza");
@@ -61,8 +54,7 @@ public class Vendedor {
         Interface.MostrarMensagem("\"Grandes novidades, aventureiro! Tenho tudo o que se pode sobreviver por aqui... e compro o que sobra.\"");
         Interface.Pausa(2500);
 
-        // O estoque é sorteado UMA vez por encontro; só um novo vendedor re-sorteia
-        Map<String, Integer> estoque = montarEstoque(ficha);
+                Map<String, Integer> estoque = montarEstoque(ficha);
 
         while (true) {
             Interface.cabecalhoMenu("VENDEDOR AMBULANTE");
@@ -87,9 +79,7 @@ public class Vendedor {
         }
     }
 
-    // Quantidade em estoque de cada item (sorteada a cada visita):
-    // Flechas 6-24, poções/consumíveis (e materiais) 1-7, armas e armaduras apenas 1.
-    private static int quantidadeEmEstoque(String nome) {
+            private static int quantidadeEmEstoque(String nome) {
         switch (nome) {
             case "Flechas":
                 return MecanicasRpg.rolarEntre(6, 24);
@@ -102,14 +92,10 @@ public class Vendedor {
             case "Pedra":
                 return MecanicasRpg.rolarEntre(1, 7);
             default:
-                return 1; // armas e armaduras
-        }
+                return 1;         }
     }
 
-    // Estoque: 5 itens aleatórios entre os gerais, cada um com uma quantidade
-    // aleatória. (Antes o estoque incluía armaduras e itens da categoria da
-    // classe do jogador; estes agora só são vendidos na vila.)
-    private static Map<String, Integer> montarEstoque(FichaRpg ficha) {
+                private static Map<String, Integer> montarEstoque(FichaRpg ficha) {
         List<String> pool = new ArrayList<>(GERAL);
         Collections.shuffle(pool);
 
@@ -166,8 +152,7 @@ public class Vendedor {
 
             int custo = preco * qtdComprar;
 
-            // Mostra a descrição e pede confirmação antes da compra
-            ItemRpg itemDetalhe = criarItem(nome);
+                        ItemRpg itemDetalhe = criarItem(nome);
             double pesoItem = itemDetalhe != null ? itemDetalhe.getPeso() : 1.0;
             double espacoNecessario = pesoItem * qtdComprar;
             if (espacoNecessario > ficha.getEspacoLivreMochila() + 0.0001) {
@@ -217,8 +202,7 @@ public class Vendedor {
             }
             Interface.Pausa(1500);
 
-            // Atualiza o estoque do vendedor
-            int restante = qtdEstoque - qtdComprar;
+                        int restante = qtdEstoque - qtdComprar;
             if (restante <= 0) {
                 estoque.remove(nome);
             } else {
@@ -227,8 +211,7 @@ public class Vendedor {
         }
     }
 
-    // Itens que podem ser comprados em quantidade (consumíveis, munição e materiais)
-    private static boolean podeComprarEmQuantidade(String nome) {
+        private static boolean podeComprarEmQuantidade(String nome) {
         switch (nome) {
             case "Flechas":
             case "Poção de Mana":
@@ -244,8 +227,7 @@ public class Vendedor {
         }
     }
 
-    // O vendedor compra QUALQUER item do jogador por 70% do valor original
-    private static void Vender(FichaRpg ficha) {
+        private static void Vender(FichaRpg ficha) {
         while (true) {
             Interface.cabecalhoMenu("VENDER");
             Interface.MostrarMensagem("\n  Seu ouro: " + ficha.getOuro() + "");
@@ -295,8 +277,7 @@ public class Vendedor {
         }
     }
 
-    // Preço de venda do vendedor (valor cheio, usado quando o jogador COMPRA)
-    private static int precoDeVenda(String nome) {
+        private static int precoDeVenda(String nome) {
         switch (nome) {
             case "Faca": return 30;
             case "Machado": return 55;
@@ -318,17 +299,26 @@ public class Vendedor {
             case "Arco Refinado": return 95;
             case "Nunchako": return 70;
             case "Foice": return 85;
-            case "Cajado": return 50;
+case "Cajado": return 50;
             case "Chapéu Mágico": return 70;
             case "Poção Grande de Mana": return 30;
             case "Pequeno Grimório": return 90;
-            // Materiais coletáveis da floresta
+            case "Capa do Viajante": return 80;
+            case "Túnica de Aventureiro": return 90;
+            case "Manto do Atirador": return 90;
+            case "Lenço de Seda": return 60;
+            case "Botas de Correio": return 70;
+            case "Maçã": return 6;
+            case "Pera": return 8;
+            case "Ameixa": return 7;
+            case "Uva": return 9;
+            case "Morango Selvagem": return 12;
+            case "Figo Seco": return 5;
             case "Madeira": return 6;
             case "Folha": return 4;
             case "Pedra": return 5;
             case "Frutas": return 5;
-            // Pratos da taverna (valor cheio; o vendedor ambulante não os vende, só compra)
-            case "Sopa do Vilarejo": return 6;
+                        case "Sopa do Vilarejo": return 6;
             case "Pão Quente com Manteiga": return 4;
             case "Ovos Mexidos": return 7;
             case "Caldo de Lobo": return 9;
@@ -340,41 +330,38 @@ public class Vendedor {
         }
     }
 
-    // Acesso público ao preço base de um item (usado pelas lojas da vila, ex.: ferreiro)
-    public static int precoBase(String nome) {
+        public static int precoBase(String nome) {
         return precoDeVenda(nome);
     }
 
-    // Preço que o vendedor PAGA ao jogador: TODO item é comprado por 70% do valor
-    // original (o preço de venda da loja para os itens dela; para drops, tesouros e
-    // materiais, o valor cheio de raridade — Osso 23, Dente de Urso 14, etc.).
-    private static int precoDeCompra(String nome) {
-        int valorCheio;
-        switch (nome) {
-            case "Couro": valorCheio = 6; break;
-            case "Dente de Urso": valorCheio = 14; break;
-            case "Pó da Fada": valorCheio = 75; break;
-            case "Osso": valorCheio = 23; break; // preço cheio de raridade
-            case "Carne de Lobo": valorCheio = 10; break;
-            case "Carne de Urso": valorCheio = 18; break;
-            case "Carne de Lobo Cozida": valorCheio = 14; break;
-            case "Carne de Urso Cozida": valorCheio = 24; break;
-            case "Carne Podre": valorCheio = 15; break;
-            case "Coroa do Rei": valorCheio = 1000; break; // fortuna real, só pode ser encontrada 1 vez
-            case "Chifre de Minotauro": valorCheio = 150; break; // troféu do boss do labirinto
-            // Troféus de classe (só podem ser VENDIDOS, nunca comprados)
-            case "Espada do Minotauro": valorCheio = 1250; break;
-            case "Espada Majestral": valorCheio = 700; break;
-            case "Cajado de Sangue": valorCheio = 1500; break;
-            default:
-                int preco = precoDeVenda(nome);
-                valorCheio = preco < 0 ? 1 : preco;
-        }
-        return valorCheio * 70 / 100;
+                private static int precoDeCompra(String nome) {
+        return valorCheio(nome) * 70 / 100;
     }
 
-    // Pratos da taverna da vila (itens compráveis no cardápio e vendáveis depois)
-    public static ItemRpg criarItem(String nome) {
+            private static int valorCheio(String nome) {
+switch (nome) {
+            case "Couro": return 6;
+            case "Dente de Urso": return 14;
+            case "Pó da Fada": return 75;
+            case "Osso": return 23;             case "Carne de Lobo": return 10;
+            case "Carne de Urso": return 18;
+            case "Carne de Lobo Cozida": return 14;
+            case "Carne de Urso Cozida": return 24;
+            case "Carne Podre": return 15;
+            case "Coroa do Rei": return 1000;             case "Chifre de Minotauro": return 150;                         case "Espada do Minotauro": return 1250;
+            case "Espada Majestral": return 700;
+            case "Cajado de Sangue": return 1500;
+            default:
+                int preco = precoDeVenda(nome);
+                return preco < 0 ? 1 : preco;
+        }
+    }
+
+                    public static int precoDeCompraMelhorado(String nome) {
+        return (int) Math.round(valorCheio(nome) * 0.8);
+    }
+
+        public static ItemRpg criarItem(String nome) {
         switch (nome) {
             case "Faca":
                 return new Arma("Faca", "Uma faca afiada que causa 1d4 de dano corpo a corpo, usando Destreza.", "CaC", 4, 1, 1, "Destreza");
@@ -438,6 +425,28 @@ public class Vendedor {
                 return new ItemRpg("Chapéu Mágico", "Um chapéu encantado que aumenta o dano das suas magias em +3.", 1);
             case "Pequeno Grimório":
                 return new ItemRpg("Pequeno Grimório", "Faz as suas magias custarem 1 de mana a menos.", 1);
+            case "Capa do Viajante":
+                return new ItemRpg("Capa do Viajante", "Uma capa grossa de lã para as noites na estrada. Recupera +4 de vida ao dormir.", 1);
+            case "Túnica de Aventureiro":
+                return new ItemRpg("Túnica de Aventureiro", "Túnica reforçada nos ombros e cotovelos. Aumenta em +1 o dano corpo a corpo.", 1);
+            case "Manto do Atirador":
+                return new ItemRpg("Manto do Atirador", "Manto leve com capuz que protege a mira. Aumenta em +1 o dano à distância.", 1);
+            case "Lenço de Seda":
+                return new ItemRpg("Lenço de Seda", "Um lenço macio enrolado no pescoço. Concede +1 de Defesa.", 1);
+            case "Botas de Correio":
+                return new ItemRpg("Botas de Correio", "Botas de sola fina e leve. Concedem +1 em testes de Destreza.", 1);
+            case "Maçã":
+                return new Consumivel("Maçã", "Uma maçã fresca e crocante. Cura 1d3 de vida e conta como comida.", 1);
+            case "Pera":
+                return new Consumivel("Pera", "Uma pera doce e suculenta. Cura 1d2 de vida e restaura 1d3 de mana.", 1);
+            case "Ameixa":
+                return new Consumivel("Ameixa", "Uma ameixa azedinha. Cura 1d2 de vida e cura o enjoo.", 1);
+            case "Uva":
+                return new Consumivel("Uva", "Cachos de uva doces. Restauram 1d4 de mana.", 1);
+            case "Morango Selvagem":
+                return new Consumivel("Morango Selvagem", "Um morango raro e vermelho-vivo. Cura 1d3 de vida.", 1);
+            case "Figo Seco":
+                return new Consumivel("Figo Seco", "Figos secos que sustentam a viagem. Saciam totalmente a fome (não curam vida).", 1);
             case "Madeira":
                 return new ItemRpg("Madeira", "Troncos e galhos fortes para construção.", 1);
             case "Folha":

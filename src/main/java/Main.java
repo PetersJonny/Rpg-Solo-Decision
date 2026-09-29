@@ -10,8 +10,7 @@ import salvamento.GerenciadorSaves;
 public class Main {
     public static void main(String[] args) {
 
-        Teclado.assegurarTerminalSaudavel(); // recupera o terminal (eco) mesmo se a última sessão fechou no modo cru
-        Interface.BarraCarregamento("Carregando jogo...");
+        Teclado.assegurarTerminalSaudavel();         Interface.BarraCarregamento("Carregando jogo...");
         Interface.ExibirBoasVindas();
 
         boolean jogoAberto = true;
@@ -25,8 +24,7 @@ public class Main {
             }
 
             if (escolhaInicial == 3) {
-                // ==================== APAGAR SAVE ====================
-                if (GerenciadorSaves.quantidadeSaves() == 0) {
+                                if (GerenciadorSaves.quantidadeSaves() == 0) {
                     Interface.ExibirErro("Você ainda não possui nenhum save para apagar.");
                     Interface.Pausa(1500);
                     continue;
@@ -36,15 +34,13 @@ public class Main {
             }
 
             if (escolhaInicial == 2) {
-                // ==================== CARREGAR JOGO ====================
-                int slot = MenuSalvamento.MenuCarregarJogo();
+                                int slot = MenuSalvamento.MenuCarregarJogo();
                 if (slot == -2) {
                     Interface.ExibirErro("Você ainda não possui nenhum save! Comece um Novo Jogo.");
                     Interface.Pausa(1500);
                     continue;
                 }
-                if (slot == -1) continue; // voltou ao menu principal
-
+                if (slot == -1) continue;
                 FichaRpg ficha = GerenciadorSaves.carregar(slot);
                 if (ficha == null) {
                     Interface.ExibirErro("Não foi possível carregar esse save.");
@@ -63,12 +59,10 @@ public class Main {
                 continue;
             }
 
-            // ==================== NOVO JOGO ====================
-            String nomePessoa = Interface.PedirNomeJogador();
+                        String nomePessoa = Interface.PedirNomeJogador();
             FichaRpg ficha = new FichaRpg(nomePessoa);
 
-            // Fase de Criação de Personagem
-            boolean criandoFicha = true;
+                        boolean criandoFicha = true;
 
             while (criandoFicha) {
                 int escolhaInterface = MenuCriacaoPersonagem.MenuCriacaoFicha();
@@ -199,8 +193,7 @@ public class Main {
 
             Interface.MostrarMensagem("\nA criação da ficha foi finalizada com sucesso!");
 
-            // O prólogo começa assim que a ficha é finalizada
-            narrativa.Aventura.IniciarPrologo(ficha);
+                        narrativa.Aventura.IniciarPrologo(ficha);
 
             if (jogarPartida(ficha)) {
                 jogoAberto = false;
@@ -208,9 +201,7 @@ public class Main {
         }
     }
 
-    // Loop da aventura. Retorna true se o jogador encerrou o jogo de vez
-    // (voltando ao menu principal quando o personagem falece, por exemplo).
-    public static boolean jogarPartida(FichaRpg ficha) {
+            public static boolean jogarPartida(FichaRpg ficha) {
         boolean jogando = true;
         boolean personagemFaleceu = false;
         boolean encerrouJogo = false;
@@ -219,7 +210,7 @@ public class Main {
             int[] ops = Interface.opcoesMenuFloresta(ficha);
 
             if (ficha.isNoVilarejo()) {
-                // ==================== VILAREJO (fora da floresta) ====================
+                                int[] opsVila = Interface.opcoesMenuVilarejo(ficha);
                 int escolhaVilarejo = Interface.MenuVilarejo(ficha);
 
                 if (escolhaVilarejo == 1) {
@@ -236,16 +227,25 @@ public class Main {
                     if (ficha.getVidaPersonagem() <= 0) {
                         personagemFaleceu = true;
                     }
-                } else if (escolhaVilarejo == 5) {
+                } else if (escolhaVilarejo == opsVila[0]) {
                     missoes.QuadroDeMissoes.MissoesEmAndamento(ficha);
-                } else if (escolhaVilarejo == 6) {
+                } else if (opsVila[1] > 0 && escolhaVilarejo == opsVila[1]) {
+                    eventos.Alfaiataria.Alfaiataria(ficha);
+                } else if (opsVila[2] > 0 && escolhaVilarejo == opsVila[2]) {
+                    eventos.BarracaDeFrutas.BarracaDeFrutas(ficha);
+                } else if (opsVila[3] > 0 && escolhaVilarejo == opsVila[3]) {
+                    eventos.Caverna.IrParaCaverna(ficha);
+                    if (ficha.getVidaPersonagem() <= 0) {
+                        personagemFaleceu = true;
+                    }
+                } else if (escolhaVilarejo == opsVila[4]) {
                     eventos.TravessiaDaFloresta.VoltarParaFloresta(ficha);
                     if (ficha.getVidaPersonagem() <= 0) {
                         personagemFaleceu = true;
                     }
-                } else if (escolhaVilarejo == 7) {
+                } else if (escolhaVilarejo == opsVila[5]) {
                     salvarJogo(ficha);
-                } else if (escolhaVilarejo == 8) {
+                } else if (escolhaVilarejo == opsVila[6]) {
                     encerrarJogo(ficha);
                     jogando = false;
                     encerrouJogo = true;
@@ -253,8 +253,7 @@ public class Main {
                     Interface.ExibirErro("Opção inválida!");
                 }
             } else {
-                // ==================== FLORESTA DE FREIJORD ====================
-                int escolhaAventura = Interface.MenuPrincipalAventura(ficha);
+                                int escolhaAventura = Interface.MenuPrincipalAventura(ficha);
 
                 if (escolhaAventura == 1) {
                     abrirFicha(ficha);
@@ -324,8 +323,7 @@ public class Main {
         return encerrouJogo;
     }
 
-    // Fluxo de "Ver ficha": mostra a ficha e permite navegar pelas suas telas
-    private static void abrirFicha(FichaRpg ficha) {
+        private static void abrirFicha(FichaRpg ficha) {
         MenuVisualizacao.MostrarFicha(ficha);
         boolean naFicha = true;
         while (naFicha) {
@@ -342,11 +340,9 @@ public class Main {
         }
     }
 
-    // Fluxo de "Salvar Jogo": escolhe o slot e salva
-    private static void salvarJogo(FichaRpg ficha) {
+        private static void salvarJogo(FichaRpg ficha) {
         int slot = MenuSalvamento.MenuSalvarJogo(ficha);
-        if (slot == -1) return; // voltou
-
+        if (slot == -1) return;
         if (GerenciadorSaves.salvar(ficha, slot)) {
             ficha.setSlotAtual(slot);
             Interface.MostrarMensagem("\nJogo salvo com sucesso no slot " + slot + "!");
@@ -356,8 +352,7 @@ public class Main {
         Interface.Pausa(1500);
     }
 
-    // Fluxo de sair: pergunta se quer salvar e encerra o jogo
-    private static void encerrarJogo(FichaRpg ficha) {
+        private static void encerrarJogo(FichaRpg ficha) {
         if (MenuSalvamento.PerguntarSalvarAntesDeSair()) {
             salvarJogo(ficha);
         }

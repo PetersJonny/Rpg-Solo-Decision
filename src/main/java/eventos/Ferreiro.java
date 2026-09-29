@@ -6,16 +6,12 @@ import java.util.List;
 import java.util.Random;
 
 import fichas.FichaRpg;
+import itens.Arma;
 import itens.Armadura;
 import itens.ItemRpg;
 import loja.Vendedor;
 import telas.Interface;
 
-// Ferreiro da vila: um dracônico enorme e parrudo. Vende armas e armaduras,
-// girando 5 itens (e só itens de arma/armadura) a cada dia. Itens restritos a
-// uma classe aparecem para todo mundo, mas só a classe certa consegue comprar.
-// Também aceita encomendas sob medida: qualquer arma/armadura vendável por +20%
-// do preço, pronta após 1 dia completo (voltar para retirar).
 public class Ferreiro {
 
     private static final String RESET = Interface.RESET;
@@ -24,8 +20,7 @@ public class Ferreiro {
     private static final String AMARELO = Interface.AMARELO;
     private static final String VERMELHO = Interface.VERMELHO;
 
-    // Tudo o que o ferreiro pode vender/encomendar: armas e armaduras do jogo.
-    private static final List<String> ACERVO = List.of(
+        private static final List<String> ACERVO = List.of(
             "Faca", "Machado", "Machadinha", "Martelo", "Mangual", "Arco", "Lança", "Espada",
             "Espada Pesada", "Machado de Guerra", "Martelo de Guerra", "Armadura Pesada",
             "Bisturi", "Arco Refinado", "Nunchako", "Foice",
@@ -34,9 +29,7 @@ public class Ferreiro {
 
     private static final int ITENS_POR_DIA = 5;
 
-    // Classe que pode usar o item ("" = qualquer classe).
-    // Guerreiro: pesada; Mago: cajado; Healer: ágil; o resto é geral.
-    private static String classeRestrita(String nome) {
+            private static String classeRestrita(String nome) {
         switch (nome) {
             case "Espada Pesada":
             case "Machado de Guerra":
@@ -55,10 +48,7 @@ public class Ferreiro {
         }
     }
 
-    // O estoque do dia é sorteado de forma determinística pelo dia atual: o mesmo
-    // dia sempre mostra os MESMOS 5 itens (e itens já de classes variadas sempre
-    // aparecem para qualquer um ver).
-    private static List<String> estoqueDoDia(FichaRpg ficha) {
+                private static List<String> estoqueDoDia(FichaRpg ficha) {
         List<String> pool = new ArrayList<>(ACERVO);
         Collections.shuffle(pool, new Random(ficha.getDiaAtual() * 7919L + 31));
         return pool.subList(0, Math.min(ITENS_POR_DIA, pool.size()));
@@ -89,20 +79,33 @@ public class Ferreiro {
             }
             Interface.MostrarMensagem("  (O estoque da forja muda a cada dia: hoje são 5 itens por conta do dia de hoje.)");
 
+            boolean podePerguntar = Alfaiataria.podePerguntarOndeFica(ficha);
+
             System.out.println("\n  O que você deseja fazer?\n");
             System.out.println("  1. Comprar do estoque do dia");
             System.out.println("  2. Encomendar uma arma/armadura sob medida");
-            System.out.println("  3. Retirar encomenda");
-            System.out.println("  4. Sair");
+            System.out.println("  3. Vender armas e armaduras");
+            System.out.println("  4. Retirar encomenda");
+            int opPerguntar = -1, opSair = 5;
+            if (podePerguntar) {
+                opPerguntar = 5;
+                System.out.println("  5. Perguntar onde fica a alfaiataria");
+                opSair = 6;
+            }
+            System.out.println("  " + opSair + ". Sair");
             System.out.println("\n  " + VERDE + "Digite a opção:" + RESET);
 
-            int escolha = Interface.lerOpcao(1, 4);
+            int escolha = Interface.lerOpcao(1, opSair);
             if (escolha == 1) {
                 ComprarDoEstoque(ficha, estoqueDoDia(ficha));
             } else if (escolha == 2) {
                 Encomendar(ficha);
             } else if (escolha == 3) {
+                Vender(ficha);
+            } else if (escolha == 4) {
                 RetirarEncomenda(ficha);
+            } else if (escolha == opPerguntar) {
+                Alfaiataria.PerguntarOndeFica(ficha, VERMELHO + "Gorak Vieira" + RESET);
             } else {
                 Interface.MostrarMensagem("\nVocê se despede do ferreiro, que volta ao seu trabalho no braseiro.");
                 Interface.Pausa(1500);
@@ -111,9 +114,7 @@ public class Ferreiro {
         }
     }
 
-    // Compra direto do estoque do dia. Itens de classe aparecem para todos, mas só
-    // a classe correspondente pode comprá-los.
-    private static void ComprarDoEstoque(FichaRpg ficha, List<String> estoque) {
+            private static void ComprarDoEstoque(FichaRpg ficha, List<String> estoque) {
         while (true) {
             Interface.cabecalhoMenu("COMPRAR DO FERREIRO");
             Interface.MostrarMensagem("\n  Seu ouro: " + AMARELO + ficha.getOuro() + RESET + "\n");
@@ -172,8 +173,7 @@ public class Ferreiro {
         }
     }
 
-    // Encomenda sob medida: +20% do preço original, pronta em 1 dia completo.
-    private static void Encomendar(FichaRpg ficha) {
+        private static void Encomendar(FichaRpg ficha) {
         if (ficha.isOrdemDoFerreiroPendente()) {
             Interface.ExibirErro("O ferreiro já está forjando sua encomenda anterior (" + ficha.getFerreiroOrdemItem() + "). Espere ficar pronta antes de pedir outra.");
             Interface.Pausa(1500);
@@ -231,8 +231,7 @@ public class Ferreiro {
         Interface.Pausa(2000);
     }
 
-    // Retirar a encomenda quando o dia seguinte (ou posterior) chegar.
-    private static void RetirarEncomenda(FichaRpg ficha) {
+        private static void RetirarEncomenda(FichaRpg ficha) {
         if (!ficha.isOrdemDoFerreiroPendente()) {
             Interface.MostrarMensagem("\nVocê não tem nenhuma encomenda no ferreiro.");
             Interface.Pausa(1500);
@@ -266,8 +265,59 @@ public class Ferreiro {
         comprarItemEfetivo(ficha, nome, "Sua encomenda de " + nome + " está pronta e você a retirou!");
     }
 
-    // Entrega o item comprado/retirado (equipa armadura automaticamente, como na loja).
-    private static void comprarItemEfetivo(FichaRpg ficha, String nome, String mensagem) {
+        private static void Vender(FichaRpg ficha) {
+        List<ItemRpg> vendaveis = new ArrayList<>();
+        for (ItemRpg item : ficha.getInventario()) {
+            if (item.getQuantidade() > 0
+                    && (item instanceof Arma || item instanceof Armadura)) {
+                vendaveis.add(item);
+            }
+        }
+
+        if (vendaveis.isEmpty()) {
+            Interface.MostrarMensagem("\n\"Traz umas armas velhas ou armaduras sobrantes que eu compro num bom preço.\", diz Gorak, martelando o aço.");
+            Interface.Pausa(2000);
+            return;
+        }
+
+        while (true) {
+            Interface.cabecalhoMenu("VENDER AO FERREIRO");
+            Interface.MostrarMensagem("\n  Seu ouro: " + AMARELO + ficha.getOuro() + RESET);
+            Interface.MostrarMensagem("  O ferreiro paga 80% do valor de cada arma e armadura.\n");
+
+            for (int i = 0; i < vendaveis.size(); i++) {
+                ItemRpg item = vendaveis.get(i);
+                int preco = Vendedor.precoDeCompraMelhorado(item.getNome());
+                System.out.println("  " + (i + 1) + ". " + item.getNome() + " (x" + item.getQuantidade() + ") - " + preco + " ouro/un.");
+            }
+            System.out.println("\n  " + VERDE + "0. Voltar" + RESET);
+
+            System.out.println("\n  Escolha um item para vender:");
+            int escolha = Interface.lerOpcao(0, vendaveis.size());
+            if (escolha == 0) return;
+
+            ItemRpg item = vendaveis.get(escolha - 1);
+            int quantidade = item.getQuantidade();
+            if (quantidade > 1) {
+                System.out.println("  Quantidade para vender (1 a " + quantidade + "): ");
+                int qtd = Interface.lerInteiro();
+                if (qtd < 1 || qtd > quantidade) {
+                    Interface.ExibirErro("Quantidade inválida!");
+                    continue;
+                }
+                quantidade = qtd;
+            }
+
+            int preco = Vendedor.precoDeCompraMelhorado(item.getNome());
+            int total = preco * quantidade;
+            ficha.adicionarOuro(total);
+            ficha.removerItem(item.getNome(), quantidade);
+            Interface.MostrarMensagem("\nVocê vendeu " + quantidade + "x " + item.getNome() + " por " + total + " ouro.");
+            Interface.Pausa(1800);
+        }
+    }
+
+        private static void comprarItemEfetivo(FichaRpg ficha, String nome, String mensagem) {
         ItemRpg item = Vendedor.criarItem(nome);
         if (item instanceof Armadura) {
             int bonusAtual = ficha.getArmaduraEquipada() != null ? ficha.getArmaduraEquipada().getBonusDefesa() : 0;

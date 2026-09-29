@@ -6,11 +6,6 @@ import loja.Vendedor;
 import missoes.QuadroDeMissoes;
 import telas.Interface;
 
-// A taverna da vila: um estabelecimento rústico com mesas de madeira, um dono
-// dracônico de pele vermelha e um quadro de missões na parede. Primeiro o bando
-// de goblins precisa ser resolvido (VilarejoDeScarbor.CenaDosGoblins); depois o
-// dono agradece (com 30 moedas e, se o jogador estiver faminto, a "primeira
-// comida é por conta da casa").
 public class Taverna {
 
     private static final String RESET = Interface.RESET;
@@ -53,8 +48,7 @@ public class Taverna {
         MenuTaverna(ficha);
     }
 
-    // Recompensa e reconhecimento do dono (uma vez só)
-    private static void CenaDoDono(FichaRpg ficha) {
+        private static void CenaDoDono(FichaRpg ficha) {
         Interface.MostrarMensagem("\nO dracônico de pele vermelha vira para você e um largo sorriso surge em seu rosto escamado.");
         Interface.Pausa(1800);
         Interface.MostrarMensagem("Ele se recompõe, encosta ambas as mãos no balcão e fala, com um ar de apresentação: " + CIANO + "\"Draven Moreau. Dono desta casa.\"" + RESET + " Que ela nunca mais caia em mãos erradas.");
@@ -92,8 +86,7 @@ public class Taverna {
             }
         }
 
-        // Se estiver faminto, o dono oferece a primeira comida por conta da casa
-        if (ficha.isComidaPorContaDaCasa()) {
+                if (ficha.isComidaPorContaDaCasa()) {
             Interface.MostrarMensagem("\"E, já que está aqui: quando precisar comer, a primeira comida é por conta da casa.\"");
             Interface.Pausa(1800);
         } else if (ficha.getDiasSemComer() >= 1) {
@@ -115,17 +108,27 @@ public class Taverna {
                 Interface.MostrarMensagem("  " + VERDE + "(A primeira comida é por conta da casa!)" + RESET);
             }
 
+            boolean podePerguntar = Alfaiataria.podePerguntarOndeFica(ficha);
+
             System.out.println("\n  O que você deseja fazer?\n");
             System.out.println("  1. " + CIANO + "Comer" + RESET + " (do cardápio da taverna)");
             System.out.println("  2. " + CIANO + "Ler o quadro de missões" + RESET + " na parede");
-            System.out.println("  3. " + VERMELHO + "Sair da taverna" + RESET);
+            int opPerguntar = -1, opSair = 3;
+            if (podePerguntar) {
+                opPerguntar = 3;
+                System.out.println("  3. " + CIANO + "Perguntar onde fica a alfaiataria" + RESET);
+                opSair = 4;
+            }
+            System.out.println("  " + VERMELHO + opSair + ". Sair da taverna" + RESET);
             System.out.println("\n  " + VERDE + "Digite a opção:" + RESET);
-            int escolha = Interface.lerOpcao(1, 3);
+            int escolha = Interface.lerOpcao(1, opSair);
 
             if (escolha == 1) {
                 Comer(ficha);
             } else if (escolha == 2) {
                 QuadroDeMissoes.QuadroDeMissoes(ficha);
+            } else if (escolha == opPerguntar) {
+                Alfaiataria.PerguntarOndeFica(ficha, VERMELHO + "Draven" + RESET);
             } else {
                 Interface.MostrarMensagem("\nVocê se levanta e sai da taverna, deixando o dracônico limpando seus copos.");
                 Interface.Pausa(1500);
@@ -134,8 +137,7 @@ public class Taverna {
         }
     }
 
-    // Cardápio da taverna: cada prato vira um item consumível na mochila.
-    private static void Comer(FichaRpg ficha) {
+        private static void Comer(FichaRpg ficha) {
         while (true) {
             Interface.cabecalhoMenu("COMER NA TAVERNA");
             Interface.MostrarMensagem("\n  Seu ouro: " + AMARELO + ficha.getOuro() + RESET + " moedas.\n");

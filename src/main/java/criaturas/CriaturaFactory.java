@@ -11,19 +11,16 @@ public class CriaturaFactory {
         int quantidade;
 
         switch (tipo) {
-            case 1: { // Lobo Selvagem: de dia 1-2, de noite 1-4
-                quantidade = deNoite ? MecanicasRpg.rolarEntre(1, 4) : MecanicasRpg.rolarEntre(1, 2);
+            case 1: {                 quantidade = deNoite ? MecanicasRpg.rolarEntre(1, 4) : MecanicasRpg.rolarEntre(1, 2);
                 for (int i = 0; i < quantidade; i++) {
                     grupo.add(criarLobo());
                 }
                 break;
             }
-            case 2: { // Urso: 1
-                grupo.add(criarUrso());
+            case 2: {                 grupo.add(criarUrso());
                 break;
             }
-            default: { // Bandido: de dia 1-3, de noite 1-5
-                quantidade = deNoite ? MecanicasRpg.rolarEntre(1, 5) : MecanicasRpg.rolarEntre(1, 3);
+            default: {                 quantidade = deNoite ? MecanicasRpg.rolarEntre(1, 5) : MecanicasRpg.rolarEntre(1, 3);
                 for (int i = 0; i < quantidade; i++) {
                     grupo.add(criarBandido());
                 }
@@ -59,10 +56,7 @@ public class CriaturaFactory {
         return c;
     }
 
-    // Goblin: assaltante das tavernas. Nível 3, pequeno e ágil; presença +2.
-    // Toque de Midas: habilidade ATIVA. Gasta uma ação para ativá-la e, no turno
-    // seguinte, ataca com +3 para acertar (só funciona se o jogador tiver ouro).
-    public static Criatura criarGoblin() {
+                public static Criatura criarGoblin() {
         Criatura c = new Criatura("Goblin", 3, 15, 12, 3);
         c.setBonusAcerto(2);
         c.setTestePresenca(2);
@@ -98,18 +92,13 @@ public class CriaturaFactory {
         return c;
     }
 
-    // ==================== CRIATURAS DO LABIRINTO ====================
-
-    // Esqueleto: arqueiro veloz. O Ataque de Ossos (1d4) pode se repetir: 80% de um
-    // segundo ataque e, se repetir, 33% de um terceiro — cada um é um ataque novo.
-    public static Criatura criarEsqueleto() {
+            public static Criatura criarEsqueleto() {
         Criatura c = new Criatura("Esqueleto", 2, 12, 12, 4);
         c.setBonusAcerto(2);
         c.setDcFuga(15);
         c.setMortoVivo(true);
         c.setXpGanho(40);
-        c.adicionarAtaque("Arco", "", 1, 6); // mesmo dano do Arco do jogo (1d6)
-        c.adicionarAtaque("Ataque de Ossos", "", 1, 4);
+        c.adicionarAtaque("Arco", "", 1, 6);         c.adicionarAtaque("Ataque de Ossos", "", 1, 4);
         c.configurarAtaqueEncadeado("Ataque de Ossos", 80, 33);
         c.adicionarDrop("Osso", 1, 3, 30);
         c.adicionarDrop("Arco", 1, 1, 10);
@@ -117,9 +106,7 @@ public class CriaturaFactory {
         return c;
     }
 
-    // Zumbi: resistente e lento. A Mordida (1d6) tem 30% de chance de infectar,
-    // causando 1d4 de dano por rodada enquanto o combate durar.
-    public static Criatura criarZumbi() {
+            public static Criatura criarZumbi() {
         Criatura c = new Criatura("Zumbi", 2, 18, 10, 2);
         c.setBonusAcerto(3);
         c.setDcFuga(10);
@@ -131,8 +118,7 @@ public class CriaturaFactory {
         return c;
     }
 
-    // Baú Monstruoso: armadilha viva dentro dos baús do labirinto.
-    public static Criatura criarBauMonstruoso() {
+        public static Criatura criarBauMonstruoso() {
         Criatura c = new Criatura("Baú Monstruoso", 3, 25, 10, 4);
         c.setBonusAcerto(4);
         c.setDcFuga(12);
@@ -142,12 +128,7 @@ public class CriaturaFactory {
         return c;
     }
 
-    // Minotauro: o guardião do coração do labirinto. Nível 5, sem possibilidade de
-    // fuga (a porta se fecha). Tem 20% de chance de INVESTIR: teste de Destreza do
-    // jogador contra o teste de ataque dele — passou, ele colide na parede e toma 25;
-    // falhou, o jogador toma 2d10. Ao morrer, cai o Chifre de Minotauro (50% 1-2,
-    // 100g cada) e a recompensa exclusiva da classe do jogador.
-    public static Criatura criarMinotauro() {
+                        public static Criatura criarMinotauro() {
         Criatura c = new Criatura("Minotauro", 5, 150, 15, 5);
         c.setBonusAcerto(4);
         c.setDcFuga(25);

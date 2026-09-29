@@ -24,13 +24,12 @@ public class ItemRpg implements java.io.Serializable {
     public double getPeso() { return peso; }
     public void setPeso(double peso) { this.peso = peso; }
 
-    // Categorias de peso por unidade: materiais e flechas 0.1, poções normais e
-    // kits 0.3, poções grandes 0.6, armas e itens normais 1, itens pesados 2.
-    private static double pesoPadraoDoNome(String nome) {
+            private static double pesoPadraoDoNome(String nome) {
         switch (nome) {
             case "Couro", "Dente de Urso", "Pó da Fada", "Osso", "Carne Podre",
                  "Carne de Lobo", "Carne de Urso", "Carne de Lobo Cozida", "Carne de Urso Cozida",
-                 "Flechas", "Madeira", "Folha", "Pedra", "Frutas", "Chifre de Minotauro":
+                 "Flechas", "Madeira", "Folha", "Pedra", "Frutas", "Chifre de Minotauro",
+                 "Maçã", "Pera", "Ameixa", "Uva", "Morango Selvagem", "Figo Seco":
                 return 0.1;
             case "Poção de Mana", "Kit Médico":
                 return 0.3;

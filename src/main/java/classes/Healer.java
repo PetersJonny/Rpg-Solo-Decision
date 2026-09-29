@@ -5,18 +5,16 @@ import itens.Arma;
 import itens.Consumivel;
 
 public class Healer extends ClasseRpg {
-    
+
     public Healer() {
         this.nome = "Healer";
         this.armaPrincipal = new Arma("Bisturi", "Um bisturi afiado e rápido, perfeito para cortes precisos. Causa 1d4 de dano.", "CaC", 4, 1, 1, "Ágil", true);
         this.itensIniciais.add(this.armaPrincipal);
         this.itensIniciais.add(new Consumivel("Kit Médico", "Pode ser usado para curar 1d4 de vida e acaba com uma infecção. Possui 5 usos.", 5));
-        
-        // Habilidade Base
-        this.habilidadesIniciais.add(new habilidades.Habilidade("Conhecimento Avançado", "Permite rerrolar um resultado falho em testes de atributos.", 2));
-        
-        // Habilidades por nível
-        this.habilidadesPorNivel.put(3, java.util.List.of(
+
+                this.habilidadesIniciais.add(new habilidades.Habilidade("Conhecimento Avançado", "Permite rerrolar um resultado falho em testes de atributos.", 2));
+
+                this.habilidadesPorNivel.put(3, java.util.List.of(
             new habilidades.Habilidade("Cura Reforçada", "Ao usar o Kit Médico, você pode gastar 1 de mana para curar 2d4 de vida extra.", 1)
         ));
         this.habilidadesPorNivel.put(5, java.util.List.of(

@@ -11,8 +11,6 @@ import static telas.Interface.*;
 
 public class MenuVisualizacao {
 
-
-
     public static void InspecionarInventario(FichaRpg ficha) {
         while (true) {
             if (ficha.getInventario().isEmpty()) {
@@ -65,8 +63,7 @@ public class MenuVisualizacao {
                     ExibirErro("Sua mana já está no máximo!");
                     cheio = true;
                 }
-                // Comida pode ser comida mesmo com vida cheia, pois resetam a fome.
-                if (!cheio) {
+                                if (!cheio) {
                     int quantidade = 1;
                     if (itemEscolhido.getQuantidade() > 1) {
                         System.out.println("  Quantidade para usar (1 a " + itemEscolhido.getQuantidade() + "): ");
@@ -82,8 +79,6 @@ public class MenuVisualizacao {
             }
         }
     }
-
-
 
     public static void InspecionarHabilidades(FichaRpg ficha) {
         if (ficha.getHabilidades().isEmpty()) {
@@ -111,15 +106,12 @@ public class MenuVisualizacao {
         }
     }
 
-
-
     public static void MostrarFicha(FichaRpg ficha) {
         cabecalhoMenu("FICHA DO PERSONAGEM");
         ClasseRpg classe = ficha.getClasseDoPersonagem();
         String nomeDaClasse = (classe != null) ? classe.getNome() : "Nenhuma";
 
-        // Lista todas as armas do inventário na seção de Combate
-        StringBuilder combate = new StringBuilder();
+                StringBuilder combate = new StringBuilder();
         for (ItemRpg item : ficha.getInventario()) {
             if (item instanceof itens.Arma) {
                 itens.Arma arma = (itens.Arma) item;
@@ -131,8 +123,7 @@ public class MenuVisualizacao {
             }
         }
 
-        // Ataque desarmado
-        String socoNome = "Soco";
+                String socoNome = "Soco";
         String socoTipo = "-";
         int socoQtdDano = 0;
         int socoDado = 0;
@@ -209,7 +200,6 @@ public class MenuVisualizacao {
 
         System.out.println("\n" + CIANO + "==========================================================================================" + RESET);
     }
-
 
     public static int MenuFicha() {
         System.out.println("\n");

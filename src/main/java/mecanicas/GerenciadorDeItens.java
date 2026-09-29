@@ -14,18 +14,14 @@ import comandos.*;
 import itens.Consumivel;
 import telas.Interface;
 
-
 import static mecanicas.MotorDeCombate.*;
 
 public class GerenciadorDeItens {
-
-
 
     public static boolean ehItemConsumivel(ItemRpg item) {
         if (!(item instanceof Consumivel)) return false;
         return !item.getNome().equals("Flechas");
     }
-
 
     public static boolean usarItemForaDeCombate(FichaRpg ficha, ItemRpg item, int quantidade) {
         if (item == null || !ehItemConsumivel(item)) return false;
@@ -41,6 +37,64 @@ public class GerenciadorDeItens {
                 int curaReal = ficha.getVidaPersonagem() - antes;
                 ficha.comerFrutas(qtd);
                 Interface.MostrarMensagem("Você comeu " + qtd + "x Frutas e recuperou " + curaReal + " de vida! Vida: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima());
+                break;
+            }
+            case "Maçã": {
+                int cura = 0;
+                for (int i = 0; i < qtd; i++) cura += MecanicasRpg.rolarDado(3);
+                int antes = ficha.getVidaPersonagem();
+                ficha.setVidaPersonagem(Math.min(ficha.getVidaPersonagem() + cura, ficha.getVidaMaxima()));
+                int curaReal = ficha.getVidaPersonagem() - antes;
+                ficha.comerFrutas(qtd);
+                Interface.MostrarMensagem("Você comeu " + qtd + "x Maçã e recuperou " + curaReal + " de vida! Vida: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima());
+                break;
+            }
+            case "Pera": {
+                int cura = 0, mana = 0;
+                for (int i = 0; i < qtd; i++) {
+                    cura += MecanicasRpg.rolarDado(2);
+                    mana += MecanicasRpg.rolarDado(3);
+                }
+                int antes = ficha.getVidaPersonagem();
+                ficha.setVidaPersonagem(Math.min(ficha.getVidaPersonagem() + cura, ficha.getVidaMaxima()));
+                int antesMana = ficha.getManaPersonagem();
+                ficha.setManaPersonagem(Math.min(ficha.getManaPersonagem() + mana, ficha.getManaMaxima()));
+                ficha.comerFrutas(qtd);
+                Interface.MostrarMensagem("Você comeu " + qtd + "x Pera: +" + (ficha.getVidaPersonagem() - antes) + " de vida e +" + (ficha.getManaPersonagem() - antesMana) + " de mana! Vida: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima() + " | Mana: " + ficha.getManaPersonagem() + "/" + ficha.getManaMaxima());
+                break;
+            }
+            case "Ameixa": {
+                int cura = 0;
+                for (int i = 0; i < qtd; i++) cura += MecanicasRpg.rolarDado(2);
+                int antes = ficha.getVidaPersonagem();
+                ficha.setVidaPersonagem(Math.min(ficha.getVidaPersonagem() + cura, ficha.getVidaMaxima()));
+                int curaReal = ficha.getVidaPersonagem() - antes;
+                ficha.comerFrutas(qtd);
+                ficha.curarEnjoo();
+                Interface.MostrarMensagem("Você comeu " + qtd + "x Ameixa e recuperou " + curaReal + " de vida" + (ficha.isEnjoado() ? "" : " e curou o enjoo") + "! Vida: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima());
+                break;
+            }
+            case "Uva": {
+                int mana = 0;
+                for (int i = 0; i < qtd; i++) mana += MecanicasRpg.rolarDado(4);
+                int antes = ficha.getManaPersonagem();
+                ficha.setManaPersonagem(Math.min(ficha.getManaPersonagem() + mana, ficha.getManaMaxima()));
+                ficha.comerFrutas(qtd);
+                Interface.MostrarMensagem("Você comeu " + qtd + "x Uva e recuperou " + (ficha.getManaPersonagem() - antes) + " de mana! Mana: " + ficha.getManaPersonagem() + "/" + ficha.getManaMaxima());
+                break;
+            }
+            case "Morango Selvagem": {
+                int cura = 0;
+                for (int i = 0; i < qtd; i++) cura += MecanicasRpg.rolarDado(3);
+                int antes = ficha.getVidaPersonagem();
+                ficha.setVidaPersonagem(Math.min(ficha.getVidaPersonagem() + cura, ficha.getVidaMaxima()));
+                ficha.comerFrutas(qtd);
+                Interface.MostrarMensagem("Você comeu " + qtd + "x Morango Selvagem e recuperou " + (ficha.getVidaPersonagem() - antes) + " de vida! Vida: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima());
+                break;
+            }
+            case "Figo Seco": {
+                ficha.comerComidaBoa();
+                Interface.MostrarMensagem("Você comeu " + qtd + "x Figo Seco. Não cura vida, mas sua fome foi totalmente saciada.");
                 break;
             }
             case "Carne de Lobo": {
@@ -107,8 +161,7 @@ public class GerenciadorDeItens {
                 ficha.comerCarnePodre();
                 break;
             }
-            // Pratos da taverna da vila: refeições que saciam a fome (Hidromel só mana)
-            case "Sopa do Vilarejo": {
+                        case "Sopa do Vilarejo": {
                 int cura = 0;
                 for (int i = 0; i < qtd; i++) cura += MecanicasRpg.rolarDado(2);
                 int antes = ficha.getVidaPersonagem();
@@ -217,7 +270,6 @@ public class GerenciadorDeItens {
         return true;
     }
 
-
     public static int escolherItemParaUsar(FichaRpg ficha) {
         while (true) {
             Interface.cabecalhoMenu("SUA MOCHILA");
@@ -305,8 +357,6 @@ public class GerenciadorDeItens {
                         Interface.Pausa(1500);
                         continue;
                     }
-                    // Comida (frutas e carnes) pode ser comida mesmo com vida cheia,
-                    // pois resetam a fome.
 
                     System.out.println("\nDeseja usar este item? (Usará sua ação quando chegar sua vez)");
                     System.out.println("1. Sim");
@@ -323,7 +373,6 @@ public class GerenciadorDeItens {
             }
         }
     }
-
 
     public static void usarItemNaVez(FichaRpg ficha, int itemIndex) {
         if (itemIndex < 0 || itemIndex >= ficha.getInventario().size()) return;
@@ -413,9 +462,7 @@ public class GerenciadorDeItens {
             ficha.setManaPersonagem(Math.min(ficha.getManaPersonagem() + cura, ficha.getManaMaxima()));
             Interface.MostrarMensagem("Você bebeu Hidromel e recuperou " + cura + " de mana! Mana atual: " + ficha.getManaPersonagem() + "/" + ficha.getManaMaxima());
         } else if (itemEscolhido.getNome().equals("Kit Médico")) {
-            // Pode usar o Kit em si ou no companheiro (se estiver ferido);
-            // com vida cheia, ainda pode usar em você mesmo para curar uma infecção
-            companheiros.Companheiro comp = ficha.getCompanheiro();
+                                    companheiros.Companheiro comp = ficha.getCompanheiro();
             boolean podeUsarEmSi = ficha.getVidaPersonagem() < ficha.getVidaMaxima() || ficha.isInfectado();
             boolean podeUsarCompanheiro = comp != null && comp.getFicha().getVidaPersonagem() < comp.getFicha().getVidaMaxima();
 

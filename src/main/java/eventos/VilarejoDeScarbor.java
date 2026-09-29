@@ -17,9 +17,7 @@ public class VilarejoDeScarbor {
     private static final String AMARELO = Interface.AMARELO;
     private static final String VERMELHO = Interface.VERMELHO;
 
-    // Cena de chegada à cidade: uma vila dominada por dracônicos, onde todos seguem
-    // seus afazeres normalmente, e ao longe uma taverna em plena confusão.
-    public static void ObservarCidade(FichaRpg ficha) {
+            public static void ObservarCidade(FichaRpg ficha) {
         Interface.MostrarMensagem("\nVocê atravessa a entrada e é recebido por uma visão que o faz parar no meio do caminho.");
         Interface.Pausa(2000);
 
@@ -53,20 +51,14 @@ public class VilarejoDeScarbor {
         }
     }
 
-    // Por enquanto o vilarejo ainda não tem conteúdo: olhar em volta é só um passeio
-    // pelos arredores, sem nenhum acontecimento.
-    public static void OlharEmVolta(FichaRpg ficha) {
+            public static void OlharEmVolta(FichaRpg ficha) {
         Interface.cabecalhoMenu("OLHAR EM VOLTA");
         Interface.MostrarMensagem("\nVocê percorre as ruas do " + CIANO + ficha.getCidadeAtual() + RESET + ", observando as casas e as pessoas.");
         Interface.MostrarMensagem("Tudo parece tranquilo e pacato por aqui. Ainda não há nada de interessante para descobrir no vilarejo.");
         Interface.Pausa(2500);
     }
 
-    // ==================== TAVERNA DOS GOBLINS ====================
-
-    // Envolve o combate com os goblins: se o jogador sobreviver e nenhum goblin
-    // ficar de pé, a taverna fica livre (goblinsResolvido = true).
-    private static void combateGoblins(FichaRpg ficha, List<Criatura> goblins, boolean furtivo) {
+            private static void combateGoblins(FichaRpg ficha, List<Criatura> goblins, boolean furtivo) {
         MotorDeCombate.IniciarCombate(ficha, goblins, furtivo);
         if (ficha.getVidaPersonagem() <= 0) return;
         for (Criatura g : goblins) {
@@ -87,8 +79,7 @@ public class VilarejoDeScarbor {
         ficha.setGoblinsResolvido(true);
     }
 
-    // Ao entrar na taverna, o jogador se depara com 4 goblins assaltando os clientes.
-    public static void CenaDosGoblins(FichaRpg ficha) {
+        public static void CenaDosGoblins(FichaRpg ficha) {
         List<Criatura> goblins = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
             goblins.add(CriaturaFactory.criarGoblin());
@@ -122,8 +113,7 @@ public class VilarejoDeScarbor {
         }
     }
 
-    // Sair dali furtivo (DT 10): se falhar, os goblins o veem e mandam entregar tudo.
-    private static void sairFurtivo(FichaRpg ficha, List<Criatura> goblins) {
+        private static void sairFurtivo(FichaRpg ficha, List<Criatura> goblins) {
         boolean passou = testeDestreza(ficha, 10, "Sair furtivo");
         if (passou) {
             Interface.MostrarMensagem("\nVocê recua pé ante pé, contorna a porta e desaparece para fora sem que ninguém perceba.");
@@ -139,8 +129,7 @@ public class VilarejoDeScarbor {
         comandoRetiradaObrigatoria(ficha, goblins);
     }
 
-    // Quando os goblins exigem a entrega dos pertences (sem saída furtiva).
-    private static void comandoRetiradaObrigatoria(FichaRpg ficha, List<Criatura> goblins) {
+        private static void comandoRetiradaObrigatoria(FichaRpg ficha, List<Criatura> goblins) {
         System.out.println("\n  O que você faz?");
         System.out.println("  1. Entregar todo o seu dinheiro");
         System.out.println("  2. Não obedecer — e lutar");
@@ -171,8 +160,7 @@ public class VilarejoDeScarbor {
         }
     }
 
-    // Tentar ir lutar contra eles furtivo (DT 15): passou, +2 na iniciativa; senão, luta normal.
-    private static void lutarFurtivo(FichaRpg ficha, List<Criatura> goblins) {
+        private static void lutarFurtivo(FichaRpg ficha, List<Criatura> goblins) {
         boolean passou = testeDestreza(ficha, 15, "Lutar furtivo");
         if (passou) {
             Interface.MostrarMensagem("\nVocê desliza pelas sombras do salão, mudo como um gato, até ficar a poucos passos deles. Eles nem suspeitam.");
@@ -187,8 +175,7 @@ public class VilarejoDeScarbor {
         }
     }
 
-    // Diálogo com os goblins: ameaçar ou entender o motivo.
-    private static void conversarComOsGoblins(FichaRpg ficha, List<Criatura> goblins) {
+        private static void conversarComOsGoblins(FichaRpg ficha, List<Criatura> goblins) {
         boolean draconico = ficha.getRaca() != null && ficha.getRaca().getNome().equals("Dracônico");
 
         Interface.MostrarMensagem("\nVocê levanta as mãos e fala em voz alta: " + CIANO + "\"Calma aí! Vamos conversar antes que alguém se machuque.\"" + RESET);
@@ -209,8 +196,7 @@ public class VilarejoDeScarbor {
         }
     }
 
-    // Ameaçar: teste de Presença contra +2 de Presença dos goblins. Passou, eles fogem de medo.
-    private static void ameacarOsGoblins(FichaRpg ficha, List<Criatura> goblins) {
+        private static void ameacarOsGoblins(FichaRpg ficha, List<Criatura> goblins) {
         Interface.MostrarMensagem("\nSua voz muda. Seus olhos se apertam e você fala baixo e raspado: " + VERMELHO + "\"Vocês têm cinco segundos para sair por essa porta antes que eu transforme vocês em tapete.\"" + RESET);
         Interface.Pausa(2000);
 
@@ -235,8 +221,7 @@ public class VilarejoDeScarbor {
         }
     }
 
-    // Entender o motivo: eles explicam o rancor; dracônicos já sabem e pulam a explicação.
-    private static void entenderMotivoDosGoblins(FichaRpg ficha, List<Criatura> goblins, boolean draconico) {
+        private static void entenderMotivoDosGoblins(FichaRpg ficha, List<Criatura> goblins, boolean draconico) {
         Interface.MostrarMensagem(CIANO + "\"Por que vocês estão fazendo isso?\" " + RESET + "você pergunta, tentando entender.");
         Interface.Pausa(1800);
 
@@ -286,8 +271,7 @@ public class VilarejoDeScarbor {
         }
     }
 
-    // Perguntar o que tiraram: a história das minas de ouro; depois, lutar ou fugir.
-    private static void explicarMinasDeOuro(FichaRpg ficha, List<Criatura> goblins) {
+        private static void explicarMinasDeOuro(FichaRpg ficha, List<Criatura> goblins) {
         Interface.MostrarMensagem(CIANO + "\"O que os dracônicos tiraram de vocês?\" " + RESET + "você pergunta.");
         Interface.Pausa(1500);
 
@@ -301,9 +285,7 @@ public class VilarejoDeScarbor {
         comandoLutarOuFugir(ficha, goblins, 15, true);
     }
 
-    // Depois de entender os motivos: lutar ou fugir. Se entendeu a história, a DT de
-    // fuga cai para 5; se é dracônico (que já sabia), permanece 10.
-    private static void comandoLutarOuFugir(FichaRpg ficha, List<Criatura> goblins, int dtFuga, boolean entendeuMotivos) {
+            private static void comandoLutarOuFugir(FichaRpg ficha, List<Criatura> goblins, int dtFuga, boolean entendeuMotivos) {
         int dificuldade = entendeuMotivos ? 5 : dtFuga;
 
         System.out.println("\n  O que você faz?");
@@ -329,8 +311,7 @@ public class VilarejoDeScarbor {
         }
     }
 
-    // Teste de Destreza contra uma dificuldade; mostra o cálculo e retorna se passou.
-    private static boolean testeDestreza(FichaRpg ficha, int dificuldade, String rotulo) {
+        private static boolean testeDestreza(FichaRpg ficha, int dificuldade, String rotulo) {
         Interface.pressionarParaTeste("Destreza (" + rotulo + ")");
         int dado = MecanicasRpg.rolarDado(20);
         int total = dado + ficha.getDestrezaTeste();

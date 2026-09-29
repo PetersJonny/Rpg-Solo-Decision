@@ -14,14 +14,11 @@ import comandos.*;
 import itens.Consumivel;
 import telas.Interface;
 
-
 import static mecanicas.GerenciadorDeAcoes.*;
 import static mecanicas.MotorDeCombate.*;
 import static mecanicas.GerenciadorDeTurnos.*;
 
 public class GerenciadorDeHabilidades {
-
-
 
     public static int EscolherHabilidadeAtiva(FichaRpg ficha) {
         List<habilidades.Habilidade> ativas = new ArrayList<>();
@@ -57,7 +54,6 @@ public class GerenciadorDeHabilidades {
 
         int escolha = Interface.lerInteiro();
 
-
         if (escolha == 0) return -1;
 
         if (escolha < 1 || escolha > ativas.size()) {
@@ -68,8 +64,7 @@ public class GerenciadorDeHabilidades {
 
         habilidades.Habilidade habEscolhida = ativas.get(escolha - 1);
 
-        // Magias do Mago só podem ser usadas se o personagem tiver um Cajado
-        if (habEscolhida instanceof habilidades.Magia
+                if (habEscolhida instanceof habilidades.Magia
                 && ficha.getClasseDoPersonagem() instanceof classes.Mago
                 && !ficha.temItem("Cajado")
                 && !ficha.temItem("Cajado de Sangue")) {
@@ -87,7 +82,6 @@ public class GerenciadorDeHabilidades {
         return ficha.getHabilidades().indexOf(habEscolhida);
     }
 
-
     public static int custoEfetivoMagia(FichaRpg ficha, habilidades.Habilidade hab) {
         int custo = hab.getCustoMana();
         if (custo <= 0) return 0;
@@ -99,8 +93,6 @@ public class GerenciadorDeHabilidades {
         if (pequenoGrimorio) custo--;
         return Math.max(1, custo);
     }
-
-
 
     public static boolean executarHabilidadeEscolhida(FichaRpg ficha, List<Criatura> inimigos, int alvoIndex, int habilidadeIndex) {
         if (habilidadeIndex < 0 || habilidadeIndex >= ficha.getHabilidades().size()) return true;
@@ -115,8 +107,6 @@ public class GerenciadorDeHabilidades {
 
         return hab.executar(ficha, inimigos, alvoIndex);
     }
-
-
 
     public static boolean executarGiro(FichaRpg ficha, List<Criatura> inimigos) {
         int maxGiros = Math.max(1, ficha.getDestreza());
@@ -171,7 +161,6 @@ public class GerenciadorDeHabilidades {
         return true;
     }
 
-
     public static boolean executarEstrondo(FichaRpg ficha, List<Criatura> inimigos, habilidades.Habilidade hab) {
         ficha.setManaPersonagem(ficha.getManaPersonagem() - custoEfetivoMagia(ficha, hab));
         ficha.setRodadasSemHabilidade(2);
@@ -207,7 +196,6 @@ public class GerenciadorDeHabilidades {
         return true;
     }
 
-
     public static boolean usarPrisao(FichaRpg ficha, List<Criatura> inimigos, int alvoIndex, habilidades.Habilidade hab) {
         if (alvoIndex < 0 || alvoIndex >= inimigos.size()) {
             Interface.MostrarMensagem("Nenhum alvo escolhido.");
@@ -222,7 +210,6 @@ public class GerenciadorDeHabilidades {
         Interface.Pausa(2000);
         return true;
     }
-
 
     public static boolean executarSemiDeus(FichaRpg ficha, habilidades.Habilidade hab) {
         if (ficha.isSemiDeusAtivo()) {
@@ -248,7 +235,6 @@ public class GerenciadorDeHabilidades {
         return true;
     }
 
-
     public static boolean executarPoderAbsoluto(FichaRpg ficha, habilidades.Habilidade hab) {
         if (ficha.isPoderAbsolutoAtivo()) {
             Interface.MostrarMensagem("O Poder Absoluto já está ativo!");
@@ -261,7 +247,6 @@ public class GerenciadorDeHabilidades {
         Interface.Pausa(2000);
         return true;
     }
-
 
     public static boolean executarCuraAbsoluta(FichaRpg ficha, habilidades.Habilidade hab) {
         ficha.setManaPersonagem(ficha.getManaPersonagem() - custoEfetivoMagia(ficha, hab));
@@ -276,7 +261,6 @@ public class GerenciadorDeHabilidades {
         return true;
     }
 
-
     public static boolean executarCuraIncessante(FichaRpg ficha) {
         if (ficha.isCuraIncessanteUsada()) {
             Interface.MostrarMensagem("A Cura Incessante só pode ser usada uma vez por combate!");
@@ -289,7 +273,6 @@ public class GerenciadorDeHabilidades {
         Interface.Pausa(2000);
         return true;
     }
-
 
     public static boolean executarExplosaoDePoder(FichaRpg ficha, List<Criatura> inimigos) {
         if (ficha.getManaPersonagem() < 2) {
@@ -350,7 +333,6 @@ public class GerenciadorDeHabilidades {
         return true;
     }
 
-
     public static boolean tentarConhecimentoAvassalador(FichaRpg ficha, List<Criatura> inimigos) {
         Interface.MostrarMensagem("\nVocê canaliza todo o seu conhecimento sobre as criaturas...");
         Interface.Pausa(1500);
@@ -392,7 +374,6 @@ public class GerenciadorDeHabilidades {
         return true;
     }
 
-
     public static boolean usarProtecaoAbsoluta(FichaRpg ficha, habilidades.Habilidade hab) {
         if (ficha.isProtecaoAbsolutaAtiva()) {
             Interface.MostrarMensagem("A Proteção Absoluta já está ativa!");
@@ -406,7 +387,6 @@ public class GerenciadorDeHabilidades {
         Interface.Pausa(2000);
         return true;
     }
-
 
     public static boolean usarCuraParaMorte(FichaRpg ficha, List<Criatura> inimigos, habilidades.Habilidade hab) {
         int alvoVeneno = escolherAlvo(inimigos);
@@ -424,7 +404,6 @@ public class GerenciadorDeHabilidades {
         return true;
     }
 
-
     public static void aplicarVenenoCuraParaMorte(FichaRpg ficha, List<Criatura> inimigos, int alvoIndex) {
         if (!ficha.isCuraParaMorteAtivo() || ficha.getAlvoCuraParaMorte() == null) return;
         if (alvoIndex < 0 || alvoIndex >= inimigos.size()) return;
@@ -437,7 +416,6 @@ public class GerenciadorDeHabilidades {
         Interface.MostrarMensagem("(Cura para a Morte! O líquido mortal causa " + veneno + " de dano)");
         Interface.Pausa(1500);
     }
-
 
     public static boolean usarPactoMortal(FichaRpg ficha, List<Criatura> inimigos, int alvoIndex, habilidades.Habilidade hab) {
         if (!ficha.isOlhoDemonicoFundido()) {
@@ -459,7 +437,6 @@ public class GerenciadorDeHabilidades {
         Interface.Pausa(2000);
         return true;
     }
-
 
     public static boolean usarReiDasCriaturas(FichaRpg ficha, List<Criatura> inimigos) {
         if (!ficha.temItem("Coroa do Rei")) {

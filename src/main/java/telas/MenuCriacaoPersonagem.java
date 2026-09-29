@@ -11,8 +11,6 @@ import static telas.Interface.*;
 
 public class MenuCriacaoPersonagem {
 
-
-
     public static int MenuCriacaoFicha() {
         System.out.println("\n");
         cabecalhoMenu("CRIAÇÃO DE PERSONAGEM");
@@ -29,7 +27,6 @@ public class MenuCriacaoPersonagem {
         return lerOpcao(8);
     }
 
-
     public static int MenuEscolherDificuldade() {
         System.out.println("\n");
         cabecalhoMenu("MODO DE DIFICULDADE");
@@ -39,8 +36,6 @@ public class MenuCriacaoPersonagem {
         System.out.println("\n  " + VERDE + "0. Voltar" + RESET);
         return lerOpcao(0, 2);
     }
-
-
 
     public static int MenuDistribuirAtributos(int pontosSobrando) {
         cabecalhoMenu("DISTRIBUIR ATRIBUTOS");
@@ -56,16 +51,12 @@ public class MenuCriacaoPersonagem {
         return lerOpcao(0, 6);
     }
 
-
-
     public static int PedirQuantidadePontos(int pontosSobrando) {
         cabecalhoMenu("QUANTIDADE DE PONTOS");
         System.out.println("\n  Quantos pontos deseja gastar? Tem " + AMARELO + pontosSobrando + RESET + " pontos ainda.");
         int gasto = lerInteiro();
         return gasto;
     }
-
-
 
     public static int MenuEscolherRaca() {
         cabecalhoMenu("ESCOLHA SUA RAÇA");
@@ -81,8 +72,6 @@ public class MenuCriacaoPersonagem {
         return lerOpcao(0, 7);
     }
 
-
-
     public static int MenuEscolherAtributoHumano() {
         cabecalhoMenu("ATRIBUTO DO HUMANO");
         System.out.println("\n  Como Humano, você escolhe em qual atributo receber +1:\n");
@@ -96,8 +85,6 @@ public class MenuCriacaoPersonagem {
         return lerOpcao(0, 6);
     }
 
-
-
     public static int MenuEscolherClasse() {
         cabecalhoMenu("ESCOLHA SUA CLASSE");
         System.out.println("\n  Escolha entre uma das 3 classes abaixo:\n");
@@ -107,8 +94,6 @@ public class MenuCriacaoPersonagem {
         System.out.println("  " + VERDE + "0. Voltar" + RESET);
         return lerOpcao(0, 3);
     }
-
-
 
     public static String EscolherElementoMago() {
         cabecalhoMenu("ELEMENTO DO MAGO");

@@ -37,7 +37,7 @@ public class Magia extends Habilidade {
     public boolean executar(FichaRpg ficha, List<Criatura> inimigos, int alvoIndex) {
         if (alvoIndex < 0 || alvoIndex >= inimigos.size()) return true;
         Criatura inimigo = inimigos.get(alvoIndex);
-        
+
         int custoPago = GerenciadorDeHabilidades.custoEfetivoMagia(ficha, this);
         if (ficha.getManaPersonagem() < custoPago) {
             Interface.ExibirErro("Mana insuficiente!");
@@ -49,10 +49,10 @@ public class Magia extends Habilidade {
             Interface.MostrarMensagem("(Custo reduzido! Pagou " + custoPago + " em vez de " + getCustoMana() + " de mana.)");
             Interface.Pausa(1000);
         }
-        
+
         Interface.MostrarMensagem("\nVocê usa " + getNome() + "!");
         Interface.Pausa(1500);
-        
+
         int quantidade = getQuantidadeDano();
         if (ficha.isMagiaBonusAtivo()) {
             quantidade++;
@@ -69,7 +69,7 @@ public class Magia extends Habilidade {
             Interface.MostrarMensagem("(Poder Absoluto dobra os dados de dano das suas magias!)");
             Interface.Pausa(1000);
         }
-        
+
         StringBuilder roladas = new StringBuilder();
         int dano = 0;
         Interface.pressionarParaRolar();
@@ -79,22 +79,22 @@ public class Magia extends Habilidade {
             if (roladas.length() > 0) roladas.append(" + ");
             roladas.append(dadoRolado);
         }
-        
+
         Interface.MostrarMensagem("-> Dados Rolados: " + roladas + " = " + dano + " (Dano Mágico: " + quantidade + "d" + getDadoDano() + ")");
         Interface.Pausa(2000);
-        
+
         if (ficha.temItem("Chapéu Mágico")) {
             dano += 3;
             Interface.MostrarMensagem("(Chapéu Mágico aumentou o dano em +3!)");
             Interface.Pausa(1000);
         }
-        
+
         if (getNome().equals("Peso da Espada")) {
             dano += ficha.getForca();
             Interface.MostrarMensagem("(Peso da Espada: +" + ficha.getForca() + " de Força no dano!)");
             Interface.Pausa(1000);
         }
-        
+
         List<Criatura> afetados = new ArrayList<>();
         afetados.add(inimigo);
         if (isAtaqueArea()) {
@@ -110,14 +110,14 @@ public class Magia extends Habilidade {
             Interface.MostrarMensagem("-> Ataque em área! Atinge: " + nomes.toString());
             Interface.Pausa(2000);
         }
-        
+
         for (Criatura alvo : afetados) {
             if (alvo.getVida() <= 0) continue;
             alvo.setVida(alvo.getVida() - dano);
             Interface.MostrarMensagem(GerenciadorDeTurnos.rotuloCriatura(inimigos, alvo) + " agora tem " + Math.max(0, alvo.getVida()) + " de vida.");
             Interface.Pausa(1500);
         }
-        
+
         GerenciadorDeHabilidades.aplicarVenenoCuraParaMorte(ficha, inimigos, alvoIndex);
         return true;
     }

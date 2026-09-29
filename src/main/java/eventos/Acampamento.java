@@ -9,24 +9,17 @@ import java.util.List;
 import fichas.FichaRpg;
 import mecanicas.MecanicasRpg;
 
-
 public class Acampamento {
     private static final String RESET = telas.Interface.RESET;
     private static final String CIANO = telas.Interface.CIANO;
     private static final String VERDE = telas.Interface.VERDE;
     private static final String AMARELO = telas.Interface.AMARELO;
 
-
-
 public static void MenuConstrucao(FichaRpg ficha) {
-        // Cada construção fica ancorada no ponto da mata em que foi montada.
-        // Aqui é possível construir no ponto atual, caminhar até uma construção
-        // (gastando a distância entre os pontos) ou usá-la quando se está nela.
-        while (true) {
+                                while (true) {
             Interface.cabecalhoMenu("C O N S T R U Ç Ã O");
 
-            // Período e localização atuais
-            String periodo = ficha.getPeriodoDescritivoMaiusculo();
+                        String periodo = ficha.getPeriodoDescritivoMaiusculo();
             System.out.println("\n  Período: " + AMARELO + periodo + RESET + "  (" + (3 - ficha.getProgressoPeriodo()) + "/3 para virar)");
 
             String local;
@@ -44,8 +37,7 @@ public static void MenuConstrucao(FichaRpg ficha) {
             System.out.println("  Localização: " + CIANO + local + RESET);
             System.out.println("  -----------------------------------------------");
 
-            // ===================== CABANA =====================
-            String statusCabana = ficha.isTemCabana() ? VERDE + "construída" + RESET : AMARELO + "não construída" + RESET;
+                        String statusCabana = ficha.isTemCabana() ? VERDE + "construída" + RESET : AMARELO + "não construída" + RESET;
             System.out.println("\n  " + CIANO + "[ CABANA ]" + RESET + "  Status: " + statusCabana);
             System.out.println("  Custo:    " + ficha.getQuantidadeDe("Madeira") + "/7x Madeira | "
                     + ficha.getQuantidadeDe("Folha") + "/10x Folha | "
@@ -57,8 +49,7 @@ public static void MenuConstrucao(FichaRpg ficha) {
                 System.out.println("  Informação: Gasta 2/3 do período para montar.");
             }
 
-            // ===================== SALA DE TREINO =====================
-            String statusSala = ficha.isTemSalaTreino() ? VERDE + "construída" + RESET : AMARELO + "não construída" + RESET;
+                        String statusSala = ficha.isTemSalaTreino() ? VERDE + "construída" + RESET : AMARELO + "não construída" + RESET;
             System.out.println("\n  " + CIANO + "[ SALA DE TREINO ]" + RESET + "  Status: " + statusSala);
             System.out.println("  Custo:    " + ficha.getQuantidadeDe("Madeira") + "/10x Madeira | "
                     + ficha.getQuantidadeDe("Folha") + "/15x Folha | "
@@ -71,8 +62,7 @@ public static void MenuConstrucao(FichaRpg ficha) {
                         + " — só usa estando nela (ou vá até o ponto dela)");
             }
 
-            // ===================== MESA DE MAGIAS =====================
-            String statusMesa = ficha.isTemMesaMagias() ? VERDE + "construída" + RESET : AMARELO + "não construída" + RESET;
+                        String statusMesa = ficha.isTemMesaMagias() ? VERDE + "construída" + RESET : AMARELO + "não construída" + RESET;
             System.out.println("\n  " + CIANO + "[ MESA DE MAGIAS ]" + RESET + "  Status: " + statusMesa);
             System.out.println("  Custo:    " + ficha.getQuantidadeDe("Madeira") + "/5x Madeira | "
                     + ficha.getQuantidadeDe("Folha") + "/4x Folha | "
@@ -85,8 +75,7 @@ public static void MenuConstrucao(FichaRpg ficha) {
                         + " — só usa estando nela (ou vá até o ponto dela)");
             }
 
-            // ===================== FOGUEIRA =====================
-            String statusFogueira = ficha.isTemFogueira() ? VERDE + "construída" + RESET : AMARELO + "não construída" + RESET;
+                        String statusFogueira = ficha.isTemFogueira() ? VERDE + "construída" + RESET : AMARELO + "não construída" + RESET;
             System.out.println("\n  " + CIANO + "[ FOGUEIRA ]" + RESET + "  Status: " + statusFogueira);
             System.out.println("  Custo:    " + ficha.getQuantidadeDe("Madeira") + "/4x Madeira | "
                     + ficha.getQuantidadeDe("Folha") + "/3x Folha");
@@ -107,8 +96,7 @@ public static void MenuConstrucao(FichaRpg ficha) {
 
             System.out.println("\n  -----------------------------------------------");
 
-            // Menu dinâmico com numeração sequencial
-            int opMontarCabana = 0, opIrCabana = 0, opDormir = 0;
+                        int opMontarCabana = 0, opIrCabana = 0, opDormir = 0;
             int opMontarSala = 0, opIrSala = 0, opTreinar = 0;
             int opMontarMesa = 0, opIrMesa = 0, opEstudar = 0;
             int opMontarFogueira = 0, opIrFogueira = 0, opCozinhar = 0;
@@ -116,8 +104,7 @@ public static void MenuConstrucao(FichaRpg ficha) {
 
             System.out.println("\n  O que deseja fazer?");
 
-            // =================== CABANA ===================
-            if (!ficha.isTemCabana()) {
+                        if (!ficha.isTemCabana()) {
                 System.out.println("  " + num + ". Montar Cabana aqui  (7x Madeira, 10x Folha, 4x Pedra — 2/3 do período)");
                 opMontarCabana = num++;
             } else if (ficha.podeUsarCabana()) {
@@ -130,8 +117,7 @@ public static void MenuConstrucao(FichaRpg ficha) {
                 opMontarCabana = num++;
             }
 
-            // =================== SALA DE TREINO ===================
-            if (!ficha.isTemSalaTreino()) {
+                        if (!ficha.isTemSalaTreino()) {
                 System.out.println("  " + num + ". Montar Sala de Treino aqui  (10x Madeira, 15x Folha, 5x Pedra, 4x Couro — 2/3 do período)");
                 opMontarSala = num++;
             } else if (ficha.getTreinoBonusPeriodosRestantes() > 0) {
@@ -146,8 +132,7 @@ public static void MenuConstrucao(FichaRpg ficha) {
                 opMontarSala = num++;
             }
 
-            // =================== MESA DE MAGIAS ===================
-            if (!ficha.isTemMesaMagias()) {
+                        if (!ficha.isTemMesaMagias()) {
                 System.out.println("  " + num + ". Montar Mesa de Magias aqui  (5x Madeira, 4x Folha, 4x Pedra, 1x Pó da Fada — 2/3 do período)");
                 opMontarMesa = num++;
             } else if (ficha.getMagiaBonusPeriodosRestantes() > 0) {
@@ -162,8 +147,7 @@ public static void MenuConstrucao(FichaRpg ficha) {
                 opMontarMesa = num++;
             }
 
-            // =================== FOGUEIRA ===================
-            if (!ficha.isTemFogueira()) {
+                        if (!ficha.isTemFogueira()) {
                 System.out.println("  " + num + ". Montar Fogueira aqui  (4x Madeira, 3x Folha — 2/3 do período)");
                 opMontarFogueira = num++;
             } else if (ficha.podeUsarFogueira()) {
@@ -181,8 +165,7 @@ public static void MenuConstrucao(FichaRpg ficha) {
 
             if (escolha == 0) return;
 
-            // =================== MONTAR CABANA ===================
-            if (escolha == opMontarCabana) {
+                        if (escolha == opMontarCabana) {
                 if (ficha.isTemCabana()) {
                     if (ficha.moverCabana()) {
                         Interface.MostrarMensagem("\nVocê constrói uma NOVA cabana bem aqui, gastando 7 madeiras, 10 folhas e 4 pedras!");
@@ -207,8 +190,7 @@ public static void MenuConstrucao(FichaRpg ficha) {
                 continue;
             }
 
-            // =================== IR PARA A CABANA ===================
-            if (escolha == opIrCabana) {
+                        if (escolha == opIrCabana) {
                 if (!ficha.isTemCabana()) {
                     Interface.ExibirErro("Você ainda não tem uma cabana!");
                     Interface.Pausa(1500);
@@ -219,8 +201,7 @@ public static void MenuConstrucao(FichaRpg ficha) {
                 continue;
             }
 
-            // =================== MONTAR SALA DE TREINO ===================
-            if (escolha == opMontarSala) {
+                        if (escolha == opMontarSala) {
                 if (ficha.isTemSalaTreino()) {
                     if (ficha.moverSalaTreino()) {
                         Interface.MostrarMensagem("\nVocê constrói uma NOVA sala de treino bem aqui, gastando 10 madeiras, 15 folhas, 5 pedras e 4 couros!");
@@ -245,8 +226,7 @@ public static void MenuConstrucao(FichaRpg ficha) {
                 continue;
             }
 
-            // =================== IR PARA A SALA DE TREINO ===================
-            if (escolha == opIrSala) {
+                        if (escolha == opIrSala) {
                 if (!ficha.isTemSalaTreino()) {
                     Interface.ExibirErro("Você ainda não tem uma sala de treino!");
                     Interface.Pausa(1500);
@@ -257,8 +237,7 @@ public static void MenuConstrucao(FichaRpg ficha) {
                 continue;
             }
 
-            // =================== TREINAR ===================
-            if (escolha == opTreinar) {
+                        if (escolha == opTreinar) {
                 if (ficha.getTreinoBonusPeriodosRestantes() > 0) {
                     Interface.ExibirErro("Você ainda está com o bônus de treino ativo! Aguarde os " + ficha.getTreinoBonusPeriodosRestantes() + " período(s) terminarem para treinar de novo.");
                     Interface.Pausa(1500);
@@ -297,8 +276,7 @@ public static void MenuConstrucao(FichaRpg ficha) {
                 continue;
             }
 
-            // =================== MONTAR MESA DE MAGIAS ===================
-            if (escolha == opMontarMesa) {
+                        if (escolha == opMontarMesa) {
                 if (ficha.isTemMesaMagias()) {
                     if (ficha.moverMesaMagias()) {
                         Interface.MostrarMensagem("\nVocê constrói uma NOVA mesa de magias bem aqui, gastando 5 madeiras, 4 folhas, 4 pedras e 1 Pó da Fada!");
@@ -323,8 +301,7 @@ public static void MenuConstrucao(FichaRpg ficha) {
                 continue;
             }
 
-            // =================== IR PARA A MESA DE MAGIAS ===================
-            if (escolha == opIrMesa) {
+                        if (escolha == opIrMesa) {
                 if (!ficha.isTemMesaMagias()) {
                     Interface.ExibirErro("Você ainda não tem uma mesa de magias!");
                     Interface.Pausa(1500);
@@ -335,8 +312,7 @@ public static void MenuConstrucao(FichaRpg ficha) {
                 continue;
             }
 
-            // =================== MONTAR FOGUEIRA ===================
-            if (escolha == opMontarFogueira) {
+                        if (escolha == opMontarFogueira) {
                 if (ficha.isTemFogueira()) {
                     if (ficha.moverFogueira()) {
                         Interface.MostrarMensagem("\nVocê constrói uma NOVA fogueira bem aqui, gastando 4 madeiras e 3 folhas!");
@@ -361,8 +337,7 @@ public static void MenuConstrucao(FichaRpg ficha) {
                 continue;
             }
 
-            // =================== IR PARA A FOGUEIRA ===================
-            if (escolha == opIrFogueira) {
+                        if (escolha == opIrFogueira) {
                 if (!ficha.isTemFogueira()) {
                     Interface.ExibirErro("Você ainda não tem uma fogueira!");
                     Interface.Pausa(1500);
@@ -373,8 +348,7 @@ public static void MenuConstrucao(FichaRpg ficha) {
                 continue;
             }
 
-            // =================== COZINHAR NA FOGUEIRA ===================
-            if (escolha == opCozinhar) {
+                        if (escolha == opCozinhar) {
                 if (!ficha.isTemFogueira()) {
                     Interface.ExibirErro("Você ainda não tem uma fogueira!");
                     Interface.Pausa(1500);
@@ -389,8 +363,7 @@ public static void MenuConstrucao(FichaRpg ficha) {
                 continue;
             }
 
-            // =================== ESTUDAR ===================
-            if (escolha == opEstudar) {
+                        if (escolha == opEstudar) {
                 if (ficha.getMagiaBonusPeriodosRestantes() > 0) {
                     Interface.ExibirErro("Você ainda está sob o efeito da Mesa de Magias! Aguarde os " + ficha.getMagiaBonusPeriodosRestantes() + " período(s) terminarem para estudar de novo.");
                     Interface.Pausa(1500);
@@ -409,8 +382,7 @@ public static void MenuConstrucao(FichaRpg ficha) {
                 continue;
             }
 
-            // =================== DORMIR ===================
-            if (escolha == opDormir) {
+                        if (escolha == opDormir) {
                 if (!ficha.isEhNoite()) {
                     Interface.ExibirErro("Você só consegue dormir quando está de noite.");
                     Interface.Pausa(1500);
@@ -433,6 +405,9 @@ public static void MenuConstrucao(FichaRpg ficha) {
                 int curaVida = ficha.getVidaPersonagem() - vidaAntes;
                 int curaMana = ficha.getManaPersonagem() - manaAntes;
                 Interface.MostrarMensagem("\nVocê dorme profundamente em sua cabana...");
+                if (ficha.temItem("Capa do Viajante")) {
+                    Interface.MostrarMensagem("(Sua Capa do Viajante te mantém aquecido durante a noite: +4 de vida no descanso.)");
+                }
                 if (perdaFomeDormir > 0) {
                     Interface.MostrarMensagem("\n(A fome cobra seu preço: você perde " + perdaFomeDormir + " de vida! " + ficha.getDiasSemComer() + " dias sem comer)");
                 }

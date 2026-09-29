@@ -30,50 +30,32 @@ public class Criatura implements java.io.Serializable {
     private List<Ataque> ataques = new ArrayList<>();
     private List<Drop> drops = new ArrayList<>();
 
-    // Dificuldade para fugir com Teste de Destreza (usada nos encontros do labirinto)
-    private int dcFuga = 12;
+        private int dcFuga = 12;
 
-    // Ataque que pode se repetir em cadeia (ex.: Esqueleto): depois do ataque original,
-    // tem chance de atacar de novo (chanceAtaqueRepetir) e, se repetir, chance de um terceiro (chanceAtaqueRepetir2).
-    private String ataqueRepetivel;
+            private String ataqueRepetivel;
     private int chanceAtaqueRepetir;
     private int chanceAtaqueRepetir2;
 
-    // Ataque que pode infectar o alvo (ex.: Zumbi): ao acertar, o alvo toma 1d4 de dano por rodada
-    private String ataqueInfeccioso;
+        private String ataqueInfeccioso;
     private int chanceInfeccao;
 
-    // Morto-vivo (Esqueleto, Zumbi, Baú Monstruoso): a Espada Majestral causa dano dobrado contra eles
-    private boolean mortoVivo;
+        private boolean mortoVivo;
 
-    // Enfraquecido pelo Pacto Mortal: -2 em suas rolagens e +5 de dano demoníaco em cada golpe sofrido
-    private boolean enfraquecido;
+        private boolean enfraquecido;
 
-    // Fugi do combate por comando da Coroa do Rei: some sem dar XP nem drops
-    private boolean fugiu;
+        private boolean fugiu;
 
-    // Investida (ex.: Minotauro): chance% do ataque virar uma carga. Se o jogador
-    // vencer o teste de Destreza contra o teste de ataque da criatura, ela toma
-    // `danoParede` (bate na parede); se falhar, o jogador toma `qtd/lados` de dano.
-    private int chanceInvestida;
+                private int chanceInvestida;
     private int investidaDanoFalhaQtd;
     private int investidaDanoFalhaLados;
     private int investidaDanoParede;
 
-    // Boss sem fuga (ex.: Minotauro): a porta se fecha e não dá para fugir do combate
-    private boolean semFuga;
+        private boolean semFuga;
 
-    // Ao morrer, concede a recompensa exclusiva da classe do jogador
-    private boolean dropDeClasse;
+        private boolean dropDeClasse;
 
-    // Toque de Midas (ex.: Goblin): habilidade ATIVA. O goblin gasta a ação de um
-    // turno para ativá-la (fica preparada); no turno seguinte, se o jogador ainda
-    // tiver ouro, ataca com +3 para acertar. O bônus some quando a prepareção é usada
-    // ou quando o jogador fica sem ouro.
-    private boolean temToqueDeMidas;
-    private boolean toqueDeMidasPreparado; // ativado gastando uma ação; o +3 vale no próximo turno
-    private int bonusToqueDeMidas;         // +3 aplicado no turno atual
-
+                    private boolean temToqueDeMidas;
+    private boolean toqueDeMidasPreparado;     private int bonusToqueDeMidas;
     public Criatura(String nome, int nivel, int vida, int defesa, int iniciativa) {
         this.nome = nome;
         this.nivel = nivel;
@@ -86,69 +68,52 @@ public class Criatura implements java.io.Serializable {
         this.chanceAparecer = 100;
     }
 
-    // Configuração de combate
-    public void setBonusAcerto(int bonusAcerto) { this.bonusAcerto = bonusAcerto; }
+        public void setBonusAcerto(int bonusAcerto) { this.bonusAcerto = bonusAcerto; }
     public void setAcertoAutomatico(boolean acertoAutomatico) { this.acertoAutomatico = acertoAutomatico; }
     public void setTestePresenca(int testePresenca) { this.testePresenca = testePresenca; }
     public void setChanceAparecer(int chanceAparecer) { this.chanceAparecer = chanceAparecer; }
 
-    // Dificuldade para o jogador fugir com Teste de Destreza
-    public void setDcFuga(int dcFuga) { this.dcFuga = dcFuga; }
+        public void setDcFuga(int dcFuga) { this.dcFuga = dcFuga; }
     public int getDcFuga() { return dcFuga; }
 
-    // Configura um ataque que pode se repetir em cadeia: ao usar `nomeAtaque`, a criatura
-    // tem `chanceSegundo`% de atacar de novo e, se repetir, `chanceTerceiro`% de um terceiro.
-    // Cada repetição é um ataque totalmente novo (nova rolagem de acerto e dano).
-    public void configurarAtaqueEncadeado(String nomeAtaque, int chanceSegundo, int chanceTerceiro) {
+                public void configurarAtaqueEncadeado(String nomeAtaque, int chanceSegundo, int chanceTerceiro) {
         this.ataqueRepetivel = nomeAtaque;
         this.chanceAtaqueRepetir = chanceSegundo;
         this.chanceAtaqueRepetir2 = chanceTerceiro;
     }
 
-    // Configura um ataque que infecta o alvo ao acertar (chance%). A infecção causa
-    // 1d4 de dano por rodada e some quando o combate acaba.
-    public void configurarInfeccao(String nomeAtaque, int chance) {
+            public void configurarInfeccao(String nomeAtaque, int chance) {
         this.ataqueInfeccioso = nomeAtaque;
         this.chanceInfeccao = chance;
     }
 
-    // Marca a criatura como morto-vivo (Espada Majestral causa dano dobrado contra ela)
-    public void setMortoVivo(boolean mortoVivo) { this.mortoVivo = mortoVivo; }
+        public void setMortoVivo(boolean mortoVivo) { this.mortoVivo = mortoVivo; }
     public boolean isMortoVivo() { return mortoVivo; }
 
-    // Pacto Mortal: enfraquece o alvo até o fim do combate (-2 em rolagens e +5 de dano sofrido)
-    public void setEnfraquecido(boolean enfraquecido) { this.enfraquecido = enfraquecido; }
+        public void setEnfraquecido(boolean enfraquecido) { this.enfraquecido = enfraquecido; }
     public boolean isEnfraquecido() { return enfraquecido; }
 
-    // Fuga ordenada pela Coroa do Rei: a criatura abandona o combate sem XP/drops
-    public void setFugiu(boolean fugiu) { this.fugiu = fugiu; }
+        public void setFugiu(boolean fugiu) { this.fugiu = fugiu; }
     public boolean isFugiu() { return fugiu; }
 
-    // Investida: exige um teste de Destreza do alvo (sentido de esquivar/agarrar).
-    public void configurarInvestida(int chance, int qtdDanoFalha, int ladosDanoFalha, int danoParede) {
+        public void configurarInvestida(int chance, int qtdDanoFalha, int ladosDanoFalha, int danoParede) {
         this.chanceInvestida = chance;
         this.investidaDanoFalhaQtd = qtdDanoFalha;
         this.investidaDanoFalhaLados = ladosDanoFalha;
         this.investidaDanoParede = danoParede;
     }
 
-    // Boss sem fuga: em combate, a fuga é bloqueada (a porta se fecha)
-    public void setSemFuga(boolean semFuga) { this.semFuga = semFuga; }
+        public void setSemFuga(boolean semFuga) { this.semFuga = semFuga; }
     public boolean isSemFuga() { return semFuga; }
 
-    // Ao morrer, concede a recompensa exclusiva da classe do jogador
-    public void setDropDeClasse(boolean dropDeClasse) { this.dropDeClasse = dropDeClasse; }
+        public void setDropDeClasse(boolean dropDeClasse) { this.dropDeClasse = dropDeClasse; }
     public boolean isDropDeClasse() { return dropDeClasse; }
 
-    // Toque de Midas (ex.: Goblin): o bônus só entra em ação se o alvo tiver ouro.
-    // Habilidade ativa: o goblin gasta a ação de um turno para ativá-la; no próximo,
-    // se o jogador ainda tiver ouro, ataca com +3 para acertar.
-    public void configurarToqueDeMidas() { this.temToqueDeMidas = true; }
+                public void configurarToqueDeMidas() { this.temToqueDeMidas = true; }
     public boolean isTemToqueDeMidas() { return temToqueDeMidas; }
     public int getBonusAcertoEfetivo() { return bonusAcerto + bonusToqueDeMidas; }
 
-    // Ataques e Drops
-    public void adicionarAtaque(String nome, String tipoDano, int qtdDado, int ladosDado) {
+        public void adicionarAtaque(String nome, String tipoDano, int qtdDado, int ladosDado) {
         ataques.add(new Ataque(nome, tipoDano, qtdDado, ladosDado));
     }
 
@@ -164,8 +129,7 @@ public class Criatura implements java.io.Serializable {
 
     public void setXpGanho(int xpGanho) { this.xpGanho = xpGanho; }
 
-    // Getters
-    public String getNome() { return nome; }
+        public String getNome() { return nome; }
     public int getNivel() { return nivel; }
     public int getVida() { return vida; }
     public int getDefesa() { return defesa; }
@@ -179,20 +143,12 @@ public class Criatura implements java.io.Serializable {
 
     public void setVida(int vida) { this.vida = vida; }
 
-    // Lista de drops possíveis da criatura (nome, quantidade e chance)
-    public List<Drop> getDrops() { return drops; }
+        public List<Drop> getDrops() { return drops; }
 
-    // Ataque da criatura contra o jogador. `alvoJogadorPrincipal` indica se o alvo é o
-    // personagem principal (só ele pode ser infectado). Depois do ataque, se o ataque
-    // usado for repetível, a criatura pode atacar novamente (cada repetição é um ataque novo).
-    public Ataque atacarJogador(FichaRpg ficha, boolean cascaGrossaAtiva, boolean alvoJogadorPrincipal) {
+                public Ataque atacarJogador(FichaRpg ficha, boolean cascaGrossaAtiva, boolean alvoJogadorPrincipal) {
         bonusToqueDeMidas = 0;
 
-        // TOQUE DE MIDAS: habilidade ATIVA. Se o jogador tem ouro e a habilidade ainda
-        // não foi ativada, a criatura gasta a AÇÃO deste turno só para ativá-la (fica
-        // preparada para o próximo turno, sem atacar agora). Quando já estiver preparada
-        // e o jogador ainda tiver ouro, ela ataca com +3. Se o ouro acabar, perde a vez.
-        if (temToqueDeMidas) {
+                                        if (temToqueDeMidas) {
             if (toqueDeMidasPreparado && ficha.getOuro() > 0) {
                 bonusToqueDeMidas = 3;
                 toqueDeMidasPreparado = false;
@@ -230,10 +186,8 @@ public class Criatura implements java.io.Serializable {
         return ataqueEscolhido;
     }
 
-    // Realiza UM ataque completo (escolhe o ataque, rola acerto/dano e aplica a infecção).
-    private Ataque executarAtaque(FichaRpg ficha, boolean cascaGrossaAtiva, boolean alvoJogadorPrincipal) {
-        // INVESTIDA: com chance%, o ataque vira uma carga que pede teste de Destreza
-        if (chanceInvestida > 0 && MecanicasRpg.rolarDado(100) <= chanceInvestida) {
+        private Ataque executarAtaque(FichaRpg ficha, boolean cascaGrossaAtiva, boolean alvoJogadorPrincipal) {
+                if (chanceInvestida > 0 && MecanicasRpg.rolarDado(100) <= chanceInvestida) {
             executarInvestida(ficha, cascaGrossaAtiva);
             return null;
         }
@@ -243,8 +197,7 @@ public class Criatura implements java.io.Serializable {
         String danoTipo = ataqueEscolhido.tipoDano == null || ataqueEscolhido.tipoDano.isEmpty()
                 ? "" : " de " + ataqueEscolhido.tipoDano;
 
-        // Acerto automático não rola d20, portanto sem chance de crítico
-        if (acertoAutomatico) {
+                if (acertoAutomatico) {
             int dano = rolarDanoDoAtaque(ataqueEscolhido, false);
             if (cascaGrossaAtiva) {
                 dano = Math.max(0, dano - 5);
@@ -294,10 +247,7 @@ public class Criatura implements java.io.Serializable {
         return ataqueEscolhido;
     }
 
-    // Investida: o alvo faz um teste de Destreza contra o teste de ataque da criatura.
-    // Se o alvo passar, a criatura colide com a parede e sofre `danoParede`; se falhar,
-    // o alvo recebe `qtd/lados` de dano.
-    private void executarInvestida(FichaRpg ficha, boolean cascaGrossaAtiva) {
+                private void executarInvestida(FichaRpg ficha, boolean cascaGrossaAtiva) {
         Interface.MostrarMensagem("\n" + VERMELHO + nome + " BAIXA A CABEÇA E INVESTE CONTRA VOCÊ COM FÚRIA CEGA!" + RESET);
         Interface.Pausa(2000);
 
@@ -337,21 +287,18 @@ public class Criatura implements java.io.Serializable {
         }
     }
 
-    // Se o ataque usado pode infectar e o alvo é o personagem principal, sorteia a infecção
-    private void aplicarInfeccao(FichaRpg ficha, boolean alvoJogadorPrincipal, Ataque ataque) {
+        private void aplicarInfeccao(FichaRpg ficha, boolean alvoJogadorPrincipal, Ataque ataque) {
         if (!alvoJogadorPrincipal || ataqueInfeccioso == null || !ataque.nome.equals(ataqueInfeccioso)) {
             return;
         }
-        if (ficha.isInfectado()) return; // não acumula
-        if (MecanicasRpg.rolarDado(100) <= chanceInfeccao) {
+        if (ficha.isInfectado()) return;         if (MecanicasRpg.rolarDado(100) <= chanceInfeccao) {
             ficha.setInfectado(true);
             Interface.MostrarMensagem("A mordida abre uma ferida que infecciona! Você sofrerá 1d4 de dano por rodada.");
             Interface.Pausa(2000);
         }
     }
 
-    // Rola o dano do ataque, dobrando a quantidade de dados em caso de crítico
-    private int rolarDanoDoAtaque(Ataque ataque, boolean critico) {
+        private int rolarDanoDoAtaque(Ataque ataque, boolean critico) {
         int dados = ataque.qtdDado * (critico ? 2 : 1);
         int dano = 0;
         for (int i = 0; i < dados; i++) {
@@ -360,16 +307,14 @@ public class Criatura implements java.io.Serializable {
         return dano;
     }
 
-    // Proteção Absoluta: reflete dano do elemento no atacante quando ele acerta
-    private void refletirProtecaoAbsoluta() {
+        private void refletirProtecaoAbsoluta() {
         int reflexo = MecanicasRpg.rolarDado(8) + MecanicasRpg.rolarDado(8);
         this.setVida(this.getVida() - reflexo);
         Interface.MostrarMensagem("(Proteção Absoluta! Reflete " + reflexo + " de dano do elemento no " + nome + ")");
         Interface.Pausa(1500);
     }
 
-    // Processa drops de ouro e itens após a morte
-    public void processarDrops(FichaRpg ficha) {
+        public void processarDrops(FichaRpg ficha) {
         if (chanceOuro > 0 && MecanicasRpg.rolarDado(100) <= chanceOuro) {
             int ouro = MecanicasRpg.rolarEntre(ouroMin, ouroMax);
             ficha.adicionarOuro(ouro);
@@ -393,10 +338,7 @@ public class Criatura implements java.io.Serializable {
         }
     }
 
-    // Recompensa exclusiva da classe (só o Minotauro concede):
-    // Guerreiro ganha a Espada do Minotauro, Mago o Cajado de Sangue e Healer a
-    // habilidade Curandeiro Combatente.
-    private void dropExclusivoDaClasse(FichaRpg ficha) {
+                private void dropExclusivoDaClasse(FichaRpg ficha) {
         if (ficha.getClasseDoPersonagem() == null) return;
 
         if (ficha.getClasseDoPersonagem() instanceof classes.Guerreiro) {
@@ -423,8 +365,7 @@ public class Criatura implements java.io.Serializable {
         Interface.Pausa(2500);
     }
 
-    // Cria os objetos de itens dropados
-    public static ItemRpg criarItemDrop(String nome) {
+        public static ItemRpg criarItemDrop(String nome) {
         switch (nome) {
             case "Couro":
                 return new ItemRpg("Couro", "Pele de animal curtida, usada em artesanato e na confecção de equipamentos.", 1);

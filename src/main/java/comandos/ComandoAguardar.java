@@ -7,7 +7,7 @@ import java.util.Set;
 import telas.Interface;
 
 public class ComandoAguardar implements ComandoCombate {
-    
+
     @Override
     public boolean isPrioritarioFuga() { return false; }
 

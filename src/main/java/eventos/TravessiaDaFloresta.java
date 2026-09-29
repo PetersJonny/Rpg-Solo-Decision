@@ -6,17 +6,13 @@ import telas.Interface;
 
 public class TravessiaDaFloresta {
 
-    // Códigos de Cores ANSI (reutilizados da Interface)
-    private static final String RESET = Interface.RESET;
+        private static final String RESET = Interface.RESET;
     private static final String CIANO = Interface.CIANO;
     private static final String VERDE = Interface.VERDE;
 
-    // Cidades para além da floresta (a chegada sorteia uma delas; por enquanto só existe Scarbor)
-    private static final String[] CIDADES = { "Vilarejo de Scarbor" };
+        private static final String[] CIDADES = { "Vilarejo de Scarbor" };
 
-    // "Tentar sair da floresta": o jogador caminha 1 a 3 períodos em direção à borda.
-    // A profundidade oculta (até sair) fica na ficha e nunca é revelada na tela.
-    public static void TentarSairDaFloresta(FichaRpg ficha) {
+            public static void TentarSairDaFloresta(FichaRpg ficha) {
         Interface.cabecalhoMenu("TENTAR SAIR DA FLORESTA");
         Interface.MostrarMensagem("\nVocê se prepara para caminhar adentrando a mata, em busca de algo além de árvores e mato.");
         Interface.MostrarMensagem("Dizem que quem vagueia por tempo suficiente na direção certa acaba saindo da floresta... mas ninguém sabe dizer quanto.");
@@ -31,8 +27,7 @@ public class TravessiaDaFloresta {
         int plano = Interface.lerOpcao(1, 4);
         if (plano == 4) return;
 
-        // Sair rumo ao desconhecido significa ter deixado a cabana/sala/mesa
-        if (ficha.isTemCabana() && ficha.isNaCabana()) {
+                if (ficha.isTemCabana() && ficha.isNaCabana()) {
             ficha.sairDaCabana();
             Interface.MostrarMensagem("\nVocê deixa sua cabana para trás e se embrenha no mato, em busca de algo além de árvores.");
             Interface.Pausa(1500);
@@ -49,8 +44,7 @@ public class TravessiaDaFloresta {
         int caminhados = 0;
         while (caminhados < plano) {
             boolean houveAcontecimento = percorrerUmTurno(ficha, true);
-            if (ficha.getVidaPersonagem() <= 0) return; // morreu no caminho
-            caminhados++;
+            if (ficha.getVidaPersonagem() <= 0) return;             caminhados++;
 
             if (ficha.isNoVilarejo()) {
                 chegarForaDaFloresta(ficha);
@@ -59,8 +53,7 @@ public class TravessiaDaFloresta {
 
             if (caminhados < plano) {
                 if (!houveAcontecimento) {
-                    // Nada interrompeu a marcha: segue caminhando sem perguntar.
-                    Interface.MostrarMensagem("\nNada interrompeu sua marcha. Você continua caminhando...");
+                                        Interface.MostrarMensagem("\nNada interrompeu sua marcha. Você continua caminhando...");
                     Interface.Pausa(1500);
                 } else {
                     System.out.println("\n  Você caminhou " + caminhados + " de " + plano + " período(s).");
@@ -80,16 +73,10 @@ public class TravessiaDaFloresta {
         }
     }
 
-    // Caminha de onde o jogador está até uma construção em outro ponto da mata:
-    // a ida/fim custam a distância entre os pontos (turno a turno, como a travessia).
-    public static void CaminharAteConstrucao(FichaRpg ficha, int profundidadeAlvo, String nomeConstrucao) {
+            public static void CaminharAteConstrucao(FichaRpg ficha, int profundidadeAlvo, String nomeConstrucao) {
         int distancia = ficha.getDistanciaAte(profundidadeAlvo);
         if (distancia == 0) {
-            // Já estamos NA profundidade da construção: entra nela em vez de
-            // simplesmente retornar. Antes, isto deixava o jogador "fora" do ponto
-            // (naCabana/naSalaTreino = false) mesmo estando parado nela, e a opção
-            // "Dormir" (e o uso da sala/mesa) nunca ficava disponível.
-            ficha.entrarNaConstrucao(profundidadeAlvo);
+                                                            ficha.entrarNaConstrucao(profundidadeAlvo);
             Interface.MostrarMensagem("\nVocê já está no mesmo ponto de " + nomeConstrucao + " e se acomoda nela.");
             Interface.Pausa(1500);
             return;
@@ -108,21 +95,14 @@ public class TravessiaDaFloresta {
         Interface.Pausa(2000);
     }
 
-    // "Voltar para a floresta": sair do vilarejo e retornar à floresta de Freijord,
-    // na margem dela (o ponto mais afastado da travessia, por onde se saiu). Dali o
-    // jogador pode explorar, buscar recursos e caminhar até as construções como sempre
-    // fez — e, para voltar ao vilarejo, basta tentar sair da floresta outra vez.
-    public static void VoltarParaFloresta(FichaRpg ficha) {
+                    public static void VoltarParaFloresta(FichaRpg ficha) {
         if (!ficha.isNoVilarejo()) return;
 
         Interface.MostrarMensagem("\nVocê decide voltar para a floresta.");
         Interface.MostrarMensagem("Você vira as costas para a estrada do vilarejo e entra de volta na mata, parando bem na margem dela — os campos abertos ainda são visíveis por entre os troncos.");
         Interface.Pausa(2500);
 
-        // O retorno deixa o jogador na margem da floresta (um passo antes de sair),
-        // conservando o ponto mais distante da travessia em vez de mandá-lo de volta
-        // para as construções. Dali ele decide quando e para onde caminhar.
-        ficha.reduzirProfundidade(ficha.getProfundidadeFloresta() - (FichaRpg.PROFUNDIDADE_PARA_SAIR - 1));
+                                ficha.reduzirProfundidade(ficha.getProfundidadeFloresta() - (FichaRpg.PROFUNDIDADE_PARA_SAIR - 1));
 
         if (ficha.podeUsarCabana() || ficha.podeUsarSalaTreino() || ficha.podeUsarMesaMagias()) {
             Interface.MostrarMensagem("\nSuas construções estão exatamente neste ponto da mata, erguidas ali.");
@@ -132,10 +112,7 @@ public class TravessiaDaFloresta {
         Interface.Pausa(2500);
     }
 
-    // Percorre um período da travessia (indoEmbora = afastando-se; false = voltando).
-    // Avança o tempo. Nos dois sentidos há a mesma chance de encontro da exploração
-    // (30% de dia, 50% à noite), sem coletar recursos. Retorna true se algo aconteceu.
-    private static boolean percorrerUmTurno(FichaRpg ficha, boolean indoEmbora) {
+                private static boolean percorrerUmTurno(FichaRpg ficha, boolean indoEmbora) {
         if (indoEmbora) {
             ficha.adicionarProfundidade(1);
         } else {
@@ -147,8 +124,7 @@ public class TravessiaDaFloresta {
                 : "\nVocê corta o mato de volta, refazendo o caminho por entre as árvores...");
         Interface.Pausa(2000);
 
-        // Mesma chance de encontro da exploração (30% de dia, 50% à noite), nos dois sentidos
-        boolean houveAcontecimento;
+                boolean houveAcontecimento;
         int chanceEncontro = ficha.isEhNoite() ? 50 : 30;
         if (MecanicasRpg.rolarDado(100) <= chanceEncontro) {
             Interface.MostrarMensagem("\nAlgo se agita entre as árvores...");
@@ -165,8 +141,7 @@ public class TravessiaDaFloresta {
         return houveAcontecimento;
     }
 
-    // Chegou na borda da floresta: sorteia a cidade de destino (e a mantém na ficha).
-    private static void chegarForaDaFloresta(FichaRpg ficha) {
+        private static void chegarForaDaFloresta(FichaRpg ficha) {
         Interface.MostrarMensagem("\nDiante de você, as árvores se abrem... A floresta de Freijord fica para trás!");
         Interface.Pausa(2500);
         Interface.MostrarMensagem("Depois de tanto mato, seus olhos avistam campos abertos e, ao longe, um vilarejo. Você finalmente saiu da floresta!");
@@ -176,9 +151,7 @@ public class TravessiaDaFloresta {
             ficha.setCidadeAtual(sortearDestino());
         }
 
-        // A chegada é anunciada por um grande letreiro na entrada, descrito na
-        // narração (sem renderizar um letreiro literal na tela).
-        Interface.MostrarMensagem("\nVocê segue pela estrada de terra até a entrada do lugar. Na beira do caminho, um grande letreiro de madeira ergue-se do mato, com letras firmes gravadas no tronco envelhecido.");
+                        Interface.MostrarMensagem("\nVocê segue pela estrada de terra até a entrada do lugar. Na beira do caminho, um grande letreiro de madeira ergue-se do mato, com letras firmes gravadas no tronco envelhecido.");
         Interface.Pausa(2000);
         Interface.MostrarMensagem("O letreiro anuncia o nome da cidade: " + CIANO + ficha.getCidadeAtual() + RESET + ". Você chegou.");
         Interface.Pausa(2500);
@@ -186,8 +159,7 @@ public class TravessiaDaFloresta {
         VilarejoDeScarbor.ObservarCidade(ficha);
     }
 
-    // Sorteia uma das cidades para além da floresta (por enquanto, só o Vilarejo de Scarbor).
-    public static String sortearDestino() {
+        public static String sortearDestino() {
         return CIDADES[MecanicasRpg.rolarDado(CIDADES.length) - 1];
     }
 }

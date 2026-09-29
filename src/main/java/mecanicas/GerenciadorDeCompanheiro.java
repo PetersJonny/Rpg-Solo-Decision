@@ -10,10 +10,7 @@ import telas.Interface;
 
 import static mecanicas.GerenciadorDeTurnos.*;
 
-/** Ações e estado do companheiro durante o turno de combate. */
 public class GerenciadorDeCompanheiro {
-
-// O companheiro age sozinho na sua vez (o jogador não controla)
 
     public static void acaoDoCompanheiro(FichaRpg ficha, companheiros.Companheiro comp, List<Criatura> inimigos) {
         FichaRpg cf = comp.getFicha();
@@ -25,8 +22,7 @@ public class GerenciadorDeCompanheiro {
         Interface.MostrarMensagem("\n" + comp.getNomeCompleto() + " age!");
         Interface.Pausa(1200);
 
-        // Healer: prioriza curar o jogador quando ele está ferido; se não, cura a si mesmo
-        if (cf.getClasseDoPersonagem() instanceof classes.Healer
+                if (cf.getClasseDoPersonagem() instanceof classes.Healer
                 && cf.temItem("Kit Médico")
                 && cf.getManaPersonagem() >= 1) {
             boolean jogadorFerido = ficha.getVidaPersonagem() <= (int) (ficha.getVidaMaxima() * 0.6);
@@ -52,8 +48,7 @@ public class GerenciadorDeCompanheiro {
             }
         }
 
-        // Mago: tenta lançar magia quando tem mana disponível
-        if (cf.getClasseDoPersonagem() instanceof classes.Mago) {
+                if (cf.getClasseDoPersonagem() instanceof classes.Mago) {
             habilidades.Magia bola = null;
             habilidades.Magia pequena = null;
             for (habilidades.Habilidade hab : cf.getHabilidades()) {
@@ -89,13 +84,10 @@ public class GerenciadorDeCompanheiro {
             }
         }
 
-        // Ataque físico com a arma equipada
-        Interface.MostrarMensagem(comp.getNome() + " avança para atacar!");
+                Interface.MostrarMensagem(comp.getNome() + " avança para atacar!");
         Interface.Pausa(1200);
         atacarComArmaDoCompanheiro(cf, alvo, inimigos);
     }
-
-// Ataque físico do companheiro usando a própria arma (roll dotado de crítico)
 
     public static void atacarComArmaDoCompanheiro(FichaRpg cf, Criatura alvo, List<Criatura> inimigos) {
         Arma arma = cf.getArmaEquipada();
@@ -151,8 +143,6 @@ public class GerenciadorDeCompanheiro {
         }
         Interface.Pausa(1200);
     }
-
-// O companheiro está de pé (presente e com vida > 0)?
 
     public static boolean companheiroEmPe(FichaRpg ficha) {
         companheiros.Companheiro comp = ficha.getCompanheiro();

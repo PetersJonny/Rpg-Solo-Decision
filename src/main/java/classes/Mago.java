@@ -5,19 +5,17 @@ import itens.Arma;
 import itens.Consumivel;
 
 public class Mago extends ClasseRpg {
-    
+
     public Mago(String elemento) {
         this.nome = "Mago";
         this.armaPrincipal = new Arma("Cajado", "Um cajado de madeira simples que causa 1d4 de dano. Pode ser usado para canalizar magia ou para bater.", "CaC/mágico", 4, 1, 1);
         this.itensIniciais.add(this.armaPrincipal);
         this.itensIniciais.add(new Consumivel("Poção de Mana", "Restaura 5 pontos de mana. É consumida após o uso.", 1));
-        
-        // Magia Base
-        this.habilidadesIniciais.add(new habilidades.Magia("Bola Elementar (" + elemento + ")", "Lança uma esfera de " + elemento.toLowerCase() + " que causa 3d10 de dano do elemento escolhido.", 2, 3, 10));
+
+                this.habilidadesIniciais.add(new habilidades.Magia("Bola Elementar (" + elemento + ")", "Lança uma esfera de " + elemento.toLowerCase() + " que causa 3d10 de dano do elemento escolhido.", 2, 3, 10));
         this.habilidadesIniciais.add(new habilidades.Magia("Pequena Magia (" + elemento + ")", "Lança uma pequena carga de " + elemento.toLowerCase() + " que causa 2d8 de dano do elemento escolhido. Não gasta mana.", 0, 2, 8));
 
-        // Escolhas de habilidade por nível
-        this.escolhasNivel.put(5, java.util.List.of(
+                this.escolhasNivel.put(5, java.util.List.of(
             new habilidades.Magia("Magia Desperta", "Cria uma grande massa do seu elemento, causando 6d12 de dano massante.", 6, 6, 12),
             new habilidades.ativas.HabilidadeProtecaoAbsoluta("Proteção Absoluta", "Envolve-se do seu elemento: +3 de defesa e reflete 2d8 de dano do elemento a quem te acertar. Dura até o fim do combate.", 5)
         ));

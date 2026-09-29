@@ -10,7 +10,7 @@ import mecanicas.GerenciadorDeAtaque;
 import mecanicas.MotorDeCombate;
 
 public class ComandoFuga implements ComandoCombate {
-    
+
     @Override
     public boolean isPrioritarioFuga() { return true; }
 

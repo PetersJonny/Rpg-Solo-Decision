@@ -1,6 +1,5 @@
 package fichas;
 
-// Modo de dificuldade da partida: controla o que acontece com os saves ao morrer.
 public enum ModoDificuldade {
     NORMAL("Normal", "Se o personagem morrer, seus saves são mantidos."),
     DIFICIL("Difícil", "Morte permanente: se o personagem morrer, o save dele é apagado.");

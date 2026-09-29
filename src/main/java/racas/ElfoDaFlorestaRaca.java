@@ -1,6 +1,5 @@
 package racas;
 
-// Elfo da Floresta — +1 em Destreza + Toque da Mata (materiais).
 public class ElfoDaFlorestaRaca extends Raca {
     private static final long serialVersionUID = 1L;
 

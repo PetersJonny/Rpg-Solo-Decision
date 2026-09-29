@@ -6,8 +6,6 @@ import java.util.List;
 import fichas.FichaRpg;
 import telas.Interface;
 
-// Quadro de missões da taverna da vila. O jogador lê os avisos, escolhe uma
-// missão e a aceita (pode aceitar várias ao mesmo tempo — acompanha as ativas).
 public class QuadroDeMissoes {
 
     private static final String RESET = Interface.RESET;
@@ -20,22 +18,33 @@ public class QuadroDeMissoes {
         public final String onde;
         public final String objetivo;
         public final String recompensa;
+                        public final boolean noQuadro;
 
         public Missao(String nome, String onde, String objetivo, String recompensa) {
+            this(nome, onde, objetivo, recompensa, true);
+        }
+
+        public Missao(String nome, String onde, String objetivo, String recompensa, boolean noQuadro) {
             this.nome = nome;
             this.onde = onde;
             this.objetivo = objetivo;
             this.recompensa = recompensa;
+            this.noQuadro = noQuadro;
         }
     }
 
-    // Registro das missões disponíveis no quadro
-    private static final List<Missao> REGISTRO = List.of(
+        private static final List<Missao> REGISTRO = List.of(
             new Missao(
                     "A Filha Perdida",
                     "Perto das cavernas ao redor da vila",
                     "Uma filha foi vista por último perto das cavernas da vila. É preciso encontrá-la antes que algo pior aconteça.",
-                    "100 ouro — falar com a dona da alfaiataria ao encontrá-la")
+                    "100 ouro — falar com a dona da alfaiataria ao encontrá-la"),
+            new Missao(
+                    "A Neta Perdida",
+                    "Entrada da vila, perto da barraca de frutas",
+                    "A netinha da velhinha sumiu enquanto colhiam frutas na floresta para fazer uma torta. Encontrá-la antes que algo aconteça.",
+                    "A gratidão eterna da velhinha",
+                    false)
     );
 
     private static void exibirAviso(Missao m) {
@@ -53,7 +62,7 @@ public class QuadroDeMissoes {
         List<Missao> ativas = new ArrayList<>();
         for (Missao m : REGISTRO) {
             if (ficha.isMissaoAceita(m.nome)) ativas.add(m);
-            else disponiveis.add(m);
+            else if (m.noQuadro) disponiveis.add(m);
         }
 
         Interface.cabecalhoMenu("QUADRO DE MISSÕES");
@@ -103,8 +112,7 @@ public class QuadroDeMissoes {
         Interface.Pausa(1800);
     }
 
-    // Resumo das missões ativas (menu do vilarejo, opção "Ver missões em andamento")
-    public static void MissoesEmAndamento(FichaRpg ficha) {
+        public static void MissoesEmAndamento(FichaRpg ficha) {
         List<String> aceitas = ficha.getMissoesAceitas();
         Interface.cabecalhoMenu("MISSÕES EM ANDAMENTO");
         if (aceitas.isEmpty()) {

@@ -1,6 +1,5 @@
 package racas;
 
-// Vigia do Crepúsculo — +1 em Sabedoria + Visão na Penumbra (testes à noite).
 public class VigiaDoCrepusculoRaca extends Raca {
     private static final long serialVersionUID = 1L;
 

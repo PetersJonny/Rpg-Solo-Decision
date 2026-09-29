@@ -10,9 +10,6 @@ import java.io.ObjectOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-// Sistema de save em arquivos: até 3 slots, guardados na pasta "saves".
-// Cada save serializa a FichaRpg (que já carrega inventário, habilidades,
-// companheiro, progresso da cabana e do tempo).
 public class GerenciadorSaves {
 
     public static final int MAX_SAVES = 3;
@@ -20,8 +17,7 @@ public class GerenciadorSaves {
 
     private GerenciadorSaves() {}
 
-    // Salva a ficha no slot informado (slot de 1 a 3). Retorna false se falhar.
-    public static boolean salvar(FichaRpg ficha, int slot) {
+        public static boolean salvar(FichaRpg ficha, int slot) {
         if (ficha == null || slot < 1 || slot > MAX_SAVES) return false;
         File dir = new File(PASTA);
         if (!dir.exists() && !dir.mkdirs()) return false;
@@ -34,8 +30,7 @@ public class GerenciadorSaves {
         }
     }
 
-    // Carrega a ficha do slot informado; retorna null se o save não existir ou estiver corrompido.
-    public static FichaRpg carregar(int slot) {
+        public static FichaRpg carregar(int slot) {
         if (slot < 1 || slot > MAX_SAVES) return null;
         File arquivo = new File(new File(PASTA), nomeArquivo(slot));
         if (!arquivo.exists()) return null;
@@ -51,8 +46,7 @@ public class GerenciadorSaves {
         return new File(new File(PASTA), nomeArquivo(slot)).exists();
     }
 
-    // Quantos slots estão ocupados (usado para saber se há algo a carregar)
-    public static int quantidadeSaves() {
+        public static int quantidadeSaves() {
         int total = 0;
         for (int slot = 1; slot <= MAX_SAVES; slot++) {
             if (existeSave(slot)) total++;
@@ -60,8 +54,7 @@ public class GerenciadorSaves {
         return total;
     }
 
-    // Descrição do slot para os menus: mostra o personagem ou "Vazio".
-    public static String infoSlot(int slot) {
+        public static String infoSlot(int slot) {
         if (slot < 1 || slot > MAX_SAVES) return "";
         File arquivo = new File(new File(PASTA), nomeArquivo(slot));
         if (!arquivo.exists()) {
@@ -85,9 +78,7 @@ public class GerenciadorSaves {
         return arquivo.exists() && arquivo.delete();
     }
 
-    // Apaga todos os saves cujo personagem tenha o nome informado (morte permanente).
-    // Retorna quantos saves foram apagados.
-    public static int deletarSavesDoPersonagem(String nomePersonagem) {
+            public static int deletarSavesDoPersonagem(String nomePersonagem) {
         int apagados = 0;
         for (int slot = 1; slot <= MAX_SAVES; slot++) {
             if (!existeSave(slot)) continue;

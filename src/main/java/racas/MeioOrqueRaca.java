@@ -1,6 +1,5 @@
 package racas;
 
-// Meio-Orque — +1 em Força + Fúria Sombria (dado de dano maior com vida baixa).
 public class MeioOrqueRaca extends Raca {
     private static final long serialVersionUID = 1L;
 

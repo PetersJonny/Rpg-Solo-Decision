@@ -10,7 +10,6 @@ import mecanicas.MecanicasRpg;
 import racas.Raca;
 import telas.Interface;
 
-/** Danos, efeitos de combate, sobrevivência (fome/descanso) e uso de estruturas. */
 public class GerenciadorDeVida {
 
     public static void receberDano(FichaRpg ficha, int dano) {
@@ -38,14 +37,13 @@ public class GerenciadorDeVida {
             ficha.vidaPersonagem = Math.max(0, ficha.vidaPersonagem - dano);
         }
 
-        // Vontade de Viver (Humano): ao cair a 0, sobrevive com 1 PV (1x/dia)
-        if (ficha.vidaPersonagem <= 0 && ficha.raca != null && ficha.raca.podeSobreviverCom1AoCair0() && !ficha.sobrevivenciaUsada) {
+                if (ficha.vidaPersonagem <= 0 && ficha.raca != null && ficha.raca.podeSobreviverCom1AoCair0() && !ficha.sobrevivenciaUsada) {
             ficha.sobrevivenciaUsada = true;
             ficha.vidaPersonagem = 1;
             telas.Interface.MostrarMensagem("\n(Vontade de Viver!) Você resiste à morte e permanece de pé com 1 de vida!");
             telas.Interface.Pausa(1500);
         }
-    
+
     }
     public static void resetarEfeitosCombate(FichaRpg ficha) {
 
@@ -76,55 +74,55 @@ public class GerenciadorDeVida {
         ficha.curaAbsolutaBonus = 0;
         ficha.curaAbsolutaVidaOriginalMax = 0;
         ficha.curaIncessanteUsada = false;
-    
+
     }
     public static int bonusTestesNoturnos(FichaRpg ficha) {
 
         return ficha.ehNoite && ficha.raca != null && ficha.raca.temBonusTestesNoturnos() ? 2 : 0;
-    
+
     }
     public static int getPenalidadeFome(FichaRpg ficha) {
 
         int penalidade = ficha.diasSemComer >= 3 ? 2 : ficha.diasSemComer >= 1 ? 1 : 0;
         if (ficha.enjoado) penalidade = Math.max(penalidade, ficha.penalidadeEnjoado);
         return penalidade;
-    
+
     }
     public static int getPerdaVidaPorFome(FichaRpg ficha) {
 
         if (ficha.diasSemComer < 5) return 0;
         return 1 << ((ficha.diasSemComer - 5) / 5);
-    
+
     }
     public static int getLabirintoChanceDescoberta(FichaRpg ficha) {
 
         return Math.min(ficha.diaAtual, 100);
-    
+
     }
     public static boolean isLabirintoDisponivel(FichaRpg ficha) {
 
         return ficha.labirintoEncontrado && ficha.labirinto != null && !ficha.labirinto.isCentroAlcancado();
-    
+
     }
     public static void marcarSobrevivenciaUsada(FichaRpg ficha) {
- ficha.sobrevivenciaUsada = true; 
+ ficha.sobrevivenciaUsada = true;
     }
     public static void marcarMenteAfiadaUsada(FichaRpg ficha) {
- ficha.menteAfiadaUsada = true; 
+ ficha.menteAfiadaUsada = true;
     }
     public static boolean podeUsarMenteAfiada(FichaRpg ficha) {
- return ficha.raca != null && ficha.raca.podeRerrolarTeste() && !ficha.menteAfiadaUsada; 
+ return ficha.raca != null && ficha.raca.podeRerrolarTeste() && !ficha.menteAfiadaUsada;
     }
     public static boolean podeUsarCabana(FichaRpg ficha) {
- return ficha.temCabana && ficha.getLocalizacaoAtual() == 0; 
+ return ficha.temCabana && ficha.getLocalizacaoAtual() == 0;
     }
     public static boolean podeUsarSalaTreino(FichaRpg ficha) {
- return ficha.temSalaTreino && ficha.getLocalizacaoAtual() == ficha.getLocalizacaoSala(); 
+ return ficha.temSalaTreino && ficha.getLocalizacaoAtual() == ficha.getLocalizacaoSala();
     }
     public static boolean podeUsarMesaMagias(FichaRpg ficha) {
- return ficha.temMesaMagias && ficha.getLocalizacaoAtual() == ficha.getLocalizacaoMesa(); 
+ return ficha.temMesaMagias && ficha.getLocalizacaoAtual() == ficha.getLocalizacaoMesa();
     }
     public static boolean podeUsarFogueira(FichaRpg ficha) {
- return ficha.temFogueira && ficha.getLocalizacaoAtual() == ficha.getLocalizacaoFogueira(); 
+ return ficha.temFogueira && ficha.getLocalizacaoAtual() == ficha.getLocalizacaoFogueira();
     }
 }

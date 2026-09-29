@@ -1,6 +1,5 @@
 package racas;
 
-// Dracônico — +1 em Constituição + Escamas de Dragão (defesa/vida).
 public class DraconicoRaca extends Raca {
     private static final long serialVersionUID = 1L;
 

@@ -30,8 +30,7 @@ public class Companheiro implements java.io.Serializable {
     private final int nivel;
     private final FichaRpg ficha;
 
-    // Controle de quanto tempo o companheiro fica com o jogador
-    private boolean dormiuPrimeiraVez = false;
+        private boolean dormiuPrimeiraVez = false;
     private int diasRestantes = 0;
     private boolean partindo = false;
 
@@ -42,8 +41,6 @@ public class Companheiro implements java.io.Serializable {
         this.ficha = gerarFicha();
     }
 
-    // ==================== GERAÇÃO ALEATÓRIA ====================
-
     private static String sortearNome() {
         return PRIMEIROS_NOMES[MecanicasRpg.rolarDado(PRIMEIROS_NOMES.length) - 1];
     }
@@ -52,10 +49,7 @@ public class Companheiro implements java.io.Serializable {
         return SOBRENOMES[MecanicasRpg.rolarDado(SOBRENOMES.length) - 1];
     }
 
-    // Cria uma ficha completa igual à do jogador: distribui 6 pontos nos atributos,
-    // sorteia uma classe (Mago/Guerreiro/Healer), aplica arma, itens e habilidades,
-    // e sobe para o nível 2 (com bônus) quando a pessoa nasce no nível 2.
-    private FichaRpg gerarFicha() {
+                private FichaRpg gerarFicha() {
         FichaRpg f = new FichaRpg("");
         for (int i = 0; i < 6; i++) {
             f.adicionarAtributo(MecanicasRpg.rolarDado(6), 1);
@@ -90,18 +84,12 @@ public class Companheiro implements java.io.Serializable {
         }
 
         if (nivel == 2) {
-            f.adicionarXp(100); // sobe para o nível 2 (aplica bônus de vida/mana/habilidades)
-        }
+            f.adicionarXp(100);         }
         return f;
     }
 
-    // ==================== CONTROLE DE DIAS ====================
-
-    // Chamado sempre que o companheiro dorme uma noite (na cabana).
-    // A contagem de dias começa a partir da PRIMEIRA vez que ele dorme.
-    public void aoDormir() {
-        // Dormir na cabana recupera 1/3 da vida e da mana (como o jogador)
-        ficha.setVidaPersonagem(Math.min(ficha.getVidaPersonagem() + ficha.getVidaMaxima() / 3, ficha.getVidaMaxima()));
+            public void aoDormir() {
+                ficha.setVidaPersonagem(Math.min(ficha.getVidaPersonagem() + ficha.getVidaMaxima() / 3, ficha.getVidaMaxima()));
         ficha.setManaPersonagem(Math.min(ficha.getManaPersonagem() + ficha.getManaMaxima() / 3, ficha.getManaMaxima()));
 
         if (!dormiuPrimeiraVez) {
@@ -120,8 +108,6 @@ public class Companheiro implements java.io.Serializable {
     public boolean isDormiuPrimeiraVez() { return dormiuPrimeiraVez; }
     public int getDiasRestantes() { return diasRestantes; }
 
-    // ==================== GETTERS ====================
-
     public String getNome() { return nome; }
     public String getSobrenome() { return sobrenome; }
     public String getNomeCompleto() { return nome + " " + sobrenome; }
@@ -137,8 +123,6 @@ public class Companheiro implements java.io.Serializable {
         if (ficha.getRaca() == null) return "Nenhuma";
         return ficha.getRaca().getNome();
     }
-
-    // ==================== EXIBIÇÃO (CONVERSAR) ====================
 
     public void mostrarResumo() {
         Interface.MostrarMensagem("\n  Nome: " + nome + " " + sobrenome);
@@ -163,8 +147,7 @@ public class Companheiro implements java.io.Serializable {
         }
     }
 
-    // A pessoa conta sobre si e sobre o que viveu — cada classe tem uma história própria
-    public void falarSobreClasse() {
+        public void falarSobreClasse() {
         Interface.MostrarMensagem("\"" + nome + " conta um pouco sobre como vive na floresta...\"");
         Interface.Pausa(1500);
 

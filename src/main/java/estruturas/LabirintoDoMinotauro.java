@@ -10,18 +10,9 @@ import mecanicas.MecanicasRpg;
 import telas.Interface;
 import telas.Teclado;
 
-// O Labirinto do Minotauro concentra TODA a mecânica da estrutura (mesmo padrão
-// do Vendedor): sorteio da descoberta, evento de encontro, menu do lugar e a
-// navegação interna — a classe Floresta apenas dispara um gancho.
-//
-// Ao ser encontrado, o caminho é gerado de forma aleatória e salvo junto da
-// ficha (Labirinto é serializável). Dentro do labirinto o jogador vê apenas a
-// grade escura com o que já percorreu (iluminado) e o que está adjacente,
-// movendo-se imediatamente com W/A/S/D. O objetivo desta etapa é chegar ao centro.
 public class LabirintoDoMinotauro {
 
-    // Sorteio normal de descoberta: 1% + 1% por dia, até 100%.
-    private static final boolean TESTE_DESCOBERTA_GARANTIDA = false;
+        private static final boolean TESTE_DESCOBERTA_GARANTIDA = false;
 
     private static final String RESET = Interface.RESET;
     private static final String CIANO = Interface.CIANO;
@@ -29,10 +20,7 @@ public class LabirintoDoMinotauro {
     private static final String VERDE = Interface.VERDE;
     private static final String VERMELHO = Interface.VERMELHO;
 
-    // Sorteia a descoberta durante uma exploração (1% + 1% a cada dia, até 100%).
-    // Só é sorteado enquanto o labirinto não foi encontrado. Ao encontrar, o
-    // caminho é randomizado/salvo e o evento de descoberta é rodado.
-    public static boolean tentarDescoberta(FichaRpg ficha) {
+                public static boolean tentarDescoberta(FichaRpg ficha) {
         if (ficha.isLabirintoEncontrado()) return false;
         if (!TESTE_DESCOBERTA_GARANTIDA && MecanicasRpg.rolarDado(100) > ficha.getLabirintoChanceDescoberta()) {
             return false;
@@ -43,9 +31,7 @@ public class LabirintoDoMinotauro {
         return true;
     }
 
-    // Evento de descoberta: narrativa da entrada + escolha de entrar agora ou não.
-    // Se não entrar agora, o local fica marcado e vira opção no menu principal.
-    private static void EncontrarEntrada(FichaRpg ficha) {
+            private static void EncontrarEntrada(FichaRpg ficha) {
         Interface.MostrarMensagem("\nEnquanto avança pela mata fechada, você tropeça em algo sólido e antigo...");
         Interface.Pausa(3500);
         Interface.MostrarMensagem("\nAfastando a vegetação, revela-se uma boca de pedra escura, engolida por raízes: a entrada de um labirinto antigo. O ar gelado que sai de dentro carrega o cheiro de ferrugem e de escuridão.");
@@ -65,24 +51,19 @@ public class LabirintoDoMinotauro {
         }
     }
 
-    // Menu do lugar: ao entrar, a interface vira total sobre o labirinto.
-    public static void MenuLabirinto(FichaRpg ficha) {
-        // Compat: saves antigos que já tinham encontrado, mas sem a grade gerada
-        if (ficha.getLabirinto() == null) {
+        public static void MenuLabirinto(FichaRpg ficha) {
+                if (ficha.getLabirinto() == null) {
             ficha.setLabirinto(new Labirinto());
         }
         Labirinto lab = ficha.getLabirinto();
 
-        // Defensivo: com o centro alcançado, o labirinto já desmoronou e o menu
-        // normalmente nem é aberto (a opção some do menu principal).
-        if (lab.isCentroAlcancado()) {
+                        if (lab.isCentroAlcancado()) {
             Interface.MostrarMensagem("\nO labirinto já desmoronou e se fechou para sempre.");
             Interface.Pausa(2000);
             return;
         }
 
-        // Vir ao labirinto conta como ter saído da cabana/sala/mesa em que estava
-        ficha.sairDaCabana();
+                ficha.sairDaCabana();
 
         while (true) {
             Interface.cabecalhoMenu("LABIRINTO");
@@ -99,11 +80,9 @@ public class LabirintoDoMinotauro {
 
             if (escolha == 1) {
                 if (AdentrarLabirinto(ficha)) {
-                    return; // o labirinto desmoronou: volta direto para a floresta
-                }
+                    return;                 }
                 if (ficha.getVidaPersonagem() <= 0) {
-                    return; // morreu dentro do labirinto: o Main encerra a jornada
-                }
+                    return;                 }
             } else if (escolha == 2) {
                 MenuVisualizacao.MostrarFicha(ficha);
             } else {
@@ -114,12 +93,7 @@ public class LabirintoDoMinotauro {
         }
     }
 
-    // Navegação interna: só a grade do labirinto e as teclas W/A/S/D aparecem.
-    // Cada tecla move imediatamente (sem Enter); qualquer outra tecla não faz nada.
-    // Ao alcançar o centro (pela primeira vez) o Minotauro trava um combate sem fuga;
-    // vencê-lo faz o labirinto desmoronar, o jogador foge e volta à floresta — retorna
-    // true (ele não pode mais entrar). Morrer para o boss encerra a jornada.
-    private static boolean AdentrarLabirinto(FichaRpg ficha) {
+                        private static boolean AdentrarLabirinto(FichaRpg ficha) {
         Labirinto lab = ficha.getLabirinto();
 
         if (lab.isCentroAlcancado()) {
@@ -137,30 +111,23 @@ public class LabirintoDoMinotauro {
 
         Teclado.modoTeclaUnica();
         try {
-            Teclado.limparBuffer(); // descarta sobra do ENTER dos menus antes do 1º movimento
-            while (true) {
+            Teclado.limparBuffer();             while (true) {
                 char tecla = Character.toLowerCase(Teclado.lerTecla());
                 int[] delta = direcao(tecla);
-                if (delta == null) continue; // qualquer outra tecla: nada acontece
-                lab.mover(delta[0], delta[1]);
+                if (delta == null) continue;                 lab.mover(delta[0], delta[1]);
                 desenhar(lab, false, Character.toUpperCase(tecla));
-                processarEvento(lab, ficha); // casas de encontro/recompensa
-                if (ficha.getVidaPersonagem() <= 0) return false; // morreu no labirinto
-                if (lab.isCentroAlcancado()) {
+                processarEvento(lab, ficha);                 if (ficha.getVidaPersonagem() <= 0) return false;                 if (lab.isCentroAlcancado()) {
                     desenhar(lab, true, Character.toUpperCase(tecla));
                     Interface.MostrarMensagem("\n" + CIANO + "Você adentra o coração do labirinto!" + RESET);
                     Interface.Pausa(4000);
                     if (!ficha.isMinotauroDerrotado()) {
-                        Teclado.restaurar(); // menus e combate esperam terminal canonico
-                        try {
+                        Teclado.restaurar();                         try {
                             enfrentarMinotauro(ficha);
                         } finally {
                             Teclado.modoTeclaUnica();
                             Teclado.limparBuffer();
                         }
-                        if (ficha.getVidaPersonagem() <= 0) return false; // morreu para o Minotauro
-                        if (!ficha.isMinotauroDerrotado()) continue; // o boss escape: tente de novo
-                    }
+                        if (ficha.getVidaPersonagem() <= 0) return false;                         if (!ficha.isMinotauroDerrotado()) continue;                     }
                     desmoronar();
                     return true;
                 }
@@ -170,11 +137,7 @@ public class LabirintoDoMinotauro {
         }
     }
 
-    // Sequência de desmoronamento: ao alcançar o centro, o labirinto racha e desaba;
-    // o jogador foge correndo pela trilha e volta à floresta. O lugar se fecha para sempre.
-    // As frases se acumulam na tela (uma por uma, sem apagar as anteriores) e cada uma
-    // fica tempo suficiente para o jogador ler com calma.
-    private static void desmoronar() {
+                    private static void desmoronar() {
         String[] fases = {
             AMARELO + "De repente, as paredes de pedra começam a tremer..." + RESET,
             VERMELHO + "CRACH! As passagens racham e blocos do teto despencam atrás de você!" + RESET,
@@ -189,18 +152,11 @@ public class LabirintoDoMinotauro {
         }
     }
 
-    // Casas especiais do labirinto, ativadas uma única vez:
-//   ENCONTRO    -> 40% Esqueleto, 40% Zumbi, 20% Baú
-//   RECOMPENSA  -> 80% ouro (7-19), 17% arma sorteada do vendedor, 3% item raro
-//                  (Olho Demoníaco, Espada Majestral e Coroa do Rei, cada um 1 vez)
-// O combate e os menus usam o terminal canonico (Enter), então esta rotina sai do
-// modo tecla única antes das escolhas e volta para ele no final.
-    private static void processarEvento(Labirinto lab, FichaRpg ficha) {
+        private static void processarEvento(Labirinto lab, FichaRpg ficha) {
         Labirinto.TipoCelula evento = lab.consumirEventoNaPosicao();
         if (evento == Labirinto.TipoCelula.NORMAL) return;
 
-        Teclado.restaurar(); // menus e combate esperam terminal canonico
-        try {
+        Teclado.restaurar();         try {
             if (evento == Labirinto.TipoCelula.ENCONTRO) {
                 int sorteio = MecanicasRpg.rolarDado(100);
                 if (sorteio <= 40) {
@@ -214,17 +170,11 @@ public class LabirintoDoMinotauro {
                 gerarRecompensa(ficha);
             }
         } finally {
-            Teclado.modoTeclaUnica(); // volta ao modo de movimento
-            Teclado.limparBuffer();
+            Teclado.modoTeclaUnica();             Teclado.limparBuffer();
         }
-        desenhar(lab, false, ' '); // redesenha o labirinto depois do evento
-    }
+        desenhar(lab, false, ' ');     }
 
-    // RECOMPENSA: ao achar, pergunta se o jogador quer pegar. Se ele quiser, sorteia:
-    // 80% ouro (7-19), 17% arma sorteada do vendedor e 3% de um dos tesouros raros
-    // (cada um só cai UMA vez por ficha). Tudo o que for pego mostra "Você pegou X".
-    // Recusar consome a casa: a recompensa fica para trás.
-    private static void gerarRecompensa(FichaRpg ficha) {
+                    private static void gerarRecompensa(FichaRpg ficha) {
         Interface.MostrarMensagem("\nEntre as pedras do corredor, algo foi esquecido por alguém há muito tempo.");
         Interface.Pausa(3000);
 
@@ -263,10 +213,7 @@ public class LabirintoDoMinotauro {
         }
     }
 
-    // Tesouro raro: Olho Demoníaco. Aceitar o chamado funde o olho ao corpo do
-    // jogador (não é um item de inventário) e concede a habilidade Pacto Mortal
-    // para sempre; recusar dá nada, mas o item já conta como achado.
-    private static void encontrarOlhoDemonico(FichaRpg ficha) {
+                private static void encontrarOlhoDemonico(FichaRpg ficha) {
         ficha.setOlhoDemonicoEncontrado(true);
         Interface.MostrarMensagem(VERMELHO + "Nas trevas, algo a observa com um olho único e pulsante..." + RESET);
         Interface.Pausa(3000);
@@ -290,9 +237,7 @@ public class LabirintoDoMinotauro {
         }
     }
 
-    // Tesouro raro: Espada Majestral. 1d12 de dano + 1d4 de luz, e dobra o dano
-    // contra mortos-vivos.
-    private static void encontrarEspadaMajestral(FichaRpg ficha) {
+            private static void encontrarEspadaMajestral(FichaRpg ficha) {
         ficha.setEspadaMajestralEncontrada(true);
         Interface.MostrarMensagem(CIANO + "Uma luz dourada rasga as sombras: cravada na rocha, uma espada majestral banhada a ouro espera por você." + RESET);
         Interface.Pausa(3500);
@@ -301,9 +246,7 @@ public class LabirintoDoMinotauro {
         Interface.Pausa(3000);
     }
 
-    // Tesouro raro: Coroa do Rei. Um teste de Intelecto 18+ revela o segredo de
-    // comandar criaturas (habilidade Rei das Criaturas).
-    private static void encontrarCoroaDoRei(FichaRpg ficha) {
+            private static void encontrarCoroaDoRei(FichaRpg ficha) {
         ficha.setCoroaReiEncontrada(true);
         Interface.MostrarMensagem(AMARELO + "Sentada em um trono de pedra, uma coroa enferrujada aguarda. Perto dela, criaturas parecem hesitar em avançar." + RESET);
         Interface.Pausa(3500);
@@ -338,9 +281,7 @@ public class LabirintoDoMinotauro {
         }
     }
 
-    // Encontro de combate: oferece Lutar ou Fugir (Teste de Destreza contra a
-    // dificuldade da criatura). Se fugir falhar, o combate começa mesmo assim.
-    private static void encontrarMonstro(FichaRpg ficha, Criatura criatura) {
+            private static void encontrarMonstro(FichaRpg ficha, Criatura criatura) {
         List<Criatura> inimigos = Collections.singletonList(criatura);
 
         Interface.MostrarMensagem("\nAlgo se move nas sombras dos corredores...");
@@ -376,9 +317,7 @@ public class LabirintoDoMinotauro {
         }
     }
 
-    // Baú do labirinto: dá para abrir ou não. Se abrir, 50% ouro (7-14) ou um
-    // Baú Monstruoso salta — e aí vale lutar ou fugir (Destreza, dificuldade 12).
-    private static void encontrarBau(FichaRpg ficha) {
+            private static void encontrarBau(FichaRpg ficha) {
         Interface.MostrarMensagem("\n" + AMARELO + "Você tropeça em um baú antigo, intacto sob o pó." + RESET);
         Interface.Pausa(3000);
 
@@ -408,12 +347,7 @@ public class LabirintoDoMinotauro {
         }
     }
 
-    // Boss do coração do labirinto: ao chegar no centro, o Minotauro se ergue e a
-    // porta se fecha atrás de você — não há como fugir. Vencê-lo marca a ficha (o
-    // labirinto desmorona logo em seguida, na chamada). Se o "Rei das Criaturas"
-    // ordenar a fuga dele, ele se retira, some sem XP/drops e renasce com a vida
-    // cheia numa próxima tentativa.
-    private static void enfrentarMinotauro(FichaRpg ficha) {
+                        private static void enfrentarMinotauro(FichaRpg ficha) {
         Interface.MostrarMensagem(VERMELHO + "Um rugido estala entre as pedras e o chão treme. Das sombras do coração do labirinto surge uma silhueta colossal..." + RESET);
         Interface.Pausa(4000);
         Interface.MostrarMensagem(VERMELHO + "O MINOTAURO ergue-se diante de você, e a porta atrás de você se fecha com um estrondo. Não há como fugir!" + RESET);
@@ -430,16 +364,11 @@ public class LabirintoDoMinotauro {
                 return;
             }
         }
-        // O Minotauro fugiu (Rei das Criaturas): ele volta às sombras com a vida cheia
-        Interface.MostrarMensagem("\nO Minotauro recua para as sombras, e a porta se reabre com um rangido. Você pode tentar de novo.");
+                Interface.MostrarMensagem("\nO Minotauro recua para as sombras, e a porta se reabre com um rangido. Você pode tentar de novo.");
         Interface.Pausa(3000);
     }
 
-    // Desenha a tela do labirinto: apenas o entorno do personagem (paredes laterais e
-    // caminhos vizinhos) e o que já foi percorrido aparecem; o resto fica escuro.
-    // O centro é sempre marcado por um grande quadrado. Uma "câmera" vertical acompanha
-    // o jogador para que o labirinto (bem maior) caiba na tela.
-    private static final int ALTURA_JANELA = 21;
+                    private static final int ALTURA_JANELA = 21;
 
     private static void desenhar(Labirinto lab, boolean centroAlcancado, char ultimaTecla) {
         System.out.print("\033[2J\033[H");
@@ -447,8 +376,7 @@ public class LabirintoDoMinotauro {
         int camIni = Math.max(0, Math.min(lab.getJogadorLinha() - ALTURA_JANELA / 2, t - ALTURA_JANELA));
 
         StringBuilder sb = new StringBuilder();
-        sb.append("\n\n\n\n\n\n"); // desce o labirinto na tela
-        for (int l = camIni; l < camIni + ALTURA_JANELA; l++) {
+        sb.append("\n\n\n\n\n\n");         for (int l = camIni; l < camIni + ALTURA_JANELA; l++) {
             for (int c = 0; c < t; c++) {
                 sb.append(desenharCelula(lab, l, c));
             }
@@ -468,22 +396,16 @@ public class LabirintoDoMinotauro {
         boolean entorno = Math.abs(l - lab.getJogadorLinha()) <= 1 && Math.abs(c - lab.getJogadorColuna()) <= 1;
 
         if (l == lab.getJogadorLinha() && c == lab.getJogadorColuna()) {
-            return AMARELO + "@ " + RESET; // jogador
-        }
+            return AMARELO + "@ " + RESET;         }
 
         if (!lab.isCaminho(l, c)) {
-            return entorno ? "██" : "  "; // paredes só aparecem ao redor do personagem
-        }
+            return entorno ? "██" : "  ";         }
 
         if (entorno) {
-            return lab.isVisitado(l, c) ? CIANO + "· " + RESET : VERDE + ". " + RESET; // vizinho andável
-        }
-        return lab.isVisitado(l, c) ? CIANO + "· " + RESET : "  "; // só o que andou fica iluminado
-    }
+            return lab.isVisitado(l, c) ? CIANO + "· " + RESET : VERDE + ". " + RESET;         }
+        return lab.isVisitado(l, c) ? CIANO + "· " + RESET : "  ";     }
 
-    // Converte a tecla em deslocamento de célula. WASD e as setas ↑ ↓ ← → funcionam
-    // iguais; qualquer outra tecla retorna null (nada acontece).
-    private static int[] direcao(char tecla) {
+            private static int[] direcao(char tecla) {
         switch (Character.toLowerCase(tecla)) {
             case 'w':
             case '↑': return new int[]{-1, 0};

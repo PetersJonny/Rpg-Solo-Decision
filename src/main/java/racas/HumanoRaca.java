@@ -1,10 +1,8 @@
 package racas;
 
-// Humano — +1 em um atributo à escolha + Vontade de Viver.
 public class HumanoRaca extends Raca {
     private static final long serialVersionUID = 1L;
-    private String atributoEscolhido = null; // definido na criação (menu)
-
+    private String atributoEscolhido = null;
     public HumanoRaca() {
         super("Humano", null,
                 "+1 em um atributo à sua escolha",
@@ -18,9 +16,7 @@ public class HumanoRaca extends Raca {
     public void setAtributoEscolhido(String a) { this.atributoEscolhido = a; }
     public String getAtributoEscolhido() { return atributoEscolhido; }
 
-    // +1 racial em um atributo à escolha (definido na criação do personagem).
-    // Se nenhum foi escolhido ainda, retorna 1 em Constituição (padrão do menu).
-    @Override public int getBonusConstituicao() { return bonusNo("Constituição"); }
+            @Override public int getBonusConstituicao() { return bonusNo("Constituição"); }
     @Override public int getBonusDestreza() { return bonusNo("Destreza"); }
     @Override public int getBonusForca() { return bonusNo("Força"); }
     @Override public int getBonusSabedoria() { return bonusNo("Sabedoria"); }

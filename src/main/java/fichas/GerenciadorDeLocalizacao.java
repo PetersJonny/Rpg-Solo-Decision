@@ -10,7 +10,6 @@ import mecanicas.MecanicasRpg;
 import racas.Raca;
 import telas.Interface;
 
-/** Completude da ficha, distâncias e posição atual do jogador entre as construções. */
 public class GerenciadorDeLocalizacao {
 
     public static boolean isFichaCompleta(FichaRpg ficha) {
@@ -26,12 +25,12 @@ public class GerenciadorDeLocalizacao {
             return false;
         }
         return true;
-    
+
     }
     public static int getDistanciaAte(FichaRpg ficha, int profundidadeAlvo) {
 
         return Math.abs(ficha.profundidadeFloresta - profundidadeAlvo);
-    
+
     }
     public static int getLocalizacaoAtual(FichaRpg ficha) {
 
@@ -40,7 +39,7 @@ public class GerenciadorDeLocalizacao {
         if (ficha.naMesaMagias) return ficha.getLocalizacaoMesa();
         if (ficha.naFogueira) return ficha.getLocalizacaoFogueira();
         return 3;
-    
+
     }
     public static int getLocalizacaoSala(FichaRpg ficha) {
 
@@ -48,14 +47,14 @@ public class GerenciadorDeLocalizacao {
         if (ficha.profundidadeSalaTreino == ficha.profundidadeCabana) return 0;
         if (ficha.profundidadeSalaTreino == ficha.profundidadeMesaMagias) return 2;
         return 1;
-    
+
     }
     public static int getLocalizacaoMesa(FichaRpg ficha) {
 
         if (!ficha.temMesaMagias) return 2;
         if (ficha.profundidadeMesaMagias == ficha.profundidadeCabana) return 0;
         return 2;
-    
+
     }
     public static int getLocalizacaoFogueira(FichaRpg ficha) {
 
@@ -64,6 +63,6 @@ public class GerenciadorDeLocalizacao {
         if (ficha.profundidadeFogueira == ficha.profundidadeSalaTreino) return 1;
         if (ficha.profundidadeFogueira == ficha.profundidadeMesaMagias) return 2;
         return 4;
-    
+
     }
 }

@@ -22,25 +22,19 @@ import static mecanicas.GerenciadorDeItens.*;
 import static mecanicas.GerenciadorDeTurnos.*;
 import static mecanicas.MotorDeCombate.*;
 
-/** Execução de ataques com arma e cálculo dos dados de dano. */
 public class GerenciadorDeAtaque {
-
-// ==================== EXECUTAR ATAQUE ====================
-
 
     public static boolean executarAtaqueComArma(FichaRpg ficha, List<Criatura> inimigos, int alvoIndex, int armaIndex) {
         if (alvoIndex < 0 || alvoIndex >= inimigos.size()) return false;
         Criatura inimigo = inimigos.get(alvoIndex);
 
-        // Defesa Absoluta do Guerreiro: o bônus some ao realizar um ataque
-        if (ficha.isDefesaAbsolutaAtiva()) {
+                if (ficha.isDefesaAbsolutaAtiva()) {
             ficha.setDefesaAbsolutaAtiva(false);
             Interface.MostrarMensagem("(Sua Defesa Absoluta se dissipa ao atacar!)");
             Interface.Pausa(1500);
         }
 
-        // Curandeiro Combatente (Healer): cada 1 de mana compra 1 ataque extra (máx = nível)
-        int ataquesExtras = comprarAtaquesExtrasCurandeiro(ficha, inimigo);
+                int ataquesExtras = comprarAtaquesExtrasCurandeiro(ficha, inimigo);
         if (ataquesExtras > 0) {
             Interface.MostrarMensagem("\nCurandeiro Combatente! Você gasta " + ataquesExtras + " de mana e executa " + ataquesExtras + " ataque(s) extra(s).");
             Interface.Pausa(1500);
@@ -56,8 +50,7 @@ public class GerenciadorDeAtaque {
             }
         }
 
-        // Espada do Minotauro (Guerreiro): 30% de chance de atacar de novo após o golpe
-        if (armaIndex >= 0 && armaIndex < ficha.getInventario().size()
+                if (armaIndex >= 0 && armaIndex < ficha.getInventario().size()
                 && ficha.getInventario().get(armaIndex) instanceof Arma
                 && ((Arma) ficha.getInventario().get(armaIndex)).getNome().equals("Espada do Minotauro")
                 && inimigo.getVida() > 0
@@ -74,9 +67,6 @@ public class GerenciadorDeAtaque {
         return acertou;
     }
 
-// Curandeiro Combatente (Healer): oferece comprar ataques extras gastando mana
-    // (1 de mana por ataque, máximo = nível). O acerto de cada golpe cura metade do dano.
-
     private static int comprarAtaquesExtrasCurandeiro(FichaRpg ficha, Criatura inimigo) {
         if (!(ficha.getClasseDoPersonagem() instanceof classes.Healer)) return 0;
         if (!temHabilidade(ficha, "Curandeiro Combatente")) return 0;
@@ -90,8 +80,6 @@ public class GerenciadorDeAtaque {
         return extra;
     }
 
-// Curandeiro Combatente (Healer): cada ataque que acerta cura metade do dano causado
-
     private static void curarCurandeiroNoGolpe(FichaRpg ficha, int danoCausado) {
         if (!(ficha.getClasseDoPersonagem() instanceof classes.Healer)) return;
         if (!temHabilidade(ficha, "Curandeiro Combatente")) return;
@@ -101,8 +89,6 @@ public class GerenciadorDeAtaque {
         Interface.MostrarMensagem("(Curandeiro Combatente! O golpe acerta e você se cura " + cura + " de vida.)");
         Interface.Pausa(1500);
     }
-
-// Executa UM ataque com arma (ou soco) e devolve o dano causado (0 se errou/inválido)
 
     private static int ataqueComArmaUnico(FichaRpg ficha, List<Criatura> inimigos, int alvoIndex, int armaIndex, boolean golpeExtra) {
         if (alvoIndex < 0 || alvoIndex >= inimigos.size()) return 0;
@@ -117,6 +103,7 @@ public class GerenciadorDeAtaque {
         }
 
         int dadoAtaque, totalAtaque, dano = 0;
+        boolean golpeCaC = false, golpeLA = false;
         int atributoBonus;
         String nomeAtributo;
 
@@ -124,6 +111,7 @@ public class GerenciadorDeAtaque {
             String socoNome = "Soco";
             int socoDado = 4;
             int socoQtd = 1;
+            golpeCaC = true;
             if (ficha.getClasseDoPersonagem() != null && ficha.getClasseDoPersonagem().getAtaqueDesarmado() != null) {
                 Arma soco = ficha.getClasseDoPersonagem().getAtaqueDesarmado();
                 socoNome = soco.getNome();
@@ -171,6 +159,8 @@ public class GerenciadorDeAtaque {
             }
         } else if (armaIndex >= 0 && armaIndex < ficha.getInventario().size()) {
             Arma armaEscolhida = (Arma) ficha.getInventario().get(armaIndex);
+            golpeCaC = armaEscolhida.getTipoArma().contains("CaC");
+            golpeLA = armaEscolhida.getTipoArma().contains("LA");
             String atributo = armaEscolhida.getAtributoAtaque();
             if (armaEscolhida.isAgil()) {
                 if (ficha.getForca() >= ficha.getDestreza()) {
@@ -185,10 +175,7 @@ public class GerenciadorDeAtaque {
                 nomeAtributo = atributo;
             }
 
-            // Fúria Sombria (Meio-Orque): com 30% ou menos de vida, o dado de dano da arma
-            // sobe um degrau (1d2→1d3→1d4→1d6→1d8→1d10→1d12); se a arma já usa 1d12
-            // (o maior dado de dano), a passiva acrescenta +1d4 extra por dado rolado.
-            int qtyDados = armaEscolhida.getQuantidadeDanoArma();
+                                                int qtyDados = armaEscolhida.getQuantidadeDanoArma();
             int dadoDano = armaEscolhida.getDadoDanoArma();
             boolean furiaSombria = ficha.getRaca() != null && ficha.getRaca().temBonusDanoVidaBaixa()
                     && ficha.getVidaPersonagem() <= ficha.getVidaMaxima() * 0.30;
@@ -197,8 +184,7 @@ public class GerenciadorDeAtaque {
             if (furiaSombria) {
                 dadosFuria = dadosExtrasFuria(dadoDano, qtyDados);
                 if (dadosFuria > 0) {
-                    ladoFuria = 4; // 1d12 + 1d4 por dado
-                } else {
+                    ladoFuria = 4;                 } else {
                     dadoDano = proximoDadoDeDano(dadoDano);
                 }
             }
@@ -225,8 +211,7 @@ public class GerenciadorDeAtaque {
                     Interface.Pausa(1000);
                 }
                 if (dadosFuria > 0) {
-                    dadosFuria *= (critico ? 2 : 1); // +1d4 extra também dobra no crítico
-                }
+                    dadosFuria *= (critico ? 2 : 1);                 }
                 StringBuilder roladas = new StringBuilder();
                 Interface.pressionarParaRolar();
                 for (int i = 0; i < dadosTotais; i++) {
@@ -252,9 +237,7 @@ public class GerenciadorDeAtaque {
                 Interface.MostrarMensagem("-> Dados Rolados: " + roladas + " = " + dano + " (Dano: " + resumoDados + " + " + nomeAtributo + ": " + atributoBonus + ")");
                 Interface.Pausa(2000);
 
-                // Espada Majestral: banhada em ouro e magia, causa +1d4 de dano de luz
-                // e o dobro do dano total contra mortos-vivos
-                if (armaEscolhida.getNome().equals("Espada Majestral")) {
+                                                if (armaEscolhida.getNome().equals("Espada Majestral")) {
                     int dadosLuz = critico ? 2 : 1;
                     int luz = 0;
                     for (int i = 0; i < dadosLuz; i++) {
@@ -282,6 +265,16 @@ public class GerenciadorDeAtaque {
         }
 
         if (dano > 0) {
+            if (ficha.temItem("Túnica de Aventureiro") && golpeCaC) {
+                dano += 1;
+                Interface.MostrarMensagem("(Túnica de Aventureiro! +1 de dano corpo a corpo)");
+                Interface.Pausa(1000);
+            }
+            if (ficha.temItem("Manto do Atirador") && golpeLA) {
+                dano += 1;
+                Interface.MostrarMensagem("(Manto do Atirador! +1 de dano à distância)");
+                Interface.Pausa(1000);
+            }
             if (ficha.isEspadaAfiadaAtiva() && armaIndex >= 0) {
                 int bonusAfiada = MecanicasRpg.rolarDado(8) + MecanicasRpg.rolarDado(8);
                 dano += bonusAfiada;
@@ -297,10 +290,6 @@ public class GerenciadorDeAtaque {
         return dano;
     }
 
-// Próximo dado de dano no padrão (1 degrau acima): 1d2→1d3→1d4→1d6→1d8→1d10→
-// 1d12 (1d12 é o maior dado de dano; 1d20 é só para testes). Usado pela Fúria
-// Sombria (Meio-Orque) com 30% ou menos de vida.
-
     static int proximoDadoDeDano(int dado) {
         switch (dado) {
             case 2: return 3;
@@ -313,10 +302,6 @@ public class GerenciadorDeAtaque {
             default: return dado;
         }
     }
-
-// Fúria Sombria com a arma já no dado máximo de dano (1d12): em vez de subir
-    // de degrau, a passiva acrescenta +1d4 por cada dado 1d12 da arma (ex.: 1d12
-    // vira 1d12 + 1d4). Retorna quantos dados extra essa arma receberia.
 
     static int dadosExtrasFuria(int dadoDano, int qtyDados) {
         return dadoDano >= 12 ? qtyDados : 0;

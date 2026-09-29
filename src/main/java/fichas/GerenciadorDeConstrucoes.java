@@ -10,7 +10,6 @@ import mecanicas.MecanicasRpg;
 import racas.Raca;
 import telas.Interface;
 
-/** Construções (cabana, sala de treino, mesa de magias, fogueira), ciclo dia/noite, sono e fome. */
 public class GerenciadorDeConstrucoes {
 
     public static void sincronizarLocalizacao(FichaRpg ficha) {
@@ -19,7 +18,7 @@ public class GerenciadorDeConstrucoes {
         ficha.naSalaTreino = ficha.temSalaTreino && ficha.profundidadeFloresta == ficha.profundidadeSalaTreino;
         ficha.naMesaMagias = ficha.temMesaMagias && ficha.profundidadeFloresta == ficha.profundidadeMesaMagias;
         ficha.naFogueira = ficha.temFogueira && ficha.profundidadeFloresta == ficha.profundidadeFogueira;
-    
+
     }
     public static void entrarNaConstrucao(FichaRpg ficha, int profundidadeAlvo) {
 
@@ -35,7 +34,7 @@ public class GerenciadorDeConstrucoes {
         if (ficha.temFogueira && ficha.profundidadeFogueira == profundidadeAlvo) {
             ficha.naFogueira = true;
         }
-    
+
     }
     public static void recomputarAdjacencias(FichaRpg ficha) {
 
@@ -46,7 +45,7 @@ public class GerenciadorDeConstrucoes {
         ficha.fogueiraJuntoCabana = ficha.temFogueira && ficha.temCabana && ficha.profundidadeFogueira == ficha.profundidadeCabana;
         ficha.fogueiraJuntoSala = ficha.temFogueira && ficha.temSalaTreino && ficha.profundidadeFogueira == ficha.profundidadeSalaTreino;
         ficha.fogueiraJuntoMesa = ficha.temFogueira && ficha.temMesaMagias && ficha.profundidadeFogueira == ficha.profundidadeMesaMagias;
-    
+
     }
     public static void sairDaCabana(FichaRpg ficha) {
 
@@ -56,7 +55,7 @@ public class GerenciadorDeConstrucoes {
         ficha.naSalaTreino = false;
         ficha.naMesaMagias = false;
         ficha.naFogueira = false;
-    
+
     }
     public static void voltarParaCabana(FichaRpg ficha) {
 
@@ -70,7 +69,7 @@ public class GerenciadorDeConstrucoes {
         } else {
             ficha.naFogueira = false;
         }
-    
+
     }
     public static void irParaSalaTreino(FichaRpg ficha) {
 
@@ -78,7 +77,7 @@ public class GerenciadorDeConstrucoes {
         ficha.naMesaMagias = false;
         ficha.naCabana = ficha.salaJuntoCabana;
         ficha.naFogueira = ficha.fogueiraJuntoSala;
-    
+
     }
     public static void irParaMesaMagias(FichaRpg ficha) {
 
@@ -86,7 +85,7 @@ public class GerenciadorDeConstrucoes {
         ficha.naSalaTreino = false;
         ficha.naCabana = ficha.mesaJuntoCabana;
         ficha.naFogueira = ficha.fogueiraJuntoMesa;
-    
+
     }
     public static void irParaFogueira(FichaRpg ficha) {
 
@@ -94,7 +93,7 @@ public class GerenciadorDeConstrucoes {
         ficha.naSalaTreino = false;
         ficha.naMesaMagias = false;
         ficha.naCabana = ficha.fogueiraJuntoCabana;
-    
+
     }
     public static boolean avancarTempo(FichaRpg ficha, int unidades) {
 
@@ -110,31 +109,26 @@ public class GerenciadorDeConstrucoes {
                 ficha.diaAtual++;
                 ficha.registrarNovoDiaFome();
                 if (eraNoite && ficha.companheiro != null) {
-                    // A noite terminou: o companheiro dormiu na cabana
-                    ficha.registrarDormidaDoCompanheiro();
+                                        ficha.registrarDormidaDoCompanheiro();
                 }
             }
-            // Passivas diárias (Vontade de Viver e Mente Afiada) renovam a cada novo dia
-            ficha.sobrevivenciaUsada = false;
+                        ficha.sobrevivenciaUsada = false;
             ficha.menteAfiadaUsada = false;
-            // Decrementa bônus de treino a cada período que se inicia
-            if (ficha.treinoBonusPeriodosRestantes > 0) {
+                        if (ficha.treinoBonusPeriodosRestantes > 0) {
                 ficha.treinoBonusPeriodosRestantes--;
                 if (ficha.treinoBonusPeriodosRestantes <= 0) {
                     ficha.treinoBonusAtributo = null;
                 }
             }
-            // Decrementa o bônus da Mesa de Magias a cada período que se inicia
-            if (ficha.magiaBonusPeriodosRestantes > 0) {
+                        if (ficha.magiaBonusPeriodosRestantes > 0) {
                 ficha.magiaBonusPeriodosRestantes--;
             }
-            // A fome cobra vida a cada período (dia e noite) a partir de 5 dias sem comer
-            ficha.aplicarPerdaVidaPorFome();
+                        ficha.aplicarPerdaVidaPorFome();
             virou = true;
         }
         ficha.cansado = ficha.diasSemDormir > 2;
         return virou;
-    
+
     }
     public static boolean dormir(FichaRpg ficha) {
 
@@ -144,6 +138,8 @@ public class GerenciadorDeConstrucoes {
         int divisor = ficha.comeuHoje ? 2 : 3;
         int curaVida = ficha.vidaMaxima / divisor;
         int curaMana = ficha.manaMaxima / divisor;
+        if (ficha.temItem("Capa do Viajante")) {
+            curaVida += 4;         }
         ficha.vidaPersonagem = Math.min(ficha.vidaPersonagem + curaVida, ficha.vidaMaxima);
         ficha.manaPersonagem = Math.min(ficha.manaPersonagem + curaMana, ficha.manaMaxima);
         ficha.ehNoite = false;
@@ -157,7 +153,7 @@ public class GerenciadorDeConstrucoes {
         ficha.menteAfiadaUsada = false;
         ficha.registrarDormidaDoCompanheiro();
         return true;
-    
+
     }
     public static String descreverFome(FichaRpg ficha) {
 
@@ -171,7 +167,7 @@ public class GerenciadorDeConstrucoes {
             return "FAMINTO " + ficha.getDiasSemComer() + " dias (-" + ficha.getPenalidadeFome() + " em testes de Destreza e Força)";
         }
         return "";
-    
+
     }
     public static void registrarNovoDiaFome(FichaRpg ficha) {
 
@@ -180,7 +176,7 @@ public class GerenciadorDeConstrucoes {
         }
         ficha.comeuHoje = false;
         ficha.frutasComidasHoje = 0;
-    
+
     }
     public static int aplicarPerdaVidaPorFome(FichaRpg ficha) {
 
@@ -188,7 +184,7 @@ public class GerenciadorDeConstrucoes {
         if (perda <= 0) return 0;
         ficha.vidaPersonagem = Math.max(0, ficha.vidaPersonagem - perda);
         return perda;
-    
+
     }
     public static void comerComidaBoa(FichaRpg ficha) {
 
@@ -196,7 +192,13 @@ public class GerenciadorDeConstrucoes {
         ficha.comeuHoje = true;
         ficha.enjoado = false;
         ficha.penalidadeEnjoado = 0;
-    
+
+    }
+    public static void curarEnjoo(FichaRpg ficha) {
+
+        ficha.enjoado = false;
+        ficha.penalidadeEnjoado = 0;
+
     }
     public static void comerCarnePodre(FichaRpg ficha) {
 
@@ -205,7 +207,7 @@ public class GerenciadorDeConstrucoes {
         ficha.comeuHoje = true;
         ficha.enjoado = true;
         ficha.penalidadeEnjoado = Math.max(penalidadeAnterior, 1);
-    
+
     }
     public static boolean comerCarneCrua(FichaRpg ficha) {
 
@@ -215,7 +217,7 @@ public class GerenciadorDeConstrucoes {
         }
         ficha.comerComidaBoa();
         return false;
-    
+
     }
     public static void comerFrutas(FichaRpg ficha, int qtd) {
 
@@ -223,7 +225,7 @@ public class GerenciadorDeConstrucoes {
         if (ficha.frutasComidasHoje >= FichaRpg.FRUTAS_PARA_REFEICAO) {
             ficha.comerComidaBoa();
         }
-    
+
     }
     public static boolean montarCabana(FichaRpg ficha) {
 
@@ -241,7 +243,7 @@ public class GerenciadorDeConstrucoes {
         ficha.naMesaMagias = false;
         ficha.recomputarAdjacencias();
         return true;
-    
+
     }
     public static boolean construirSalaTreino(FichaRpg ficha) {
 
@@ -259,7 +261,7 @@ public class GerenciadorDeConstrucoes {
         ficha.naSalaTreino = true;
         ficha.naMesaMagias = false;
         return true;
-    
+
     }
     public static void entrarSalaTreino(FichaRpg ficha) {
 
@@ -271,13 +273,13 @@ public class GerenciadorDeConstrucoes {
             ficha.naCabana = false;
         }
         ficha.naFogueira = ficha.fogueiraJuntoSala;
-    
+
     }
     public static void treinarAtributo(FichaRpg ficha, String atributo) {
 
         ficha.treinoBonusAtributo = atributo;
         ficha.treinoBonusPeriodosRestantes = 2;
-    
+
     }
     public static void terminarTreino(FichaRpg ficha) {
 
@@ -290,7 +292,7 @@ public class GerenciadorDeConstrucoes {
             ficha.naSalaTreino = true;
         }
         ficha.naFogueira = ficha.fogueiraJuntoSala;
-    
+
     }
     public static boolean construirMesaMagias(FichaRpg ficha) {
 
@@ -309,7 +311,7 @@ public class GerenciadorDeConstrucoes {
         ficha.naSalaTreino = false;
         ficha.naCabana = ficha.mesaJuntoCabana;
         return true;
-    
+
     }
     public static boolean montarFogueira(FichaRpg ficha) {
 
@@ -327,7 +329,7 @@ public class GerenciadorDeConstrucoes {
         ficha.naMesaMagias = false;
         ficha.naCabana = ficha.fogueiraJuntoCabana;
         return true;
-    
+
     }
     public static boolean cozinharTodasAsCarnes(FichaRpg ficha) {
 
@@ -340,7 +342,7 @@ public class GerenciadorDeConstrucoes {
         ficha.cozinharTipoCarne("Carne de Lobo", "Carne de Lobo Cozida", lobos);
         ficha.cozinharTipoCarne("Carne de Urso", "Carne de Urso Cozida", ursos);
         return true;
-    
+
     }
     public static void cozinharTipoCarne(FichaRpg ficha, String crua, String cozida, int qtd) {
 
@@ -349,7 +351,7 @@ public class GerenciadorDeConstrucoes {
         ItemRpg cozido = criaturas.Criatura.criarItemDrop(cozida);
         cozido.setQuantidade(qtd);
         ficha.adicionarItem(cozido);
-    
+
     }
     public static boolean moverCabana(FichaRpg ficha) {
 
@@ -366,7 +368,7 @@ public class GerenciadorDeConstrucoes {
         ficha.naMesaMagias = false;
         ficha.recomputarAdjacencias();
         return true;
-    
+
     }
     public static boolean moverSalaTreino(FichaRpg ficha) {
 
@@ -384,7 +386,7 @@ public class GerenciadorDeConstrucoes {
         ficha.recomputarAdjacencias();
         ficha.naCabana = ficha.salaJuntoCabana;
         return true;
-    
+
     }
     public static boolean moverMesaMagias(FichaRpg ficha) {
 
@@ -402,7 +404,7 @@ public class GerenciadorDeConstrucoes {
         ficha.recomputarAdjacencias();
         ficha.naCabana = ficha.mesaJuntoCabana;
         return true;
-    
+
     }
     public static boolean moverFogueira(FichaRpg ficha) {
 
@@ -419,7 +421,7 @@ public class GerenciadorDeConstrucoes {
         ficha.recomputarAdjacencias();
         ficha.naCabana = ficha.fogueiraJuntoCabana;
         return true;
-    
+
     }
     public static int getProfundidadeConstrucaoMaisProxima(FichaRpg ficha) {
 
@@ -429,11 +431,11 @@ public class GerenciadorDeConstrucoes {
         if (ficha.temMesaMagias) p = Math.max(p, ficha.profundidadeMesaMagias);
         if (ficha.temFogueira) p = Math.max(p, ficha.profundidadeFogueira);
         return p;
-    
+
     }
     public static void estudarMagia(FichaRpg ficha) {
 
         ficha.magiaBonusPeriodosRestantes = 2;
-    
+
     }
 }

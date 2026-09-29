@@ -7,28 +7,16 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-// Grade navegável do Labirinto do Minotauro (serializável: fica salva na ficha).
-// O caminho é gerado de forma aleatória uma única vez, no momento da descoberta;
-// o jogador reconhece apenas que já andou (iluminado) e o que está adjacente.
-// Algumas casas são especiais: de ENCONTRO (monstros) e de RECOMPENSA (itens),
-// sorteadas na geração. O labirinto termina ao entrar na primeira casa do centro.
 public class Labirinto implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private static final int TAMANHO = 31; // grade 31x31 (15x15 de corredores)
-    private static final int RAIO_CENTRO = 2; // praça central 5x5 (o "meio" do labirinto)
-
-    // Quantidade de casas especiais por labirinto (ajustável)
-    static final int QUANTIDADE_ENCONTROS = 8;
+    private static final int TAMANHO = 31;     private static final int RAIO_CENTRO = 2;
+        static final int QUANTIDADE_ENCONTROS = 8;
     static final int QUANTIDADE_RECOMPENSAS = 6;
 
-    // Tipos de casa: ENCONTRO (monstro) e RECOMPENSA (item) ativam UMA vez por labirinto.
-    public enum TipoCelula { NORMAL, ENCONTRO, RECOMPENSA }
+        public enum TipoCelula { NORMAL, ENCONTRO, RECOMPENSA }
 
-    private final boolean[][] caminhos; // true = célula andável
-    private final boolean[][] visitados; // true = já percorrido (fica iluminado)
-    private final TipoCelula[][] tipoCelula; // marca as casas especiais
-    private int jogadorLinha, jogadorColuna;
+    private final boolean[][] caminhos;     private final boolean[][] visitados;     private final TipoCelula[][] tipoCelula;     private int jogadorLinha, jogadorColuna;
     private boolean centroAlcancado = false;
     private final int centroLinha, centroColuna;
     private final int entradaLinha, entradaColuna;
@@ -48,18 +36,13 @@ public class Labirinto implements Serializable {
         this.entradaColuna = TAMANHO / 2;
 
         gerarCaminhos();
-        abrirPracaCentral(); // espaço aberto ao redor do centro
-        posicionarEventos(); // sorteia as casas de encontro e de recompensa
-        // Abre a única passagem na borda inferior (a entrada)
-        caminhos[entradaLinha][entradaColuna] = true;
+        abrirPracaCentral();         posicionarEventos();                 caminhos[entradaLinha][entradaColuna] = true;
         this.jogadorLinha = entradaLinha;
         this.jogadorColuna = entradaColuna;
         visitados[entradaLinha][entradaColuna] = true;
     }
 
-    // Backtracker aleatório: começa no centro e abre passagens entre as células
-    // ímpares (corredores). As células pares ficam como paredes.
-    private void gerarCaminhos() {
+            private void gerarCaminhos() {
         boolean[][] passou = new boolean[TAMANHO][TAMANHO];
         List<int[]> pilha = new ArrayList<>();
         Random rnd = new Random();
@@ -84,17 +67,14 @@ public class Labirinto implements Serializable {
                 continue;
             }
             int[] escolhido = vizinhosLivres.get(rnd.nextInt(vizinhosLivres.size()));
-            // Abre a parede entre a célula atual e a escolhida
-            caminhos[atual[0] + escolhido[2]][atual[1] + escolhido[3]] = true;
+                        caminhos[atual[0] + escolhido[2]][atual[1] + escolhido[3]] = true;
             caminhos[escolhido[0]][escolhido[1]] = true;
             passou[escolhido[0]][escolhido[1]] = true;
             pilha.add(new int[]{escolhido[0], escolhido[1]});
         }
     }
 
-    // Tenta andar uma célula; retorna false se a posição for parede/fora do labirinto.
-    // Ao pisar, o local fica iluminado (visitado) e persiste no save.
-    public boolean mover(int deslocLinha, int deslocColuna) {
+            public boolean mover(int deslocLinha, int deslocColuna) {
         int nl = jogadorLinha + deslocLinha;
         int nc = jogadorColuna + deslocColuna;
         if (nl < 0 || nc < 0 || nl >= TAMANHO || nc >= TAMANHO) return false;
@@ -102,15 +82,13 @@ public class Labirinto implements Serializable {
         jogadorLinha = nl;
         jogadorColuna = nc;
         visitados[nl][nc] = true;
-        // O labirinto termina ao entrar na primeira casa do centro (área do minotauro)
-        if (isRegiaoCentro(nl, nc)) {
+                if (isRegiaoCentro(nl, nc)) {
             centroAlcancado = true;
         }
         return true;
     }
 
-    // Abre uma praça 5x5 ao redor do centro: o "meio" do labirinto (área do minotauro).
-    private void abrirPracaCentral() {
+        private void abrirPracaCentral() {
         for (int l = centroLinha - RAIO_CENTRO; l <= centroLinha + RAIO_CENTRO; l++) {
             for (int c = centroColuna - RAIO_CENTRO; c <= centroColuna + RAIO_CENTRO; c++) {
                 caminhos[l][c] = true;
@@ -118,9 +96,7 @@ public class Labirinto implements Serializable {
         }
     }
 
-    // Sorteia aleatoriamente as casas de ENCONTRO (monstros) e de RECOMPENSA (itens)
-    // entre os corredores válidos. A entrada e a área central ficam livres.
-    private void posicionarEventos() {
+            private void posicionarEventos() {
         List<int[]> candidatas = new ArrayList<>();
         for (int l = 0; l < TAMANHO; l++) {
             for (int c = 0; c < TAMANHO; c++) {
@@ -139,8 +115,7 @@ public class Labirinto implements Serializable {
         }
     }
 
-    // Retorna o evento da casa atual e o consome (cada casa especial ativa UMA vez).
-    public TipoCelula consumirEventoNaPosicao() {
+        public TipoCelula consumirEventoNaPosicao() {
         TipoCelula tipo = tipoCelula[jogadorLinha][jogadorColuna];
         if (tipo != TipoCelula.NORMAL) {
             tipoCelula[jogadorLinha][jogadorColuna] = TipoCelula.NORMAL;
@@ -148,8 +123,7 @@ public class Labirinto implements Serializable {
         return tipo;
     }
 
-    // Praça central (5x5) e sua borda (o quadrado grande, sempre visível)
-    public boolean isRegiaoCentro(int linha, int coluna) {
+        public boolean isRegiaoCentro(int linha, int coluna) {
         return Math.abs(linha - centroLinha) <= RAIO_CENTRO && Math.abs(coluna - centroColuna) <= RAIO_CENTRO;
     }
 
@@ -182,8 +156,7 @@ public class Labirinto implements Serializable {
     public int getEntradaLinha() { return entradaLinha; }
     public int getEntradaColuna() { return entradaColuna; }
 
-    // Integridade: todos os corredores se conectam à entrada (usado em testes).
-    public boolean estaConectado() {
+        public boolean estaConectado() {
         boolean[][] alcancado = new boolean[TAMANHO][TAMANHO];
         ArrayDeque<int[]> fila = new ArrayDeque<>();
         fila.add(new int[]{entradaLinha, entradaColuna});

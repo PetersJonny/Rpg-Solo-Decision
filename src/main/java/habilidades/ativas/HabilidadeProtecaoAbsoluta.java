@@ -12,7 +12,7 @@ public class HabilidadeProtecaoAbsoluta extends Habilidade {
     public HabilidadeProtecaoAbsoluta(String nome, String descricao, int custoMana) {
         super(nome, descricao, custoMana);
     }
-    
+
     @Override
     public boolean executar(FichaRpg ficha, List<Criatura> inimigos, int alvoIndex) {
         return GerenciadorDeHabilidades.usarProtecaoAbsoluta(ficha, this);

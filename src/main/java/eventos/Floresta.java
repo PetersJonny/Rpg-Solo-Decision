@@ -12,14 +12,12 @@ import telas.Interface;
 
 public class Floresta {
 
-    // Códigos de Cores ANSI (aliases das usadas na Interface, para um único ponto de origem)
-    private static final String RESET = Interface.RESET;
+        private static final String RESET = Interface.RESET;
     private static final String CIANO = Interface.CIANO;
     private static final String VERDE = Interface.VERDE;
     private static final String AMARELO = Interface.AMARELO;
 
-    // Avança o tempo e mostra o que aconteceu com o período (dia/noite) e o cansaço
-    static void avancarTempoComMensagens(FichaRpg ficha, int unidades) {
+        static void avancarTempoComMensagens(FichaRpg ficha, int unidades) {
         int vidaAntesFome = ficha.getVidaPersonagem();
         boolean virou = ficha.avancarTempo(unidades);
         int perdaFome = vidaAntesFome - ficha.getVidaPersonagem();
@@ -58,14 +56,12 @@ public class Floresta {
             verificarCompanheiroPosDormir(ficha);
         }
 
-        // Ao ter uma cabana, pode aparecer alguém perdido (20% por período, no dia ou na noite)
-        if (ficha.isTemCabana() && !ficha.temCompanheiro() && MecanicasRpg.rolarDado(100) <= 20) {
+                if (ficha.isTemCabana() && !ficha.temCompanheiro() && MecanicasRpg.rolarDado(100) <= 20) {
             EventoPerdido(ficha);
         }
     }
 
-    // Verifica se o companheiro decidiu partir após dormir
-    public static void verificarCompanheiroPosDormir(FichaRpg ficha) {
+        public static void verificarCompanheiroPosDormir(FichaRpg ficha) {
         if (!ficha.companheiroQuerPartir()) return;
         String nomePartiu = ficha.getCompanheiro().getNomeCompleto();
         ficha.removerCompanheiro();
@@ -87,13 +83,10 @@ public class Floresta {
             ficha.sairDaCabana();
         }
 
-        // Sempre há um encontro ao explorar a floresta (vendedor, fada ou criatura)
-        EventoAnimal(ficha);
+                EventoAnimal(ficha);
 
         avancarTempoComMensagens(ficha, 1);
     }
-
-    // ==================== BUSCAR RECURSOS ====================
 
     public static void BuscarRecursos(FichaRpg ficha) {
         Interface.cabecalhoMenu("BUSCAR RECURSOS");
@@ -117,8 +110,7 @@ public class Floresta {
             Interface.Pausa(2000);
         }
 
-        // 30% de chance de cruzar com uma criatura (50% durante a noite)
-        int chanceEncontro = ficha.isEhNoite() ? 50 : 30;
+                int chanceEncontro = ficha.isEhNoite() ? 50 : 30;
         if (MecanicasRpg.rolarDado(100) <= chanceEncontro) {
             Interface.MostrarMensagem("\nEnquanto recolhe materiais, você percebe um movimento suspeito nas sombras...");
             Interface.Pausa(1500);
@@ -144,21 +136,7 @@ public class Floresta {
         return true;
     }
 
-    // ==================== CONSTRUÇÃO ====================
-
-    // Descreve onde uma construção está em relação ao ponto atual do jogador.
-
-    // Cozinhar TODAS as carnes cruas na fogueira de uma vez: gasta 2 Madeiras e
-    // transforma toda a Carne de Lobo/Urso do inventário nas versões cozidas.
-
-    // Mensagens de localização ao montar a sala de treino.
-
-    // Mensagens de localização ao montar a mesa de magias.
-
-    // ==================== PESSOA PERDIDA (SISTEMA DE AJUDA) ====================
-
-    // Uma pessoa perdida na floresta pode ser encontrada quando o jogador tem uma cabana
-    private static void EventoPerdido(FichaRpg ficha) {
+        private static void EventoPerdido(FichaRpg ficha) {
         companheiros.Companheiro perdido = new companheiros.Companheiro();
 
         Interface.MostrarMensagem("\nUm vulto surge entre as árvores, com olhar cansado e roupas surradas...");
@@ -189,8 +167,7 @@ public class Floresta {
         }
     }
 
-    // Conversa com a pessoa que acompanha o jogador (sem mostrar a ficha completa)
-    public static void ConversarComCompanheiro(FichaRpg ficha) {
+        public static void ConversarComCompanheiro(FichaRpg ficha) {
         companheiros.Companheiro comp = ficha.getCompanheiro();
         if (comp == null) return;
 
@@ -236,16 +213,14 @@ public class Floresta {
         }
     }
 
-    // Pedido de confirmação antes de dispensar o companheiro (sai do grupo)
-    private static boolean confirmarDespedida(companheiros.Companheiro comp) {
+        private static boolean confirmarDespedida(companheiros.Companheiro comp) {
         System.out.println("\n  Deseja mesmo se despedir de " + comp.getNome() + "? Ela(e) deixará de te acompanhar.\n");
         System.out.println("  1. Sim, despedir-me");
         System.out.println("  2. Não, quero que fique");
         return Interface.lerOpcao(2) == 1;
     }
 
-    // Usa um Kit Médico do inventário do jogador para curar o companheiro
-    private static void curarCompanheiroComKit(FichaRpg ficha) {
+        private static void curarCompanheiroComKit(FichaRpg ficha) {
         companheiros.Companheiro comp = ficha.getCompanheiro();
         if (comp == null || !ficha.temItem("Kit Médico")) return;
 
@@ -256,8 +231,7 @@ public class Floresta {
         int curaReal = cf.getVidaPersonagem() - antes;
         Interface.MostrarMensagem("\nVocê usa um Kit Médico em " + comp.getNome() + " e ela(e) recupera " + curaReal + " de vida! Vida: " + cf.getVidaPersonagem() + "/" + cf.getVidaMaxima());
 
-        // Consome o kit do inventário do jogador
-        for (int i = 0; i < ficha.getInventario().size(); i++) {
+                for (int i = 0; i < ficha.getInventario().size(); i++) {
             ItemRpg item = ficha.getInventario().get(i);
             if (item.getNome().equals("Kit Médico")) {
                 ficha.consumirItem(item, 1);
@@ -273,33 +247,27 @@ public class Floresta {
         Interface.Pausa(2000);
     }
 
-    // ==================== SORTEIO DE ENCONTRO ====================
-
     static void EventoAnimal(FichaRpg ficha) {
         Interface.MostrarMensagem("\nAlgo se move por entre as árvores...");
         Interface.Pausa(2500);
 
-        // Chance de descobrir o Labirinto do Minotauro explorando (1% + 1% a cada dia, até encontrar)
-        if (estruturas.LabirintoDoMinotauro.tentarDescoberta(ficha)) {
+                if (estruturas.LabirintoDoMinotauro.tentarDescoberta(ficha)) {
             return;
         }
 
-        // 10% de chance de encontrar um vendedor ambulante
-        if (MecanicasRpg.rolarDado(100) <= 10) {
+                if (MecanicasRpg.rolarDado(100) <= 10) {
             loja.Vendedor.EncontrarVendedor(ficha);
             return;
         }
 
-        // 20% de chance de encontrar uma Fada (Meio-Fada: 40%) — apenas uma vez por personagem
-        int chanceFada = ficha.getRaca() != null && ficha.getRaca().dobraChanceEncontrarFada() ? 40 : 20;
+                int chanceFada = ficha.getRaca() != null && ficha.getRaca().dobraChanceEncontrarFada() ? 40 : 20;
         if (!ficha.isFadaEncontrada() && MecanicasRpg.rolarDado(100) <= chanceFada) {
             ficha.setFadaEncontrada(true);
             EncontrarFada(ficha);
             return;
         }
 
-        // Sorteia o tipo de criatura (1 = Lobo, 2 = Urso, 3 = Bandido)
-        int tipo = MecanicasRpg.rolarDado(3);
+                int tipo = MecanicasRpg.rolarDado(3);
         List<Criatura> inimigos = criarGrupoMonstros(tipo, ficha.isEhNoite());
         Criatura referencia = inimigos.get(0);
 
@@ -346,12 +314,9 @@ public class Floresta {
         }
     }
 
-    // Cria o grupo de monstros conforme o tipo (dia: grupos menores, noite: grupos maiores)
-    private static List<Criatura> criarGrupoMonstros(int tipo, boolean deNoite) {
+        private static List<Criatura> criarGrupoMonstros(int tipo, boolean deNoite) {
         return criaturas.CriaturaFactory.criarGrupoMonstros(tipo, deNoite);
     }
-
-    // ==================== ENCONTRO COM A FADA ====================
 
     private static void EncontrarFada(FichaRpg ficha) {
         Interface.pressionarParaTeste("Presença");
@@ -374,7 +339,6 @@ public class Floresta {
         System.out.println("  2. Lutar contra a Fada");
         System.out.println("  3. Deixá-la em paz e seguir caminho");
         int escolha = Interface.lerOpcao(3);
-
 
         if (escolha == 1) {
             Interface.pressionarParaTeste("Sabedoria");

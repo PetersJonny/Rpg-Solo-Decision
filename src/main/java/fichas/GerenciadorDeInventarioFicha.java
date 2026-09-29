@@ -11,7 +11,6 @@ import mecanicas.MecanicasRpg;
 import racas.Raca;
 import telas.Interface;
 
-/** Inventário da ficha: adicionar/remover itens, mochila, equipar e coletar. */
 public class GerenciadorDeInventarioFicha {
 
     public static void adicionarItem(FichaRpg ficha, ItemRpg novoItem) {
@@ -23,12 +22,12 @@ public class GerenciadorDeInventarioFicha {
             }
         }
         ficha.inventario.add(novoItem);
-    
+
     }
     public static double getCapacidadeMochila(FichaRpg ficha) {
 
         return Math.max(10, 10 + 5.0 * ficha.getForca());
-    
+
     }
     public static double getPesoTotalMochila(FichaRpg ficha) {
 
@@ -37,12 +36,12 @@ public class GerenciadorDeInventarioFicha {
             total += item.getPeso() * item.getQuantidade();
         }
         return total;
-    
+
     }
     public static double getEspacoLivreMochila(FichaRpg ficha) {
 
         return ficha.getCapacidadeMochila() - ficha.getPesoTotalMochila();
-    
+
     }
     public static boolean tentarAdicionarItem(FichaRpg ficha, ItemRpg novoItem) {
 
@@ -53,7 +52,7 @@ public class GerenciadorDeInventarioFicha {
             return true;
         }
         return false;
-    
+
     }
     public static int adicionarItemLimitado(FichaRpg ficha, ItemRpg novoItem) {
 
@@ -67,7 +66,7 @@ public class GerenciadorDeInventarioFicha {
         novoItem.setQuantidade(qtdPegar);
         ficha.adicionarItem(novoItem);
         return qtdPegar;
-    
+
     }
     public static void coletarItemEncontrado(FichaRpg ficha, ItemRpg item, String origem) {
 
@@ -116,7 +115,7 @@ public class GerenciadorDeInventarioFicha {
         ficha.adicionarItem(item);
         Interface.MostrarMensagem("-> Você coletou " + qtdPegar + "x " + item.getNome() + " (peso: " + String.format("%.1f", pesoUnit * qtdPegar) + "/" + String.format("%.1f", ficha.getCapacidadeMochila()) + ").");
         Interface.Pausa(1500);
-    
+
     }
     public static boolean removerItem(FichaRpg ficha, String nome, int quantidade) {
 
@@ -140,14 +139,14 @@ public class GerenciadorDeInventarioFicha {
             }
         }
         return false;
-    
+
     }
     public static void consumirItem(FichaRpg ficha, ItemRpg item, int quantidade) {
 
         if (item != null) {
             item.setQuantidade(item.getQuantidade() - Math.max(0, quantidade));
         }
-    
+
     }
     public static void equiparMelhorArmadura(FichaRpg ficha) {
 
@@ -167,7 +166,7 @@ public class GerenciadorDeInventarioFicha {
             ficha.inventario.remove(melhor);
             ficha.armaduraEquipada = melhor;
         }
-    
+
     }
     public static boolean temItem(FichaRpg ficha, String nome) {
 
@@ -178,7 +177,7 @@ public class GerenciadorDeInventarioFicha {
             }
         }
         return false;
-    
+
     }
     public static int getQuantidadeDe(FichaRpg ficha, String nome) {
 
@@ -190,6 +189,6 @@ public class GerenciadorDeInventarioFicha {
             }
         }
         return total;
-    
+
     }
 }

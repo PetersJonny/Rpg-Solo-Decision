@@ -18,7 +18,6 @@ public class Aventura {
             escolha = Interface.lerInteiro();
         }
 
-
         if (escolha == 2) {
             Interface.MostrarMensagem("\nPrólogo pulado. Sua jornada em Freijord começa agora!");
             Interface.Pausa(2000);
@@ -31,10 +30,10 @@ public class Aventura {
         Narrar("Apenas os verdadeiramente fortes, movidos por uma inabalável vontade de viver, conseguem suportar os perigos que espreitam nas nevascas.", 7000);
         Narrar("E você, " + ficha.getNomePersonagem() + ", tomou a sua decisão...", 5500);
         Narrar("Deixar o conforto para trás e buscar o seu próprio destino como aventureiro, arriscando sua vida através de missões.", 7000);
-        
+
         System.out.println("\n");
         Interface.barraDivisoria();
-        
+
         System.out.println("\n(Pressione ENTER para continuar...)");
         Interface.scanner.nextLine();
     }

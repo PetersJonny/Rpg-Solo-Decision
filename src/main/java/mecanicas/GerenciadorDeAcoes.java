@@ -22,13 +22,7 @@ import static mecanicas.GerenciadorDeItens.*;
 import static mecanicas.GerenciadorDeTurnos.*;
 import static mecanicas.MotorDeCombate.*;
 
-/** Decisões e menus do turno do jogador durante o combate. */
 public class GerenciadorDeAcoes {
-
-// ==================== VEZ DO JOGADOR ====================
-
-    // Fase de declaração: o jogador escolhe a ação da rodada SEM executar ainda.
-    // A execução acontece quando chega a vez dele na ordem de iniciativa.
 
     public static ComandoCombate declararAcao(FichaRpg ficha, List<Criatura> inimigos, boolean[] cascaGrossaAtiva, boolean semHabilidades) {
         while (true) {
@@ -74,15 +68,6 @@ public class GerenciadorDeAcoes {
         }
     }
 
-// Apresenta as opções de habilidade ao atingir um novo nível com escolha
-
-    // Deus (Guerreiro lvl 10): ativa permanentemente a forma de Semi Deus e concede Cura Incessante
-
-    // Conhecimento Absoluto (Healer lvl 10): +2 em todos os atributos
-
-    // Arma Mental transforma o Bisturi de 1d4 para 3d8 ao ser aprendida
-
-
     public static void executarAcaoJogador(FichaRpg ficha, List<Criatura> inimigos, int tipoAcao, int alvoIndex, int armaIndex, int habIndex) {
         boolean sucesso;
         if (tipoAcao == 1) {
@@ -96,9 +81,6 @@ public class GerenciadorDeAcoes {
         }
     }
 
-// ==================== CONHECIMENTO AVANÇADO ====================
-
-
     public static void tentarConhecimentoAvancado(FichaRpg ficha, List<Criatura> inimigos, int tipoAcao, int alvoIndex, int armaIndex, int habIndex) {
         for (habilidades.Habilidade hab : ficha.getHabilidades()) {
             if (hab.getNome().equals("Conhecimento Avançado") && ficha.getManaPersonagem() >= GerenciadorDeHabilidades.custoEfetivoMagia(ficha, hab)) {
@@ -106,7 +88,6 @@ public class GerenciadorDeAcoes {
                 System.out.println("1. Sim");
                 System.out.println("2. Não");
                 int escolha = Interface.lerInteiro();
-
 
                 if (escolha == 1) {
                     ficha.setManaPersonagem(ficha.getManaPersonagem() - GerenciadorDeHabilidades.custoEfetivoMagia(ficha, hab));
@@ -129,9 +110,6 @@ public class GerenciadorDeAcoes {
             }
         }
     }
-
-// ==================== MENU LUTAR ====================
-
 
     public static ComandoCombate MenuLutarComEscolha(FichaRpg ficha, List<Criatura> inimigos, boolean[] cascaGrossaAtiva, boolean semHabilidades) {
         Interface.cabecalhoMenu("COMO LUTAR?");
@@ -240,8 +218,6 @@ public class GerenciadorDeAcoes {
         return null;
     }
 
-// Escolhe o alvo entre os inimigos vivos
-
     public static int escolherAlvo(List<Criatura> inimigos) {
         List<Criatura> vivos = new ArrayList<>();
         for (Criatura c : inimigos) {
@@ -261,7 +237,6 @@ public class GerenciadorDeAcoes {
         System.out.println("\n  " + VERDE + "0. Voltar" + RESET);
 
         int escolha = Interface.lerInteiro();
-
 
         if (escolha < 1 || escolha > vivos.size()) return -1;
 

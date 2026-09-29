@@ -25,16 +25,10 @@ import static mecanicas.GerenciadorDeTurnos.*;
 
 public class MotorDeCombate {
 
-    // Códigos de Cores ANSI usados nos menus
-    public static final String RESET = "\u001B[0m";
+        public static final String RESET = "\u001B[0m";
     public static final String CIANO = "\u001B[36m";
     public static final String VERDE = "\u001B[32m";
     public static final String AMARELO = "\u001B[33m";
-
-    
-
-// ==================== INICIAR COMBATE ====================
-
 
     public static void IniciarCombate(FichaRpg ficha, List<Criatura> inimigos, boolean jogadorSurpreendeu) {
         Interface.MostrarMensagem("\n================ COMBATE ================");
@@ -51,8 +45,7 @@ public class MotorDeCombate {
         List<int[]> ordem = new ArrayList<>();
         ordem.add(new int[]{iniciativaJogador, 0});
 
-        // Companheiro (se presente e consciente) também entra na iniciativa
-        companheiros.Companheiro comp = ficha.getCompanheiro();
+                companheiros.Companheiro comp = ficha.getCompanheiro();
         if (comp != null && comp.getFicha().getVidaPersonagem() > 0) {
             int dadoComp = MecanicasRpg.rolarDado(20);
             int iniciativaComp = dadoComp + comp.getFicha().getDestrezaTeste();
@@ -70,8 +63,7 @@ public class MotorDeCombate {
             ordem.add(new int[]{iniciativaInimigo, i + 1});
         }
 
-        // Ordena os combatentes pela iniciativa (do maior para o menor)
-        ordem.sort((a, b) -> Integer.compare(b[0], a[0]));
+                ordem.sort((a, b) -> Integer.compare(b[0], a[0]));
 
         StringBuilder ordemTexto = new StringBuilder();
         for (int[] token : ordem) {
@@ -110,7 +102,6 @@ public class MotorDeCombate {
             return false;
         }
     }
-// Verifica se a habilidade passiva ainda pode ser ativada nesta rodada
 
     public static boolean podeAtivarPassiva(FichaRpg ficha, habilidades.Habilidade habilidade, boolean cascaGrossaAtiva) {
         if (!habilidade.isPassiva()) return false;
@@ -127,8 +118,6 @@ public class MotorDeCombate {
             case "Espada Afiada": ficha.setEspadaAfiadaAtiva(true); break;
         }
     }
-// ==================== ESCOLHER ARMA ====================
-
 
     public static int EscolherArma(FichaRpg ficha) {
         List<Arma> armas = new ArrayList<>();
@@ -171,7 +160,6 @@ public class MotorDeCombate {
         System.out.println("\n  " + VERDE + "0. Voltar" + RESET);
 
         int escolha = Interface.lerInteiro();
-
 
         if (escolha == 0) return -1;
         if (escolha < 1 || escolha > armas.size() + 1) return -1;
@@ -216,36 +204,6 @@ public class MotorDeCombate {
             }
         }
     }
-// ==================== HABILIDADES ====================
-
-    // Custo de mana efetivo de uma habilidade/magia.
-    // O Pequeno Grimório reduz 1 no custo das magias pagas; a Meio-Fada (Encanto
-    // Feérico) reduz 1 no custo de magias e habilidades. O custo nunca pode zerar:
-    // o mínimo é 1, a não ser que a própria habilidade tenha custo definido como 0.
-
-    // Estrondo do Guerreiro: 5 de mana, 7d10 em área e não pode usar habilidades no próximo turno
-
-    // Prisão do Mago: prende um inimigo até ele passar em um teste de d20 (15+) na vez dele
-
-    // Semi Deus do Guerreiro (lvl 9): gasta TODA a mana, +50% de vida máxima, cura total e +4 dados CaC
-
-    // Poder Absoluto do Mago (lvl 9): 15 de mana, todas as magias dobram os dados até o fim do combate
-
-    // Cura Absoluta do Healer (lvl 9): 10 de mana, cura total e vida bônus (dobra a vida, gasta-se primeiro)
-
-    // Cura Incessante (Guerreiro lvl 10): cura toda a vida, uma vez por combate
-
-    // Explosão de Poder (Mago lvl 10): gasta mana escolhida, cada 2 de mana causa 2d12 em TODOS os inimigos
-
-    // Conhecimento Avassalador do Healer: teste de Intelecto (DC 15) revela as informações dos monstros
-
-    // Proteção Absoluta do Mago: +3 de defesa e reflexo de 2d8 do elemento enquanto acertado
-
-    // Cura para a Morte do Healer: injeta líquido mortal (ativa a partir do próximo turno)
-
-    // Aplica o dano do líquido mortal ao final de cada ataque contra o alvo envenenado
-
-    // Tenta reviver o personagem com Cura Total (uma vez por combate)
 
     public static boolean tentarReviver(FichaRpg ficha) {
         if (ficha.getVidaPersonagem() > 0) return true;
@@ -266,14 +224,6 @@ public class MotorDeCombate {
         Interface.Pausa(2500);
         return true;
     }
-// ==================== MOCHILA ====================
-
-    // Uso de consumíveis fora de combate (pela ficha/inventário).
-    // Retorna verdadeiro se o item foi usado (consome a quantidade escolhida).
-
-    // Fase de declaração da mochila: escolhe e confirma o item (sem aplicar ainda).
-    // Retorna o índice do item, -1 para voltar ao menu principal ou -2 para declarar fuga.
-
 
     public static boolean temHabilidade(FichaRpg ficha, String nome) {
         for (habilidades.Habilidade hab : ficha.getHabilidades()) {
