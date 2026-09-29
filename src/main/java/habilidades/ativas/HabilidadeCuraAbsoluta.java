@@ -1,5 +1,7 @@
 package habilidades.ativas;
 
+import mecanicas.GerenciadorDeHabilidades;
+
 import habilidades.Habilidade;
 import fichas.FichaRpg;
 import criaturas.Criatura;
@@ -13,6 +15,6 @@ public class HabilidadeCuraAbsoluta extends Habilidade {
     
     @Override
     public boolean executar(FichaRpg ficha, List<Criatura> inimigos, int alvoIndex) {
-        return MotorDeCombate.executarCuraAbsoluta(ficha, this);
+        return GerenciadorDeHabilidades.executarCuraAbsoluta(ficha, this);
     }
 }

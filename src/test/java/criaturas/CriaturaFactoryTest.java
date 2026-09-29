@@ -127,7 +127,7 @@ class CriaturaFactoryTest {
         ficha.setVidaPersonagem(ficha.getVidaMaxima());
         itens.Consumivel kit = new itens.Consumivel("Kit Médico", "curar", 1);
         ficha.getInventario().add(kit);
-        mecanicas.MotorDeCombate.usarItemForaDeCombate(ficha, kit, 1);
+        mecanicas.GerenciadorDeItens.usarItemForaDeCombate(ficha, kit, 1);
         assertFalse(ficha.isInfectado(), "Kit Médico deve curar a infecção");
         assertEquals(0, kit.getQuantidade());
         assertEquals(ficha.getVidaMaxima(), ficha.getVidaPersonagem());

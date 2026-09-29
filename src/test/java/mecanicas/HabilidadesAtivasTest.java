@@ -100,8 +100,8 @@ class HabilidadesAtivasTest {
         // Com o item, o custo deve ser reduzido de 5 para 4.
         ficha.getInventario().add(new itens.ItemRpg("Pequeno Grimório", "Reduz o custo das magias em 1.", 1));
         
-        // O custo efetivo é calculado por MotorDeCombate.custoEfetivoMagia
-        int custoReal = MotorDeCombate.custoEfetivoMagia(ficha, magiaTeste);
+        // O custo efetivo é calculado por GerenciadorDeHabilidades.custoEfetivoMagia
+        int custoReal = GerenciadorDeHabilidades.custoEfetivoMagia(ficha, magiaTeste);
         
         assertEquals(4, custoReal, "O Pequeno Grimório deve reduzir o custo de 5 para 4");
     }
@@ -111,7 +111,7 @@ class HabilidadesAtivasTest {
         Magia magiaPequena = new Magia("Faísca", "...", 1, 1, 4);
         ficha.getInventario().add(new itens.ItemRpg("Pequeno Grimório", "Reduz o custo em 1", 1));
         
-        int custoReal = MotorDeCombate.custoEfetivoMagia(ficha, magiaPequena);
+        int custoReal = GerenciadorDeHabilidades.custoEfetivoMagia(ficha, magiaPequena);
         
         assertEquals(1, custoReal, "O Pequeno Grimório não deve reduzir o custo para 0 (min 1 para magias que custam algo)");
     }

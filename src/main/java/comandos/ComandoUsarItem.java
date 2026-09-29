@@ -1,5 +1,7 @@
 package comandos;
 
+import mecanicas.GerenciadorDeItens;
+
 import fichas.FichaRpg;
 import criaturas.Criatura;
 import java.util.List;
@@ -18,7 +20,7 @@ public class ComandoUsarItem implements ComandoCombate {
 
     @Override
     public int executar(FichaRpg ficha, List<Criatura> inimigos, boolean[] cascaGrossaAtiva, int[] tentativasFuga, Set<Criatura> jaAtacouNaRodada) {
-        MotorDeCombate.usarItemNaVez(ficha, itemIndex);
+        GerenciadorDeItens.usarItemNaVez(ficha, itemIndex);
         return 1;
     }
 }

@@ -1,5 +1,7 @@
 package habilidades.ativas;
 
+import mecanicas.GerenciadorDeHabilidades;
+
 import habilidades.Habilidade;
 import fichas.FichaRpg;
 import criaturas.Criatura;
@@ -13,6 +15,6 @@ public class HabilidadeConhecimentoAvassalador extends Habilidade {
     
     @Override
     public boolean executar(FichaRpg ficha, List<Criatura> inimigos, int alvoIndex) {
-        return MotorDeCombate.tentarConhecimentoAvassalador(ficha, inimigos);
+        return GerenciadorDeHabilidades.tentarConhecimentoAvassalador(ficha, inimigos);
     }
 }

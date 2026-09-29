@@ -1,5 +1,7 @@
 package estruturas;
 
+import telas.MenuVisualizacao;
+
 import criaturas.Criatura;
 import fichas.FichaRpg;
 import java.util.Collections;
@@ -103,7 +105,7 @@ public class LabirintoDoMinotauro {
                     return; // morreu dentro do labirinto: o Main encerra a jornada
                 }
             } else if (escolha == 2) {
-                Interface.MostrarFicha(ficha);
+                MenuVisualizacao.MostrarFicha(ficha);
             } else {
                 Interface.MostrarMensagem("\nVocê deixa a entrada do labirinto e retorna à floresta.");
                 Interface.Pausa(1500);

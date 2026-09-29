@@ -1,6 +1,9 @@
 import classes.*;
 import fichas.FichaRpg;
 import telas.Interface;
+import telas.MenuCriacaoPersonagem;
+import telas.MenuSalvamento;
+import telas.MenuVisualizacao;
 import telas.Teclado;
 import salvamento.GerenciadorSaves;
 
@@ -28,13 +31,13 @@ public class Main {
                     Interface.Pausa(1500);
                     continue;
                 }
-                Interface.MenuApagarSave();
+                MenuSalvamento.MenuApagarSave();
                 continue;
             }
 
             if (escolhaInicial == 2) {
                 // ==================== CARREGAR JOGO ====================
-                int slot = Interface.MenuCarregarJogo();
+                int slot = MenuSalvamento.MenuCarregarJogo();
                 if (slot == -2) {
                     Interface.ExibirErro("Você ainda não possui nenhum save! Comece um Novo Jogo.");
                     Interface.Pausa(1500);
@@ -68,7 +71,7 @@ public class Main {
             boolean criandoFicha = true;
 
             while (criandoFicha) {
-                int escolhaInterface = Interface.MenuCriacaoFicha();
+                int escolhaInterface = MenuCriacaoPersonagem.MenuCriacaoFicha();
 
                 switch (escolhaInterface) {
                     case 1:
@@ -81,11 +84,11 @@ public class Main {
                         int totalDePontos = 6;
 
                         while (totalDePontos > 0) {
-                            int atributoEscolhido = Interface.MenuDistribuirAtributos(totalDePontos);
+                            int atributoEscolhido = MenuCriacaoPersonagem.MenuDistribuirAtributos(totalDePontos);
 
                             if (atributoEscolhido == 0) break;
 
-                            int gastoDePontos = Interface.PedirQuantidadePontos(totalDePontos);
+                            int gastoDePontos = MenuCriacaoPersonagem.PedirQuantidadePontos(totalDePontos);
 
                             if (gastoDePontos <= 0) {
                                 Interface.ExibirErro("Por favor, insira um valor maior que zero!");
@@ -109,11 +112,11 @@ public class Main {
                         break;
 
                     case 3:
-                        int escolhaClasse = Interface.MenuEscolherClasse();
+                        int escolhaClasse = MenuCriacaoPersonagem.MenuEscolherClasse();
                         switch (escolhaClasse) {
                             case 0: break;
                             case 1:
-                                String elemento = Interface.EscolherElementoMago();
+                                String elemento = MenuCriacaoPersonagem.EscolherElementoMago();
                                 if (elemento != null) ficha.setClasse(new Mago(elemento));
                                 break;
                             case 2:
@@ -128,11 +131,11 @@ public class Main {
                         break;
 
                     case 4:
-                        int escolhaRaca = Interface.MenuEscolherRaca();
+                        int escolhaRaca = MenuCriacaoPersonagem.MenuEscolherRaca();
                         switch (escolhaRaca) {
                             case 0: break;
                             case 1:
-                                int atributoHumano = Interface.MenuEscolherAtributoHumano();
+                                int atributoHumano = MenuCriacaoPersonagem.MenuEscolherAtributoHumano();
                                 if (atributoHumano == 0) break;
                                 String[] atributosHumano = {"", "Constituição", "Destreza", "Força", "Sabedoria", "Intelecto", "Presença"};
                                 ficha.setRaca(new racas.HumanoRaca(atributosHumano[atributoHumano]));
@@ -149,7 +152,7 @@ public class Main {
                         break;
 
                     case 5:
-                        int escolhaDificuldade = Interface.MenuEscolherDificuldade();
+                        int escolhaDificuldade = MenuCriacaoPersonagem.MenuEscolherDificuldade();
                         switch (escolhaDificuldade) {
                             case 0: break;
                             case 1:
@@ -167,7 +170,7 @@ public class Main {
                         break;
 
                     case 6:
-                        Interface.MostrarFicha(ficha);
+                        MenuVisualizacao.MostrarFicha(ficha);
                         break;
 
                     case 7:
@@ -266,7 +269,7 @@ public class Main {
                         personagemFaleceu = true;
                     }
                 } else if (escolhaAventura == 4) {
-                    eventos.Floresta.MenuConstrucao(ficha);
+                    eventos.Acampamento.MenuConstrucao(ficha);
                     if (ficha.getVidaPersonagem() <= 0) {
                         personagemFaleceu = true;
                     }
@@ -323,14 +326,14 @@ public class Main {
 
     // Fluxo de "Ver ficha": mostra a ficha e permite navegar pelas suas telas
     private static void abrirFicha(FichaRpg ficha) {
-        Interface.MostrarFicha(ficha);
+        MenuVisualizacao.MostrarFicha(ficha);
         boolean naFicha = true;
         while (naFicha) {
-            int acaoFicha = Interface.MenuFicha();
+            int acaoFicha = MenuVisualizacao.MenuFicha();
             if (acaoFicha == 1) {
-                Interface.InspecionarHabilidades(ficha);
+                MenuVisualizacao.InspecionarHabilidades(ficha);
             } else if (acaoFicha == 2) {
-                Interface.InspecionarInventario(ficha);
+                MenuVisualizacao.InspecionarInventario(ficha);
             } else if (acaoFicha == 3) {
                 naFicha = false;
             } else {
@@ -341,7 +344,7 @@ public class Main {
 
     // Fluxo de "Salvar Jogo": escolhe o slot e salva
     private static void salvarJogo(FichaRpg ficha) {
-        int slot = Interface.MenuSalvarJogo(ficha);
+        int slot = MenuSalvamento.MenuSalvarJogo(ficha);
         if (slot == -1) return; // voltou
 
         if (GerenciadorSaves.salvar(ficha, slot)) {
@@ -355,7 +358,7 @@ public class Main {
 
     // Fluxo de sair: pergunta se quer salvar e encerra o jogo
     private static void encerrarJogo(FichaRpg ficha) {
-        if (Interface.PerguntarSalvarAntesDeSair()) {
+        if (MenuSalvamento.PerguntarSalvarAntesDeSair()) {
             salvarJogo(ficha);
         }
         Interface.MostrarMensagem("\nEncerrando o jogo... Até a próxima aventura!");

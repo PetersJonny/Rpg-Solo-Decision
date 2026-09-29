@@ -361,12 +361,12 @@ class FichaRpgTest {
         ficha.avancarTempo(3);
         ficha.avancarTempo(3); // 1 dia sem comer
         // 1 fruta é lanche: cura, mas NÃO zera a fome (precisa 3 no dia)
-        assertTrue(mecanicas.MotorDeCombate.usarItemForaDeCombate(ficha,
+        assertTrue(mecanicas.GerenciadorDeItens.usarItemForaDeCombate(ficha,
                 new itens.Consumivel("Frutas", "", 1), 1));
         assertEquals(1, ficha.getDiasSemComer());
         assertEquals(100, ficha.getVidaPersonagem());
         // Mais 2 frutas completam a refeição do dia
-        assertTrue(mecanicas.MotorDeCombate.usarItemForaDeCombate(ficha,
+        assertTrue(mecanicas.GerenciadorDeItens.usarItemForaDeCombate(ficha,
                 new itens.Consumivel("Frutas", "", 2), 2));
         assertEquals(0, ficha.getDiasSemComer());
         assertEquals(100, ficha.getVidaPersonagem());
@@ -396,7 +396,7 @@ class FichaRpgTest {
         ficha.avancarTempo(3); // 1 dia sem comer
         ficha.setVidaMaxima(50);
         ficha.setVidaPersonagem(20);
-        assertTrue(mecanicas.MotorDeCombate.usarItemForaDeCombate(ficha,
+        assertTrue(mecanicas.GerenciadorDeItens.usarItemForaDeCombate(ficha,
                 new itens.Consumivel("Carne de Lobo Cozida", "", 1), 1));
         assertEquals(0, ficha.getDiasSemComer());
         assertTrue(ficha.getVidaPersonagem() >= 21 && ficha.getVidaPersonagem() <= 23);

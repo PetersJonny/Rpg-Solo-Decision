@@ -4,6 +4,9 @@ import fichas.FichaRpg;
 import criaturas.Criatura;
 import java.util.List;
 import java.util.Set;
+import mecanicas.GerenciadorDeTurnos;
+import mecanicas.GerenciadorDeAcoes;
+import mecanicas.GerenciadorDeAtaque;
 import mecanicas.MotorDeCombate;
 
 public class ComandoUsarHabilidade implements ComandoCombate {
@@ -20,7 +23,7 @@ public class ComandoUsarHabilidade implements ComandoCombate {
 
     @Override
     public int executar(FichaRpg ficha, List<Criatura> inimigos, boolean[] cascaGrossaAtiva, int[] tentativasFuga, Set<Criatura> jaAtacouNaRodada) {
-        MotorDeCombate.executarAcaoJogador(ficha, inimigos, 2, alvoIndex, -1, habIndex);
+        GerenciadorDeAcoes.executarAcaoJogador(ficha, inimigos, 2, alvoIndex, -1, habIndex);
         return 1;
     }
 }

@@ -1,9 +1,14 @@
 package habilidades;
 
+import mecanicas.GerenciadorDeHabilidades;
+
 import fichas.FichaRpg;
 import criaturas.Criatura;
 import java.util.List;
 import java.util.ArrayList;
+import mecanicas.GerenciadorDeTurnos;
+import mecanicas.GerenciadorDeAcoes;
+import mecanicas.GerenciadorDeAtaque;
 import mecanicas.MotorDeCombate;
 import mecanicas.MecanicasRpg;
 import telas.Interface;
@@ -33,7 +38,7 @@ public class Magia extends Habilidade {
         if (alvoIndex < 0 || alvoIndex >= inimigos.size()) return true;
         Criatura inimigo = inimigos.get(alvoIndex);
         
-        int custoPago = MotorDeCombate.custoEfetivoMagia(ficha, this);
+        int custoPago = GerenciadorDeHabilidades.custoEfetivoMagia(ficha, this);
         if (ficha.getManaPersonagem() < custoPago) {
             Interface.ExibirErro("Mana insuficiente!");
             Interface.Pausa(1500);
@@ -99,7 +104,7 @@ public class Magia extends Habilidade {
             for (Criatura afetado : afetados) {
                 if (afetado.getVida() > 0) {
                     if (nomes.length() > 0) nomes.append(", ");
-                    nomes.append(MotorDeCombate.rotuloCriatura(inimigos, afetado));
+                    nomes.append(GerenciadorDeTurnos.rotuloCriatura(inimigos, afetado));
                 }
             }
             Interface.MostrarMensagem("-> Ataque em área! Atinge: " + nomes.toString());
@@ -109,11 +114,11 @@ public class Magia extends Habilidade {
         for (Criatura alvo : afetados) {
             if (alvo.getVida() <= 0) continue;
             alvo.setVida(alvo.getVida() - dano);
-            Interface.MostrarMensagem(MotorDeCombate.rotuloCriatura(inimigos, alvo) + " agora tem " + Math.max(0, alvo.getVida()) + " de vida.");
+            Interface.MostrarMensagem(GerenciadorDeTurnos.rotuloCriatura(inimigos, alvo) + " agora tem " + Math.max(0, alvo.getVida()) + " de vida.");
             Interface.Pausa(1500);
         }
         
-        MotorDeCombate.aplicarVenenoCuraParaMorte(ficha, inimigos, alvoIndex);
+        GerenciadorDeHabilidades.aplicarVenenoCuraParaMorte(ficha, inimigos, alvoIndex);
         return true;
     }
 }

@@ -1,5 +1,7 @@
 package telas;
 
+import mecanicas.GerenciadorDeItens;
+
 import classes.ClasseRpg;
 import fichas.FichaRpg;
 import itens.ItemRpg;
@@ -148,112 +150,7 @@ public class Interface {
         }
     }
 
-    public static int MenuCriacaoFicha() {
-        System.out.println("\n");
-        cabecalhoMenu("CRIAÇÃO DE PERSONAGEM");
-        System.out.println("\n  O que deseja fazer?\n");
-        System.out.println("  1. Escolher nome do personagem / alterar");
-        System.out.println("  2. Distribuir pontos entre atributos / mudar pontos");
-        System.out.println("  3. Escolher classe / mudar classe");
-        System.out.println("  4. Escolher raça / mudar raça");
-        System.out.println("  5. Escolher modo de dificuldade");
-        System.out.println("  6. Mostrar ficha");
-        System.out.println("  7. Finalizar criação do personagem");
-        System.out.println("  8. Fechar o jogo\n");
-        System.out.println("  " + VERDE + "Digite a opção:" + RESET);
-        return lerOpcao(8);
-    }
-
     // Escolha do modo de dificuldade (1 = Normal, 2 = Difícil). Retorna 0 se voltou.
-    public static int MenuEscolherDificuldade() {
-        System.out.println("\n");
-        cabecalhoMenu("MODO DE DIFICULDADE");
-        System.out.println("\n  Escolha o modo da sua jornada:\n");
-        System.out.println("  1. " + VERDE + "Normal" + RESET + " — " + fichas.ModoDificuldade.NORMAL.getDescricao());
-        System.out.println("  2. " + AMARELO + "Difícil" + RESET + " — " + fichas.ModoDificuldade.DIFICIL.getDescricao());
-        System.out.println("\n  " + VERDE + "0. Voltar" + RESET);
-        return lerOpcao(0, 2);
-    }
-
-    public static int MenuDistribuirAtributos(int pontosSobrando) {
-        cabecalhoMenu("DISTRIBUIR ATRIBUTOS");
-        System.out.println("\n  Você tem " + AMARELO + pontosSobrando + RESET + " pontos para distribuir.\n");
-        System.out.println("  Escolha qual atributo quer melhorar:\n");
-        System.out.println("  1. Constituição");
-        System.out.println("  2. Destreza");
-        System.out.println("  3. Força");
-        System.out.println("  4. Sabedoria");
-        System.out.println("  5. Intelecto");
-        System.out.println("  6. Presença\n");
-        System.out.println("  " + VERDE + "0. Voltar" + RESET);
-        return lerOpcao(0, 6);
-    }
-
-    public static int PedirQuantidadePontos(int pontosSobrando) {
-        cabecalhoMenu("QUANTIDADE DE PONTOS");
-        System.out.println("\n  Quantos pontos deseja gastar? Tem " + AMARELO + pontosSobrando + RESET + " pontos ainda.");
-        int gasto = lerInteiro();
-        return gasto;
-    }
-
-    public static int MenuEscolherRaca() {
-        cabecalhoMenu("ESCOLHA SUA RAÇA");
-        System.out.println("\n  Escolha entre uma das 7 raças disponíveis:\n");
-        System.out.println("  1. " + CIANO + "Humano" + RESET + " — +1 em um atributo à sua escolha e Vontade de Viver (sobrevive com 1 PV).");
-        System.out.println("  2. " + CIANO + "Elfo da Floresta" + RESET + " — +1 Destreza e Toque da Mata (+30% de material ao coletar recursos).");
-        System.out.println("  3. " + CIANO + "Vigia do Crepúsculo" + RESET + " — +1 Sabedoria e Visão na Penumbra (+2 em testes noturnos).");
-        System.out.println("  4. " + CIANO + "Meio-Fada" + RESET + " — +1 Presença e Encanto Feérico (dobra a chance de encontrar fadas e reduz em 1 o custo de mana, nunca abaixo de 1).");
-        System.out.println("  5. " + CIANO + "Dracônico" + RESET + " — +1 Constituição e Escamas de Dragão (+2 defesa e +2 vida máx).");
-        System.out.println("  6. " + CIANO + "Meio-Orque" + RESET + " — +1 Força e Fúria Sombria (dado de dano das armas sobe 1 degrau com vida abaixo de 30%; em 1d12 ganha +1d4).");
-        System.out.println("  7. " + CIANO + "Gnomo" + RESET + " — +1 Intelecto e Mente Afiada (pode rolar novamente um teste mental).\n");
-        System.out.println("  " + VERDE + "0. Voltar" + RESET);
-        return lerOpcao(0, 7);
-    }
-
-    public static int MenuEscolherAtributoHumano() {
-        cabecalhoMenu("ATRIBUTO DO HUMANO");
-        System.out.println("\n  Como Humano, você escolhe em qual atributo receber +1:\n");
-        System.out.println("  1. Constituição");
-        System.out.println("  2. Destreza");
-        System.out.println("  3. Força");
-        System.out.println("  4. Sabedoria");
-        System.out.println("  5. Intelecto");
-        System.out.println("  6. Presença\n");
-        System.out.println("  " + VERDE + "0. Voltar" + RESET);
-        return lerOpcao(0, 6);
-    }
-
-    public static int MenuEscolherClasse() {
-        cabecalhoMenu("ESCOLHA SUA CLASSE");
-        System.out.println("\n  Escolha entre uma das 3 classes abaixo:\n");
-        System.out.println("  1. " + CIANO + "Mago" + RESET + " — só pode usar cajado, conjura magias poderosas, porém é mais frágil.");
-        System.out.println("  2. " + CIANO + "Guerreiro" + RESET + " — só pode usar espada e atacar corpo a corpo, porém é mais resistente.");
-        System.out.println("  3. " + CIANO + "Healer" + RESET + " — tem poderes de cura, pode curar a si mesmo e aos outros, tem uma vida mediana.\n");
-        System.out.println("  " + VERDE + "0. Voltar" + RESET);
-        return lerOpcao(0, 3);
-    }
-
-    public static String EscolherElementoMago() {
-        cabecalhoMenu("ELEMENTO DO MAGO");
-        System.out.println("\n  Como Mago, você deve escolher o elemento da sua Bola Elementar:\n");
-        System.out.println("  1. Fogo");
-        System.out.println("  2. Água");
-        System.out.println("  3. Gelo");
-        System.out.println("  4. Elétrico");
-        System.out.println("  5. Terra");
-        System.out.println("  6. Ácido\n");
-        System.out.println("  " + VERDE + "0. Voltar" + RESET);
-        int escolha = lerOpcao(0, 6);
-        switch (escolha) {
-            case 1: return "Fogo";
-            case 2: return "Água";
-            case 3: return "Gelo";
-            case 4: return "Elétrico";
-            case 5: return "Terra";
-            case 6: return "Ácido";
-            default: return null;
-        }
-    }
 
     // Menu exibido antes do nome: Novo/Carregar/Apagar/Fechar
     public static int MenuInicial() {
@@ -270,111 +167,12 @@ public class Interface {
 
     // Tela para escolher qual save continuar. Retorna o slot (1 a 3),
     // -1 se o jogador voltou, ou -2 se não existe nenhum save salvo.
-    public static int MenuCarregarJogo() {
-        while (true) {
-            if (GerenciadorSaves.quantidadeSaves() == 0) {
-                return -2;
-            }
-
-            System.out.println("\n");
-            cabecalhoMenu("CARREGAR JOGO");
-            System.out.println("\n  Escolha qual save continuar:\n");
-            for (int slot = 1; slot <= GerenciadorSaves.MAX_SAVES; slot++) {
-                String info = GerenciadorSaves.infoSlot(slot);
-                if (GerenciadorSaves.existeSave(slot)) {
-                    System.out.println("  " + slot + ". " + CIANO + info + RESET);
-                } else {
-                    System.out.println("  " + slot + ". " + AMARELO + info + RESET);
-                }
-            }
-            System.out.println("\n  " + VERDE + "0. Voltar" + RESET);
-
-            int escolha = lerOpcao(0, GerenciadorSaves.MAX_SAVES);
-            if (escolha == 0) return -1;
-            if (GerenciadorSaves.existeSave(escolha)) {
-                return escolha;
-            }
-            ExibirErro("Opção inválida ou save vazio!");
-        }
-    }
 
     // Tela para escolher em qual slot salvar (permite sobrescrever). Retorna o slot (1 a 3) ou -1.
-    public static int MenuSalvarJogo(FichaRpg ficha) {
-        while (true) {
-            System.out.println("\n");
-            cabecalhoMenu("SALVAR JOGO");
-            System.out.println("\n  Escolha o slot onde deseja salvar:\n");
-            for (int slot = 1; slot <= GerenciadorSaves.MAX_SAVES; slot++) {
-                String info = GerenciadorSaves.infoSlot(slot);
-                if (GerenciadorSaves.existeSave(slot)) {
-                    System.out.println("  " + slot + ". " + AMARELO + info + RESET + "  (será substituído)");
-                } else {
-                    System.out.println("  " + slot + ". " + VERDE + "Vazio" + RESET);
-                }
-            }
-            System.out.println("\n  " + VERDE + "0. Voltar" + RESET);
-
-            int escolha = lerOpcao(0, GerenciadorSaves.MAX_SAVES);
-            if (escolha == 0) return -1;
-            return escolha;
-        }
-    }
 
     // Tela para escolher qual save apagar (com confirmação). Retorna true se deletou.
-    public static boolean MenuApagarSave() {
-        while (true) {
-            if (GerenciadorSaves.quantidadeSaves() == 0) {
-                return false;
-            }
-
-            System.out.println("\n");
-            cabecalhoMenu("APAGAR SAVE");
-            System.out.println("\n  Escolha qual save deseja deletar:\n");
-            for (int slot = 1; slot <= GerenciadorSaves.MAX_SAVES; slot++) {
-                String info = GerenciadorSaves.infoSlot(slot);
-                if (GerenciadorSaves.existeSave(slot)) {
-                    System.out.println("  " + slot + ". " + CIANO + info + RESET);
-                } else {
-                    System.out.println("  " + slot + ". " + AMARELO + info + RESET);
-                }
-            }
-            System.out.println("\n  " + VERDE + "0. Voltar" + RESET);
-
-            int escolha = lerOpcao(0, GerenciadorSaves.MAX_SAVES);
-            if (escolha == 0) return false;
-            if (!GerenciadorSaves.existeSave(escolha)) {
-                ExibirErro("Opção inválida ou save vazio!");
-                continue;
-            }
-
-            // Confirmação antes de apagar
-            System.out.println("\n  Tem certeza que deseja apagar o save " + escolha + "?\n");
-            System.out.println("  " + AMARELO + GerenciadorSaves.infoSlot(escolha) + RESET);
-            System.out.println("\n  1. Sim, apagar");
-            System.out.println("  2. Não, manter\n");
-            System.out.println("  " + VERDE + "Digite a opção:" + RESET);
-            int confirma = lerOpcao(2);
-
-            if (confirma == 1) {
-                if (GerenciadorSaves.deletar(escolha)) {
-                    MostrarMensagem("\n  Save " + escolha + " apagado com sucesso.");
-                } else {
-                    ExibirErro("Falha ao apagar o save.");
-                }
-                Pausa(1500);
-                return true;
-            }
-        }
-    }
 
     // Pergunta se o jogador quer salvar antes de sair (1 = sim, 2 = não)
-    public static boolean PerguntarSalvarAntesDeSair() {
-        System.out.println("\n  Deseja salvar o jogo antes de sair?\n");
-        System.out.println("  1. Sim");
-        System.out.println("  2. Não\n");
-        System.out.println("  " + VERDE + "Digite a opção:" + RESET);
-        return lerOpcao(2) == 1;
-    }
 
     // Números das opções dinâmicas do menu da floresta:
     // {Viajar, Labirinto, Conversar, Salvar, Encerrar}.
@@ -466,89 +264,9 @@ public class Interface {
     }
 
     // Interação com a Ficha
-    public static int MenuFicha() {
-        System.out.println("\n");
-        cabecalhoMenu("SUA FICHA");
-        System.out.println("\n  O que deseja fazer?\n");
-        System.out.println("  1. Ver Habilidades");
-        System.out.println("  2. Ver Inventário (Ler descrições)");
-        System.out.println("  3. Voltar para a Aventura");
-        System.out.println("\n  " + VERDE + "Digite a opção:" + RESET);
-        return lerOpcao(3);
-    }
-
-    public static void InspecionarInventario(FichaRpg ficha) {
-        while (true) {
-            if (ficha.getInventario().isEmpty()) {
-                System.out.println(AMARELO + "  Seu inventário está vazio." + RESET);
-                return;
-            }
-
-            cabecalhoMenu("SEU INVENTÁRIO");
-            System.out.println("  Espaço na mochila: " + CIANO + String.format("%.1f", ficha.getPesoTotalMochila()) + RESET + " / " + CIANO + String.format("%.1f", ficha.getCapacidadeMochila()) + RESET + " (Força " + ficha.getForca() + ")");
-            System.out.println("\n  Escolha um item para ver a descrição:\n");
-            for (int i = 0; i < ficha.getInventario().size(); i++) {
-                ItemRpg item = ficha.getInventario().get(i);
-                String tipo = mecanicas.MotorDeCombate.ehItemConsumivel(item) ? "  [Consumível]" : "";
-                System.out.println("  " + (i + 1) + ". " + CIANO + item.getNome() + RESET + " (x" + item.getQuantidade() + ")" + tipo);
-            }
-            System.out.println("\n  " + VERDE + "0. Voltar" + RESET);
-
-            System.out.println("\n  Digite o número do item que deseja ver a descrição:");
-            int escolha = lerOpcao(0, ficha.getInventario().size());
-            if (escolha == 0) return;
-
-            ItemRpg itemEscolhido = ficha.getInventario().get(escolha - 1);
-            System.out.println("\n" + CIANO + "  -- " + itemEscolhido.getNome().toUpperCase() + " --" + RESET);
-            System.out.println("  Descrição: " + itemEscolhido.getDescricao());
-            System.out.println(CIANO + "  -----------------------" + RESET);
-
-            boolean consumivel = mecanicas.MotorDeCombate.ehItemConsumivel(itemEscolhido);
-            int opcaoAcao;
-            if (consumivel) {
-                System.out.println("\n  O que deseja fazer?");
-                System.out.println("  1. Usar este item");
-                System.out.println("  2. Dropar este item");
-                System.out.println("  3. Voltar");
-                opcaoAcao = lerOpcao(3);
-            } else {
-                System.out.println("\n  O que deseja fazer?");
-                System.out.println("  1. Dropar este item");
-                System.out.println("  2. Voltar");
-                opcaoAcao = lerOpcao(2);
-            }
-
-            if (consumivel && opcaoAcao == 1) {
-                String nomeItem = itemEscolhido.getNome();
-                boolean cheio = false;
-                boolean eComida = nomeItem.equals("Frutas") || nomeItem.equals("Carne de Lobo") || nomeItem.equals("Carne de Urso");
-                if (nomeItem.equals("Kit Médico") && ficha.getVidaPersonagem() >= ficha.getVidaMaxima() && !ficha.isInfectado()) {
-                    ExibirErro("Sua vida já está no máximo!");
-                    cheio = true;
-                } else if ((nomeItem.equals("Poção de Mana") || nomeItem.equals("Poção Grande de Mana")) && ficha.getManaPersonagem() >= ficha.getManaMaxima()) {
-                    ExibirErro("Sua mana já está no máximo!");
-                    cheio = true;
-                }
-                // Comida pode ser comida mesmo com vida cheia, pois resetam a fome.
-                if (!cheio) {
-                    int quantidade = 1;
-                    if (itemEscolhido.getQuantidade() > 1) {
-                        System.out.println("  Quantidade para usar (1 a " + itemEscolhido.getQuantidade() + "): ");
-                        int qtd = lerInteiro();
-                        if (qtd > 0 && qtd <= itemEscolhido.getQuantidade()) {
-                            quantidade = qtd;
-                        }
-                    }
-                    mecanicas.MotorDeCombate.usarItemForaDeCombate(ficha, itemEscolhido, quantidade);
-                }
-            } else if (consumivel ? opcaoAcao == 2 : opcaoAcao == 1) {
-                droparItemDoInventario(ficha, itemEscolhido);
-            }
-        }
-    }
 
     // Dropar (descartar) um item do inventário, escolhendo a quantidade
-    private static void droparItemDoInventario(FichaRpg ficha, ItemRpg item) {
+    public static void droparItemDoInventario(FichaRpg ficha, ItemRpg item) {
         int qtdAtual = item.getQuantidade();
         System.out.println("\n  Você tem " + qtdAtual + "x " + item.getNome() + ".");
         System.out.println("  Quantidade para dropar (1 a " + qtdAtual + ", 0 para cancelar): ");
@@ -580,134 +298,11 @@ public class Interface {
         }
     }
 
-    public static void InspecionarHabilidades(FichaRpg ficha) {
-        if (ficha.getHabilidades().isEmpty()) {
-            System.out.println(AMARELO + "  Você não possui nenhuma habilidade." + RESET);
-            return;
-        }
-
-        cabecalhoMenu("SUAS HABILIDADES");
-        System.out.println("\n  Escolha uma habilidade para ler a descrição:\n");
-        for (int i = 0; i < ficha.getHabilidades().size(); i++) {
-            habilidades.Habilidade hab = ficha.getHabilidades().get(i);
-            System.out.println("  " + (i + 1) + ". " + CIANO + hab.getNome() + RESET + " (Custo: " + hab.getCustoMana() + " Mana)");
-        }
-        System.out.println("\n  " + VERDE + "0. Voltar" + RESET);
-
-        System.out.println("\n  Digite o número da habilidade que deseja ler a descrição:");
-        int escolha = lerOpcao(0, ficha.getHabilidades().size());
-
-        if (escolha > 0 && escolha <= ficha.getHabilidades().size()) {
-            habilidades.Habilidade habEscolhida = ficha.getHabilidades().get(escolha - 1);
-            System.out.println("\n" + CIANO + "  -- " + habEscolhida.getNome().toUpperCase() + " --" + RESET);
-            System.out.println("  Custo de Mana: " + habEscolhida.getCustoMana());
-            System.out.println("  Descrição: " + habEscolhida.getDescricao());
-            System.out.println(CIANO + "  -----------------------" + RESET);
-        }
-    }
-
     public static void ExibirErro(String erro) {
         System.out.println(AMARELO + "[AVISO] " + erro + RESET);
     }
 
     public static void MostrarMensagem(String msg) {
         System.out.println(msg);
-    }
-
-    public static void MostrarFicha(FichaRpg ficha) {
-        cabecalhoMenu("FICHA DO PERSONAGEM");
-        ClasseRpg classe = ficha.getClasseDoPersonagem();
-        String nomeDaClasse = (classe != null) ? classe.getNome() : "Nenhuma";
-
-        // Lista todas as armas do inventário na seção de Combate
-        StringBuilder combate = new StringBuilder();
-        for (ItemRpg item : ficha.getInventario()) {
-            if (item instanceof itens.Arma) {
-                itens.Arma arma = (itens.Arma) item;
-                combate.append("\n    - ").append(arma.getNome())
-                    .append("  (Dano: ").append(arma.getQuantidadeDanoArma())
-                    .append("d").append(arma.getDadoDanoArma())
-                    .append(" | Tipo: ").append(arma.getTipoArma())
-                    .append(" | Atributo: ").append(arma.getAtributoAtaque()).append(")");
-            }
-        }
-
-        // Ataque desarmado
-        String socoNome = "Soco";
-        String socoTipo = "-";
-        int socoQtdDano = 0;
-        int socoDado = 0;
-        if (classe != null && classe.getAtaqueDesarmado() != null) {
-            socoNome = classe.getAtaqueDesarmado().getNome();
-            socoTipo = classe.getAtaqueDesarmado().getTipoArma();
-            socoQtdDano = classe.getAtaqueDesarmado().getQuantidadeDanoArma();
-            socoDado = classe.getAtaqueDesarmado().getDadoDanoArma();
-        }
-        combate.append("\n    - ").append(socoNome)
-            .append("  (Dano: ").append(socoQtdDano).append("d").append(socoDado)
-            .append(" | Tipo: ").append(socoTipo).append(")");
-
-        System.out.println("\n  Nome: " + CIANO + ficha.getNomePersonagem() + RESET + "        Nível: " + ficha.getNivel() + (ficha.getNivel() < 10 ? "  (XP: " + ficha.getXp() + "/" + fichas.FichaRpg.getXpNecessaria(ficha.getNivel()) + ")" : "  (XP: " + ficha.getXp() + " - Nível máximo)"));
-        String modoFicha = ficha.isModoDificil() ? AMARELO + "Difícil" : VERDE + "Normal";
-        String modoLabel = ficha.isModoDificil() ? " [DIFÍCIL]" : " [Normal]";
-        System.out.println("  Dono da ficha: " + ficha.getNomePessoa() + "      Classe: " + nomeDaClasse + "      Raça: " + (ficha.getRaca() != null ? ficha.getRaca().getNome() : "Nenhuma") + "      Modo: " + modoFicha + RESET + modoLabel);
-        if (ficha.getRaca() != null) {
-            racas.Raca raca = ficha.getRaca();
-            System.out.println("  " + CIANO + "[ RAÇA — " + raca.getNome() + " ]" + RESET + "   " + raca.getBonusDescricao());
-            System.out.println("    Passiva: " + AMARELO + raca.getPassiva() + RESET + " — " + raca.getPassivaDescricao());
-        }
-        System.out.println("  Vida: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima() + "        Mana: " + ficha.getManaPersonagem() + "/" + ficha.getManaMaxima());
-        System.out.println("  Ouro: " + ficha.getOuro());
-
-        System.out.println("\n  " + CIANO + "[ ATRIBUTOS ]" + RESET);
-        System.out.println("    Constituição: " + ficha.getConstituicao() + "    Destreza: " + ficha.getDestreza());
-        System.out.println("    Força: " + ficha.getForca() + "    Sabedoria: " + ficha.getSabedoria());
-        System.out.println("    Intelecto: " + ficha.getIntelecto() + "    Presença: " + ficha.getPresenca());
-
-        System.out.println("\n  " + CIANO + "[ COMBATE ]" + RESET + combate);
-        System.out.println("    Defesa: " + ficha.getDefesa());
-
-        System.out.println("\n  " + CIANO + "[ ABRIGO E TEMPO ]" + RESET);
-        System.out.println("    Período: " + ficha.getPeriodoDescritivo() + " (" + (3 - ficha.getProgressoPeriodo()) + "/3 para virar)");
-        String cabanaStatus = !ficha.isTemCabana()
-                ? "Não construída"
-                : (ficha.isNaCabana() ? "Construída (você está nela)" : "Construída (você está longe dela)");
-        System.out.println("    Cabana: " + cabanaStatus + " | Dias sem dormir: " + ficha.getDiasSemDormir() + (ficha.isCansado() ? " (CANSADO: -1 em testes)" : ""));
-        String salaStatus = !ficha.isTemSalaTreino()
-                ? "Não construída"
-                : (ficha.isSalaJuntoCabana() ? "Construída (junto à cabana)"
-                    : ficha.isSalaJuntoMesa() ? "Construída (junto à mesa)" : "Construída (longe da cabana)");
-        System.out.println("    Sala de Treino: " + salaStatus + (ficha.isNaSalaTreino() ? " (você está nela)" : "") + (ficha.getTreinoBonusPeriodosRestantes() > 0 ? " | Bônus de treino: +2 em " + ficha.getTreinoBonusAtributo() + " (restam " + ficha.getTreinoBonusPeriodosRestantes() + " períodos)" : ""));
-        String mesaStatus = !ficha.isTemMesaMagias()
-                ? "Não construída"
-                : (ficha.isMesaJuntoCabana() ? "Construída (junto à cabana)"
-                    : ficha.isMesaJuntoSala() ? "Construída (junto à sala)" : "Construída (longe da cabana)");
-        System.out.println("    Mesa de Magias: " + mesaStatus + (ficha.isNaMesaMagias() ? " (você está nela)" : "") + (ficha.getMagiaBonusPeriodosRestantes() > 0 ? " | Bônus de estudo: +1 dado de dano (restam " + ficha.getMagiaBonusPeriodosRestantes() + " períodos)" : ""));
-        String fogueiraStatus = !ficha.isTemFogueira()
-                ? "Não construída"
-                : (ficha.isFogueiraJuntoCabana() ? "Construída (junto à cabana)"
-                    : ficha.isFogueiraJuntoSala() ? "Construída (junto à sala)"
-                    : ficha.isFogueiraJuntoMesa() ? "Construída (junto à mesa)" : "Construída (longe da cabana)");
-        System.out.println("    Fogueira: " + fogueiraStatus + (ficha.isNaFogueira() ? " (você está nela)" : "") + " | Cozinha TODAS as carnes cruas de uma vez (2x Madeira)");
-
-        System.out.println("\n  " + CIANO + "[ INVENTÁRIO ]" + RESET);
-        if (ficha.getInventario().isEmpty()) {
-            System.out.println("    - Vazio");
-        } else {
-            for (ItemRpg item : ficha.getInventario()) {
-                System.out.println("    - " + item.getNome() + " (x" + item.getQuantidade() + ")");
-            }
-        }
-
-        System.out.println("\n  " + CIANO + "[ HABILIDADES ]" + RESET);
-        if (ficha.getHabilidades().isEmpty()) {
-            System.out.println("    - Nenhuma");
-        } else {
-            for (habilidades.Habilidade hab : ficha.getHabilidades()) {
-                System.out.println("    - " + hab.getNome() + " (Custo: " + hab.getCustoMana() + " Mana)");
-            }
-        }
-
-        System.out.println("\n" + CIANO + "==========================================================================================" + RESET);
     }
 }

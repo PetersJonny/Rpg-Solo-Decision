@@ -13,141 +13,141 @@ public class FichaRpg implements java.io.Serializable {
     private static final long serialVersionUID = 1L;
 
     // Identificação
-    private String nomePersonagem = "Desconhecido", nomePessoa;
+    String nomePersonagem = "Desconhecido", nomePessoa;
     
     // Status de Sobrevivência
-    private int nivel = 1;
-    private int xp = 0;
-    private int ouro = 0;
-    private int vidaPersonagem, manaPersonagem;
-    private int vidaMaxima, manaMaxima;
+    int nivel = 1;
+    int xp = 0;
+    int ouro = 0;
+    int vidaPersonagem, manaPersonagem;
+    int vidaMaxima, manaMaxima;
 
 
     // Encontros
     private boolean fadaEncontrada = false;
     
     // Atributos Base
-    private int constituicaoBase, destrezaBase, forcaBase, sabedoriaBase, intelectoBase, presencaBase;
+    int constituicaoBase, destrezaBase, forcaBase, sabedoriaBase, intelectoBase, presencaBase;
 
     // Raça (gera +1 num atributo e uma passiva). Humano escolhe o atributo.
-    private racas.Raca raca = null;
+    racas.Raca raca = null;
     private String atributoRacialHumano = null; // "+1" escolhido pelo Humano (ex.: "Força")
 
     // Passivas diárias (resetadas a cada novo dia)
-    private boolean sobrevivenciaUsada = false; // Vontade de Viver (Humano): 1x/dia
-    private boolean menteAfiadaUsada = false;  // Mente Afiada (Gnomo): 1x/dia
+    boolean sobrevivenciaUsada = false; // Vontade de Viver (Humano): 1x/dia
+    boolean menteAfiadaUsada = false;  // Mente Afiada (Gnomo): 1x/dia
     
     // Atributos Finais (Base + Modificadores)
-    private int constituicao, destreza, forca, sabedoria, intelecto, presenca;
+    int constituicao, destreza, forca, sabedoria, intelecto, presenca;
     
     // Classe
-    private ClasseRpg classeDoPersonagem = null;
+    ClasseRpg classeDoPersonagem = null;
     
     // Defesa
-    private int defesa, bonusDeDefesa;
+    int defesa, bonusDeDefesa;
 
     // Equipamento e Inventário
-    private Arma armaEquipada;
-    private itens.Armadura armaduraEquipada;
-    private List<ItemRpg> inventario = new ArrayList<>();
+    Arma armaEquipada;
+    itens.Armadura armaduraEquipada;
+    List<ItemRpg> inventario = new ArrayList<>();
     
     // Habilidades
-    private List<habilidades.Habilidade> habilidades = new ArrayList<>();
+    List<habilidades.Habilidade> habilidades = new ArrayList<>();
 
     // Efeitos temporários de combate
-    private boolean espadaAfiadaAtiva;
-    private boolean protecaoAbsolutaAtiva;
-    private int bonusDefesaTemporario;
-    private boolean curaParaMortePreparado;
-    private boolean curaParaMorteAtivo;
-    private criaturas.Criatura alvoCuraParaMorte;
-    private boolean curaTotalUsada;
-    private boolean infectado; // infecção zumbi: 1d4 de dano por rodada de combate
+    boolean espadaAfiadaAtiva;
+    boolean protecaoAbsolutaAtiva;
+    int bonusDefesaTemporario;
+    boolean curaParaMortePreparado;
+    boolean curaParaMorteAtivo;
+    criaturas.Criatura alvoCuraParaMorte;
+    boolean curaTotalUsada;
+    boolean infectado; // infecção zumbi: 1d4 de dano por rodada de combate
 
     // Efeitos lvl 7
-    private boolean defesaAbsolutaAtiva;
-    private int rodadasSemHabilidade;
-    private boolean magiaProibidaUsada;
-    private boolean magiaProibidaAtiva;
-    private criaturas.Criatura prisaoAtiva;
+    boolean defesaAbsolutaAtiva;
+    int rodadasSemHabilidade;
+    boolean magiaProibidaUsada;
+    boolean magiaProibidaAtiva;
+    criaturas.Criatura prisaoAtiva;
 
     // Efeitos lvl 9
-    private boolean semiDeusAtivo;
-    private int semiDeusVidaOriginalMax;
-    private boolean poderAbsolutoAtivo;
-    private int curaAbsolutaBonus;
-    private int curaAbsolutaVidaOriginalMax;
+    boolean semiDeusAtivo;
+    int semiDeusVidaOriginalMax;
+    boolean poderAbsolutoAtivo;
+    int curaAbsolutaBonus;
+    int curaAbsolutaVidaOriginalMax;
 
     // Efeitos lvl 10
-    private boolean deusAtivo;
-    private boolean curaIncessanteUsada;
+    boolean deusAtivo;
+    boolean curaIncessanteUsada;
     private boolean conhecimentoAbsolutoAplicado;
 
     // Efeitos de tempo (dia/noite) e abrigo
-    private boolean ehNoite = false;
-    private int progressoPeriodo = 0;
-    private int diaAtual = 1; // Dia 1, Noite 1, Dia 2, Noite 2, ...
-    private int diasSemDormir = 0;
-    private boolean cansado = false;
-    private boolean temCabana = false;
-    private boolean naCabana = false;
+    boolean ehNoite = false;
+    int progressoPeriodo = 0;
+    int diaAtual = 1; // Dia 1, Noite 1, Dia 2, Noite 2, ...
+    int diasSemDormir = 0;
+    boolean cansado = false;
+    boolean temCabana = false;
+    boolean naCabana = false;
 
     // Sistema de fome: quantos dias consecutivos sem comer; comeuHoje marca se
     // comeu no dia que passou (usado no virar do dia e no bônus de dormir);
     // enjoado = comeu comida estragada (mantém/ganha -1 em testes de Destreza e Força).
     // Frutas só contam como "comida completa" ao comer 3+ no dia; carne conta 1x.
-    private int diasSemComer = 0;
-    private boolean comeuHoje = false;
-    private boolean enjoado = false;
-    private int penalidadeEnjoado = 0;
-    private int frutasComidasHoje = 0;
-    private static final int FRUTAS_PARA_REFEICAO = 3;
-    private static final int CHANCE_CARNE_ESTRAGADA = 30;
+    int diasSemComer = 0;
+    boolean comeuHoje = false;
+    boolean enjoado = false;
+    int penalidadeEnjoado = 0;
+    int frutasComidasHoje = 0;
+    static final int FRUTAS_PARA_REFEICAO = 3;
+    static final int CHANCE_CARNE_ESTRAGADA = 30;
 
     // Companheiro (pessoa perdida que o jogador acolheu)
-    private companheiros.Companheiro companheiro = null;
+    companheiros.Companheiro companheiro = null;
 
     // Modo de dificuldade e slot de save vinculado à partida
     private ModoDificuldade modoDificuldade = ModoDificuldade.NORMAL;
     private int slotAtual = 0; // 0 = nenhum save vinculado
 
     // Sala de Treino
-    private boolean temSalaTreino = false;
-    private boolean naSalaTreino = false;
-    private boolean salaJuntoCabana = false; // se a sala foi construída enquanto se estava na cabana
-    private String treinoBonusAtributo = null; // "Força" ou "Destreza"
-    private int treinoBonusPeriodosRestantes = 0;
+    boolean temSalaTreino = false;
+    boolean naSalaTreino = false;
+    boolean salaJuntoCabana = false; // se a sala foi construída enquanto se estava na cabana
+    String treinoBonusAtributo = null; // "Força" ou "Destreza"
+    int treinoBonusPeriodosRestantes = 0;
 
     // Mesa de Magias
-    private boolean temMesaMagias = false;
-    private int magiaBonusPeriodosRestantes = 0;
-    private boolean naMesaMagias = false; // se o jogador está junto da mesa
-    private boolean mesaJuntoCabana = false; // se a mesa foi construída estando na cabana
-    private boolean mesaJuntoSala = false; // se a mesa foi construída estando na sala de treino
-    private boolean salaJuntoMesa = false; // se a sala foi construída estando na mesa de magias
+    boolean temMesaMagias = false;
+    int magiaBonusPeriodosRestantes = 0;
+    boolean naMesaMagias = false; // se o jogador está junto da mesa
+    boolean mesaJuntoCabana = false; // se a mesa foi construída estando na cabana
+    boolean mesaJuntoSala = false; // se a mesa foi construída estando na sala de treino
+    boolean salaJuntoMesa = false; // se a sala foi construída estando na mesa de magias
 
     // Fogueira (para cozinhar carne crua e deixá-la segura)
-    private boolean temFogueira = false;
-    private boolean naFogueira = false; // se o jogador está junto da fogueira
-    private boolean fogueiraJuntoCabana = false; // se a fogueira foi construída estando na cabana
-    private boolean fogueiraJuntoSala = false; // se a fogueira foi construída estando na sala de treino
-    private boolean fogueiraJuntoMesa = false; // se a fogueira foi construída estando na mesa de magias
+    boolean temFogueira = false;
+    boolean naFogueira = false; // se o jogador está junto da fogueira
+    boolean fogueiraJuntoCabana = false; // se a fogueira foi construída estando na cabana
+    boolean fogueiraJuntoSala = false; // se a fogueira foi construída estando na sala de treino
+    boolean fogueiraJuntoMesa = false; // se a fogueira foi construída estando na mesa de magias
 
     // Profundidade da travessia em que cada construção foi montada (o "ponto" dela).
     // Montar de novo em outro lugar move o ponto; a distância entre duas construções
     // é a diferença entre as profundidades onde cada uma está.
-    private int profundidadeCabana = 0;
-    private int profundidadeSalaTreino = 0;
-    private int profundidadeMesaMagias = 0;
-    private int profundidadeFogueira = 0;
+    int profundidadeCabana = 0;
+    int profundidadeSalaTreino = 0;
+    int profundidadeMesaMagias = 0;
+    int profundidadeFogueira = 0;
 
     // Estruturas encontradas na floresta (só podem ser descobertas explorando)
-    private boolean labirintoEncontrado = false;
-    private estruturas.Labirinto labirinto = null; // grade salva junto da ficha
+    boolean labirintoEncontrado = false;
+    estruturas.Labirinto labirinto = null; // grade salva junto da ficha
 
     // Travessia para fora da floresta: profundidade oculta ao jogador.
     // 0 = perto das construções; 20 = fora da floresta (em uma cidade).
-    private int profundidadeFloresta = 0;
+    int profundidadeFloresta = 0;
 
     public static final int PROFUNDIDADE_PARA_SAIR = 20;
 
@@ -167,7 +167,7 @@ public class FichaRpg implements java.io.Serializable {
     private boolean reiDasCriaturas = false;
 
     // Pacto Mortal (Olho Demoníaco): ativo até o fim do combate — você sofre +3 em todo dano
-    private boolean pactoMortalAtivo = false;
+    boolean pactoMortalAtivo = false;
 
     // Minotauro: ao ser derrotado no coração do labirinto, ele não aparece de novo
     private boolean minotauroDerrotado = false;
@@ -189,7 +189,7 @@ public class FichaRpg implements java.io.Serializable {
     private boolean ferreiroSeApresentou = false;
 
     // Missões aceitas no quadro da vila (nomes; podem ser várias ao mesmo tempo)
-    private List<String> missoesAceitas = new ArrayList<>();
+    List<String> missoesAceitas = new ArrayList<>();
 
     // Construtor
     public FichaRpg(String nomePessoa) {
@@ -201,114 +201,19 @@ public class FichaRpg implements java.io.Serializable {
     }
 
     // Distribuição de Pontos
-    public void adicionarAtributo(int opcao, int pontos) {
-        switch (opcao) {
-            case 1: constituicaoBase += pontos; break;
-            case 2: destrezaBase += pontos; break;
-            case 3: forcaBase += pontos; break;
-            case 4: sabedoriaBase += pontos; break;
-            case 5: intelectoBase += pontos; break;
-            case 6: presencaBase += pontos; break;
-        }
-    }
+    public void adicionarAtributo(int opcao, int pontos) { GerenciadorDeCrescimento.adicionarAtributo(this, opcao, pontos); }
 
     public void setClasse(ClasseRpg classe) {
         this.classeDoPersonagem = classe;
         aplicarBonus();
     }
-
-    public void resetarPontosBase() {
-        this.constituicaoBase = 0;
-        this.presencaBase = 0;
-        this.destrezaBase = 0;
-        this.sabedoriaBase = 0;
-        this.intelectoBase = 0;
-        this.forcaBase = 0;
-        aplicarBonus();
-    }
+    public void resetarPontosBase() { GerenciadorDeCrescimento.resetarPontosBase(this); }
 
     // Aplicação de Modificadores e Equipamentos Iniciais
-    public void aplicarBonus() {
-        this.constituicao = constituicaoBase;
-        this.destreza = destrezaBase;
-        this.forca = forcaBase;
-        this.sabedoria = sabedoriaBase;
-        this.intelecto = intelectoBase;
-        this.presenca = presencaBase;
-        
-        if (classeDoPersonagem == null) {
-            this.vidaPersonagem = 0;
-            this.manaPersonagem = 0;
-            // Raça ainda dá atributos/defesa mesmo sem classe escolhida
-            if (raca != null) {
-                this.constituicao += raca.getBonusConstituicao();
-                this.forca += raca.getBonusForca();
-                this.destreza += raca.getBonusDestreza();
-                this.sabedoria += raca.getBonusSabedoria();
-                this.intelecto += raca.getBonusIntelecto();
-                this.presenca += raca.getBonusPresenca();
-            }
-            this.defesa = 10 + this.destreza + bonusDeDefesa + (raca != null ? raca.getBonusDefesa() : 0);
-            return;
-        }
-
-        this.vidaPersonagem = classeDoPersonagem.calcularVidaBase(this.constituicaoBase);
-        this.manaPersonagem = classeDoPersonagem.calcularManaBase(this.presencaBase);
-        this.vidaMaxima = this.vidaPersonagem;
-        this.manaMaxima = this.manaPersonagem;
-        
-        this.constituicao += classeDoPersonagem.getBonusConstituicao();
-        this.forca += classeDoPersonagem.getBonusForca();
-        this.destreza += classeDoPersonagem.getBonusDestreza();
-        this.sabedoria += classeDoPersonagem.getBonusSabedoria();
-        this.intelecto += classeDoPersonagem.getBonusIntelecto();
-        this.presenca += classeDoPersonagem.getBonusPresenca();
-        
-        // Bônus racial (+1 no atributo da raça; defesa/vida extras p/ Dracônico)
-        if (raca != null) {
-            this.constituicao += raca.getBonusConstituicao();
-            this.forca += raca.getBonusForca();
-            this.destreza += raca.getBonusDestreza();
-            this.sabedoria += raca.getBonusSabedoria();
-            this.intelecto += raca.getBonusIntelecto();
-            this.presenca += raca.getBonusPresenca();
-        }
-        
-        // Bônus racial (+1 no atributo da raça + bônus permanentes de defesa/vida)
-        this.defesa = 10 + this.destreza + bonusDeDefesa + (raca != null ? raca.getBonusDefesa() : 0);
-        this.vidaMaxima += (raca != null ? raca.getBonusVidaMaxima() : 0);
-        // A vida atual acompanha o máximo: começa cheia com o bônus de vida da raça
-        this.vidaPersonagem += (raca != null ? raca.getBonusVidaMaxima() : 0);
-
-        // Ficha ganha a arma e os itens da classe
-        this.armaEquipada = classeDoPersonagem.getArmaPrincipal();
-        this.inventario = new ArrayList<>(classeDoPersonagem.getItensIniciais());
-        
-        // Ficha ganha as habilidades da classe
-        this.habilidades = new ArrayList<>(classeDoPersonagem.getHabilidadesIniciais());
-
-        // Equipa a melhor armadura do inventário (as demais ficam na mochila)
-        if (armaduraEquipada != null) {
-            inventario.add(armaduraEquipada);
-            armaduraEquipada = null;
-        }
-        equiparMelhorArmadura();
-    }
+    public void aplicarBonus() { GerenciadorDeCrescimento.aplicarBonus(this); }
 
     // Validador de Ficha
-    public boolean isFichaCompleta() {
-        if (nomePersonagem.equals("Desconhecido") || nomePersonagem.trim().isEmpty()) {
-            return false;
-        }
-        if (classeDoPersonagem == null) {
-            return false;
-        }
-        int totalAtributosBase = constituicaoBase + destrezaBase + forcaBase + sabedoriaBase + intelectoBase + presencaBase;
-        if (totalAtributosBase < 6) {
-            return false;
-        }
-        return true;
-    }
+    public boolean isFichaCompleta() { return GerenciadorDeLocalizacao.isFichaCompleta(this); }
 
     // Getters
     public String getNomePersonagem() { return nomePersonagem; }
@@ -342,10 +247,10 @@ public class FichaRpg implements java.io.Serializable {
 
     // Passivas diárias (1x por dia): Vontade de Viver (Humano) e Mente Afiada (Gnomo)
     public boolean isSobrevivenciaUsada() { return sobrevivenciaUsada; }
-    public void marcarSobrevivenciaUsada() { this.sobrevivenciaUsada = true; }
+    public void marcarSobrevivenciaUsada() { GerenciadorDeVida.marcarSobrevivenciaUsada(this); }
     public boolean isMenteAfiadaUsada() { return menteAfiadaUsada; }
-    public void marcarMenteAfiadaUsada() { this.menteAfiadaUsada = true; }
-    public boolean podeUsarMenteAfiada() { return raca != null && raca.podeRerrolarTeste() && !menteAfiadaUsada; }
+    public void marcarMenteAfiadaUsada() { GerenciadorDeVida.marcarMenteAfiadaUsada(this); }
+    public boolean podeUsarMenteAfiada() { return GerenciadorDeVida.podeUsarMenteAfiada(this); }
     public Arma getArmaEquipada() { return armaEquipada; }
     public List<ItemRpg> getInventario() { return inventario; }
     public List<habilidades.Habilidade> getHabilidades() { return habilidades; }
@@ -365,284 +270,71 @@ public class FichaRpg implements java.io.Serializable {
     public void setManaMaxima(int manaMaxima) { this.manaMaxima = manaMaxima; }
 
     // Dinheiro
-    public void adicionarOuro(int quantidade) { 
-        if (quantidade <= 0) return;
-        if (Integer.MAX_VALUE - this.ouro < quantidade) {
-            this.ouro = Integer.MAX_VALUE;
-        } else {
-            this.ouro += quantidade;
-        }
-    }
+    public void adicionarOuro(int quantidade) { GerenciadorDeOuroEDeslocamento.adicionarOuro(this, quantidade); }
 
     // Tenta gastar ouro; retorna false se não tiver o suficiente
-    public boolean gastarOuro(int quantidade) {
-        if (quantidade < 0 || this.ouro < quantidade) {
-            return false;
-        }
-        this.ouro -= quantidade;
-        return true;
-    }
+    public boolean gastarOuro(int quantidade) { return GerenciadorDeOuroEDeslocamento.gastarOuro(this, quantidade); }
 
     // XP necessária para subir do nível atual para o próximo
-    public static int getXpNecessaria(int nivel) {
-        switch (nivel) {
-            case 1: return 100;
-            case 2: return 300;
-            case 3: return 700;
-            case 4: return 1500;
-            case 5: return 3500;
-            case 6: return 8000;
-            case 7: return 15000;
-            case 8: return 40000;
-            case 9: return 100000;
-            default: return -1; // Nível 10 é o máximo
-        }
-    }
+    public static int getXpNecessaria(int nivel) { return GerenciadorDeCrescimento.getXpNecessaria(nivel); }
 
     // Adiciona XP e trata os up's de nível; retorna quantos níveis foram ganhos
-    public int adicionarXp(int quantidade) {
-        this.xp += Math.max(0, quantidade);
-        int niveisGanhos = 0;
-        while (nivel < 10) {
-            int necessaria = getXpNecessaria(nivel);
-            if (xp >= necessaria) {
-                xp -= necessaria; // Antes era xp = 0 (bug que sumia com XP excedente)
-                nivel++;
-                niveisGanhos++;
-                // Aplica bônus de vida e mana da classe
-                if (classeDoPersonagem != null) {
-                    classeDoPersonagem.aplicarBonusNivel(this);
-                    // Ganha as habilidades do nível alcançado
-                    classeDoPersonagem.aplicarHabilidadesNivel(this, nivel);
-                }
-            } else {
-                break;
-            }
-        }
-        return niveisGanhos;
-    }
+    public int adicionarXp(int quantidade) { return GerenciadorDeCrescimento.adicionarXp(this, quantidade); }
 
     public int getXp() { return xp; }
     public void setXp(int xp) { this.xp = xp; }
 
     // Adicionar item ao inventário, empilhando se já existir
-    public void adicionarItem(ItemRpg novoItem) {
-        for (ItemRpg existente : inventario) {
-            if (existente.getNome().equals(novoItem.getNome())) {
-                existente.setQuantidade(existente.getQuantidade() + novoItem.getQuantidade());
-                return;
-            }
-        }
-        inventario.add(novoItem);
-    }
+    public void adicionarItem(ItemRpg novoItem) { GerenciadorDeInventarioFicha.adicionarItem(this, novoItem); }
 
     // ==================== ESPAÇO DA MOCHILA ====================
 
     // Capacidade de carga da mochila: 10 + 5 por ponto de Força; com Força
     // negativa, fica fixa em 10 (o mínimo de carregar o básico).
-    public double getCapacidadeMochila() {
-        return Math.max(10, 10 + 5.0 * getForca());
-    }
+    public double getCapacidadeMochila() { return GerenciadorDeInventarioFicha.getCapacidadeMochila(this); }
 
     // Peso total carregado (soma do peso de cada unidade do inventário)
-    public double getPesoTotalMochila() {
-        double total = 0;
-        for (ItemRpg item : inventario) {
-            total += item.getPeso() * item.getQuantidade();
-        }
-        return total;
-    }
+    public double getPesoTotalMochila() { return GerenciadorDeInventarioFicha.getPesoTotalMochila(this); }
 
     // Quanto de espaço ainda resta na mochila
-    public double getEspacoLivreMochila() {
-        return getCapacidadeMochila() - getPesoTotalMochila();
-    }
+    public double getEspacoLivreMochila() { return GerenciadorDeInventarioFicha.getEspacoLivreMochila(this); }
 
     // Tenta adicionar o item se houver espaço; retorna false e NÃO adiciona se estourar
-    public boolean tentarAdicionarItem(ItemRpg novoItem) {
-        double espacoNecessario = novoItem.getPeso() * novoItem.getQuantidade();
-        double espacoLivre = getEspacoLivreMochila();
-        if (espacoNecessario <= espacoLivre + 0.0001) {
-            adicionarItem(novoItem);
-            return true;
-        }
-        return false;
-    }
+    public boolean tentarAdicionarItem(ItemRpg novoItem) { return GerenciadorDeInventarioFicha.tentarAdicionarItem(this, novoItem); }
 
     // Adiciona apenas a quantidade que couber na mochila (o item tem sua quantidade
     // reduzida ao que foi guardado); retorna quantas unidades foram pegas.
-    public int adicionarItemLimitado(ItemRpg novoItem) {
-        double espacoLivre = getEspacoLivreMochila();
-        double pesoUnit = novoItem.getPeso();
-        int qtd = novoItem.getQuantidade();
-        if (pesoUnit <= 0 || espacoLivre <= 0) return 0;
-        int qtdCabe = (int) Math.floor(espacoLivre / pesoUnit);
-        int qtdPegar = Math.min(qtd, qtdCabe);
-        if (qtdPegar <= 0) return 0;
-        novoItem.setQuantidade(qtdPegar);
-        adicionarItem(novoItem);
-        return qtdPegar;
-    }
+    public int adicionarItemLimitado(ItemRpg novoItem) { return GerenciadorDeInventarioFicha.adicionarItemLimitado(this, novoItem); }
 
     // Pergunta se o jogador quer pegar o item achado e quantos, respeitando o espaço
     // da mochila. O que não couber ou for recusado fica para trás.
-    public void coletarItemEncontrado(ItemRpg item, String origem) {
-        double pesoUnit = item.getPeso();
-        double espacoLivre = getEspacoLivreMochila();
-        int qtd = item.getQuantidade();
-
-        int cabemDeFato = (pesoUnit > 0) ? (int) Math.floor(espacoLivre / pesoUnit) : qtd;
-        if (cabemDeFato < 0) cabemDeFato = 0;
-        cabemDeFato = Math.min(qtd, cabemDeFato);
-
-        if (cabemDeFato <= 0) {
-            Interface.MostrarMensagem(origem + " " + qtd + "x " + item.getNome() + ", mas não há espaço na mochila! (Peso: " + String.format("%.1f", pesoUnit) + " cada, livre: " + String.format("%.1f", espacoLivre) + ")");
-            Interface.Pausa(1500);
-            return;
-        }
-
-        Interface.MostrarMensagem("-> " + origem + " " + qtd + "x " + item.getNome() + " (peso " + String.format("%.1f", pesoUnit) + " cada, espaço livre: " + String.format("%.1f", espacoLivre) + "/" + String.format("%.1f", getCapacidadeMochila()) + ").");
-        Interface.Pausa(800);
-
-        System.out.println("  Deseja pegar?");
-        System.out.println("  1. Pegar tudo (" + cabemDeFato + "x)");
-        System.out.println("  2. Escolher a quantidade");
-        System.out.println("  3. Deixar para trás");
-        int escolha = Interface.lerOpcao(3);
-
-        int qtdPegar;
-        if (escolha == 1) {
-            qtdPegar = cabemDeFato;
-        } else if (escolha == 2) {
-            System.out.println("  Quantidade (1 a " + cabemDeFato + "):");
-            int qtdEscolhida = Interface.lerInteiro();
-            qtdPegar = Math.min(Math.max(0, qtdEscolhida), cabemDeFato);
-            if (qtdPegar <= 0) {
-                Interface.MostrarMensagem("-> Você não pegou nada.");
-                Interface.Pausa(1000);
-                return;
-            }
-        } else {
-            Interface.MostrarMensagem("-> Você deixou " + item.getNome() + " para trás.");
-            Interface.Pausa(1000);
-            return;
-        }
-
-        item.setQuantidade(qtdPegar);
-        adicionarItem(item);
-        Interface.MostrarMensagem("-> Você coletou " + qtdPegar + "x " + item.getNome() + " (peso: " + String.format("%.1f", pesoUnit * qtdPegar) + "/" + String.format("%.1f", getCapacidadeMochila()) + ").");
-        Interface.Pausa(1500);
-    }
+    public void coletarItemEncontrado(ItemRpg item, String origem) { GerenciadorDeInventarioFicha.coletarItemEncontrado(this, item, origem); }
 
     // Remove itens do inventário; se a arma equipada for vendida, ela é desequipada.
-    public boolean removerItem(String nome, int quantidade) {
-        for (ItemRpg item : inventario) {
-            if (item.getNome().equals(nome)) {
-                int atual = item.getQuantidade();
-                int remover = Math.min(atual, quantidade);
-                if (atual - remover <= 0) {
-                    inventario.remove(item);
-                    if (armaEquipada != null && armaEquipada.getNome().equals(nome)) {
-                        armaEquipada = null;
-                    }
-                    if (armaduraEquipada != null && armaduraEquipada.getNome().equals(nome)) {
-                        armaduraEquipada = null;
-                        equiparMelhorArmadura();
-                    }
-                } else {
-                    item.setQuantidade(atual - remover);
-                }
-                return true;
-            }
-        }
-        return false;
-    }
+    public boolean removerItem(String nome, int quantidade) { return GerenciadorDeInventarioFicha.removerItem(this, nome, quantidade); }
 
     // Consome unidades de um item (usar poções, flechas, kit médico...).
     // Conteúdo compartilhado entre o menu de inventário e o combate.
-    public void consumirItem(ItemRpg item, int quantidade) {
-        if (item != null) {
-            item.setQuantidade(item.getQuantidade() - Math.max(0, quantidade));
-        }
-    }
+    public void consumirItem(ItemRpg item, int quantidade) { GerenciadorDeInventarioFicha.consumirItem(this, item, quantidade); }
 
     // Equipa a armadura de maior bônus do inventário; a que estava equipada volta para a mochila
-    public void equiparMelhorArmadura() {
-        itens.Armadura melhor = null;
-        for (ItemRpg item : new ArrayList<>(inventario)) {
-            if (item instanceof itens.Armadura) {
-                itens.Armadura arm = (itens.Armadura) item;
-                if (melhor == null || arm.getBonusDefesa() > melhor.getBonusDefesa()) {
-                    melhor = arm;
-                }
-            }
-        }
-        if (melhor != null) {
-            if (armaduraEquipada != null) {
-                inventario.add(armaduraEquipada);
-            }
-            inventario.remove(melhor);
-            armaduraEquipada = melhor;
-        }
-    }
+    public void equiparMelhorArmadura() { GerenciadorDeInventarioFicha.equiparMelhorArmadura(this); }
 
     // Verifica se o jogador possui um item (com quantidade) no inventário
-    public boolean temItem(String nome) {
-        if (inventario == null) return false;
-        for (ItemRpg item : inventario) {
-            if (item.getNome().equals(nome) && item.getQuantidade() > 0) {
-                return true;
-            }
-        }
-        return false;
-    }
+    public boolean temItem(String nome) { return GerenciadorDeInventarioFicha.temItem(this, nome); }
 
     // Bônus aleatório de atributo (concedido pela Fada)
-    public String aumentarAtributoAleatorio() {
-        int sorteado = MecanicasRpg.rolarDado(6);
-        switch (sorteado) {
-            case 1: aumentarConstituicao(1); return "Constituição";
-            case 2: destreza++; return "Destreza";
-            case 3: forca++; return "Força";
-            case 4: sabedoria++; return "Sabedoria";
-            case 5: intelecto++; return "Intelecto";
-            default: presenca++; return "Presença";
-        }
-    }
+    public String aumentarAtributoAleatorio() { return GerenciadorDeCrescimento.aumentarAtributoAleatorio(this); }
 
     // Aumenta o atributo escolhido (ponto de atributo ganho no level up)
-    public String aumentarAtributo(int opcao) {
-        switch (opcao) {
-            case 1: aumentarConstituicao(1); return "Constituição";
-            case 2: destreza++; return "Destreza";
-            case 3: forca++; return "Força";
-            case 4: sabedoria++; return "Sabedoria";
-            case 5: intelecto++; return "Intelecto";
-            default: presenca++; return "Presença";
-        }
-    }
+    public String aumentarAtributo(int opcao) { return GerenciadorDeCrescimento.aumentarAtributo(this, opcao); }
 
     // Aumenta a Constituição aplicando retroativo de vida para TODOS os níveis já ganhos:
     // cada ponto extra de Constituição deveria ter dado +1 de vida em cada level up passado.
-    public void aumentarConstituicao(int quantidade) {
-        constituicao += quantidade;
-        if (quantidade > 0 && nivel > 1) {
-            int vidaRetroativa = quantidade * (nivel - 1);
-            vidaMaxima += vidaRetroativa;
-            vidaPersonagem = Math.min(vidaPersonagem + vidaRetroativa, vidaMaxima);
-        }
-    }
+    public void aumentarConstituicao(int quantidade) { GerenciadorDeCrescimento.aumentarConstituicao(this, quantidade); }
 
     // Conhecimento Absoluto (Healer lvl 10): +quantidade em TODOS os atributos
-    public void aumentarTodosAtributos(int quantidade) {
-        destreza += quantidade;
-        forca += quantidade;
-        sabedoria += quantidade;
-        intelecto += quantidade;
-        presenca += quantidade;
-        defesa += quantidade;
-        aumentarConstituicao(quantidade);
-    }
+    public void aumentarTodosAtributos(int quantidade) { GerenciadorDeCrescimento.aumentarTodosAtributos(this, quantidade); }
 
     // ==================== TEMPO (DIA/NOITE) E ABRIGO ====================
 
@@ -658,13 +350,9 @@ public class FichaRpg implements java.io.Serializable {
     public boolean temCompanheiro() { return companheiro != null; }
     public companheiros.Companheiro getCompanheiro() { return companheiro; }
     public void setCompanheiro(companheiros.Companheiro companheiro) { this.companheiro = companheiro; }
-    public void removerCompanheiro() { this.companheiro = null; }
-    public boolean companheiroQuerPartir() { return companheiro != null && companheiro.isPartindo(); }
-    public void registrarDormidaDoCompanheiro() {
-        if (companheiro != null) {
-            companheiro.aoDormir();
-        }
-    }
+    public void removerCompanheiro() { GerenciadorDeMissoesECompanheiro.removerCompanheiro(this); }
+    public boolean companheiroQuerPartir() { return GerenciadorDeMissoesECompanheiro.companheiroQuerPartir(this); }
+    public void registrarDormidaDoCompanheiro() { GerenciadorDeMissoesECompanheiro.registrarDormidaDoCompanheiro(this); }
     public boolean isTemSalaTreino() { return temSalaTreino; }
     public boolean isNaSalaTreino() { return naSalaTreino; }
     public boolean isSalaJuntoCabana() { return salaJuntoCabana; }
@@ -686,52 +374,29 @@ public class FichaRpg implements java.io.Serializable {
     public int getProfundidadeFogueira() { return profundidadeFogueira; }
 
     // Distância (em períodos de caminhada) entre o ponto atual e uma profundidade qualquer.
-    public int getDistanciaAte(int profundidadeAlvo) {
-        return Math.abs(profundidadeFloresta - profundidadeAlvo);
-    }
+    public int getDistanciaAte(int profundidadeAlvo) { return GerenciadorDeLocalizacao.getDistanciaAte(this, profundidadeAlvo); }
 
     // Localização (id) em que o jogador está: 0 = ponto da cabana, 1 = ponto da sala
     // de treino, 2 = ponto da mesa de magias, 3 = meio da mata, 4 = ponto próprio da
     // fogueira. Duas estruturas montadas na MESMA profundidade ficam no mesmo ponto.
-    public int getLocalizacaoAtual() {
-        if (naCabana) return 0;
-        if (naSalaTreino) return getLocalizacaoSala();
-        if (naMesaMagias) return getLocalizacaoMesa();
-        if (naFogueira) return getLocalizacaoFogueira();
-        return 3;
-    }
+    public int getLocalizacaoAtual() { return GerenciadorDeLocalizacao.getLocalizacaoAtual(this); }
 
     // Ponto onde a sala de treino fica (0 = ponto da cabana; 2 = ponto da mesa; 1 = ponto próprio).
-    public int getLocalizacaoSala() {
-        if (!temSalaTreino) return 1;
-        if (profundidadeSalaTreino == profundidadeCabana) return 0;
-        if (profundidadeSalaTreino == profundidadeMesaMagias) return 2;
-        return 1;
-    }
+    public int getLocalizacaoSala() { return GerenciadorDeLocalizacao.getLocalizacaoSala(this); }
 
     // Ponto onde a mesa de magias fica (0 = ponto da cabana; 2 = ponto próprio ou da sala).
-    public int getLocalizacaoMesa() {
-        if (!temMesaMagias) return 2;
-        if (profundidadeMesaMagias == profundidadeCabana) return 0;
-        return 2;
-    }
+    public int getLocalizacaoMesa() { return GerenciadorDeLocalizacao.getLocalizacaoMesa(this); }
 
     // Ponto onde a fogueira fica (0 = ponto da cabana; 1 = ponto da sala;
     // 2 = ponto da mesa; 4 = ponto próprio).
-    public int getLocalizacaoFogueira() {
-        if (!temFogueira) return 4;
-        if (profundidadeFogueira == profundidadeCabana) return 0;
-        if (profundidadeFogueira == profundidadeSalaTreino) return 1;
-        if (profundidadeFogueira == profundidadeMesaMagias) return 2;
-        return 4;
-    }
+    public int getLocalizacaoFogueira() { return GerenciadorDeLocalizacao.getLocalizacaoFogueira(this); }
 
     // Uma construção só pode ser usada quando o jogador está no ponto dela
     // (o ponto em que ela foi montada).
-    public boolean podeUsarCabana() { return temCabana && getLocalizacaoAtual() == 0; }
-    public boolean podeUsarSalaTreino() { return temSalaTreino && getLocalizacaoAtual() == getLocalizacaoSala(); }
-    public boolean podeUsarMesaMagias() { return temMesaMagias && getLocalizacaoAtual() == getLocalizacaoMesa(); }
-    public boolean podeUsarFogueira() { return temFogueira && getLocalizacaoAtual() == getLocalizacaoFogueira(); }
+    public boolean podeUsarCabana() { return GerenciadorDeVida.podeUsarCabana(this); }
+    public boolean podeUsarSalaTreino() { return GerenciadorDeVida.podeUsarSalaTreino(this); }
+    public boolean podeUsarMesaMagias() { return GerenciadorDeVida.podeUsarMesaMagias(this); }
+    public boolean podeUsarFogueira() { return GerenciadorDeVida.podeUsarFogueira(this); }
 
     public boolean isFogueiraJuntoCabana() { return fogueiraJuntoCabana; }
     public boolean isFogueiraJuntoSala() { return fogueiraJuntoSala; }
@@ -789,24 +454,18 @@ public class FichaRpg implements java.io.Serializable {
 
     public List<String> getMissoesAceitas() { return missoesAceitas; }
     public boolean isMissaoAceita(String nome) { return missoesAceitas.contains(nome); }
-    public void aceitarMissao(String nome) {
-        if (!missoesAceitas.contains(nome)) missoesAceitas.add(nome);
-    }
+    public void aceitarMissao(String nome) { GerenciadorDeMissoesECompanheiro.aceitarMissao(this, nome); }
 
     public boolean isPactoMortalAtivo() { return pactoMortalAtivo; }
     public void setPactoMortalAtivo(boolean pactoMortalAtivo) { this.pactoMortalAtivo = pactoMortalAtivo; }
 
     // O labirinto fica acessível no menu enquanto não tiver sido concluído.
     // Ao alcançar o centro, ele desmorona, o jogador foge para a floresta e a opção some.
-    public boolean isLabirintoDisponivel() {
-        return labirintoEncontrado && labirinto != null && !labirinto.isCentroAlcancado();
-    }
+    public boolean isLabirintoDisponivel() { return GerenciadorDeVida.isLabirintoDisponivel(this); }
 
     // Chance de descobrir o Labirinto do Minotauro a cada exploração:
     // começa em 1% e aumenta +1% a cada dia que passa (dia 1 = 1%, dia 2 = 2%...), até no máximo 100%.
-    public int getLabirintoChanceDescoberta() {
-        return Math.min(diaAtual, 100);
-    }
+    public int getLabirintoChanceDescoberta() { return GerenciadorDeVida.getLabirintoChanceDescoberta(this); }
 
     // ==================== TRAVESSIA PARA FORA DA FLORESTA ====================
 
@@ -821,174 +480,52 @@ public class FichaRpg implements java.io.Serializable {
     public void setCidadeAtual(String cidadeAtual) { this.cidadeAtual = cidadeAtual; }
 
     // Aprofunda a travessia (1 unidade = 1/3 do período); no máximo sai da floresta.
-    public void adicionarProfundidade(int unidades) {
-        profundidadeFloresta = Math.min(PROFUNDIDADE_PARA_SAIR, profundidadeFloresta + Math.max(0, unidades));
-        sincronizarLocalizacao();
-    }
+    public void adicionarProfundidade(int unidades) { GerenciadorDeOuroEDeslocamento.adicionarProfundidade(this, unidades); }
 
     // Reduz a profundidade ao voltar para as construções (nunca abaixo de 0).
-    public void reduzirProfundidade(int unidades) {
-        profundidadeFloresta = Math.max(0, profundidadeFloresta - Math.max(0, unidades));
-        sincronizarLocalizacao();
-    }
+    public void reduzirProfundidade(int unidades) { GerenciadorDeOuroEDeslocamento.reduzirProfundidade(this, unidades); }
 
     // Ao mudar de profundidade, o jogador passa a estar "em" qualquer construção
     // que ocupa exatamente aquela profundidade (várias podem ficar juntas no mesmo ponto).
-    private void sincronizarLocalizacao() {
-        naCabana = temCabana && profundidadeFloresta == profundidadeCabana;
-        naSalaTreino = temSalaTreino && profundidadeFloresta == profundidadeSalaTreino;
-        naMesaMagias = temMesaMagias && profundidadeFloresta == profundidadeMesaMagias;
-        naFogueira = temFogueira && profundidadeFloresta == profundidadeFogueira;
-    }
+    public void sincronizarLocalizacao() { GerenciadorDeConstrucoes.sincronizarLocalizacao(this); }
 
     // Entra na construção que fica NO ponto indicado (distância 0): corrige o
     // estado "expulso" que acontecia quando o jogador saía da cabana (sairDaCabana)
     // ou caminhava de volta sem mudar de profundidade — o menu de construção
     // voltava a mostrar "Ir para a Cabana (0 período(s))" para sempre, e a opção
     // "Dormir" nunca mais aparecia. Agora, estando no ponto, ele volta a ficar NELA.
-    public void entrarNaConstrucao(int profundidadeAlvo) {
-        if (temCabana && profundidadeCabana == profundidadeAlvo) {
-            naCabana = true;
-        }
-        if (temSalaTreino && profundidadeSalaTreino == profundidadeAlvo) {
-            naSalaTreino = true;
-        }
-        if (temMesaMagias && profundidadeMesaMagias == profundidadeAlvo) {
-            naMesaMagias = true;
-        }
-        if (temFogueira && profundidadeFogueira == profundidadeAlvo) {
-            naFogueira = true;
-        }
-    }
+    public void entrarNaConstrucao(int profundidadeAlvo) { GerenciadorDeConstrucoes.entrarNaConstrucao(this, profundidadeAlvo); }
 
     // Recalcula os flags de "junto": duas estruturas ficam juntas quando foram
     // montadas na MESMA profundidade (mesmo ponto da mata).
-    private void recomputarAdjacencias() {
-        salaJuntoCabana = temSalaTreino && temCabana && profundidadeSalaTreino == profundidadeCabana;
-        salaJuntoMesa = temSalaTreino && temMesaMagias && profundidadeSalaTreino == profundidadeMesaMagias;
-        mesaJuntoCabana = temMesaMagias && temCabana && profundidadeMesaMagias == profundidadeCabana;
-        mesaJuntoSala = temMesaMagias && temSalaTreino && profundidadeMesaMagias == profundidadeSalaTreino;
-        fogueiraJuntoCabana = temFogueira && temCabana && profundidadeFogueira == profundidadeCabana;
-        fogueiraJuntoSala = temFogueira && temSalaTreino && profundidadeFogueira == profundidadeSalaTreino;
-        fogueiraJuntoMesa = temFogueira && temMesaMagias && profundidadeFogueira == profundidadeMesaMagias;
-    }
+    public void recomputarAdjacencias() { GerenciadorDeConstrucoes.recomputarAdjacencias(this); }
 
     // Sair da cabana para explorar/colher recursos (também sai da sala e da mesa)
-    public void sairDaCabana() {
-        if (temCabana) {
-            naCabana = false;
-        }
-        naSalaTreino = false;
-        naMesaMagias = false;
-        naFogueira = false;
-    }
+    public void sairDaCabana() { GerenciadorDeConstrucoes.sairDaCabana(this); }
 
     // Voltar para a cabana (custa 1/3 do período)
-    public void voltarParaCabana() {
-        if (temCabana) {
-            naCabana = true;
-        }
-        naSalaTreino = false;
-        naMesaMagias = false;
-        if (fogueiraJuntoCabana) {
-            naFogueira = true;
-        } else {
-            naFogueira = false;
-        }
-    }
+    public void voltarParaCabana() { GerenciadorDeConstrucoes.voltarParaCabana(this); }
 
     // Ir até a sala de treino (custa 1/3 do período): quem está nela passa a
     // estar no local da sala (que pode ser junto à cabana, se for o caso).
-    public void irParaSalaTreino() {
-        naSalaTreino = true;
-        naMesaMagias = false;
-        naCabana = salaJuntoCabana;
-        naFogueira = fogueiraJuntoSala;
-    }
+    public void irParaSalaTreino() { GerenciadorDeConstrucoes.irParaSalaTreino(this); }
 
     // Ir até a mesa de magias (custa 1/3 do período): quem está nela passa a
     // estar no local da mesa (que pode ser junto à cabana, se for o caso).
-    public void irParaMesaMagias() {
-        naMesaMagias = true;
-        naSalaTreino = false;
-        naCabana = mesaJuntoCabana;
-        naFogueira = fogueiraJuntoMesa;
-    }
+    public void irParaMesaMagias() { GerenciadorDeConstrucoes.irParaMesaMagias(this); }
 
     // Ir até a fogueira (custa 1/3 do período): quem está nela passa a estar
     // no local da fogueira (que pode ser junto à cabana/sala/mesa, se for o caso).
-    public void irParaFogueira() {
-        naFogueira = true;
-        naSalaTreino = false;
-        naMesaMagias = false;
-        naCabana = fogueiraJuntoCabana;
-    }
+    public void irParaFogueira() { GerenciadorDeConstrucoes.irParaFogueira(this); }
 
     // Avança o tempo do período (dia ou noite); a cada 3 unidades o período vira.
     // Explorar e buscar recursos consomem 1/3; montar a cabana consome 2/3.
-    public boolean avancarTempo(int unidades) {
-        progressoPeriodo += Math.max(0, unidades);
-        boolean virou = false;
-        while (progressoPeriodo >= 3) {
-            progressoPeriodo -= 3;
-            boolean eraNoite = ehNoite;
-            ehNoite = !ehNoite;
-            if (ehNoite) {
-                diasSemDormir++;
-            } else {
-                diaAtual++;
-                registrarNovoDiaFome();
-                if (eraNoite && companheiro != null) {
-                    // A noite terminou: o companheiro dormiu na cabana
-                    registrarDormidaDoCompanheiro();
-                }
-            }
-            // Passivas diárias (Vontade de Viver e Mente Afiada) renovam a cada novo dia
-            sobrevivenciaUsada = false;
-            menteAfiadaUsada = false;
-            // Decrementa bônus de treino a cada período que se inicia
-            if (treinoBonusPeriodosRestantes > 0) {
-                treinoBonusPeriodosRestantes--;
-                if (treinoBonusPeriodosRestantes <= 0) {
-                    treinoBonusAtributo = null;
-                }
-            }
-            // Decrementa o bônus da Mesa de Magias a cada período que se inicia
-            if (magiaBonusPeriodosRestantes > 0) {
-                magiaBonusPeriodosRestantes--;
-            }
-            // A fome cobra vida a cada período (dia e noite) a partir de 5 dias sem comer
-            aplicarPerdaVidaPorFome();
-            virou = true;
-        }
-        cansado = diasSemDormir > 2;
-        return virou;
-    }
+    public boolean avancarTempo(int unidades) { return GerenciadorDeConstrucoes.avancarTempo(this, unidades); }
 
     // Dormir: só de noite, estando NA cabana (não adianta estando longe na floresta).
     // Se comeu no mesmo dia, recupera 1/2 da vida máxima e 1/2 da mana máxima;
     // caso contrário, recupera 1/3 de cada. Faz amanhecer.
-    public boolean dormir() {
-        if (!ehNoite) return false;
-        if (!temCabana || !naCabana) return false;
-        aplicarPerdaVidaPorFome();
-        int divisor = comeuHoje ? 2 : 3;
-        int curaVida = vidaMaxima / divisor;
-        int curaMana = manaMaxima / divisor;
-        vidaPersonagem = Math.min(vidaPersonagem + curaVida, vidaMaxima);
-        manaPersonagem = Math.min(manaPersonagem + curaMana, manaMaxima);
-        ehNoite = false;
-        progressoPeriodo = 0;
-        diaAtual++;
-        registrarNovoDiaFome();
-        diasSemDormir = 0;
-        cansado = false;
-        naMesaMagias = false;
-        sobrevivenciaUsada = false;
-        menteAfiadaUsada = false;
-        registrarDormidaDoCompanheiro();
-        return true;
-    }
+    public boolean dormir() { return GerenciadorDeConstrucoes.dormir(this); }
 
     // ==================== FOME ====================
 
@@ -1000,337 +537,105 @@ public class FichaRpg implements java.io.Serializable {
     public boolean isEnjoado() { return enjoado; }
 
     // Descrição do estado de fome para exibir nos menus. Retorna "" se tudo bem.
-    public String descreverFome() {
-        if (enjoado) {
-            return "FAMINTO? " + getDiasSemComer() + " dias sem comer | ENJOADO (-" + penalidadeEnjoado + " em testes de Destreza e Força)";
-        }
-        if (diasSemComer >= 5) {
-            return "FAMINTO " + getDiasSemComer() + " dias (-" + getPenalidadeFome() + " em testes; perde " + getPerdaVidaPorFome() + " por período)";
-        }
-        if (diasSemComer >= 1) {
-            return "FAMINTO " + getDiasSemComer() + " dias (-" + getPenalidadeFome() + " em testes de Destreza e Força)";
-        }
-        return "";
-    }
+    public String descreverFome() { return GerenciadorDeConstrucoes.descreverFome(this); }
 
     // Encerra o dia que passou: se não comeu, soma mais um dia de fome e
     // a perda de vida é aplicada a cada período que se inicia.
-    private void registrarNovoDiaFome() {
-        if (!comeuHoje) {
-            diasSemComer++;
-        }
-        comeuHoje = false;
-        frutasComidasHoje = 0;
-    }
+    public void registrarNovoDiaFome() { GerenciadorDeConstrucoes.registrarNovoDiaFome(this); }
 
     // Aplica a perda de vida por fome (a cada período, dia e noite) a partir
     // de 5 dias sem comer: 1, dobrando a cada 5 dias (10→2, 15→4, 20→8...).
     // Retorna o valor de vida perdido (0 se não aplicou).
-    private int aplicarPerdaVidaPorFome() {
-        int perda = getPerdaVidaPorFome();
-        if (perda <= 0) return 0;
-        vidaPersonagem = Math.max(0, vidaPersonagem - perda);
-        return perda;
-    }
+    public int aplicarPerdaVidaPorFome() { return GerenciadorDeConstrucoes.aplicarPerdaVidaPorFome(this); }
 
     // Comer comida boa (frutas ou carnes frescas): zera a fome, cura o enjoo e
     // marca que comeu hoje.
-    public void comerComidaBoa() {
-        diasSemComer = 0;
-        comeuHoje = true;
-        enjoado = false;
-        penalidadeEnjoado = 0;
-    }
+    public void comerComidaBoa() { GerenciadorDeConstrucoes.comerComidaBoa(this); }
 
     // Comer carne podre: zera a contagem de dias sem comer, mas o personagem
     // fica enjoado — continua com o debuff de status que já tinha (se tiver) ou
     // ganha o debuff de -1 nos testes de Destreza e Força (se não tinha).
     // O enjoo passa até comer comida boa.
-    public void comerCarnePodre() {
-        int penalidadeAnterior = getPenalidadeFome();
-        diasSemComer = 0;
-        comeuHoje = true;
-        enjoado = true;
-        penalidadeEnjoado = Math.max(penalidadeAnterior, 1);
-    }
+    public void comerCarnePodre() { GerenciadorDeConstrucoes.comerCarnePodre(this); }
 
     // Comer carne crua (de Lobo ou de Urso): ela pode estar estragada. Com
     // CHANCE_CARNE_ESTRAGADA de dar o efeito da Carne Podre — zera a contagem de
     // fome mas NÃO recupera vida e deixa enjoado. Retorna true se estragou.
-    public boolean comerCarneCrua() {
-        if (MecanicasRpg.rolarDado(100) <= CHANCE_CARNE_ESTRAGADA) {
-            comerCarnePodre();
-            return true;
-        }
-        comerComidaBoa();
-        return false;
-    }
+    public boolean comerCarneCrua() { return GerenciadorDeConstrucoes.comerCarneCrua(this); }
 
     // Frutas: cada fruta é um lanche (cura 1d2, tratado no MotorDeCombate), mas
     // só viram UMA "comida completa" quando somam 3 no dia. O contador reseta
     // a cada novo dia (registrarNovoDiaFome).
-    public void comerFrutas(int qtd) {
-        frutasComidasHoje += Math.max(1, qtd);
-        if (frutasComidasHoje >= FRUTAS_PARA_REFEICAO) {
-            comerComidaBoa();
-        }
-    }
+    public void comerFrutas(int qtd) { GerenciadorDeConstrucoes.comerFrutas(this, qtd); }
 
     public int getFrutasComidasHoje() { return frutasComidasHoje; }
 
     // Montar a cabana: gasta 7 madeiras, 10 folhas e 4 pedras (só a primeira vez).
     // Retorna true se conseguiu construir.
-    public boolean montarCabana() {
-        if (temCabana) return false;
-        if (getQuantidadeDe("Madeira") < 7 || getQuantidadeDe("Folha") < 10 || getQuantidadeDe("Pedra") < 4) {
-            return false;
-        }
-        removerItem("Madeira", 7);
-        removerItem("Folha", 10);
-        removerItem("Pedra", 4);
-        temCabana = true;
-        profundidadeCabana = profundidadeFloresta;
-        naCabana = true;
-        naSalaTreino = false;
-        naMesaMagias = false;
-        recomputarAdjacencias();
-        return true;
-    }
+    public boolean montarCabana() { return GerenciadorDeConstrucoes.montarCabana(this); }
 
     // Montar a sala de treino: gasta 10 madeiras, 15 folhas, 5 pedras e 4 couros.
     // Ela fica ancorada exatamente no ponto da mata onde for construída: se for
     // no mesmo ponto de outra construção, ficam JUNTO (estar em uma permite usar
     // a vizinha sem novo deslocamento); caso contrário, são pontos separados.
-    public boolean construirSalaTreino() {
-        if (temSalaTreino) return false;
-        if (getQuantidadeDe("Madeira") < 10 || getQuantidadeDe("Folha") < 15 || getQuantidadeDe("Pedra") < 5 || getQuantidadeDe("Couro") < 4) {
-            return false;
-        }
-        removerItem("Madeira", 10);
-        removerItem("Folha", 15);
-        removerItem("Pedra", 5);
-        removerItem("Couro", 4);
-        temSalaTreino = true;
-        profundidadeSalaTreino = profundidadeFloresta;
-        recomputarAdjacencias();
-        naSalaTreino = true;
-        naMesaMagias = false;
-        return true;
-    }
+    public boolean construirSalaTreino() { return GerenciadorDeConstrucoes.construirSalaTreino(this); }
 
     // Entrar na sala de treino para treinar. Se a sala for junto da cabana,
     // o jogador continua considerado "na cabana"; caso contrário, ela fica longe.
-    public void entrarSalaTreino() {
-        naSalaTreino = true;
-        naMesaMagias = false;
-        if (salaJuntoCabana) {
-            naCabana = true;
-        } else {
-            naCabana = false;
-        }
-        naFogueira = fogueiraJuntoSala;
-    }
+    public void entrarSalaTreino() { GerenciadorDeConstrucoes.entrarSalaTreino(this); }
 
     // Aplica o bônus de treino (+2 em Força ou Destreza) que dura os 2 períodos seguintes
-    public void treinarAtributo(String atributo) {
-        this.treinoBonusAtributo = atributo;
-        this.treinoBonusPeriodosRestantes = 2;
-    }
+    public void treinarAtributo(String atributo) { GerenciadorDeConstrucoes.treinarAtributo(this, atributo); }
 
     // Depois de treinar o período inteiro: se a sala for junto da cabana,
     // o jogador permanece na cabana; caso contrário, continua na sala.
-    public void terminarTreino() {
-        naMesaMagias = false;
-        if (salaJuntoCabana) {
-            naCabana = true;
-            naSalaTreino = false;
-        } else {
-            naCabana = false;
-            naSalaTreino = true;
-        }
-        naFogueira = fogueiraJuntoSala;
-    }
+    public void terminarTreino() { GerenciadorDeConstrucoes.terminarTreino(this); }
 
     // Montar a mesa de magias: gasta 5 madeiras, 4 folhas, 4 pedras e 1 Pó da Fada.
     // Retorna true se conseguiu construir.
-    public boolean construirMesaMagias() {
-        if (temMesaMagias) return false;
-        if (getQuantidadeDe("Madeira") < 5 || getQuantidadeDe("Folha") < 4 || getQuantidadeDe("Pedra") < 4 || getQuantidadeDe("Pó da Fada") < 1) {
-            return false;
-        }
-        removerItem("Madeira", 5);
-        removerItem("Folha", 4);
-        removerItem("Pedra", 4);
-        removerItem("Pó da Fada", 1);
-        temMesaMagias = true;
-        profundidadeMesaMagias = profundidadeFloresta;
-        recomputarAdjacencias();
-        naMesaMagias = true;
-        naSalaTreino = false;
-        naCabana = mesaJuntoCabana;
-        return true;
-    }
+    public boolean construirMesaMagias() { return GerenciadorDeConstrucoes.construirMesaMagias(this); }
 
     // Montar a fogueira: gasta 4 madeiras e 3 folhas. Ela fica ancorada no ponto
     // da mata onde for construída, exatamente como as outras construções.
-    public boolean montarFogueira() {
-        if (temFogueira) return false;
-        if (getQuantidadeDe("Madeira") < 4 || getQuantidadeDe("Folha") < 3) {
-            return false;
-        }
-        removerItem("Madeira", 4);
-        removerItem("Folha", 3);
-        temFogueira = true;
-        profundidadeFogueira = profundidadeFloresta;
-        recomputarAdjacencias();
-        naFogueira = true;
-        naSalaTreino = false;
-        naMesaMagias = false;
-        naCabana = fogueiraJuntoCabana;
-        return true;
-    }
+    public boolean montarFogueira() { return GerenciadorDeConstrucoes.montarFogueira(this); }
 
     // Cozinhar TODAS as carnes cruas na fogueira: gasta 2 madeiras (a lenha queima)
     // e transforma TODAS as carnes cruas do inventário (de Lobo e de Urso) nas
     // versões cozidas, que não têm risco de estragar ao serem comidas. Só funciona
     // estando junto da fogueira.
-    public boolean cozinharTodasAsCarnes() {
-        if (!podeUsarFogueira()) return false;
-        if (getQuantidadeDe("Madeira") < 2) return false;
-        int lobos = getQuantidadeDe("Carne de Lobo");
-        int ursos = getQuantidadeDe("Carne de Urso");
-        if (lobos == 0 && ursos == 0) return false;
-        removerItem("Madeira", 2);
-        cozinharTipoCarne("Carne de Lobo", "Carne de Lobo Cozida", lobos);
-        cozinharTipoCarne("Carne de Urso", "Carne de Urso Cozida", ursos);
-        return true;
-    }
+    public boolean cozinharTodasAsCarnes() { return GerenciadorDeConstrucoes.cozinharTodasAsCarnes(this); }
 
     // Converte `qtd` unidades da carne crua na versão cozida (sem gastar madeira).
-    private void cozinharTipoCarne(String crua, String cozida, int qtd) {
-        if (qtd <= 0) return;
-        removerItem(crua, qtd);
-        ItemRpg cozido = criaturas.Criatura.criarItemDrop(cozida);
-        cozido.setQuantidade(qtd);
-        adicionarItem(cozido);
-    }
+    public void cozinharTipoCarne(String crua, String cozida, int qtd) { GerenciadorDeConstrucoes.cozinharTipoCarne(this, crua, cozida, qtd); }
 
     // Mover (montar uma nova) construção no ponto atual, gastando a mesma matéria-prima.
     // O novo local passa a ser o ponto da construção; o antigo fica para trás.
-    public boolean moverCabana() {
-        if (!temCabana) return false;
-        if (getQuantidadeDe("Madeira") < 7 || getQuantidadeDe("Folha") < 10 || getQuantidadeDe("Pedra") < 4) {
-            return false;
-        }
-        removerItem("Madeira", 7);
-        removerItem("Folha", 10);
-        removerItem("Pedra", 4);
-        profundidadeCabana = profundidadeFloresta;
-        naCabana = true;
-        naSalaTreino = false;
-        naMesaMagias = false;
-        recomputarAdjacencias();
-        return true;
-    }
-
-    public boolean moverSalaTreino() {
-        if (!temSalaTreino) return false;
-        if (getQuantidadeDe("Madeira") < 10 || getQuantidadeDe("Folha") < 15 || getQuantidadeDe("Pedra") < 5 || getQuantidadeDe("Couro") < 4) {
-            return false;
-        }
-        removerItem("Madeira", 10);
-        removerItem("Folha", 15);
-        removerItem("Pedra", 5);
-        removerItem("Couro", 4);
-        profundidadeSalaTreino = profundidadeFloresta;
-        naSalaTreino = true;
-        naMesaMagias = false;
-        recomputarAdjacencias();
-        naCabana = salaJuntoCabana;
-        return true;
-    }
-
-    public boolean moverMesaMagias() {
-        if (!temMesaMagias) return false;
-        if (getQuantidadeDe("Madeira") < 5 || getQuantidadeDe("Folha") < 4 || getQuantidadeDe("Pedra") < 4 || getQuantidadeDe("Pó da Fada") < 1) {
-            return false;
-        }
-        removerItem("Madeira", 5);
-        removerItem("Folha", 4);
-        removerItem("Pedra", 4);
-        removerItem("Pó da Fada", 1);
-        profundidadeMesaMagias = profundidadeFloresta;
-        naMesaMagias = true;
-        naSalaTreino = false;
-        recomputarAdjacencias();
-        naCabana = mesaJuntoCabana;
-        return true;
-    }
-
-    public boolean moverFogueira() {
-        if (!temFogueira) return false;
-        if (getQuantidadeDe("Madeira") < 4 || getQuantidadeDe("Folha") < 3) {
-            return false;
-        }
-        removerItem("Madeira", 4);
-        removerItem("Folha", 3);
-        profundidadeFogueira = profundidadeFloresta;
-        naFogueira = true;
-        naSalaTreino = false;
-        naMesaMagias = false;
-        recomputarAdjacencias();
-        naCabana = fogueiraJuntoCabana;
-        return true;
-    }
+    public boolean moverCabana() { return GerenciadorDeConstrucoes.moverCabana(this); }
+    public boolean moverSalaTreino() { return GerenciadorDeConstrucoes.moverSalaTreino(this); }
+    public boolean moverMesaMagias() { return GerenciadorDeConstrucoes.moverMesaMagias(this); }
+    public boolean moverFogueira() { return GerenciadorDeConstrucoes.moverFogueira(this); }
 
     // Profundidade da construção mais adiantada na travessia (a mais próxima da
     // borda da floresta). Usado quando se volta de uma cidade para as construções.
-    public int getProfundidadeConstrucaoMaisProxima() {
-        int p = 0;
-        if (temCabana) p = Math.max(p, profundidadeCabana);
-        if (temSalaTreino) p = Math.max(p, profundidadeSalaTreino);
-        if (temMesaMagias) p = Math.max(p, profundidadeMesaMagias);
-        if (temFogueira) p = Math.max(p, profundidadeFogueira);
-        return p;
-    }
+    public int getProfundidadeConstrucaoMaisProxima() { return GerenciadorDeConstrucoes.getProfundidadeConstrucaoMaisProxima(this); }
 
     // Estudar na mesa de magias (gasta o período inteiro): +1 dado de dano
     // em TODAS as habilidades de dano, valendo os 2 períodos seguintes
-    public void estudarMagia() {
-        this.magiaBonusPeriodosRestantes = 2;
-    }
+    public void estudarMagia() { GerenciadorDeConstrucoes.estudarMagia(this); }
 
     // Total de um item no inventário (somando as pilhas)
-    public int getQuantidadeDe(String nome) {
-        int total = 0;
-        if (inventario == null) return 0;
-        for (ItemRpg item : inventario) {
-            if (item.getNome().equals(nome)) {
-                total += item.getQuantidade();
-            }
-        }
-        return total;
-    }
+    public int getQuantidadeDe(String nome) { return GerenciadorDeInventarioFicha.getQuantidadeDe(this, nome); }
 
     // Getters usados em TESTES de atributo: quando cansado, -1 em testes.
     // Não afeta vida, mana, defesa nem dano.
     // Visão na Penumbra (Vigia do Crepúsculo): +2 em testes durante a noite.
-    private int bonusTestesNoturnos() {
-        return ehNoite && raca != null && raca.temBonusTestesNoturnos() ? 2 : 0;
-    }
+    public int bonusTestesNoturnos() { return GerenciadorDeVida.bonusTestesNoturnos(this); }
     // Fome: -1 em testes de Força e Destreza quando sem comer no dia anterior,
     // -2 quando há 3+ dias sem comer. Carne podre (enjoado) mantém o debuff.
-    public int getPenalidadeFome() {
-        int penalidade = diasSemComer >= 3 ? 2 : diasSemComer >= 1 ? 1 : 0;
-        if (enjoado) penalidade = Math.max(penalidade, penalidadeEnjoado);
-        return penalidade;
-    }
+    public int getPenalidadeFome() { return GerenciadorDeVida.getPenalidadeFome(this); }
     // Perda de vida por período (dia e noite) por fome: a partir de 5 dias sem
     // comer perde 1, dobra a cada 5 dias (10→2, 15→4, 20→8...).
-    public int getPerdaVidaPorFome() {
-        if (diasSemComer < 5) return 0;
-        return 1 << ((diasSemComer - 5) / 5);
-    }
+    public int getPerdaVidaPorFome() { return GerenciadorDeVida.getPerdaVidaPorFome(this); }
     public int getDestrezaTeste() { return getDestreza() - (cansado ? 1 : 0) - getPenalidadeFome() + bonusTestesNoturnos(); }
     public int getPresencaTeste() { return presenca - (cansado ? 1 : 0) + bonusTestesNoturnos(); }
     public int getSabedoriaTeste() { return sabedoria - (cansado ? 1 : 0) + bonusTestesNoturnos(); }
@@ -1339,35 +644,7 @@ public class FichaRpg implements java.io.Serializable {
     public int getConstituicaoTeste() { return constituicao - (cansado ? 1 : 0) + bonusTestesNoturnos(); }
 
     // Reseta os efeitos temporários antes de um novo combate
-    public void resetarEfeitosCombate() {
-        this.espadaAfiadaAtiva = false;
-        this.protecaoAbsolutaAtiva = false;
-        this.bonusDefesaTemporario = 0;
-        this.curaParaMortePreparado = false;
-        this.curaParaMorteAtivo = false;
-        this.alvoCuraParaMorte = null;
-        this.curaTotalUsada = false;
-        this.infectado = false;
-        this.pactoMortalAtivo = false;
-        this.defesaAbsolutaAtiva = false;
-        this.rodadasSemHabilidade = 0;
-        this.magiaProibidaUsada = false;
-        this.magiaProibidaAtiva = false;
-        this.prisaoAtiva = null;
-        if (this.semiDeusAtivo && !this.deusAtivo) {
-            this.vidaMaxima = this.semiDeusVidaOriginalMax;
-            this.vidaPersonagem = Math.min(this.vidaPersonagem, this.vidaMaxima);
-            this.semiDeusAtivo = false;
-        }
-        this.semiDeusVidaOriginalMax = 0;
-        if (this.deusAtivo) {
-            this.semiDeusAtivo = true;
-        }
-        this.poderAbsolutoAtivo = false;
-        this.curaAbsolutaBonus = 0;
-        this.curaAbsolutaVidaOriginalMax = 0;
-        this.curaIncessanteUsada = false;
-    }
+    public void resetarEfeitosCombate() { GerenciadorDeVida.resetarEfeitosCombate(this); }
 
     public boolean isEspadaAfiadaAtiva() { return espadaAfiadaAtiva; }
     public void setEspadaAfiadaAtiva(boolean espadaAfiadaAtiva) { this.espadaAfiadaAtiva = espadaAfiadaAtiva; }
@@ -1434,36 +711,5 @@ public class FichaRpg implements java.io.Serializable {
 
     // Recebe dano considerando a proteção da Cura Absoluta (absorve dano primeiro).
     // O Pacto Mortal (Olho Demoníaco) faz você sofrer +3 em todo dano até o fim do combate.
-    public void receberDano(int dano) {
-        if (dano < 0) return;
-        if (pactoMortalAtivo) {
-            dano += 3;
-            telas.Interface.MostrarMensagem("(Pacto Mortal! Você sofre +3 de dano)");
-            telas.Interface.Pausa(1200);
-        }
-        if (curaAbsolutaBonus > 0) {
-            if (dano <= curaAbsolutaBonus) {
-                curaAbsolutaBonus -= dano;
-                telas.Interface.MostrarMensagem("(Proteção da Cura Absoluta absorve " + dano + " de dano! Restante: " + curaAbsolutaBonus + ")");
-                telas.Interface.Pausa(1500);
-            } else {
-                int restante = dano - curaAbsolutaBonus;
-                curaAbsolutaBonus = 0;
-                vidaMaxima = curaAbsolutaVidaOriginalMax;
-                vidaPersonagem = Math.max(0, vidaPersonagem - restante);
-                telas.Interface.MostrarMensagem("(A proteção da Cura Absoluta se esgotou!)");
-                telas.Interface.Pausa(1500);
-            }
-        } else {
-            vidaPersonagem = Math.max(0, vidaPersonagem - dano);
-        }
-
-        // Vontade de Viver (Humano): ao cair a 0, sobrevive com 1 PV (1x/dia)
-        if (vidaPersonagem <= 0 && raca != null && raca.podeSobreviverCom1AoCair0() && !sobrevivenciaUsada) {
-            sobrevivenciaUsada = true;
-            vidaPersonagem = 1;
-            telas.Interface.MostrarMensagem("\n(Vontade de Viver!) Você resiste à morte e permanece de pé com 1 de vida!");
-            telas.Interface.Pausa(1500);
-        }
-    }
+    public void receberDano(int dano) { GerenciadorDeVida.receberDano(this, dano); }
 }
