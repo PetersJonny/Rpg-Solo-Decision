@@ -3,6 +3,7 @@ package eventos;
 import java.util.List;
 
 import fichas.FichaRpg;
+import fichas.GerenciadorDeMissoesECompanheiro;
 import itens.ItemRpg;
 import loja.Vendedor;
 import telas.Interface;
@@ -53,6 +54,7 @@ public class Alfaiataria {
                 Interface.MostrarMensagem("\nEla aponta para o fim das ruas, além das últimas casas. Agora você sabe onde fica a caverna.");
                 Interface.Pausa(1800);
                 ficha.setCaveConhecida(true);
+                GerenciadorDeMissoesECompanheiro.registrarNovidade(ficha, "A Filha Perdida", "Célia Morel disse que a filha foi vista por último nas partes finais do fundo da vila, onde uma caverna se abre no barranco.");
             }
 
                         if (!ficha.isFilhaEncontrada()) {
@@ -88,6 +90,7 @@ public class Alfaiataria {
             } else if (escolha == opPista) {
                 Interface.MostrarMensagem("\n\"Só sei de uma coisa com certeza: ela ia sempre à beira da mata colher frutas perto da entrada da vila. Foi a última vez que a vi.\"");
                 Interface.Pausa(2400);
+                GerenciadorDeMissoesECompanheiro.registrarNovidade(ficha, "A Filha Perdida", "A filha ia sempre à beira da mata da entrada da vila colher frutas. Foi a última vez que a mãe a viu.");
             } else {
                 Interface.MostrarMensagem("\nVocê se despede da moça, que volta à costura.");
                 Interface.Pausa(1500);

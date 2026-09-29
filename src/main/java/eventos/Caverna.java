@@ -1,6 +1,7 @@
 package eventos;
 
 import fichas.FichaRpg;
+import fichas.GerenciadorDeMissoesECompanheiro;
 import telas.Interface;
 
 public class Caverna {
@@ -69,6 +70,7 @@ public class Caverna {
             Interface.MostrarMensagem("\"Foi bem na entrada da vila, praticamente. Eu fico na " + CIANO + "lojinha de frutas" + RESET + " ali por perto\", ela diz, apontando para as barracas.");
             Interface.Pausa(2200);
             Interface.MostrarMensagem("\"Assim que puder, vou procurá-la\", você promete.");
+            GerenciadorDeMissoesECompanheiro.registrarNovidade(ficha, "A Neta Perdida", "A netinha sumiu na mata da entrada da vila, quase em frente à lojinha de frutas, onde elas colhiam frutas para uma torta.");
             Interface.Pausa(1500);
             Interface.MostrarMensagem("\nA velhinha agradece de novo e se despede, seguindo na direção da barraca de frutas. A barraca agora aparece no menu da vila.");
             Interface.Pausa(2200);
@@ -102,6 +104,9 @@ public class Caverna {
 
         Interface.MostrarMensagem("\nVocê se aproxima da entrada e espreita o interior. Pedras soltas se amontoam no chão, e o escuro se estende sem fim. Sem uma fonte de luz, é impossível enxergar além de alguns passos.");
         Interface.Pausa(2400);
+        if (ficha.isMissaoAceita("A Filha Perdida")) {
+            GerenciadorDeMissoesECompanheiro.registrarNovidade(ficha, "A Filha Perdida", "A caverna é escura e profunda: sem uma fonte de luz, é impossível enxergar além de alguns passos.");
+        }
         Interface.MostrarMensagem("Por enquanto, você volta para a vila para se preparar antes de se aventurar a fundo.");
         Interface.Pausa(1800);
     }

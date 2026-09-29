@@ -3,6 +3,7 @@ package eventos;
 import java.util.List;
 
 import fichas.FichaRpg;
+import fichas.GerenciadorDeMissoesECompanheiro;
 import itens.ItemRpg;
 import loja.Vendedor;
 import telas.Interface;
@@ -55,6 +56,11 @@ public class BarracaDeFrutas {
             } else if (escolha == 2) {
                 Interface.MostrarMensagem("\nVocê percorre os arredores com o olhar: a barraca, as cestas de frutas, a estrada de terra que leva à mata... Tudo parece em ordem — sem pegadas, sem sinais de luta.");
                 Interface.Pausa(2400);
+                if (missaoNeta) {
+                    Interface.MostrarMensagem("A velhinha acompanha o seu olhar e comenta: \"Ela foi vista pela última vez ali, na mata da entrada. Se a menina entrou por algum lado, foi por ali.\"");
+                    Interface.Pausa(2400);
+                    GerenciadorDeMissoesECompanheiro.registrarNovidade(ficha, "A Neta Perdida", "A netinha foi vista pela última vez na mata da entrada da vila, perto da barraca.");
+                }
                 Interface.MostrarMensagem("Por enquanto, não há pistas novas por aqui.");
                 Interface.Pausa(1600);
             } else {

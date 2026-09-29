@@ -57,6 +57,19 @@ public class QuadroDeMissoes {
         Interface.MostrarMensagem(CIANO + "==============================\n" + RESET);
     }
 
+    private static void exibirNovidades(FichaRpg ficha, Missao m) {
+        List<String> novidades = ficha.getNovidades(m.nome);
+        if (novidades.isEmpty()) {
+            Interface.MostrarMensagem("\n  " + m.nome + ": você ainda não descobriu nada além do aviso.");
+            return;
+        }
+        Interface.MostrarMensagem("\n  " + VERDE + "O que você já sabe sobre " + AMARELO + m.nome + RESET + ":");
+        for (String n : novidades) {
+            if (n.startsWith("!")) n = n.substring(1);
+            Interface.MostrarMensagem("    • " + n);
+        }
+    }
+
     public static void QuadroDeMissoes(FichaRpg ficha) {
         List<Missao> disponiveis = new ArrayList<>();
         List<Missao> ativas = new ArrayList<>();
@@ -73,7 +86,12 @@ public class QuadroDeMissoes {
         } else {
             Interface.MostrarMensagem(VERDE + "\n  MISSÕES EM ANDAMENTO (" + ativas.size() + "):" + RESET);
             for (Missao m : ativas) {
-                Interface.MostrarMensagem("   • " + AMARELO + m.nome + RESET + " — " + m.onde);
+                int novas = 0;
+                for (String n : ficha.getNovidades(m.nome)) {
+                    if (n.startsWith("!")) novas++;
+                }
+                String marca = novas > 0 ? VERDE + "  [" + novas + " nova" + (novas > 1 ? "s" : "") + "]" + RESET : "";
+                Interface.MostrarMensagem("   • " + AMARELO + m.nome + RESET + " — " + m.onde + marca);
             }
         }
 
@@ -139,6 +157,8 @@ public class QuadroDeMissoes {
             System.out.println("  Objetivo: " + m.objetivo);
             System.out.println("  Recompensa: " + m.recompensa);
             Interface.MostrarMensagem(CIANO + "==============================" + RESET);
+            exibirNovidades(ficha, m);
+            ficha.marcarNovidadesVistas(m.nome);
         }
         Interface.Pausa(2200);
     }

@@ -6,7 +6,9 @@ import itens.ItemRpg;
 import telas.Interface;
 import racas.Raca;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import mecanicas.MecanicasRpg;
 
 public class FichaRpg implements java.io.Serializable {
@@ -136,6 +138,7 @@ public class FichaRpg implements java.io.Serializable {
         private boolean ferreiroSeApresentou = false;
 
         List<String> missoesAceitas = new ArrayList<>();
+    Map<String, List<String>> missoesNovidades = new HashMap<>();
 
         private boolean alfaiatariaConhecida = false;
         private boolean caveConhecida = false;
@@ -357,6 +360,33 @@ public class FichaRpg implements java.io.Serializable {
     public List<String> getMissoesAceitas() { return missoesAceitas; }
     public boolean isMissaoAceita(String nome) { return missoesAceitas.contains(nome); }
     public void aceitarMissao(String nome) { GerenciadorDeMissoesECompanheiro.aceitarMissao(this, nome); }
+    public void adicionarNovidade(String missao, String texto) {
+        missoesNovidades.computeIfAbsent(missao, k -> new ArrayList<>()).add(texto);
+    }
+    public List<String> getNovidades(String missao) {
+        List<String> n = missoesNovidades.get(missao);
+        return n == null ? List.of() : n;
+    }
+    public boolean temNovidadeNaoVista(String missao) {
+        for (String s : getNovidades(missao)) {
+            if (s.startsWith("!")) return true;
+        }
+        return false;
+    }
+    public void marcarNovidadesVistas(String missao) {
+        List<String> n = missoesNovidades.get(missao);
+        if (n == null) return;
+        List<String> limpas = new ArrayList<>();
+        for (String s : n) {
+            limpas.add(s.startsWith("!") ? s.substring(1) : s);
+        }
+        missoesNovidades.put(missao, limpas);
+    }
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        if (missoesAceitas == null) missoesAceitas = new ArrayList<>();
+        if (missoesNovidades == null) missoesNovidades = new HashMap<>();
+    }
     public boolean isAlfaiatariaConhecida() { return alfaiatariaConhecida; }
     public void setAlfaiatariaConhecida(boolean alfaiatariaConhecida) { this.alfaiatariaConhecida = alfaiatariaConhecida; }
     public boolean isCaveConhecida() { return caveConhecida; }
