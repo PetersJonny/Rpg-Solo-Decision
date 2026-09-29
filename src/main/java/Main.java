@@ -10,7 +10,8 @@ import salvamento.GerenciadorSaves;
 public class Main {
     public static void main(String[] args) {
 
-        Teclado.assegurarTerminalSaudavel();         Interface.BarraCarregamento("Carregando jogo...");
+        Teclado.assegurarTerminalSaudavel();
+        Interface.BarraCarregamento("Carregando jogo...");
         Interface.ExibirBoasVindas();
 
         boolean jogoAberto = true;

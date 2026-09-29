@@ -7,9 +7,10 @@ public class Teclado {
     private Teclado() {}
 
     private static boolean modoCruAtivo = false;
-    private static String estadoSalvo;     private static Thread hookRestauracao;
+    private static String estadoSalvo;
+    private static Thread hookRestauracao;
 
-        public static synchronized void modoTeclaUnica() {
+    public static synchronized void modoTeclaUnica() {
         if (modoCruAtivo) return;
         estadoSalvo = capturarEstado();
         executar("stty -icanon min 1 -echo < /dev/tty");
@@ -18,42 +19,54 @@ public class Teclado {
         Runtime.getRuntime().addShutdownHook(hookRestauracao);
     }
 
-            public static synchronized void restaurar() {
+    public static synchronized void restaurar() {
         if (!modoCruAtivo) return;
         modoCruAtivo = false;
         if (hookRestauracao != null) {
             try {
                 Runtime.getRuntime().removeShutdownHook(hookRestauracao);
             } catch (IllegalStateException e) {
-                            }
+
+            }
             hookRestauracao = null;
         }
-                if (estadoSalvo != null && !estadoSalvo.isBlank()) {
+
+        if (estadoSalvo != null && !estadoSalvo.isBlank()) {
             executar("stty " + estadoSalvo + " < /dev/tty");
         }
-                executar("stty icanon echo < /dev/tty");
-    }
 
-            public static void limparBuffer() {
-        try {
-            while (System.in.available() > 0) System.in.read();
-        } catch (IOException e) {
-                    }
-    }
-
-                public static void assegurarTerminalSaudavel() {
         executar("stty icanon echo < /dev/tty");
     }
 
-                    public static char lerTecla() {
+    public static void limparBuffer() {
+        try {
+            while (System.in.available() > 0) System.in.read();
+        } catch (IOException e) {
+
+        }
+    }
+
+    public static void assegurarTerminalSaudavel() {
+        executar("stty icanon echo < /dev/tty");
+    }
+
+    public static char lerTecla() {
         try {
             int b = System.in.read();
             if (b == -1) return '\0';
-            if (b != 27) return (char) b;                         if (System.in.available() == 0) return '\0';
+            if (b != 27) return (char) b;
+
+            if (System.in.available() == 0) return '\0';
             int br = System.in.read();
-            if (br != '[') return '\0';             int dir = System.in.read();
+            if (br != '[') return '\0';
+            int dir = System.in.read();
             switch (dir) {
-                case 'A': return '↑';                 case 'B': return '↓';                 case 'C': return '→';                 case 'D': return '←';                 default: return '\0';              }
+                case 'A': return '↑';
+                case 'B': return '↓';
+                case 'C': return '→';
+                case 'D': return '←';
+                default: return '\0';
+            }
         } catch (IOException e) {
             return '\0';
         }
@@ -72,6 +85,7 @@ public class Teclado {
         try {
             new ProcessBuilder("sh", "-c", comando + " < /dev/tty").inheritIO().start().waitFor();
         } catch (Exception e) {
-                    }
+
+        }
     }
 }

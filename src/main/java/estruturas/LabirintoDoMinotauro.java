@@ -12,7 +12,7 @@ import telas.Teclado;
 
 public class LabirintoDoMinotauro {
 
-        private static final boolean TESTE_DESCOBERTA_GARANTIDA = false;
+    private static final boolean TESTE_DESCOBERTA_GARANTIDA = false;
 
     private static final String RESET = Interface.RESET;
     private static final String CIANO = Interface.CIANO;
@@ -20,7 +20,7 @@ public class LabirintoDoMinotauro {
     private static final String VERDE = Interface.VERDE;
     private static final String VERMELHO = Interface.VERMELHO;
 
-                public static boolean tentarDescoberta(FichaRpg ficha) {
+    public static boolean tentarDescoberta(FichaRpg ficha) {
         if (ficha.isLabirintoEncontrado()) return false;
         if (!TESTE_DESCOBERTA_GARANTIDA && MecanicasRpg.rolarDado(100) > ficha.getLabirintoChanceDescoberta()) {
             return false;
@@ -31,7 +31,7 @@ public class LabirintoDoMinotauro {
         return true;
     }
 
-            private static void EncontrarEntrada(FichaRpg ficha) {
+    private static void EncontrarEntrada(FichaRpg ficha) {
         Interface.MostrarMensagem("\nEnquanto avança pela mata fechada, você tropeça em algo sólido e antigo...");
         Interface.Pausa(3500);
         Interface.MostrarMensagem("\nAfastando a vegetação, revela-se uma boca de pedra escura, engolida por raízes: a entrada de um labirinto antigo. O ar gelado que sai de dentro carrega o cheiro de ferrugem e de escuridão.");
@@ -51,19 +51,20 @@ public class LabirintoDoMinotauro {
         }
     }
 
-        public static void MenuLabirinto(FichaRpg ficha) {
-                if (ficha.getLabirinto() == null) {
+    public static void MenuLabirinto(FichaRpg ficha) {
+
+        if (ficha.getLabirinto() == null) {
             ficha.setLabirinto(new Labirinto());
         }
         Labirinto lab = ficha.getLabirinto();
 
-                        if (lab.isCentroAlcancado()) {
+        if (lab.isCentroAlcancado()) {
             Interface.MostrarMensagem("\nO labirinto já desmoronou e se fechou para sempre.");
             Interface.Pausa(2000);
             return;
         }
 
-                ficha.sairDaCabana();
+        ficha.sairDaCabana();
 
         while (true) {
             Interface.cabecalhoMenu("LABIRINTO");
@@ -80,9 +81,11 @@ public class LabirintoDoMinotauro {
 
             if (escolha == 1) {
                 if (AdentrarLabirinto(ficha)) {
-                    return;                 }
+                    return;
+                }
                 if (ficha.getVidaPersonagem() <= 0) {
-                    return;                 }
+                    return;
+                }
             } else if (escolha == 2) {
                 MenuVisualizacao.MostrarFicha(ficha);
             } else {
@@ -93,7 +96,7 @@ public class LabirintoDoMinotauro {
         }
     }
 
-                        private static boolean AdentrarLabirinto(FichaRpg ficha) {
+    private static boolean AdentrarLabirinto(FichaRpg ficha) {
         Labirinto lab = ficha.getLabirinto();
 
         if (lab.isCentroAlcancado()) {
@@ -111,23 +114,30 @@ public class LabirintoDoMinotauro {
 
         Teclado.modoTeclaUnica();
         try {
-            Teclado.limparBuffer();             while (true) {
+            Teclado.limparBuffer();
+            while (true) {
                 char tecla = Character.toLowerCase(Teclado.lerTecla());
                 int[] delta = direcao(tecla);
-                if (delta == null) continue;                 lab.mover(delta[0], delta[1]);
+                if (delta == null) continue;
+                lab.mover(delta[0], delta[1]);
                 desenhar(lab, false, Character.toUpperCase(tecla));
-                processarEvento(lab, ficha);                 if (ficha.getVidaPersonagem() <= 0) return false;                 if (lab.isCentroAlcancado()) {
+                processarEvento(lab, ficha);
+                if (ficha.getVidaPersonagem() <= 0) return false;
+                if (lab.isCentroAlcancado()) {
                     desenhar(lab, true, Character.toUpperCase(tecla));
                     Interface.MostrarMensagem("\n" + CIANO + "Você adentra o coração do labirinto!" + RESET);
                     Interface.Pausa(4000);
                     if (!ficha.isMinotauroDerrotado()) {
-                        Teclado.restaurar();                         try {
+                        Teclado.restaurar();
+                        try {
                             enfrentarMinotauro(ficha);
                         } finally {
                             Teclado.modoTeclaUnica();
                             Teclado.limparBuffer();
                         }
-                        if (ficha.getVidaPersonagem() <= 0) return false;                         if (!ficha.isMinotauroDerrotado()) continue;                     }
+                        if (ficha.getVidaPersonagem() <= 0) return false;
+                        if (!ficha.isMinotauroDerrotado()) continue;
+                    }
                     desmoronar();
                     return true;
                 }
@@ -137,7 +147,7 @@ public class LabirintoDoMinotauro {
         }
     }
 
-                    private static void desmoronar() {
+    private static void desmoronar() {
         String[] fases = {
             AMARELO + "De repente, as paredes de pedra começam a tremer..." + RESET,
             VERMELHO + "CRACH! As passagens racham e blocos do teto despencam atrás de você!" + RESET,
@@ -152,11 +162,12 @@ public class LabirintoDoMinotauro {
         }
     }
 
-        private static void processarEvento(Labirinto lab, FichaRpg ficha) {
+    private static void processarEvento(Labirinto lab, FichaRpg ficha) {
         Labirinto.TipoCelula evento = lab.consumirEventoNaPosicao();
         if (evento == Labirinto.TipoCelula.NORMAL) return;
 
-        Teclado.restaurar();         try {
+        Teclado.restaurar();
+        try {
             if (evento == Labirinto.TipoCelula.ENCONTRO) {
                 int sorteio = MecanicasRpg.rolarDado(100);
                 if (sorteio <= 40) {
@@ -170,11 +181,13 @@ public class LabirintoDoMinotauro {
                 gerarRecompensa(ficha);
             }
         } finally {
-            Teclado.modoTeclaUnica();             Teclado.limparBuffer();
+            Teclado.modoTeclaUnica();
+            Teclado.limparBuffer();
         }
-        desenhar(lab, false, ' ');     }
+        desenhar(lab, false, ' ');
+    }
 
-                    private static void gerarRecompensa(FichaRpg ficha) {
+    private static void gerarRecompensa(FichaRpg ficha) {
         Interface.MostrarMensagem("\nEntre as pedras do corredor, algo foi esquecido por alguém há muito tempo.");
         Interface.Pausa(3000);
 
@@ -213,7 +226,7 @@ public class LabirintoDoMinotauro {
         }
     }
 
-                private static void encontrarOlhoDemonico(FichaRpg ficha) {
+    private static void encontrarOlhoDemonico(FichaRpg ficha) {
         ficha.setOlhoDemonicoEncontrado(true);
         Interface.MostrarMensagem(VERMELHO + "Nas trevas, algo a observa com um olho único e pulsante..." + RESET);
         Interface.Pausa(3000);
@@ -237,7 +250,7 @@ public class LabirintoDoMinotauro {
         }
     }
 
-            private static void encontrarEspadaMajestral(FichaRpg ficha) {
+    private static void encontrarEspadaMajestral(FichaRpg ficha) {
         ficha.setEspadaMajestralEncontrada(true);
         Interface.MostrarMensagem(CIANO + "Uma luz dourada rasga as sombras: cravada na rocha, uma espada majestral banhada a ouro espera por você." + RESET);
         Interface.Pausa(3500);
@@ -246,7 +259,7 @@ public class LabirintoDoMinotauro {
         Interface.Pausa(3000);
     }
 
-            private static void encontrarCoroaDoRei(FichaRpg ficha) {
+    private static void encontrarCoroaDoRei(FichaRpg ficha) {
         ficha.setCoroaReiEncontrada(true);
         Interface.MostrarMensagem(AMARELO + "Sentada em um trono de pedra, uma coroa enferrujada aguarda. Perto dela, criaturas parecem hesitar em avançar." + RESET);
         Interface.Pausa(3500);
@@ -281,7 +294,7 @@ public class LabirintoDoMinotauro {
         }
     }
 
-            private static void encontrarMonstro(FichaRpg ficha, Criatura criatura) {
+    private static void encontrarMonstro(FichaRpg ficha, Criatura criatura) {
         List<Criatura> inimigos = Collections.singletonList(criatura);
 
         Interface.MostrarMensagem("\nAlgo se move nas sombras dos corredores...");
@@ -317,7 +330,7 @@ public class LabirintoDoMinotauro {
         }
     }
 
-            private static void encontrarBau(FichaRpg ficha) {
+    private static void encontrarBau(FichaRpg ficha) {
         Interface.MostrarMensagem("\n" + AMARELO + "Você tropeça em um baú antigo, intacto sob o pó." + RESET);
         Interface.Pausa(3000);
 
@@ -347,7 +360,7 @@ public class LabirintoDoMinotauro {
         }
     }
 
-                        private static void enfrentarMinotauro(FichaRpg ficha) {
+    private static void enfrentarMinotauro(FichaRpg ficha) {
         Interface.MostrarMensagem(VERMELHO + "Um rugido estala entre as pedras e o chão treme. Das sombras do coração do labirinto surge uma silhueta colossal..." + RESET);
         Interface.Pausa(4000);
         Interface.MostrarMensagem(VERMELHO + "O MINOTAURO ergue-se diante de você, e a porta atrás de você se fecha com um estrondo. Não há como fugir!" + RESET);
@@ -364,11 +377,12 @@ public class LabirintoDoMinotauro {
                 return;
             }
         }
-                Interface.MostrarMensagem("\nO Minotauro recua para as sombras, e a porta se reabre com um rangido. Você pode tentar de novo.");
+
+        Interface.MostrarMensagem("\nO Minotauro recua para as sombras, e a porta se reabre com um rangido. Você pode tentar de novo.");
         Interface.Pausa(3000);
     }
 
-                    private static final int ALTURA_JANELA = 21;
+    private static final int ALTURA_JANELA = 21;
 
     private static void desenhar(Labirinto lab, boolean centroAlcancado, char ultimaTecla) {
         System.out.print("\033[2J\033[H");
@@ -376,7 +390,8 @@ public class LabirintoDoMinotauro {
         int camIni = Math.max(0, Math.min(lab.getJogadorLinha() - ALTURA_JANELA / 2, t - ALTURA_JANELA));
 
         StringBuilder sb = new StringBuilder();
-        sb.append("\n\n\n\n\n\n");         for (int l = camIni; l < camIni + ALTURA_JANELA; l++) {
+        sb.append("\n\n\n\n\n\n");
+        for (int l = camIni; l < camIni + ALTURA_JANELA; l++) {
             for (int c = 0; c < t; c++) {
                 sb.append(desenharCelula(lab, l, c));
             }
@@ -396,16 +411,20 @@ public class LabirintoDoMinotauro {
         boolean entorno = Math.abs(l - lab.getJogadorLinha()) <= 1 && Math.abs(c - lab.getJogadorColuna()) <= 1;
 
         if (l == lab.getJogadorLinha() && c == lab.getJogadorColuna()) {
-            return AMARELO + "@ " + RESET;         }
+            return AMARELO + "@ " + RESET;
+        }
 
         if (!lab.isCaminho(l, c)) {
-            return entorno ? "██" : "  ";         }
+            return entorno ? "██" : "  ";
+        }
 
         if (entorno) {
-            return lab.isVisitado(l, c) ? CIANO + "· " + RESET : VERDE + ". " + RESET;         }
-        return lab.isVisitado(l, c) ? CIANO + "· " + RESET : "  ";     }
+            return lab.isVisitado(l, c) ? CIANO + "· " + RESET : VERDE + ". " + RESET;
+        }
+        return lab.isVisitado(l, c) ? CIANO + "· " + RESET : "  ";
+    }
 
-            private static int[] direcao(char tecla) {
+    private static int[] direcao(char tecla) {
         switch (Character.toLowerCase(tecla)) {
             case 'w':
             case '↑': return new int[]{-1, 0};

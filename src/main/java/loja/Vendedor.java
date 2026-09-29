@@ -343,12 +343,15 @@ switch (nome) {
             case "Couro": return 6;
             case "Dente de Urso": return 14;
             case "Pó da Fada": return 75;
-            case "Osso": return 23;             case "Carne de Lobo": return 10;
+            case "Osso": return 23;
+            case "Carne de Lobo": return 10;
             case "Carne de Urso": return 18;
             case "Carne de Lobo Cozida": return 14;
             case "Carne de Urso Cozida": return 24;
             case "Carne Podre": return 15;
-            case "Coroa do Rei": return 1000;             case "Chifre de Minotauro": return 150;                         case "Espada do Minotauro": return 1250;
+            case "Coroa do Rei": return 1000;
+            case "Chifre de Minotauro": return 150;
+            case "Espada do Minotauro": return 1250;
             case "Espada Majestral": return 700;
             case "Cajado de Sangue": return 1500;
             default:

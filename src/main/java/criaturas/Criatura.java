@@ -30,32 +30,34 @@ public class Criatura implements java.io.Serializable {
     private List<Ataque> ataques = new ArrayList<>();
     private List<Drop> drops = new ArrayList<>();
 
-        private int dcFuga = 12;
+    private int dcFuga = 12;
 
-            private String ataqueRepetivel;
+    private String ataqueRepetivel;
     private int chanceAtaqueRepetir;
     private int chanceAtaqueRepetir2;
 
-        private String ataqueInfeccioso;
+    private String ataqueInfeccioso;
     private int chanceInfeccao;
 
-        private boolean mortoVivo;
+    private boolean mortoVivo;
 
-        private boolean enfraquecido;
+    private boolean enfraquecido;
 
-        private boolean fugiu;
+    private boolean fugiu;
 
-                private int chanceInvestida;
+    private int chanceInvestida;
     private int investidaDanoFalhaQtd;
     private int investidaDanoFalhaLados;
     private int investidaDanoParede;
 
-        private boolean semFuga;
+    private boolean semFuga;
 
-        private boolean dropDeClasse;
+    private boolean dropDeClasse;
 
-                    private boolean temToqueDeMidas;
-    private boolean toqueDeMidasPreparado;     private int bonusToqueDeMidas;
+    private boolean temToqueDeMidas;
+    private boolean toqueDeMidasPreparado;
+    private int bonusToqueDeMidas;
+
     public Criatura(String nome, int nivel, int vida, int defesa, int iniciativa) {
         this.nome = nome;
         this.nivel = nivel;
@@ -68,52 +70,52 @@ public class Criatura implements java.io.Serializable {
         this.chanceAparecer = 100;
     }
 
-        public void setBonusAcerto(int bonusAcerto) { this.bonusAcerto = bonusAcerto; }
+    public void setBonusAcerto(int bonusAcerto) { this.bonusAcerto = bonusAcerto; }
     public void setAcertoAutomatico(boolean acertoAutomatico) { this.acertoAutomatico = acertoAutomatico; }
     public void setTestePresenca(int testePresenca) { this.testePresenca = testePresenca; }
     public void setChanceAparecer(int chanceAparecer) { this.chanceAparecer = chanceAparecer; }
 
-        public void setDcFuga(int dcFuga) { this.dcFuga = dcFuga; }
+    public void setDcFuga(int dcFuga) { this.dcFuga = dcFuga; }
     public int getDcFuga() { return dcFuga; }
 
-                public void configurarAtaqueEncadeado(String nomeAtaque, int chanceSegundo, int chanceTerceiro) {
+    public void configurarAtaqueEncadeado(String nomeAtaque, int chanceSegundo, int chanceTerceiro) {
         this.ataqueRepetivel = nomeAtaque;
         this.chanceAtaqueRepetir = chanceSegundo;
         this.chanceAtaqueRepetir2 = chanceTerceiro;
     }
 
-            public void configurarInfeccao(String nomeAtaque, int chance) {
+    public void configurarInfeccao(String nomeAtaque, int chance) {
         this.ataqueInfeccioso = nomeAtaque;
         this.chanceInfeccao = chance;
     }
 
-        public void setMortoVivo(boolean mortoVivo) { this.mortoVivo = mortoVivo; }
+    public void setMortoVivo(boolean mortoVivo) { this.mortoVivo = mortoVivo; }
     public boolean isMortoVivo() { return mortoVivo; }
 
-        public void setEnfraquecido(boolean enfraquecido) { this.enfraquecido = enfraquecido; }
+    public void setEnfraquecido(boolean enfraquecido) { this.enfraquecido = enfraquecido; }
     public boolean isEnfraquecido() { return enfraquecido; }
 
-        public void setFugiu(boolean fugiu) { this.fugiu = fugiu; }
+    public void setFugiu(boolean fugiu) { this.fugiu = fugiu; }
     public boolean isFugiu() { return fugiu; }
 
-        public void configurarInvestida(int chance, int qtdDanoFalha, int ladosDanoFalha, int danoParede) {
+    public void configurarInvestida(int chance, int qtdDanoFalha, int ladosDanoFalha, int danoParede) {
         this.chanceInvestida = chance;
         this.investidaDanoFalhaQtd = qtdDanoFalha;
         this.investidaDanoFalhaLados = ladosDanoFalha;
         this.investidaDanoParede = danoParede;
     }
 
-        public void setSemFuga(boolean semFuga) { this.semFuga = semFuga; }
+    public void setSemFuga(boolean semFuga) { this.semFuga = semFuga; }
     public boolean isSemFuga() { return semFuga; }
 
-        public void setDropDeClasse(boolean dropDeClasse) { this.dropDeClasse = dropDeClasse; }
+    public void setDropDeClasse(boolean dropDeClasse) { this.dropDeClasse = dropDeClasse; }
     public boolean isDropDeClasse() { return dropDeClasse; }
 
-                public void configurarToqueDeMidas() { this.temToqueDeMidas = true; }
+    public void configurarToqueDeMidas() { this.temToqueDeMidas = true; }
     public boolean isTemToqueDeMidas() { return temToqueDeMidas; }
     public int getBonusAcertoEfetivo() { return bonusAcerto + bonusToqueDeMidas; }
 
-        public void adicionarAtaque(String nome, String tipoDano, int qtdDado, int ladosDado) {
+    public void adicionarAtaque(String nome, String tipoDano, int qtdDado, int ladosDado) {
         ataques.add(new Ataque(nome, tipoDano, qtdDado, ladosDado));
     }
 
@@ -129,7 +131,7 @@ public class Criatura implements java.io.Serializable {
 
     public void setXpGanho(int xpGanho) { this.xpGanho = xpGanho; }
 
-        public String getNome() { return nome; }
+    public String getNome() { return nome; }
     public int getNivel() { return nivel; }
     public int getVida() { return vida; }
     public int getDefesa() { return defesa; }
@@ -143,12 +145,12 @@ public class Criatura implements java.io.Serializable {
 
     public void setVida(int vida) { this.vida = vida; }
 
-        public List<Drop> getDrops() { return drops; }
+    public List<Drop> getDrops() { return drops; }
 
-                public Ataque atacarJogador(FichaRpg ficha, boolean cascaGrossaAtiva, boolean alvoJogadorPrincipal) {
+    public Ataque atacarJogador(FichaRpg ficha, boolean cascaGrossaAtiva, boolean alvoJogadorPrincipal) {
         bonusToqueDeMidas = 0;
 
-                                        if (temToqueDeMidas) {
+        if (temToqueDeMidas) {
             if (toqueDeMidasPreparado && ficha.getOuro() > 0) {
                 bonusToqueDeMidas = 3;
                 toqueDeMidasPreparado = false;
@@ -186,8 +188,9 @@ public class Criatura implements java.io.Serializable {
         return ataqueEscolhido;
     }
 
-        private Ataque executarAtaque(FichaRpg ficha, boolean cascaGrossaAtiva, boolean alvoJogadorPrincipal) {
-                if (chanceInvestida > 0 && MecanicasRpg.rolarDado(100) <= chanceInvestida) {
+    private Ataque executarAtaque(FichaRpg ficha, boolean cascaGrossaAtiva, boolean alvoJogadorPrincipal) {
+
+        if (chanceInvestida > 0 && MecanicasRpg.rolarDado(100) <= chanceInvestida) {
             executarInvestida(ficha, cascaGrossaAtiva);
             return null;
         }
@@ -197,7 +200,7 @@ public class Criatura implements java.io.Serializable {
         String danoTipo = ataqueEscolhido.tipoDano == null || ataqueEscolhido.tipoDano.isEmpty()
                 ? "" : " de " + ataqueEscolhido.tipoDano;
 
-                if (acertoAutomatico) {
+        if (acertoAutomatico) {
             int dano = rolarDanoDoAtaque(ataqueEscolhido, false);
             if (cascaGrossaAtiva) {
                 dano = Math.max(0, dano - 5);
@@ -247,7 +250,7 @@ public class Criatura implements java.io.Serializable {
         return ataqueEscolhido;
     }
 
-                private void executarInvestida(FichaRpg ficha, boolean cascaGrossaAtiva) {
+    private void executarInvestida(FichaRpg ficha, boolean cascaGrossaAtiva) {
         Interface.MostrarMensagem("\n" + VERMELHO + nome + " BAIXA A CABEÇA E INVESTE CONTRA VOCÊ COM FÚRIA CEGA!" + RESET);
         Interface.Pausa(2000);
 
@@ -287,18 +290,19 @@ public class Criatura implements java.io.Serializable {
         }
     }
 
-        private void aplicarInfeccao(FichaRpg ficha, boolean alvoJogadorPrincipal, Ataque ataque) {
+    private void aplicarInfeccao(FichaRpg ficha, boolean alvoJogadorPrincipal, Ataque ataque) {
         if (!alvoJogadorPrincipal || ataqueInfeccioso == null || !ataque.nome.equals(ataqueInfeccioso)) {
             return;
         }
-        if (ficha.isInfectado()) return;         if (MecanicasRpg.rolarDado(100) <= chanceInfeccao) {
+        if (ficha.isInfectado()) return;
+        if (MecanicasRpg.rolarDado(100) <= chanceInfeccao) {
             ficha.setInfectado(true);
             Interface.MostrarMensagem("A mordida abre uma ferida que infecciona! Você sofrerá 1d4 de dano por rodada.");
             Interface.Pausa(2000);
         }
     }
 
-        private int rolarDanoDoAtaque(Ataque ataque, boolean critico) {
+    private int rolarDanoDoAtaque(Ataque ataque, boolean critico) {
         int dados = ataque.qtdDado * (critico ? 2 : 1);
         int dano = 0;
         for (int i = 0; i < dados; i++) {
@@ -307,14 +311,14 @@ public class Criatura implements java.io.Serializable {
         return dano;
     }
 
-        private void refletirProtecaoAbsoluta() {
+    private void refletirProtecaoAbsoluta() {
         int reflexo = MecanicasRpg.rolarDado(8) + MecanicasRpg.rolarDado(8);
         this.setVida(this.getVida() - reflexo);
         Interface.MostrarMensagem("(Proteção Absoluta! Reflete " + reflexo + " de dano do elemento no " + nome + ")");
         Interface.Pausa(1500);
     }
 
-        public void processarDrops(FichaRpg ficha) {
+    public void processarDrops(FichaRpg ficha) {
         if (chanceOuro > 0 && MecanicasRpg.rolarDado(100) <= chanceOuro) {
             int ouro = MecanicasRpg.rolarEntre(ouroMin, ouroMax);
             ficha.adicionarOuro(ouro);
@@ -338,7 +342,7 @@ public class Criatura implements java.io.Serializable {
         }
     }
 
-                private void dropExclusivoDaClasse(FichaRpg ficha) {
+    private void dropExclusivoDaClasse(FichaRpg ficha) {
         if (ficha.getClasseDoPersonagem() == null) return;
 
         if (ficha.getClasseDoPersonagem() instanceof classes.Guerreiro) {
@@ -365,7 +369,7 @@ public class Criatura implements java.io.Serializable {
         Interface.Pausa(2500);
     }
 
-        public static ItemRpg criarItemDrop(String nome) {
+    public static ItemRpg criarItemDrop(String nome) {
         switch (nome) {
             case "Couro":
                 return new ItemRpg("Couro", "Pele de animal curtida, usada em artesanato e na confecção de equipamentos.", 1);

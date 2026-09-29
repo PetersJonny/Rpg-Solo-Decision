@@ -31,7 +31,7 @@ public class GerenciadorDeTurnos {
         List<Criatura> mortesProcessadas = new ArrayList<>();
         ficha.resetarEfeitosCombate();
 
-                if (temHabilidade(ficha, "Defesa Absoluta")) {
+        if (temHabilidade(ficha, "Defesa Absoluta")) {
             ficha.setDefesaAbsolutaAtiva(true);
             Interface.MostrarMensagem("\n(Defesa Absoluta ativa! +5 de defesa até você atacar.)");
             Interface.Pausa(1500);
@@ -60,7 +60,7 @@ public class GerenciadorDeTurnos {
             cascaGrossaAtiva[0] = false;
             ficha.setMagiaProibidaAtiva(false);
 
-                        if (ficha.isInfectado() && ficha.getVidaPersonagem() > 0) {
+            if (ficha.isInfectado() && ficha.getVidaPersonagem() > 0) {
                 int danoInfecao = MecanicasRpg.rolarDado(4);
                 ficha.receberDano(danoInfecao);
                 Interface.MostrarMensagem("\nSua infecção zumbi corrói as feridas! Dano: " + danoInfecao + " (Vida: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima() + ")");
@@ -69,7 +69,7 @@ public class GerenciadorDeTurnos {
                 if (inimigosVivos(inimigos).isEmpty()) break;
             }
 
-                        if (ficha.isCuraParaMortePreparado()) {
+            if (ficha.isCuraParaMortePreparado()) {
                 ficha.setCuraParaMortePreparado(false);
                 ficha.setCuraParaMorteAtivo(true);
                 Interface.MostrarMensagem("\nO líquido mortal injetado começa a agir!");
@@ -79,29 +79,33 @@ public class GerenciadorDeTurnos {
             if (ficha.getVidaPersonagem() <= 0 && !companheiroEmPe(ficha)) break;
             if (inimigosVivos(inimigos).isEmpty()) break;
 
-                                    boolean semHabilidades = ficha.getRodadasSemHabilidade() > 0;
+            boolean semHabilidades = ficha.getRodadasSemHabilidade() > 0;
             ComandoCombate acaoDeclarada = ficha.getVidaPersonagem() > 0
                     ? declararAcao(ficha, inimigos, cascaGrossaAtiva, semHabilidades)
                     : new ComandoAguardar();
 
-                        Set<Criatura> jaAtacouNaRodada = new HashSet<>();
+            Set<Criatura> jaAtacouNaRodada = new HashSet<>();
 
-                                    boolean acaoResolvida = false;
+            boolean acaoResolvida = false;
             if (acaoDeclarada.isPrioritarioFuga()) {
                 int resultadoFuga = acaoDeclarada.executar(ficha, inimigos, cascaGrossaAtiva, tentativasFuga, jaAtacouNaRodada);
                 if (resultadoFuga == 0) {
                     Interface.MostrarMensagem("\nVocê conseguiu escapar da floresta!");
                     Interface.Pausa(2500);
-                    ficha.setInfectado(false);                     ficha.setPactoMortalAtivo(false);                     return;
+                    ficha.setInfectado(false);
+                    ficha.setPactoMortalAtivo(false);
+                    return;
                 }
                 if (resultadoFuga == 1) {
-                                        continue;
+
+                    continue;
                 }
-                                acaoResolvida = true;
+
+                acaoResolvida = true;
                 processarMortes(inimigos, mortesProcessadas, ficha);
             }
 
-                                    for (int[] token : ordem) {
+            for (int[] token : ordem) {
                 if (ficha.getVidaPersonagem() <= 0 && !companheiroEmPe(ficha)) break;
                 if (inimigosVivos(inimigos).isEmpty()) break;
 
@@ -112,11 +116,15 @@ public class GerenciadorDeTurnos {
                     if (resultado == 0) {
                         Interface.MostrarMensagem("\nVocê conseguiu escapar da floresta!");
                         Interface.Pausa(2500);
-                        ficha.setInfectado(false);                     ficha.setPactoMortalAtivo(false);                         return;
+                        ficha.setInfectado(false);
+                    ficha.setPactoMortalAtivo(false);
+                        return;
                     }
-                                        processarMortes(inimigos, mortesProcessadas, ficha);
+
+                    processarMortes(inimigos, mortesProcessadas, ficha);
                 } else if (token[1] == -1) {
-                                        companheiros.Companheiro comp = ficha.getCompanheiro();
+
+                    companheiros.Companheiro comp = ficha.getCompanheiro();
                     if (comp != null && comp.getFicha().getVidaPersonagem() > 0) {
                         acaoDoCompanheiro(ficha, comp, inimigos);
                         processarMortes(inimigos, mortesProcessadas, ficha);
@@ -124,7 +132,8 @@ public class GerenciadorDeTurnos {
                 } else {
                     Criatura c = inimigos.get(token[1] - 1);
                     if (c.getVida() > 0 && !c.isFugiu() && !jaAtacouNaRodada.contains(c)) {
-                                                if (ficha.getPrisaoAtiva() == c) {
+
+                        if (ficha.getPrisaoAtiva() == c) {
                             int testePrisao = MecanicasRpg.rolarDado(20);
                             Interface.MostrarMensagem("\n" + rotuloCriatura(inimigos, c) + " tenta se libertar da prisão (d20, precisa de 15 ou mais): " + testePrisao);
                             Interface.Pausa(1500);
@@ -138,7 +147,7 @@ public class GerenciadorDeTurnos {
                             Interface.Pausa(1500);
                         }
 
-                                                if (ficha.isMagiaProibidaAtiva()) {
+                        if (ficha.isMagiaProibidaAtiva()) {
                             Interface.MostrarMensagem("\n" + rotuloCriatura(inimigos, c) + " investe, mas a Magia Proibida corrompe seu golpe e ele erra!");
                             Interface.Pausa(1500);
                             continue;
@@ -147,7 +156,7 @@ public class GerenciadorDeTurnos {
                         Interface.MostrarMensagem("\n" + rotuloCriatura(inimigos, c) + " avança para atacar!");
                         Interface.Pausa(1500);
 
-                                                                        companheiros.Companheiro comp2 = ficha.getCompanheiro();
+                        companheiros.Companheiro comp2 = ficha.getCompanheiro();
                         boolean atacarCompanheiro = comp2 != null
                                 && comp2.getFicha().getVidaPersonagem() > 0
                                 && (ficha.getVidaPersonagem() <= 0 || MecanicasRpg.rolarDado(2) == 1);
@@ -162,21 +171,23 @@ public class GerenciadorDeTurnos {
                         } else {
                             c.atacarJogador(ficha, cascaGrossaAtiva[0], true);
                         }
-                                                processarMortes(inimigos, mortesProcessadas, ficha);
+
+                        processarMortes(inimigos, mortesProcessadas, ficha);
                     }
                 }
             }
 
-                        if (ficha.getRodadasSemHabilidade() > 0) {
+            if (ficha.getRodadasSemHabilidade() > 0) {
                 ficha.setRodadasSemHabilidade(ficha.getRodadasSemHabilidade() - 1);
             }
         }
 
-                        companheiros.Companheiro comp = ficha.getCompanheiro();
+        companheiros.Companheiro comp = ficha.getCompanheiro();
         boolean grupoVenceu = inimigosVivos(inimigos).isEmpty();
 
         if (grupoVenceu) {
-                        if (comp != null && ficha.getVidaPersonagem() > 0) {
+
+            if (comp != null && ficha.getVidaPersonagem() > 0) {
                 FichaRpg cf = comp.getFicha();
                 if (cf.getVidaPersonagem() <= 0) {
                     Interface.cabecalhoMenu("RESGATE DO COMPANHEIRO");
@@ -189,7 +200,7 @@ public class GerenciadorDeTurnos {
                         Interface.MostrarMensagem("\n  Ele(a) parte em silêncio.");
                         Interface.Pausa(1500);
 
-                                                List<ItemRpg> itensComp = new ArrayList<>(cf.getInventario());
+                        List<ItemRpg> itensComp = new ArrayList<>(cf.getInventario());
                         for (ItemRpg item : itensComp) {
                             ficha.adicionarItem(item);
                         }
@@ -213,13 +224,14 @@ public class GerenciadorDeTurnos {
                     }
                     Interface.Pausa(2000);
                 } else if (cf.getVidaPersonagem() < cf.getVidaMaxima() * 0.3) {
-                                        Interface.MostrarMensagem("\n" + comp.getNomeCompleto() + " respira fundo e se recupera um pouco após o combate.");
+
+                    Interface.MostrarMensagem("\n" + comp.getNomeCompleto() + " respira fundo e se recupera um pouco após o combate.");
                     cf.setVidaPersonagem(Math.max((int) (cf.getVidaMaxima() * 0.5), 1));
                     Interface.Pausa(2000);
                 }
             }
 
-                        if (ficha.getVidaPersonagem() <= 0) {
+            if (ficha.getVidaPersonagem() <= 0) {
                 if (!tentarReviver(ficha) && companheiroEmPe(ficha)) {
                     FichaRpg cf = comp.getFicha();
                     Interface.cabecalhoMenu("RESGATE DO JOGADOR");
@@ -234,7 +246,9 @@ public class GerenciadorDeTurnos {
         }
 
         Interface.cabecalhoMenu("FIM DO COMBATE");
-        ficha.setInfectado(false);                     ficha.setPactoMortalAtivo(false);         if (ficha.getVidaPersonagem() <= 0) {
+        ficha.setInfectado(false);
+                    ficha.setPactoMortalAtivo(false);
+        if (ficha.getVidaPersonagem() <= 0) {
             Interface.MostrarMensagem("\n  Você foi derrotado... A floresta recupera o silêncio.");
             Interface.Pausa(3000);
         } else {
@@ -316,7 +330,7 @@ public class GerenciadorDeTurnos {
     public static int TentarFugirNaVez(FichaRpg ficha, List<Criatura> inimigos, boolean[] cascaGrossaAtiva, int[] tentativasFuga, Set<Criatura> jaAtacouNaRodada) {
         int resultadoFuga = TentarFugir(ficha, inimigos, tentativasFuga[0]);
 
-                if (resultadoFuga == tentativasFuga[0] && resultadoFuga != -1) {
+        if (resultadoFuga == tentativasFuga[0] && resultadoFuga != -1) {
             Interface.MostrarMensagem("\nVocê hesita e perde a oportunidade!");
             Interface.Pausa(1500);
             return -1;
@@ -410,7 +424,7 @@ public class GerenciadorDeTurnos {
         Interface.MostrarMensagem("\nVocê tenta se esquivar e recuar...");
         Interface.Pausa(2000);
 
-                int melhorIniciativa = -1000;
+        int melhorIniciativa = -1000;
         for (Criatura c : inimigos) {
             if (c.getVida() <= 0) continue;
             if (c.getIniciativa() > melhorIniciativa) {

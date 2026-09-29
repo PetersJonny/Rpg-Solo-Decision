@@ -152,7 +152,8 @@ public class Interface {
 
                 public static int[] opcoesMenuFloresta(FichaRpg ficha) {
         int num = 5;
-        int opViajar = num++;         int opLabirinto = -1, opConversar = -1;
+        int opViajar = num++;
+        int opLabirinto = -1, opConversar = -1;
         if (ficha.isLabirintoDisponivel()) opLabirinto = num++;
         if (ficha.temCompanheiro()) opConversar = num++;
         int opSalvar = num++;
@@ -202,7 +203,8 @@ public class Interface {
 
                 public static int[] opcoesMenuVilarejo(FichaRpg ficha) {
         int num = 5;
-        int opMissoes = num++;         int opAlfaiataria = -1, opBarraca = -1, opCaverna = -1;
+        int opMissoes = num++;
+        int opAlfaiataria = -1, opBarraca = -1, opCaverna = -1;
         if (ficha.isAlfaiatariaConhecida()) opAlfaiataria = num++;
         if (ficha.isMissaoAceita("A Neta Perdida")) opBarraca = num++;
         if (ficha.isCaveConhecida()) opCaverna = num++;

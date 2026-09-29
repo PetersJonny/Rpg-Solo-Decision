@@ -26,7 +26,8 @@ public class FichaRpg implements java.io.Serializable {
 
         racas.Raca raca = null;
     private String atributoRacialHumano = null;
-        boolean sobrevivenciaUsada = false;     boolean menteAfiadaUsada = false;
+        boolean sobrevivenciaUsada = false;
+        boolean menteAfiadaUsada = false;
         int constituicao, destreza, forca, sabedoria, intelecto, presenca;
 
         ClasseRpg classeDoPersonagem = null;
@@ -65,7 +66,8 @@ public class FichaRpg implements java.io.Serializable {
 
         boolean ehNoite = false;
     int progressoPeriodo = 0;
-    int diaAtual = 1;     int diasSemDormir = 0;
+    int diaAtual = 1;
+    int diasSemDormir = 0;
     boolean cansado = false;
     boolean temCabana = false;
     boolean naCabana = false;
@@ -84,13 +86,21 @@ public class FichaRpg implements java.io.Serializable {
     private int slotAtual = 0;
         boolean temSalaTreino = false;
     boolean naSalaTreino = false;
-    boolean salaJuntoCabana = false;     String treinoBonusAtributo = null;     int treinoBonusPeriodosRestantes = 0;
+    boolean salaJuntoCabana = false;
+    String treinoBonusAtributo = null;
+    int treinoBonusPeriodosRestantes = 0;
 
         boolean temMesaMagias = false;
     int magiaBonusPeriodosRestantes = 0;
-    boolean naMesaMagias = false;     boolean mesaJuntoCabana = false;     boolean mesaJuntoSala = false;     boolean salaJuntoMesa = false;
+    boolean naMesaMagias = false;
+    boolean mesaJuntoCabana = false;
+    boolean mesaJuntoSala = false;
+    boolean salaJuntoMesa = false;
         boolean temFogueira = false;
-    boolean naFogueira = false;     boolean fogueiraJuntoCabana = false;     boolean fogueiraJuntoSala = false;     boolean fogueiraJuntoMesa = false;
+    boolean naFogueira = false;
+    boolean fogueiraJuntoCabana = false;
+    boolean fogueiraJuntoSala = false;
+    boolean fogueiraJuntoMesa = false;
                 int profundidadeCabana = 0;
     int profundidadeSalaTreino = 0;
     int profundidadeMesaMagias = 0;
