@@ -51,6 +51,7 @@ public class GerenciadorDeTurnos {
         int[] tentativasFuga = {0};
         List<Criatura> mortesProcessadas = new ArrayList<>();
         ficha.resetarEfeitosCombate();
+        ficha.setEmCombate(true);
 
         if (temHabilidade(ficha, "Defesa Absoluta")) {
             ficha.setDefesaAbsolutaAtiva(true);
@@ -61,6 +62,7 @@ public class GerenciadorDeTurnos {
         while ((ficha.getVidaPersonagem() > 0
                 || (ficha.getCompanheiro() != null && ficha.getCompanheiro().getFicha().getVidaPersonagem() > 0))
                 && !inimigosVivos(inimigos).isEmpty()) {
+            ficha.setFrutaImuneNestaRodada(false);
             for (Criatura c : inimigos) {
                 if (c.getVida() > 0 && c.isSangrando() && !c.isFugiu()) {
                     int dano = MecanicasRpg.rolarDado(6);
@@ -286,6 +288,13 @@ public class GerenciadorDeTurnos {
         }
 
         Interface.cabecalhoMenu("FIM DO COMBATE");
+        if (ficha.isFrutaDoDiaboAtiva()) {
+            Interface.MostrarMensagem("\nO poder da " + Interface.AMARELO + "Fruta do Diabo" + Interface.RESET + " se desfaz. O calor some do seu peito.");
+            Interface.Pausa(2500);
+        }
+        ficha.setFrutaDoDiaboAtiva(false);
+        ficha.setFrutaImuneNestaRodada(false);
+        ficha.setEmCombate(false);
         ficha.setInfectado(false);
                     ficha.setPactoMortalAtivo(false);
         if (ficha.getVidaPersonagem() <= 0) {

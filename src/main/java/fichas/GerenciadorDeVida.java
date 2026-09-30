@@ -15,6 +15,11 @@ public class GerenciadorDeVida {
     public static void receberDano(FichaRpg ficha, int dano) {
 
         if (dano < 0) return;
+        if (ficha.isFrutaImuneNestaRodada()) {
+            telas.Interface.MostrarMensagem("(Fruta do Diabo! Os " + dano + " de dano não chegam a te alcançar nesta rodada)");
+            telas.Interface.Pausa(1500);
+            return;
+        }
         if (ficha.pactoMortalAtivo) {
             dano += 3;
             telas.Interface.MostrarMensagem("(Pacto Mortal! Você sofre +3 de dano)");
@@ -74,6 +79,9 @@ public class GerenciadorDeVida {
         ficha.curaAbsolutaBonus = 0;
         ficha.curaAbsolutaVidaOriginalMax = 0;
         ficha.curaIncessanteUsada = false;
+        ficha.setFrutaDoDiaboAtiva(false);
+        ficha.setFrutaImuneNestaRodada(false);
+        ficha.setEmCombate(false);
 
     }
     public static int bonusTestesNoturnos(FichaRpg ficha) {

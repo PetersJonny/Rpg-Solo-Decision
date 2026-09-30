@@ -263,12 +263,10 @@ public class GerenciadorDeItens {
                 break;
             }
             case "Fruta do Diabo": {
-                Interface.MostrarMensagem("\nVocê encara a " + AMARELO + "Fruta do Diabo" + RESET + ". Ela parece pulsar de um jeito errado...");
+                Interface.MostrarMensagem("\nA " + AMARELO + "Fruta do Diabo" + RESET + " pulsa na sua mão. Não é hora de morder isso: não há nada para matar.");
                 Interface.Pausa(2000);
-                Interface.MostrarMensagem("A velhinha disse que só deve ser usada em momento de extrema urgência. Ninguém sabe o que ela faz.");
-                Interface.Pausa(2400);
-                System.out.println("  [O poder da Fruta do Diabo ainda não foi definido.]");
-                Interface.Pausa(1500);
+                Interface.MostrarMensagem("\n(Ela só pode ser usada em combate, e só quando restar algo para você matar.)");
+                Interface.Pausa(2000);
                 return false;
             }
             default:
@@ -477,6 +475,31 @@ public class GerenciadorDeItens {
             int cura = MecanicasRpg.rolarDado(4);
             ficha.setManaPersonagem(Math.min(ficha.getManaPersonagem() + cura, ficha.getManaMaxima()));
             Interface.MostrarMensagem("Você bebeu Hidromel e recuperou " + cura + " de mana! Mana atual: " + ficha.getManaPersonagem() + "/" + ficha.getManaMaxima());
+        } else if (itemEscolhido.getNome().equals("Fruta do Diabo")) {
+            if (ficha.isFrutaDoDiaboAtiva()) {
+                Interface.MostrarMensagem("\nO poder da fruta ainda está ativo. Ela não tem mais o que te dar.");
+                Interface.Pausa(2000);
+                return;
+            }
+            Interface.MostrarMensagem("\nVocê encara a " + AMARELO + "Fruta do Diabo" + RESET + ". Ela parece pulsar de um jeito errado...");
+            Interface.Pausa(2000);
+            Interface.MostrarMensagem("A velhinha disse que só deveria ser usada em momento de extrema urgência. Ninguém sabe o que ela faz.");
+            Interface.Pausa(2400);
+            int antesVidaFruta = ficha.getVidaPersonagem();
+            int antesManaFruta = ficha.getManaPersonagem();
+            ficha.setVidaPersonagem(ficha.getVidaMaxima());
+            ficha.setManaPersonagem(ficha.getManaMaxima());
+            ficha.setFrutaDoDiaboAtiva(true);
+            ficha.setFrutaImuneNestaRodada(true);
+            Interface.MostrarMensagem("\nVocê morde a fruta. Ela explode na língua num gosto de ferro e de vela, e algo se acende por dentro.");
+            Interface.Pausa(2500);
+            Interface.MostrarMensagem("\n-> Vida restaurada: +" + (ficha.getVidaPersonagem() - antesVidaFruta) + " (" + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima() + ")");
+            Interface.MostrarMensagem("\n-> Mana restaurada: +" + (ficha.getManaPersonagem() - antesManaFruta) + " (" + ficha.getManaPersonagem() + "/" + ficha.getManaMaxima() + ")");
+            Interface.Pausa(2000);
+            Interface.MostrarMensagem("\n" + AMARELO + "(Fruta do Diabo ativa!) Nenhum dano te alcança nesta rodada, e todo o seu dano sobe um dado: 1d6 vira 1d8, 1d8 vira 1d10, 1d10 vira 1d12." + RESET);
+            Interface.Pausa(2500);
+            Interface.MostrarMensagem("\n(A fruta tem um uso só, e o poder dura até o fim deste combate.)");
+            Interface.Pausa(2000);
         } else if (itemEscolhido.getNome().equals("Kit Médico")) {
                                     companheiros.Companheiro comp = ficha.getCompanheiro();
             boolean podeUsarEmSi = ficha.getVidaPersonagem() < ficha.getVidaMaxima() || ficha.isInfectado();

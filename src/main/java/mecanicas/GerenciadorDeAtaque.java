@@ -119,6 +119,12 @@ public class GerenciadorDeAtaque {
                 socoDado = soco.getDadoDanoArma();
                 socoQtd = soco.getQuantidadeDanoArma();
             }
+            int socoOriginal = socoDado;
+            socoDado = ficha.upgradeDadoFruta(socoDado);
+            if (socoDado != socoOriginal) {
+                Interface.MostrarMensagem("(Fruta do Diabo! O dado de dano sobe: 1d" + socoOriginal + " -> 1d" + socoDado + ")");
+                Interface.Pausa(1500);
+            }
             atributoBonus = ficha.getForca();
             nomeAtributo = "Força";
 
@@ -177,8 +183,13 @@ public class GerenciadorDeAtaque {
                 nomeAtributo = atributo;
             }
 
-                                                int qtyDados = armaEscolhida.getQuantidadeDanoArma();
-            int dadoDano = armaEscolhida.getDadoDanoArma();
+            int qtyDados = armaEscolhida.getQuantidadeDanoArma();
+            int dadoOriginal = armaEscolhida.getDadoDanoArma();
+            int dadoDano = ficha.upgradeDadoFruta(dadoOriginal);
+            if (dadoDano != dadoOriginal) {
+                Interface.MostrarMensagem("(Fruta do Diabo! O dado de dano sobe: 1d" + dadoOriginal + " -> 1d" + dadoDano + ")");
+                Interface.Pausa(1500);
+            }
             boolean furiaSombria = ficha.getRaca() != null && ficha.getRaca().temBonusDanoVidaBaixa()
                     && ficha.getVidaPersonagem() <= ficha.getVidaMaxima() * 0.30;
             int dadosFuria = 0;

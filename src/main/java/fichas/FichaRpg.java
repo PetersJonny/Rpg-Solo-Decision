@@ -161,6 +161,10 @@ public class FichaRpg implements java.io.Serializable {
     private boolean acampamentoAlcancado = false;
     private boolean cabanaAlcancada = false;
     private boolean netaCorpoLevado = false;
+
+    private boolean frutaDoDiaboAtiva = false;
+    private boolean frutaImuneNestaRodada = false;
+    private boolean emCombate = false;
     private int turnosParaVoltar = 3;
 
         public FichaRpg(String nomePessoa) {
@@ -438,6 +442,26 @@ public class FichaRpg implements java.io.Serializable {
     public void setCabanaAlcancada(boolean v) { this.cabanaAlcancada = v; }
     public boolean isNetaCorpoLevado() { return netaCorpoLevado; }
     public void setNetaCorpoLevado(boolean v) { this.netaCorpoLevado = v; }
+    public boolean isFrutaDoDiaboAtiva() { return frutaDoDiaboAtiva; }
+    public void setFrutaDoDiaboAtiva(boolean v) { this.frutaDoDiaboAtiva = v; }
+    public boolean isFrutaImuneNestaRodada() { return frutaImuneNestaRodada; }
+    public void setFrutaImuneNestaRodada(boolean v) { this.frutaImuneNestaRodada = v; }
+    public boolean isEmCombate() { return emCombate; }
+    public void setEmCombate(boolean v) { this.emCombate = v; }
+
+    public int upgradeDadoFruta(int dado) {
+        if (!frutaDoDiaboAtiva) return dado;
+        switch (dado) {
+            case 2: return 3;
+            case 3: return 4;
+            case 4: return 6;
+            case 6: return 8;
+            case 8: return 10;
+            case 10: return 12;
+            default: return dado;
+        }
+    }
+
     public boolean isPresencaNetaPassou() { return presencaNetaPassou; }
     public void setPresencaNetaPassou(boolean v) { this.presencaNetaPassou = v; }
     public boolean isMissaoNetaEncerrada() { return missaoNetaEncerrada; }

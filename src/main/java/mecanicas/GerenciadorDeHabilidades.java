@@ -141,10 +141,11 @@ public class GerenciadorDeHabilidades {
         }
 
         for (int g = 1; g <= giros; g++) {
+            int dadoGiroTamanho = ficha.upgradeDadoFruta(10);
             int danoGiro = ficha.getForca();
             StringBuilder roladas = new StringBuilder();
             for (int i = 0; i < dadosPorGiro; i++) {
-                int dadoGiro = MecanicasRpg.rolarDado(10);
+                int dadoGiro = MecanicasRpg.rolarDado(dadoGiroTamanho);
                 danoGiro += dadoGiro;
                 if (roladas.length() > 0) roladas.append(" + ");
                 roladas.append(dadoGiro);
@@ -177,13 +178,14 @@ public class GerenciadorDeHabilidades {
             Interface.Pausa(1000);
         }
 
+        int dadoEstrondo = ficha.upgradeDadoFruta(10);
         int dano = 0;
         Interface.pressionarParaRolar();
         for (int i = 0; i < totalDados; i++) {
-            dano += MecanicasRpg.rolarDado(10);
+            dano += MecanicasRpg.rolarDado(dadoEstrondo);
         }
         dano += ficha.getForca();
-        Interface.MostrarMensagem("-> Estrondo: " + totalDados + "d10 + " + ficha.getForca() + " (Força) = " + dano + " de dano em área!");
+        Interface.MostrarMensagem("-> Estrondo: " + totalDados + "d" + dadoEstrondo + " + " + ficha.getForca() + " (Força) = " + dano + " de dano em área!");
         Interface.Pausa(1500);
 
         for (Criatura alvo : vivos) {
@@ -312,15 +314,17 @@ public class GerenciadorDeHabilidades {
             }
         }
 
-        Interface.MostrarMensagem("\nVocê libera a Explosão de Poder! " + gasto + " de mana se convertem em " + totalDados + "d12 de dano de " + elemento + "!");
+        int dadosTotaisFruta = ficha.isFrutaDoDiaboAtiva() ? totalDados + 1 : totalDados;
+        String msgFrutaExplosao = ficha.isFrutaDoDiaboAtiva() ? " (+1d12 da Fruta do Diabo)" : "";
+        Interface.MostrarMensagem("\nVocê libera a Explosão de Poder! " + gasto + " de mana se convertem em " + totalDados + "d12" + msgFrutaExplosao + " de dano de " + elemento + "!");
         Interface.Pausa(2000);
 
         int dano = 0;
         Interface.pressionarParaRolar();
-        for (int i = 0; i < totalDados; i++) {
+        for (int i = 0; i < dadosTotaisFruta; i++) {
             dano += MecanicasRpg.rolarDado(12);
         }
-        Interface.MostrarMensagem("-> Dados Rolados: " + totalDados + "d12 = " + dano + " de dano em TODOS os inimigos!");
+        Interface.MostrarMensagem("-> Dados Rolados: " + dadosTotaisFruta + "d12 = " + dano + " de dano em TODOS os inimigos!");
         Interface.Pausa(2000);
 
         List<Criatura> vivos = inimigosVivos(inimigos);
@@ -411,7 +415,8 @@ public class GerenciadorDeHabilidades {
         Criatura alvo = inimigos.get(alvoIndex);
         if (alvo.getVida() <= 0 || alvo != ficha.getAlvoCuraParaMorte()) return;
 
-        int veneno = MecanicasRpg.rolarDado(8) + MecanicasRpg.rolarDado(8) + MecanicasRpg.rolarDado(8);
+        int dadoVeneno = ficha.upgradeDadoFruta(8);
+        int veneno = MecanicasRpg.rolarDado(dadoVeneno) + MecanicasRpg.rolarDado(dadoVeneno) + MecanicasRpg.rolarDado(dadoVeneno);
         aplicarDanoCriatura(alvo, veneno);
         Interface.MostrarMensagem("(Cura para a Morte! O líquido mortal causa " + veneno + " de dano)");
         Interface.Pausa(1500);
