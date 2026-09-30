@@ -496,7 +496,7 @@ public class GerenciadorDeItens {
             Interface.MostrarMensagem("\n-> Vida restaurada: +" + (ficha.getVidaPersonagem() - antesVidaFruta) + " (" + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima() + ")");
             Interface.MostrarMensagem("\n-> Mana restaurada: +" + (ficha.getManaPersonagem() - antesManaFruta) + " (" + ficha.getManaPersonagem() + "/" + ficha.getManaMaxima() + ")");
             Interface.Pausa(2000);
-            Interface.MostrarMensagem("\n" + AMARELO + "(Fruta do Diabo ativa!) Nenhum dano te alcança nesta rodada, e todo o seu dano sobe um dado: 1d6 vira 1d8, 1d8 vira 1d10, 1d10 vira 1d12." + RESET);
+            Interface.MostrarMensagem("\n" + AMARELO + "(Fruta do Diabo ativa!) Nenhum dano te alcança nesta rodada, e todo o seu dano sobe um dado: 1d4 vira 1d6, 1d6 vira 1d8, 1d8 vira 1d10, 1d10 vira 1d12. O que já é 1d12 ganha um dado a mais: 1d12 vira 1d12 + 1d4, e esse dado extra vai subindo até 1d6, 1d8, 1d10 e 1d12." + RESET);
             Interface.Pausa(2500);
             Interface.MostrarMensagem("\n(A fruta tem um uso só, e o poder dura até o fim deste combate.)");
             Interface.Pausa(2000);

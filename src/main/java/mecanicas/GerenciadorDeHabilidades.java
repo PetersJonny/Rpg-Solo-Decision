@@ -314,17 +314,21 @@ public class GerenciadorDeHabilidades {
             }
         }
 
-        int dadosTotaisFruta = ficha.isFrutaDoDiaboAtiva() ? totalDados + 1 : totalDados;
-        String msgFrutaExplosao = ficha.isFrutaDoDiaboAtiva() ? " (+1d12 da Fruta do Diabo)" : "";
-        Interface.MostrarMensagem("\nVocê libera a Explosão de Poder! " + gasto + " de mana se convertem em " + totalDados + "d12" + msgFrutaExplosao + " de dano de " + elemento + "!");
+        int ladoExtra = ficha.ladoDadoExtraFruta(totalDados);
+        String exprBase = totalDados + "d12";
+        String exprFruta = ladoExtra > 0 ? exprBase + " + 1d" + ladoExtra + " (Fruta do Diabo)" : exprBase;
+        Interface.MostrarMensagem("\nVocê libera a Explosão de Poder! " + gasto + " de mana se convertem em " + exprFruta + " de dano de " + elemento + "!");
         Interface.Pausa(2000);
 
         int dano = 0;
         Interface.pressionarParaRolar();
-        for (int i = 0; i < dadosTotaisFruta; i++) {
+        for (int i = 0; i < totalDados; i++) {
             dano += MecanicasRpg.rolarDado(12);
         }
-        Interface.MostrarMensagem("-> Dados Rolados: " + dadosTotaisFruta + "d12 = " + dano + " de dano em TODOS os inimigos!");
+        if (ladoExtra > 0) {
+            dano += MecanicasRpg.rolarDado(ladoExtra);
+        }
+        Interface.MostrarMensagem("-> Dados Rolados: " + exprFruta + " = " + dano + " de dano em TODOS os inimigos!");
         Interface.Pausa(2000);
 
         List<Criatura> vivos = inimigosVivos(inimigos);

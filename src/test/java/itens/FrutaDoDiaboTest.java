@@ -81,6 +81,32 @@ class FrutaDoDiaboTest {
     }
 
     @Test
+    void dadoD12GanhaUmDadoExtraQueSobeDeEscada() {
+        FichaRpg f = new FichaRpg("T");
+        assertEquals(0, f.ladoDadoExtraFruta(1));
+
+        f.setFrutaDoDiaboAtiva(true);
+        assertEquals(4, f.ladoDadoExtraFruta(1));
+        assertEquals(6, f.ladoDadoExtraFruta(2));
+        assertEquals(8, f.ladoDadoExtraFruta(3));
+        assertEquals(10, f.ladoDadoExtraFruta(4));
+        assertEquals(12, f.ladoDadoExtraFruta(5));
+    }
+
+    @Test
+    void nadaMaisENoFimDoCombate() {
+        FichaRpg f = new FichaRpg("T");
+        f.setFrutaDoDiaboAtiva(true);
+        f.setFrutaImuneNestaRodada(true);
+        f.setEmCombate(true);
+
+        f.resetarEfeitosCombate();
+
+        assertEquals(6, f.upgradeDadoFruta(6));
+        assertEquals(0, f.ladoDadoExtraFruta(1));
+    }
+
+    @Test
     void nenhumaRondaDeCombateNaoAtingeOJogador() {
         FichaRpg f = new FichaRpg("T");
         f.setVidaMaxima(30);

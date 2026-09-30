@@ -449,6 +449,12 @@ public class FichaRpg implements java.io.Serializable {
     public boolean isEmCombate() { return emCombate; }
     public void setEmCombate(boolean v) { this.emCombate = v; }
 
+    public int ladoDadoExtraFruta(int quantidadeBase) {
+        if (!frutaDoDiaboAtiva) return 0;
+        int[] escada = {4, 6, 8, 10, 12};
+        return escada[(quantidadeBase - 1) % escada.length];
+    }
+
     public int upgradeDadoFruta(int dado) {
         if (!frutaDoDiaboAtiva) return dado;
         switch (dado) {
