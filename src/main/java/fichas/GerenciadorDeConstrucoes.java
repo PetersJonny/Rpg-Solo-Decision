@@ -157,6 +157,12 @@ public class GerenciadorDeConstrucoes {
     }
     public static String descreverFome(FichaRpg ficha) {
 
+        if (ficha.isCheio()) {
+            return "CHEIO (" + ficha.getRefeicoesHoje() + "/" + FichaRpg.REFEICOES_POR_DIA + " refeições hoje | não cabe mais nada)";
+        }
+        if (ficha.refeicoesHoje > 0) {
+            return "Saciado (" + ficha.getRefeicoesHoje() + "/" + FichaRpg.REFEICOES_POR_DIA + " refeições hoje)";
+        }
         if (ficha.enjoado) {
             return "FAMINTO? " + ficha.getDiasSemComer() + " dias sem comer | ENJOADO (-" + ficha.penalidadeEnjoado + " em testes de Destreza e Força)";
         }
@@ -176,6 +182,7 @@ public class GerenciadorDeConstrucoes {
         }
         ficha.comeuHoje = false;
         ficha.frutasComidasHoje = 0;
+        ficha.refeicoesHoje = 0;
 
     }
     public static int aplicarPerdaVidaPorFome(FichaRpg ficha) {
@@ -187,7 +194,8 @@ public class GerenciadorDeConstrucoes {
 
     }
     public static void comerComidaBoa(FichaRpg ficha) {
-
+        if (ficha.isCheio()) return;
+        ficha.refeicoesHoje++;
         ficha.diasSemComer = 0;
         ficha.comeuHoje = true;
         ficha.enjoado = false;
@@ -201,7 +209,8 @@ public class GerenciadorDeConstrucoes {
 
     }
     public static void comerCarnePodre(FichaRpg ficha) {
-
+        if (ficha.isCheio()) return;
+        ficha.refeicoesHoje++;
         int penalidadeAnterior = ficha.getPenalidadeFome();
         ficha.diasSemComer = 0;
         ficha.comeuHoje = true;
@@ -210,6 +219,7 @@ public class GerenciadorDeConstrucoes {
 
     }
     public static boolean comerCarneCrua(FichaRpg ficha) {
+        if (ficha.isCheio()) return false;
 
         if (MecanicasRpg.rolarDado(100) <= FichaRpg.CHANCE_CARNE_ESTRAGADA) {
             ficha.comerCarnePodre();
@@ -221,6 +231,7 @@ public class GerenciadorDeConstrucoes {
     }
     public static void comerFrutas(FichaRpg ficha, int qtd) {
 
+        if (ficha.isCheio()) return;
         ficha.frutasComidasHoje += Math.max(1, qtd);
         if (ficha.frutasComidasHoje >= FichaRpg.FRUTAS_PARA_REFEICAO) {
             ficha.comerComidaBoa();

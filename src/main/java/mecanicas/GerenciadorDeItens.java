@@ -26,8 +26,29 @@ public class GerenciadorDeItens {
         return !item.getNome().equals("Flechas");
     }
 
+    private static final List<String> COMIDAS = List.of(
+            "Frutas", "Maçã", "Pera", "Ameixa", "Uva", "Morango Selvagem", "Figo Seco",
+            "Carne de Lobo", "Carne de Urso", "Carne de Lobo Cozida", "Carne de Urso Cozida", "Carne Podre",
+            "Sopa do Vilarejo", "Pão Quente com Manteiga", "Ovos Mexidos", "Caldo de Lobo",
+            "Peixe Assado", "Estofado de Urso", "Torta de Frutas"
+    );
+
+    public static boolean ehComida(String nome) {
+        return COMIDAS.contains(nome);
+    }
+
+    private static boolean barrarComidaSeCheio(FichaRpg ficha, String nome) {
+        if (!ehComida(nome) || !ficha.isCheio()) return false;
+        Interface.MostrarMensagem("\nVocê está " + AMARELO + "cheio" + RESET + ". Já comeu " + ficha.getRefeicoesHoje() + " refeições hoje e não cabe mais nada.");
+        Interface.Pausa(2200);
+        Interface.MostrarMensagem("\n(A comida ficou no inventário. Espere virar o dia para comer de novo.)");
+        Interface.Pausa(1800);
+        return true;
+    }
+
     public static boolean usarItemForaDeCombate(FichaRpg ficha, ItemRpg item, int quantidade) {
         if (item == null || !ehItemConsumivel(item)) return false;
+        if (barrarComidaSeCheio(ficha, item.getNome())) return false;
         int qtd = Math.min(Math.max(1, quantidade), item.getQuantidade());
         String nome = item.getNome();
 
@@ -397,6 +418,7 @@ public class GerenciadorDeItens {
             Interface.Pausa(1500);
             return;
         }
+        if (barrarComidaSeCheio(ficha, itemEscolhido.getNome())) return;
 
         if (itemEscolhido.getNome().equals("Poção de Mana")) {
             ficha.setManaPersonagem(ficha.getManaPersonagem() + 5);

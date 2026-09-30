@@ -80,8 +80,10 @@ public class FichaRpg implements java.io.Serializable {
     boolean enjoado = false;
     int penalidadeEnjoado = 0;
     int frutasComidasHoje = 0;
+    int refeicoesHoje = 0;
     static final int FRUTAS_PARA_REFEICAO = 3;
     static final int CHANCE_CARNE_ESTRAGADA = 30;
+    static final int REFEICOES_POR_DIA = 3;
 
         companheiros.Companheiro companheiro = null;
 
@@ -536,6 +538,9 @@ public class FichaRpg implements java.io.Serializable {
                 public void comerFrutas(int qtd) { GerenciadorDeConstrucoes.comerFrutas(this, qtd); }
 
     public int getFrutasComidasHoje() { return frutasComidasHoje; }
+    public int getRefeicoesHoje() { return refeicoesHoje; }
+    public boolean isCheio() { return refeicoesHoje >= REFEICOES_POR_DIA; }
+    public int getRefeicoesRestantesHoje() { return Math.max(0, REFEICOES_POR_DIA - refeicoesHoje); }
 
             public boolean montarCabana() { return GerenciadorDeConstrucoes.montarCabana(this); }
 

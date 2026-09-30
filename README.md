@@ -61,6 +61,15 @@ Você distribui **6 pontos** entre os seis atributos. Depois escolhe a classe (M
 
 Depois de **2 noites sem dormir**, o personagem fica **cansado**: **−1 em todos os testes de atributo** (iniciativa, presença, fuga, intelecto, etc.). Não afeta vida, mana ou dano. Dormir na cabana remove o cansaço.
 
+### Fome e saciedade
+
+- A fome é contada em **dias sem comer** e zera assim que você come qualquer coisa que sacie.
+- **1 dia sem comer:** −1 em testes de Destreza e Força. **5 dias ou mais:** além da penalidade, o personagem **perde vida a cada período** (o valor cresce com os dias).
+- **Comida estragada** (Carne Podre, ou carne crua que estragou) sacia a fome, mas deixa **enjoado**, com −1 em testes de Destreza e Força até o próximo dia.
+- **Frutas**: **3 frutas** (ou a opção "Frutas", que junta várias) contam como **1 refeição**.
+- **Saciedade (estar cheio):** cada refeição que sacia a fome conta **1 de 3 por dia**. Ao comer a **terceira**, o personagem fica **cheio** e **não consegue comer mais nada** — o jogo recusa o uso de qualquer comida e **a comida permanece no inventário**. A saciedade zera ao virar o dia. O menu da floresta e o do vilarejo mostram o estado: `Saciado (1/3 refeições hoje)` e `CHEIO (3/3 refeições hoje | não cabe mais nada)`.
+- **Dormir** divide a cura pela metade quando você comeu no dia (`vida máxima / 2`) e usa a divisão completa quando não comeu (`vida máxima / 3`).
+
 ### Dificuldade
 
 - **Normal** — ao morrer, os saves do personagem são mantidos.
