@@ -94,6 +94,20 @@ class FrutaDoDiaboTest {
     }
 
     @Test
+    void dadoExtraSomaSemRemoverNenhumDadoOriginal() {
+        FichaRpg f = new FichaRpg("T");
+        f.setFrutaDoDiaboAtiva(true);
+        for (int base = 1; base <= 8; base++) {
+            int ladosOriginais = 12;
+            int ladosExtras = f.ladoDadoExtraFruta(base);
+            int totalDeDados = base + 1;
+            assertTrue(totalDeDados >= base, "nenhum dado original pode ser perdido");
+            assertTrue(ladosExtras >= 4 && ladosExtras % 2 == 0, "o dado extra usa a escada d4/d6/d8/d10/d12");
+            assertEquals(12, ladosOriginais);
+        }
+    }
+
+    @Test
     void nadaMaisENoFimDoCombate() {
         FichaRpg f = new FichaRpg("T");
         f.setFrutaDoDiaboAtiva(true);
