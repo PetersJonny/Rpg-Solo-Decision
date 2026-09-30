@@ -387,7 +387,7 @@ Cada construção fica **ancorada no ponto da mata onde foi montada** — na tri
 - Ao entrar, a interface vira sobre o labirinto (apenas **ver a ficha** continua disponível).
 - **O caminho é randomizado na descoberta e salvo na ficha** — ao voltar depois, continua exatamente de onde parou (células visitadas permanecem iluminadas).
 - **Navegação:** a tela mostra apenas a grade ao redor do personagem — as **laterais/paredes** onde você está (`##`) e os corredores vizinhos (`.`) — mais o que **já foi percorrido** (iluminado `·`) e sua posição (`@`). O resto do labirinto fica escuro, inclusive o centro (visível apenas enquanto se explora). Movimento via **W/A/S/D ou as setas do teclado** (↑ ↓ ← →) — executa no momento da tecla, **sem Enter**; qualquer outra tecla (número, caractere etc.) não faz nada. Uma câmera acompanha o personagem para que o labirinto (grade 31x31, bem maior) caiba na tela.
-- Há **apenas uma entrada**. **Casas especiais:** em algumas casas aleatórias há **encontros** (8 por labirinto) e em outras há **recompensas** (6 por labirinto) — cada casa especial é sorteada na geração e ativa uma única vez. **Encontros:** 40% Esqueleto, 40% Zumbi e 20% Baú. **Recompensas:** ao achar, o jogo pergunta **"quer pegar?"** — escolher **sim** sorteia: **80%** ouro (7–19), **17%** uma arma sorteada entre as armas do vendedor e **3%** um dos **tesouros raros** (Olho Demoníaco, Espada Majestral e Coroa do Rei — cada um só cai **uma vez** por ficha; detalhes no spoiler abaixo) e mostra **"Você pegou X"**; escolher **não** consuma a casa e deixa a recompensa para trás. Ao perceber um monstro, dá para **Lutar** ou **Tentar Fugir** com um **Teste de Destreza** (a dificuldade é por criatura — veja o spoiler abaixo). Ao pisar na **primeira casa do centro**, o **Minotauro** enfrenta você — **a porta se fecha e não dá para fugir** do combate. **Vencendo o Minotauro**, o labirinto **desmorona**: o jogador foge correndo, volta à floresta e o labirinto se **fecha para sempre** — a opção **Labirinto** some do menu.
+- Há **apenas uma entrada**. **Casas especiais:** em algumas casas aleatórias há **encontros** (8 por labirinto) e em outras há **recompensas** (6 por labirinto) — cada casa especial é sorteada na geração e ativa uma única vez. **Encontros:** 40% Esqueleto, 40% Zumbi e 20% Baú. **Recompensas:** ao achar, o jogo pergunta **"quer pegar?"** — escolher **sim** sorteia: **80%** ouro (7–19), **17%** uma arma sorteada entre as armas do vendedor e **3%** um dos **tesouros raros** (Olho Demoníaco, Espada Majestral e Coroa do Rei — cada um só cai **uma vez** por ficha; detalhes no spoiler abaixo) e mostra **"Você pegou X"**; escolher **não** faz a casa ser consumida e a recompensa é **perdida** — não dá para voltar para pegá-la. Ao perceber um monstro, dá para **Lutar** ou **Tentar Fugir** com um **Teste de Destreza** (a dificuldade é por criatura — veja o spoiler abaixo). Ao pisar na **primeira casa do centro**, o **Minotauro** enfrenta você — **a porta se fecha e não dá para fugir** do combate. **Vencendo o Minotauro**, o labirinto **desmorona**: o jogador foge correndo, volta à floresta e o labirinto se **fecha para sempre** — a opção **Labirinto** some do menu.
   <details>
   <summary>⚠️ <b>Spoiler: o Minotauro (chefe do centro)</b> — clique para revelar</summary>
 
@@ -396,7 +396,7 @@ Cada construção fica **ancorada no ponto da mata onde foi montada** — na tri
   - **Minotauro** (Nível 5): **150** de vida, **15** de defesa, **+5** de iniciativa e **+4** de bônus de ataque; ataques comuns de **Garras 2d6** e **Chifre 1d12**.
   - **Investida (20% dos ataques):** o Minotauro baixa a cabeça e investe. Você rola um **Teste de Destreza** contra o **teste de ataque** dele (empate favorece você). **Passou:** ele bate de frente na parede e sofre **25** de dano. **Falhou:** ele te atinge em cheio e você sofre **2d10** de dano.
   - **A porta se fecha:** não há como fugir — a opção de fuga fica bloqueada até a vitória (se o **Rei das Criaturas** ordenar que ele fuja, ele se retira e reaparece com a vida cheia numa próxima tentativa).
-  - Recompensas: **500 XP**, **Chifre de Minotauro** (50% de cair, 1–2, vale **70g** em troca) e a **recompensa exclusiva da classe**:
+  - Recompensas: **500 XP**, **Chifre de Minotauro** (50% de cair, 1–2, vale **150g** no total — o vendedor paga **105g** por unidade) e a **recompensa exclusiva da classe**:
     - **Guerreiro:** a **Espada do Minotauro** — **2d10 + Força**, com **30%** de chance de **atacar de novo** após cada golpe.
     - **Mago:** o **Cajado de Sangue** — **1d6 + Força** e **+1 dado de dano** em todas as suas magias (conta como Cajado para conjurar).
     - **Healer:** a habilidade passiva **Curandeiro Combatente** — ao atacar, cada **1 de mana** (máximo = seu nível) compra **1 ataque extra**, e **todo ataque que acerta cura metade do dano causado**.
@@ -407,34 +407,31 @@ Cada construção fica **ancorada no ponto da mata onde foi montada** — na tri
 
 ## Vendedor
 
-O **vendedor ambulante** aparece em 10% das explorações. O estoque é sorteado a cada visita (5 itens): itens do catálogo geral + itens exclusivos da sua classe.
+O **vendedor ambulante** aparece em 10% das explorações. O estoque é sorteado a cada visita entre os **14 itens do catálogo geral** (5 itens por visita). O vendedor **não** vende armas, armaduras ou itens exclusivos de classe — esses ficam com o **ferreiro**.
 
 ### Preços de compra
 
 | Item | Preço | Item | Preço |
 |---|---|---|---|
-| Faca | 20 | Espada (Guerreiro) | 40 |
-| Machado | 35 | Espada Pesada (Guerreiro) | 70 |
-| Machadinha | 20 | Machado de Guerra (Guerreiro) | 90 |
-| Martelo | 50 | Martelo de Guerra (Guerreiro) | 90 |
-| Mangual | 35 | Armadura Pesada (Guerreiro) | 100 |
-| Arco | 40 | Bisturi (Healer) | 25 |
-| Flechas | 3 / un. | Arco Refinado (Healer) | 60 |
-| Lança | 50 | Nunchako (Healer) | 45 |
-| Armadura Leve | 60 | Foice (Healer) | 55 |
-| Poção de Mana | 15 | Cajado (Mago) | 30 |
-| Kit Médico | 20 | Chapéu Mágico (Mago) | 50 |
-| Poção Grande de Mana | 25 | Pequeno Grimório (Mago) | 60 |
-| Madeira / Folha / Pedra | 6 / 4 / 5 | Frutas | 5 |
+| Faca | 30 | Poção de Mana | 18 |
+| Machado | 55 | Kit Médico | 25 |
+| Machadinha | 30 | Madeira | 6 |
+| Martelo | 80 | Folha | 4 |
+| Mangual | 55 | Pedra | 5 |
+| Arco | 65 | Frutas | 5 |
+| Flechas | 5 / un. | | |
+| Lança | 80 | | |
 
 ### Regras de venda
 
-- O vendedor compra **qualquer item** seu por **70% do valor original** — o preço da loja para os produtos dele e o valor cheio de raridade para drops/tesouros (Osso cheio 23 → **16**, Dente de Urso 14 → **9**, Chifre de Minotauro 100 → **70**, etc.).
+- O vendedor compra **qualquer item** seu por **70% do valor original** — o preço da loja para os produtos dele e o valor cheio de raridade para drops/tesouros (Osso 23 → **16**, Dente de Urso 14 → **9**, Chifre de Minotauro 150 → **105**, etc.).
+- O **ferreiro** e a **alfaiataria** pagam um pouco mais: **80%** do valor cheio.
 
-### Itens mágicos do Mago
+### Onde ficam os itens exclusivos de classe
 
-- **Chapéu Mágico** (50g): **+3 de dano** em todas as suas magias.
-- **Pequeno Grimório** (60g): magias pagas custam **1 de mana a menos** (mínimo 1).
+Espada, Espada Pesada, Machado de Guerra, Martelo de Guerra, Armadura Pesada (Guerreiro), Bisturi, Arco Refinado, Nunchako, Foice (Healer) e Cajado (Mago) são vendidos **apenas pelo ferreiro**, com restrição de classe.
+
+> **Lacuna conhecida:** o **Chapéu Mágico** (+3 de dano em todas as magias), o **Pequeno Grimório** (magias pagas custam 1 de mana a menos, mínimo 1) e a **Poção Grande de Mana** existem no código e têm efeitos implementados, mas **não têm nenhuma fonte de obtenção no jogo** — não estão no estoque do vendedor.
 
 ---
 
