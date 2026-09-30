@@ -134,4 +134,16 @@ class MissaoNetaPerdidaTest {
         f.setPresencaNetaPassou(true);
         assertTrue(f.isPresencaNetaPassou());
     }
+
+    @Test
+    void aceitouNoDia10MorreNoDia17() throws Exception {
+        FichaRpg f = new FichaRpg("Teste");
+        f.setDiaAceitouNeta(10);
+        for (int dia = 10; dia <= 16; dia++) {
+            setDiaAtual(f, dia);
+            assertFalse(f.isPrazoNetaEstourado(), "ainda viva no dia " + dia);
+        }
+        setDiaAtual(f, 17);
+        assertTrue(f.isPrazoNetaEstourado());
+    }
 }
