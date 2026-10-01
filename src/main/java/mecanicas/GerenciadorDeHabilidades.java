@@ -224,9 +224,9 @@ public class GerenciadorDeHabilidades {
             Interface.Pausa(1500);
             return true;
         }
-        ficha.setSemiDeusVidaOriginalMax(ficha.getVidaMaxima());
-        int bonus = ficha.getVidaMaxima() / 2;
-        ficha.setVidaMaxima(ficha.getVidaMaxima() + bonus);
+        ficha.setSemiDeusVidaOriginalMax(ficha.getVidaMaximaBase());
+        int bonus = ficha.getVidaMaximaBase() / 2;
+        ficha.setVidaMaxima(ficha.getVidaMaximaBase() + bonus);
         ficha.setVidaPersonagem(ficha.getVidaMaxima());
         ficha.setManaPersonagem(0);
         ficha.setSemiDeusAtivo(true);

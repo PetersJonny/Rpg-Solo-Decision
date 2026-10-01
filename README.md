@@ -353,7 +353,28 @@ Dizem que quem caminha por tempo suficiente, adentrando a mata em busca de algo 
 
 ### Vilarejo (fora da floresta)
 
-- O menu do vilarejo permite **Ver ficha**, **Olhar em volta** (por enquanto não há nada para descobrir lá), **Voltar para a floresta** (refaz todo o caminho de volta até as construções), **Salvar Jogo** e **Encerrar jogo**.
+- O menu do vilarejo permite **Ver ficha**, **Olhar em volta**, **ir à taverna**, **ir ao ferreiro**, **ir à Casa do Chapéu Mágico**, **Ver missões em andamento**, **Voltar para a floresta** (refaz todo o caminho de volta até as construções), **Salvar Jogo** e **Encerrar jogo**.
+- **Cada visita a uma loja gasta 1 período do dia** (taverna, ferreiro, alfaiataria, barraca de frutas e Chapéu Mágico). O período é cobrado ao sair da loja, então comprar vários itens no mesmo dia só custa 1 período.
+
+### Casa do Chapéu Mágico
+
+Loja da Dona Maga, fica **no começo da vila, ao lado do ferreiro**. Como o ferreiro, só vende **itens mágicos** — e também só **compra** itens mágicos, pagando 80% do valor.
+
+- O estoque muda a cada dia: **5 itens sorteados**.
+- **Não-consumível: 1 unidade cada.** Depois de comprar, aquele item fica esgotado para você (a loja não vende duplicata).
+- **Consumível: entre 1 e 5 unidades** do mesmo item, e o estoque só renova no dia seguinte.
+
+| Item | Preço | Efeito |
+|---|---|---|
+| Manto do Astrólogo | 150 | +1 em todos os testes de Intelecto |
+| Gema de Mana | 100 | +10 de mana máxima (a mana atual sobe junto) |
+| Amuleto do Coração | 110 | +10 de vida máxima (a vida atual sobe junto) |
+| Ampulheta de Prata | 80 | +1 de Iniciativa |
+| Luvas de Prata | 90 | Ataques com arma tiram **1 da Defesa do alvo**. Não acumula por ataque nem por par de luvas |
+| Pó de Midas | 70 | +10% na chance de encontrar itens e ouro nas criaturas |
+| Gota de Veneno | 40 | Ver abaixo |
+
+**Gota de Veneno** (1 uso): no combate, a opção **"Aplicar Gota de Veneno na arma"** gasta a rodada inteira e consome a gota. O veneno **só dura até o seu próximo turno**: o próximo ataque **com arma** que acertar deixa o alvo envenenado, causando **1d4 de dano por rodada até o fim do combate**. Se o ataque errar, o veneno seca e é preciso outra gota. Não funciona com magia.
 
 ---
 

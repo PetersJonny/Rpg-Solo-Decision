@@ -39,6 +39,11 @@ public class MotorDeCombate {
         Interface.Pausa(2500);
 
         int bonusIniciativaJogador = bonusIniciativaExtra;
+        if (ficha.temItem("Ampulheta de Prata")) {
+            bonusIniciativaJogador++;
+            Interface.MostrarMensagem("(Ampulheta de Prata! +1 de Iniciativa)");
+            Interface.Pausa(1500);
+        }
         Interface.pressionarParaTeste("Destreza");
         int dadoJogador = MecanicasRpg.rolarDado(20);
         int iniciativaJogador = dadoJogador + ficha.getDestrezaTeste() + bonusIniciativaJogador;

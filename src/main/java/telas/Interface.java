@@ -211,6 +211,7 @@ public class Interface {
 
                 public static int[] opcoesMenuVilarejo(FichaRpg ficha) {
         int num = 5;
+        int opChapeu = num++;
         int opMissoes = num++;
         int opAlfaiataria = -1, opBarraca = -1, opCaverna = -1;
         if (ficha.isAlfaiatariaConhecida()) opAlfaiataria = num++;
@@ -219,7 +220,7 @@ public class Interface {
         int opVoltar = num++;
         int opSalvar = num++;
         int opEncerrar = num++;
-        return new int[]{opMissoes, opAlfaiataria, opBarraca, opCaverna, opVoltar, opSalvar, opEncerrar};
+        return new int[]{opMissoes, opAlfaiataria, opBarraca, opCaverna, opVoltar, opSalvar, opEncerrar, opChapeu};
     }
 
             public static int MenuVilarejo(FichaRpg ficha) {
@@ -244,6 +245,7 @@ public class Interface {
         System.out.println("  2. Olhar em volta");
         System.out.println("  3. Ir à " + CIANO + "taverna" + RESET + " (comida + quadro de missões)");
         System.out.println("  4. Ir ao " + CIANO + "ferreiro" + RESET + " (armas e armaduras)");
+        System.out.println("  " + ops[7] + ". Ir à " + CIANO + "Casa do Chapéu Mágico" + RESET + " (itens mágicos)");
         System.out.println("  " + ops[0] + ". Ver missões em andamento (" + ativas + ")");
         if (ops[1] > 0) {
             System.out.println("  " + ops[1] + ". Ir à " + CIANO + "alfaiataria" + RESET + " (centro do comércio)");

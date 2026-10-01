@@ -44,6 +44,7 @@ public class Criatura implements java.io.Serializable {
     private int chanceSangramento;
 
     private boolean sangrando;
+    private boolean envenenado;
 
     private boolean desertaEmGrupo;
 
@@ -348,6 +349,8 @@ public class Criatura implements java.io.Serializable {
 
     public boolean isSangrando() { return sangrando; }
     public void setSangrando(boolean sangrando) { this.sangrando = sangrando; }
+    public boolean isEnvenenado() { return envenenado; }
+    public void setEnvenenado(boolean envenenado) { this.envenenado = envenenado; }
 
     public void configurarSangramento(String nomeAtaque, int chance) {
         this.ataqueSangrante = nomeAtaque;
@@ -382,8 +385,13 @@ public class Criatura implements java.io.Serializable {
         Interface.Pausa(1500);
     }
 
+    public static int bonusSortePublico(FichaRpg ficha) {
+        return ficha.temItem("Pó de Midas") ? 10 : 0;
+    }
+
     public void processarDrops(FichaRpg ficha) {
-        if (chanceOuro > 0 && MecanicasRpg.rolarDado(100) <= chanceOuro) {
+        int bonusSorte = bonusSortePublico(ficha);
+        if (chanceOuro > 0 && MecanicasRpg.rolarDado(100) <= chanceOuro + bonusSorte) {
             int ouro = MecanicasRpg.rolarEntre(ouroMin, ouroMax);
             ficha.adicionarOuro(ouro);
             Interface.MostrarMensagem("-> Você encontrou " + ouro + " moedas de ouro!");
@@ -391,7 +399,7 @@ public class Criatura implements java.io.Serializable {
         }
 
         for (Drop drop : drops) {
-            if (MecanicasRpg.rolarDado(100) <= drop.chance) {
+            if (MecanicasRpg.rolarDado(100) <= Math.min(100, drop.chance + bonusSorte)) {
                 int qtd = MecanicasRpg.rolarEntre(drop.qtdMin, drop.qtdMax);
                 ItemRpg item = criarItemDrop(drop.nomeItem);
                 if (item != null) {

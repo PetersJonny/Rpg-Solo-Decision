@@ -90,6 +90,18 @@ public class GerenciadorDeAtaque {
         Interface.Pausa(1500);
     }
 
+    private static int defesaAlvoContraLuvas(FichaRpg ficha, Criatura inimigo) {
+        int defesa = inimigo.getDefesa();
+        if (ficha.temItem("Luvas de Prata")) {
+            defesa = Math.max(0, defesa - 1);
+        }
+        return defesa;
+    }
+
+    public static int defesaAlvoContraLuvasPublico(FichaRpg ficha, Criatura inimigo) {
+        return defesaAlvoContraLuvas(ficha, inimigo);
+    }
+
     private static int ataqueComArmaUnico(FichaRpg ficha, List<Criatura> inimigos, int alvoIndex, int armaIndex, boolean golpeExtra) {
         if (alvoIndex < 0 || alvoIndex >= inimigos.size()) return 0;
         Criatura inimigo = inimigos.get(alvoIndex);
@@ -212,8 +224,9 @@ public class GerenciadorDeAtaque {
             }
             Interface.Pausa(2000);
 
-            if (critico || totalAtaque >= inimigo.getDefesa()) {
-                Interface.MostrarMensagem("-> Acertou! (defesa do alvo: " + inimigo.getDefesa() + ")" + (critico ? " CRÍTICO sempre acerta." : ""));
+            int defesaAlvo = defesaAlvoContraLuvas(ficha, inimigo);
+            if (critico || totalAtaque >= defesaAlvo) {
+                Interface.MostrarMensagem("-> Acertou! (defesa do alvo: " + defesaAlvo + ")" + (critico ? " CRÍTICO sempre acerta." : ""));
                 Interface.Pausa(1500);
 
                 int dadosTotais = qtyDados * (critico ? 2 : 1);
@@ -266,7 +279,7 @@ public class GerenciadorDeAtaque {
                     }
                 }
             } else {
-                Interface.MostrarMensagem("-> Errou! (defesa do alvo: " + inimigo.getDefesa() + ")");
+                Interface.MostrarMensagem("-> Errou! (defesa do alvo: " + defesaAlvo + ")");
                 Interface.Pausa(1500);
             }
 
@@ -295,6 +308,12 @@ public class GerenciadorDeAtaque {
                 Interface.Pausa(1500);
             }
             aplicarDanoCriatura(inimigo, dano);
+            if (ficha.isArmaEnvenenada() && inimigo.getVida() > 0 && !inimigo.isEnvenenado()) {
+                inimigo.setEnvenenado(true);
+                ficha.setArmaEnvenenada(false);
+                Interface.MostrarMensagem("(A arma untada envenena " + inimigo.getNome() + "! 1d4 de dano por rodada até o fim do combate)");
+                Interface.Pausa(1800);
+            }
             if ("Cutelo".equals(nomeArmaUsada) && inimigo.getVida() > 0 && !inimigo.isSangrando()) {
                 inimigo.setSangrando(true);
                 Interface.MostrarMensagem("(O Cutelo! O corte de " + inimigo.getNome() + " não para de sangrar: 1d6 de dano por rodada)");

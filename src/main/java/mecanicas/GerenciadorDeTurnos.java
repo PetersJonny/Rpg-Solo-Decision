@@ -62,6 +62,11 @@ public class GerenciadorDeTurnos {
         while ((ficha.getVidaPersonagem() > 0
                 || (ficha.getCompanheiro() != null && ficha.getCompanheiro().getFicha().getVidaPersonagem() > 0))
                 && !inimigosVivos(inimigos).isEmpty()) {
+            if (ficha.getRodadaVenenoNaArma() == 1) {
+                Interface.MostrarMensagem("\nO veneno da sua arma secou: " + AMARELO + "ele só dura até o seu próximo turno." + RESET);
+                Interface.Pausa(1800);
+            }
+            ficha.tickVenenoNaArma();
             ficha.setFrutaImuneNestaRodada(false);
             for (Criatura c : inimigos) {
                 if (c.getVida() > 0 && c.isSangrando() && !c.isFugiu()) {
@@ -69,6 +74,12 @@ public class GerenciadorDeTurnos {
                     c.setVida(c.getVida() - dano);
                     Interface.MostrarMensagem("\n" + c.getNome() + " sangra profusamente! Dano: " + dano + " (Vida: " + Math.max(0, c.getVida()) + ")");
                     Interface.Pausa(1500);
+                }
+                if (c.getVida() > 0 && c.isEnvenenado() && !c.isFugiu()) {
+                    int danoVeneno = MecanicasRpg.rolarDado(4);
+                    c.setVida(c.getVida() - danoVeneno);
+                    Interface.MostrarMensagem("\nO veneno age nas feridas de " + c.getNome() + "! Dano: " + danoVeneno + " (1d4 por rodada) (Vida: " + Math.max(0, c.getVida()) + ")");
+                    Interface.Pausa(1800);
                 }
             }
             if (inimigosVivos(inimigos).isEmpty()) break;
@@ -294,6 +305,14 @@ public class GerenciadorDeTurnos {
         }
         ficha.setFrutaDoDiaboAtiva(false);
         ficha.setFrutaImuneNestaRodada(false);
+        if (ficha.isArmaEnvenenada()) {
+            Interface.MostrarMensagem("\nO veneno da sua arma se seca e some. Você precisa de mais " + Interface.AMARELO + "Gota de Veneno" + Interface.RESET + ".");
+            Interface.Pausa(2000);
+            ficha.setArmaEnvenenada(false);
+        }
+        for (Criatura c : inimigos) {
+            c.setEnvenenado(false);
+        }
         ficha.setEmCombate(false);
         ficha.setInfectado(false);
                     ficha.setPactoMortalAtivo(false);

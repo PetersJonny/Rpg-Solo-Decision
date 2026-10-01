@@ -85,6 +85,12 @@ public class FichaRpg implements java.io.Serializable {
     static final int CHANCE_CARNE_ESTRAGADA = 30;
     static final int REFEICOES_POR_DIA = 3;
 
+    boolean armaEnvenenada = false;
+    int rodadaVenenoNaArma = 0;
+    int estoqueLojaDia = 0;
+    Map<String, Integer> estoqueConsumiveisLoja = new HashMap<>();
+    boolean chapeuMagicoConhecido = false;
+
         companheiros.Companheiro companheiro = null;
 
         private ModoDificuldade modoDificuldade = ModoDificuldade.NORMAL;
@@ -228,14 +234,20 @@ public class FichaRpg implements java.io.Serializable {
     public boolean isFadaEncontrada() { return fadaEncontrada; }
     public void setFadaEncontrada(boolean fadaEncontrada) { this.fadaEncontrada = fadaEncontrada; }
 
-        public void setVidaPersonagem(int vida) { this.vidaPersonagem = Math.max(0, Math.min(vida, vidaMaxima)); }
-    public void setManaPersonagem(int mana) { this.manaPersonagem = Math.max(0, Math.min(mana, manaMaxima)); }
+        public void setVidaPersonagem(int vida) { this.vidaPersonagem = Math.max(0, Math.min(vida, getVidaMaxima())); }
+    public void setManaPersonagem(int mana) { this.manaPersonagem = Math.max(0, Math.min(mana, getManaMaxima())); }
 
-        public int getVidaMaxima() { return vidaMaxima; }
-    public int getManaMaxima() { return manaMaxima; }
+        public int getVidaMaxima() { return vidaMaxima + getBonusVidaMaxima(); }
+    public int getManaMaxima() { return manaMaxima + getBonusManaMaxima(); }
+
+        public int getVidaMaximaBase() { return vidaMaxima; }
+    public int getManaMaximaBase() { return manaMaxima; }
 
         public void setVidaMaxima(int vidaMaxima) { this.vidaMaxima = vidaMaxima; }
     public void setManaMaxima(int manaMaxima) { this.manaMaxima = manaMaxima; }
+
+        public int getBonusVidaMaxima() { return temItem("Amuleto do Coração") ? 10 : 0; }
+    public int getBonusManaMaxima() { return temItem("Gema de Mana") ? 10 : 0; }
 
         public void adicionarOuro(int quantidade) { GerenciadorDeOuroEDeslocamento.adicionarOuro(this, quantidade); }
 
@@ -409,7 +421,25 @@ public class FichaRpg implements java.io.Serializable {
         in.defaultReadObject();
         if (missoesAceitas == null) missoesAceitas = new ArrayList<>();
         if (missoesNovidades == null) missoesNovidades = new HashMap<>();
+        if (estoqueConsumiveisLoja == null) estoqueConsumiveisLoja = new HashMap<>();
     }
+    public boolean isArmaEnvenenada() { return armaEnvenenada; }
+    public void setArmaEnvenenada(boolean v) { this.armaEnvenenada = v; this.rodadaVenenoNaArma = v ? 2 : 0; }
+    public void tickVenenoNaArma() {
+        if (!armaEnvenenada) return;
+        rodadaVenenoNaArma--;
+        if (rodadaVenenoNaArma <= 0) {
+            armaEnvenenada = false;
+            rodadaVenenoNaArma = 0;
+        }
+    }
+    public int getRodadaVenenoNaArma() { return rodadaVenenoNaArma; }
+    public int getEstoqueLojaDia() { return estoqueLojaDia; }
+    public void setEstoqueLojaDia(int dia) { this.estoqueLojaDia = dia; }
+    public Map<String, Integer> getEstoqueConsumiveisLoja() { return estoqueConsumiveisLoja; }
+    public void setEstoqueConsumiveisLoja(Map<String, Integer> m) { this.estoqueConsumiveisLoja = m; }
+    public boolean isChapeuMagicoConhecido() { return chapeuMagicoConhecido; }
+    public void setChapeuMagicoConhecido(boolean v) { this.chapeuMagicoConhecido = v; }
     public boolean isAlfaiatariaConhecida() { return alfaiatariaConhecida; }
     public void setAlfaiatariaConhecida(boolean alfaiatariaConhecida) { this.alfaiatariaConhecida = alfaiatariaConhecida; }
     public boolean isCaveConhecida() { return caveConhecida; }
@@ -420,6 +450,7 @@ public class FichaRpg implements java.io.Serializable {
     public void setFilhaEncontrada(boolean filhaEncontrada) { this.filhaEncontrada = filhaEncontrada; }
     public boolean isNetaEncontrada() { return netaEncontrada; }
     public void setNetaEncontrada(boolean netaEncontrada) { this.netaEncontrada = netaEncontrada; }
+    public void setDiaAtual(int diaAtual) { this.diaAtual = Math.max(1, diaAtual); }
     public int getDiaAceitouNeta() { return diaAceitouNeta; }
     public void setDiaAceitouNeta(int diaAceitouNeta) { this.diaAceitouNeta = diaAceitouNeta; }
     public boolean isNetaMorta() { return netaMorta; }
@@ -578,7 +609,7 @@ public class FichaRpg implements java.io.Serializable {
     public int getPresencaTeste() { return presenca - (cansado ? 1 : 0) + bonusTestesNoturnos(); }
     public int getSabedoriaTeste() { return sabedoria - (cansado ? 1 : 0) + bonusTestesNoturnos(); }
     public int getForcaTeste() { return getForca() - (cansado ? 1 : 0) - getPenalidadeFome() + bonusTestesNoturnos(); }
-    public int getIntelectoTeste() { return intelecto - (cansado ? 1 : 0) + bonusTestesNoturnos(); }
+    public int getIntelectoTeste() { return intelecto + (temItem("Manto do Astrólogo") ? 1 : 0) - (cansado ? 1 : 0) + bonusTestesNoturnos(); }
     public int getConstituicaoTeste() { return constituicao - (cansado ? 1 : 0) + bonusTestesNoturnos(); }
 
         public void resetarEfeitosCombate() { GerenciadorDeVida.resetarEfeitosCombate(this); }

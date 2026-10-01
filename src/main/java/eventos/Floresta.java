@@ -17,7 +17,7 @@ public class Floresta {
     private static final String VERDE = Interface.VERDE;
     private static final String AMARELO = Interface.AMARELO;
 
-        static void avancarTempoComMensagens(FichaRpg ficha, int unidades) {
+        public static void avancarTempoComMensagens(FichaRpg ficha, int unidades) {
         int vidaAntesFome = ficha.getVidaPersonagem();
         boolean virou = ficha.avancarTempo(unidades);
         int perdaFome = vidaAntesFome - ficha.getVidaPersonagem();

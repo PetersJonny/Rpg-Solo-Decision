@@ -55,8 +55,8 @@ public class GerenciadorDeEvolucao {
             ficha.setSemiDeusVidaOriginalMax(0);
         }
 
-        int bonusVida = ficha.getVidaMaxima() / 2;
-        ficha.setVidaMaxima(ficha.getVidaMaxima() + bonusVida);
+        int bonusVida = ficha.getVidaMaximaBase() / 2;
+        ficha.setVidaMaxima(ficha.getVidaMaximaBase() + bonusVida);
         ficha.setSemiDeusAtivo(true);
         ficha.setDeusAtivo(true);
         if (!temHabilidade(ficha, "Cura Incessante")) {

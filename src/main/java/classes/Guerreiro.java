@@ -46,10 +46,10 @@ public class Guerreiro extends ClasseRpg {
     @Override
     public void aplicarBonusNivel(FichaRpg ficha) {
         int ganhoVida = 5 + ficha.getConstituicao();
-        ficha.setVidaMaxima(ficha.getVidaMaxima() + ganhoVida);
+        ficha.setVidaMaxima(ficha.getVidaMaximaBase() + ganhoVida);
         ficha.setVidaPersonagem(ficha.getVidaPersonagem() + ganhoVida);
         int ganhoMana = 1 + ficha.getPresenca();
-        ficha.setManaMaxima(ficha.getManaMaxima() + ganhoMana);
+        ficha.setManaMaxima(ficha.getManaMaximaBase() + ganhoMana);
         ficha.setManaPersonagem(ficha.getManaPersonagem() + ganhoMana);
     }
 

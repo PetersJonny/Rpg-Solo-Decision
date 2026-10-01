@@ -35,14 +35,27 @@ public class GerenciadorDeAcoes {
             } else {
                 System.out.println("  3. Tentar Fugir");
             }
-            System.out.println("  4. Ver Ficha\n");
-            System.out.println("  Escolha uma opção:");
+            boolean podeVeneno = ficha.temItem("Gota de Veneno") && !ficha.isArmaEnvenenada();
+            int opVerFicha = 4;
+            int opVeneno = -1;
+            if (podeVeneno) {
+                opVeneno = 5;
+            }
+            System.out.println("  4. Ver Ficha");
+            if (opVeneno > 0) {
+                System.out.println("  " + opVeneno + ". Aplicar Gota de Veneno na arma " + AMARELO + "(gasta a rodada)" + RESET);
+            }
+            System.out.println("\n  Escolha uma opção:");
             int escolha = Interface.lerInteiro();
 
-            if (escolha == 4) {
+            if (escolha == opVerFicha) {
                 MenuVisualizacao.MostrarFicha(ficha);
                 Interface.Pausa(1500);
                 continue;
+            }
+
+            if (opVeneno > 0 && escolha == opVeneno) {
+                return new ComandoAplicarVeneno(-1);
             }
 
             if (escolha == 1) {

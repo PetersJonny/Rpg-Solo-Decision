@@ -43,10 +43,10 @@ public class Mago extends ClasseRpg {
     @Override
     public void aplicarBonusNivel(FichaRpg ficha) {
         int ganhoVida = 2 + ficha.getConstituicao();
-        ficha.setVidaMaxima(ficha.getVidaMaxima() + ganhoVida);
+        ficha.setVidaMaxima(ficha.getVidaMaximaBase() + ganhoVida);
         ficha.setVidaPersonagem(ficha.getVidaPersonagem() + ganhoVida);
         int ganhoMana = 3 + ficha.getPresenca();
-        ficha.setManaMaxima(ficha.getManaMaxima() + ganhoMana);
+        ficha.setManaMaxima(ficha.getManaMaximaBase() + ganhoMana);
         ficha.setManaPersonagem(ficha.getManaPersonagem() + ganhoMana);
     }
 

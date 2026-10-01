@@ -30,7 +30,9 @@ public class Vendedor {
             "Bisturi", "Arco Refinado", "Nunchako", "Foice"
     );
     private static final List<String> MAGICO = List.of(
-            "Cajado", "Chapéu Mágico", "Poção Grande de Mana", "Pequeno Grimório"
+            "Cajado", "Chapéu Mágico", "Poção Grande de Mana", "Pequeno Grimório",
+            "Manto do Astrólogo", "Gema de Mana", "Amuleto do Coração", "Ampulheta de Prata",
+            "Luvas de Prata", "Pó de Midas", "Gota de Veneno"
     );
 
         private static final List<String> ARMAS_DO_JOGO = List.of(
@@ -305,6 +307,13 @@ case "Cajado": return 50;
             case "Chapéu Mágico": return 70;
             case "Poção Grande de Mana": return 30;
             case "Pequeno Grimório": return 90;
+            case "Manto do Astrólogo": return 150;
+            case "Gema de Mana": return 100;
+            case "Amuleto do Coração": return 110;
+            case "Ampulheta de Prata": return 80;
+            case "Luvas de Prata": return 90;
+            case "Pó de Midas": return 70;
+            case "Gota de Veneno": return 40;
             case "Capa do Viajante": return 80;
             case "Túnica de Aventureiro": return 90;
             case "Manto do Atirador": return 90;
@@ -434,6 +443,20 @@ switch (nome) {
                 return new ItemRpg("Chapéu Mágico", "Um chapéu encantado que aumenta o dano das suas magias em +3.", 1);
             case "Pequeno Grimório":
                 return new ItemRpg("Pequeno Grimório", "Faz as suas magias custarem 1 de mana a menos.", 1);
+            case "Manto do Astrólogo":
+                return new ItemRpg("Manto do Astrólogo", "Manto de lã azul-escura bordada de constelações. Concede +1 em todos os testes de Intelecto.", 1);
+            case "Gema de Mana":
+                return new ItemRpg("Gema de Mana", "Uma gema azul translúcida que pulsa quando você usa magia. Aumenta sua mana máxima em +10.", 1);
+            case "Amuleto do Coração":
+                return new ItemRpg("Amuleto do Coração", "Um amuleto de bronze com um coração esmaltado de vermelho. Aumenta sua vida máxima em +10.", 1);
+            case "Ampulheta de Prata":
+                return new ItemRpg("Ampulheta de Prata", "Ampulheta encantada que cede sempre a areia um instante antes. Concede +1 de Iniciativa.", 1);
+            case "Luvas de Prata":
+                return new ItemRpg("Luvas de Prata", "Luvas de malha de prata que tiram a firmeza do golpe. Reduzem em 1 a Defesa do alvo dos seus ataques com arma (não acumula).", 1);
+            case "Pó de Midas":
+                return new ItemRpg("Pó de Midas", "Pó dourado que atrai tesouros. Aumenta em 10% a chance de encontrar itens e ouro nas criaturas.", 1);
+            case "Gota de Veneno":
+                return new Consumivel("Gota de Veneno", "Uma gota de veneno negro. Gasta uma rodada inteira para untar sua arma: o próximo ataque que acertar envenena o alvo, causando 1d4 de dano por rodada até o fim do combate.", 1);
             case "Capa do Viajante":
                 return new ItemRpg("Capa do Viajante", "Uma capa grossa de lã para as noites na estrada. Recupera +4 de vida ao dormir.", 1);
             case "Túnica de Aventureiro":

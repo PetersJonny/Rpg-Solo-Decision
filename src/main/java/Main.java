@@ -220,11 +220,19 @@ public class Main {
                     eventos.VilarejoDeScarbor.OlharEmVolta(ficha);
                 } else if (escolhaVilarejo == 3) {
                     eventos.Taverna.Taverna(ficha);
+                    eventos.Floresta.avancarTempoComMensagens(ficha, 1);
                     if (ficha.getVidaPersonagem() <= 0) {
                         personagemFaleceu = true;
                     }
                 } else if (escolhaVilarejo == 4) {
                     eventos.Ferreiro.Ferreiro(ficha);
+                    eventos.Floresta.avancarTempoComMensagens(ficha, 1);
+                    if (ficha.getVidaPersonagem() <= 0) {
+                        personagemFaleceu = true;
+                    }
+                } else if (escolhaVilarejo == opsVila[7]) {
+                    eventos.CasaDoChapeuMagico.CasaDoChapeuMagico(ficha);
+                    eventos.Floresta.avancarTempoComMensagens(ficha, 1);
                     if (ficha.getVidaPersonagem() <= 0) {
                         personagemFaleceu = true;
                     }
@@ -232,8 +240,10 @@ public class Main {
                     missoes.QuadroDeMissoes.MissoesEmAndamento(ficha);
                 } else if (opsVila[1] > 0 && escolhaVilarejo == opsVila[1]) {
                     eventos.Alfaiataria.Alfaiataria(ficha);
+                    eventos.Floresta.avancarTempoComMensagens(ficha, 1);
                 } else if (opsVila[2] > 0 && escolhaVilarejo == opsVila[2]) {
                     eventos.BarracaDeFrutas.BarracaDeFrutas(ficha);
+                    eventos.Floresta.avancarTempoComMensagens(ficha, 1);
                 } else if (opsVila[3] > 0 && escolhaVilarejo == opsVila[3]) {
                     eventos.Caverna.IrParaCaverna(ficha);
                     if (ficha.getVidaPersonagem() <= 0) {

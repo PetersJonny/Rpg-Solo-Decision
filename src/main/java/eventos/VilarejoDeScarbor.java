@@ -54,6 +54,7 @@ public class VilarejoDeScarbor {
             public static void OlharEmVolta(FichaRpg ficha) {
         Interface.cabecalhoMenu("OLHAR EM VOLTA");
         Interface.MostrarMensagem("\nVocê percorre as ruas do " + CIANO + ficha.getCidadeAtual() + RESET + ", observando as casas e as pessoas.");
+        Interface.MostrarMensagem("No começo da rua principal, lado a lado, ficam as duas lojas mais concorridas do vilarejo: " + CIANO + "a forja fumegante do Gorak" + RESET + ", onde o martelo nunca para, e a " + CIANO + "Casa do Chapéu Mágico" + RESET + ", de onde sai um cheiro doce de fumaça roxa.");
         Interface.MostrarMensagem("Tudo parece tranquilo e pacato por aqui. Ainda não há nada de interessante para descobrir no vilarejo.");
         Interface.Pausa(2500);
     }
