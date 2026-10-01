@@ -113,7 +113,7 @@ public class TrilhaDaNeta {
         boolean passou = ficha.isPresencaNetaPassou();
         int turnos = passou ? TURNOS_CABANA : TURNOS_TRILHA;
         if (passou) {
-            Interface.MostrarMensagem("\nAs marcas continuam consistentes, e com as frutas_dumpa_da_dica é possível ler o rumo. Dá para contar: " + AMARELO + turnos + RESET + " períodos até onde quer que a trilha acabe.");
+            Interface.MostrarMensagem("\nAs marcas continuam consistentes, e com as marcas das frutas é possível ler o rumo. Dá para contar: " + AMARELO + turnos + RESET + " períodos até onde quer que a trilha acabe.");
         } else {
             Interface.MostrarMensagem("\nAs marcas são fracas, mas não mentem. Dá para contar: " + AMARELO + turnos + RESET + " períodos de caminhada até onde quer que a trilha acabe.");
         }

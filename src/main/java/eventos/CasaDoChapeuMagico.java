@@ -71,14 +71,15 @@ public class CasaDoChapeuMagico {
         return ACERVO.contains(nome);
     }
 
-    private static void Consumir(FichaRpg ficha, String nome) {
+    private static void Consumir(FichaRpg ficha, String nome, int qtd) {
         if (!CONSUMIVEIS.contains(nome)) return;
-        Integer qtd = ficha.getEstoqueConsumiveisLoja().get(nome);
-        if (qtd == null || qtd <= 0) return;
-        if (qtd == 1) {
+        Integer atual = ficha.getEstoqueConsumiveisLoja().get(nome);
+        if (atual == null || atual <= 0) return;
+        int restante = atual - qtd;
+        if (restante <= 0) {
             ficha.getEstoqueConsumiveisLoja().remove(nome);
         } else {
-            ficha.getEstoqueConsumiveisLoja().put(nome, qtd - 1);
+            ficha.getEstoqueConsumiveisLoja().put(nome, restante);
         }
     }
 
@@ -198,16 +199,19 @@ public class CasaDoChapeuMagico {
                 continue;
             }
 
-            if (item.getPeso() > ficha.getEspacoLivreMochila() + 0.0001) {
+            int qtd = CONSUMIVEIS.contains(nome) ? Math.max(1, quantidadeEmEstoque(ficha, nome)) : 1;
+            item.setQuantidade(qtd);
+
+            double espaco = item.getPeso() * qtd;
+            if (espaco > ficha.getEspacoLivreMochila() + 0.0001) {
                 ficha.adicionarOuro(preco);
-                Interface.ExibirErro("Sua mochila não tem espaço para " + nome + "! (livre: " + String.format("%.1f", ficha.getEspacoLivreMochila()) + ")");
+                Interface.ExibirErro("Sua mochila não tem espaço para " + qtd + "x " + nome + "! (livre: " + String.format("%.1f", ficha.getEspacoLivreMochila()) + ")");
                 Interface.Pausa(1500);
                 continue;
             }
 
             if (CONSUMIVEIS.contains(nome)) {
-                item.setQuantidade(Math.max(1, quantidadeEmEstoque(ficha, nome)));
-                Consumir(ficha, nome);
+                Consumir(ficha, nome, qtd);
             }
 
             int vidaAntes = ficha.getVidaMaxima();

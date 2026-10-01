@@ -351,6 +351,7 @@ case "Cajado": return 50;
 
             private static int valorCheio(String nome) {
 switch (nome) {
+            case "Flechas": return 5;
             case "Couro": return 6;
             case "Dente de Urso": return 14;
             case "Pó da Fada": return 75;
@@ -377,6 +378,8 @@ switch (nome) {
 
         public static ItemRpg criarItem(String nome) {
         switch (nome) {
+            case "Flechas":
+                return new ItemRpg("Flechas", "Munição para arcos e foices.", 1);
             case "Faca":
                 return new Arma("Faca", "Uma faca afiada que causa 1d4 de dano corpo a corpo, usando Destreza.", "CaC", 4, 1, 1, "Destreza");
             case "Cutelo":

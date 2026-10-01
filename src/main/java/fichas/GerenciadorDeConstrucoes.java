@@ -136,12 +136,12 @@ public class GerenciadorDeConstrucoes {
         if (!ficha.temCabana || !ficha.naCabana) return false;
         ficha.aplicarPerdaVidaPorFome();
         int divisor = ficha.comeuHoje ? 2 : 3;
-        int curaVida = ficha.vidaMaxima / divisor;
-        int curaMana = ficha.manaMaxima / divisor;
+        int curaVida = ficha.getVidaMaxima() / divisor;
+        int curaMana = ficha.getManaMaxima() / divisor;
         if (ficha.temItem("Capa do Viajante")) {
             curaVida += 4;         }
-        ficha.vidaPersonagem = Math.min(ficha.vidaPersonagem + curaVida, ficha.vidaMaxima);
-        ficha.manaPersonagem = Math.min(ficha.manaPersonagem + curaMana, ficha.manaMaxima);
+        ficha.setVidaPersonagem(ficha.getVidaPersonagem() + curaVida);
+        ficha.setManaPersonagem(ficha.getManaPersonagem() + curaMana);
         ficha.ehNoite = false;
         ficha.progressoPeriodo = 0;
         ficha.diaAtual++;

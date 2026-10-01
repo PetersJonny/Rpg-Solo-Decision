@@ -45,7 +45,7 @@ public class Caverna {
         if (escolha == 3) {
             Interface.MostrarMensagem("\nVocê acena com a cabeça, sem parar, e segue adiante. A velhinha fica parada no caminho, observando você ir.");
             Interface.Pausa(1800);
-            ficha.setVelhinhaEncontrada(true);
+            GerenciadorDeMissoesECompanheiro.registrarNovidade(ficha, "A Neta Perdida", "Você deixou a velhinha para trás sem ouvi-la. Ela ainda está no caminho para a caverna.");
             return;
         }
 

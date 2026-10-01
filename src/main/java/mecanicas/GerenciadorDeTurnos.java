@@ -82,7 +82,10 @@ public class GerenciadorDeTurnos {
                     Interface.Pausa(1800);
                 }
             }
-            if (inimigosVivos(inimigos).isEmpty()) break;
+            if (inimigosVivos(inimigos).isEmpty()) {
+                processarMortes(inimigos, mortesProcessadas, ficha);
+                break;
+            }
             Interface.cabecalhoMenu("COMBATE");
             Interface.MostrarMensagem("  Sua Vida: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima() + " | Mana: " + ficha.getManaPersonagem() + "/" + ficha.getManaMaxima());
             if (ficha.getCuraAbsolutaBonus() > 0) {
@@ -146,6 +149,7 @@ public class GerenciadorDeTurnos {
                     Interface.Pausa(2500);
                     ficha.setInfectado(false);
                     ficha.setPactoMortalAtivo(false);
+                    limparEfeitosAoFugir(ficha, inimigos);
                     return;
                 }
                 if (resultadoFuga == 1) {
@@ -169,7 +173,8 @@ public class GerenciadorDeTurnos {
                         Interface.MostrarMensagem("\nVocê conseguiu escapar da floresta!");
                         Interface.Pausa(2500);
                         ficha.setInfectado(false);
-                    ficha.setPactoMortalAtivo(false);
+                        ficha.setPactoMortalAtivo(false);
+                        limparEfeitosAoFugir(ficha, inimigos);
                         return;
                     }
 
@@ -324,6 +329,14 @@ public class GerenciadorDeTurnos {
             Interface.Pausa(2500);
         }
         Interface.barraDivisoria();
+    }
+
+    private static void limparEfeitosAoFugir(FichaRpg ficha, List<Criatura> inimigos) {
+        ficha.setArmaEnvenenada(false);
+        ficha.setEmCombate(false);
+        for (Criatura c : inimigos) {
+            c.setEnvenenado(false);
+        }
     }
 
     public static void processarMortes(List<Criatura> inimigos, List<Criatura> mortesProcessadas, FichaRpg ficha) {

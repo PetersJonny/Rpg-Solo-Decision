@@ -7,10 +7,8 @@ import java.util.Set;
 import telas.Interface;
 
 public class ComandoAplicarVeneno implements ComandoCombate {
-    private int itemIndex;
 
-    public ComandoAplicarVeneno(int itemIndex) {
-        this.itemIndex = itemIndex;
+    public ComandoAplicarVeneno() {
     }
 
     @Override
@@ -21,12 +19,12 @@ public class ComandoAplicarVeneno implements ComandoCombate {
         if (ficha.isArmaEnvenenada()) {
             Interface.MostrarMensagem("\nSua arma já está untada de veneno. Use-a no próximo ataque!");
             Interface.Pausa(1500);
-            return 0;
+            return 1;
         }
         if (!ficha.removerItem("Gota de Veneno", 1)) {
             Interface.MostrarMensagem("\nVocê não tem mais Gota de Veneno.");
             Interface.Pausa(1500);
-            return 0;
+            return 1;
         }
 
         ficha.setArmaEnvenenada(true);

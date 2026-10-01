@@ -253,7 +253,7 @@ public class GerenciadorDeHabilidades {
     public static boolean executarCuraAbsoluta(FichaRpg ficha, habilidades.Habilidade hab) {
         ficha.setManaPersonagem(ficha.getManaPersonagem() - custoEfetivoMagia(ficha, hab));
         if (ficha.getCuraAbsolutaBonus() == 0) {
-            ficha.setCuraAbsolutaVidaOriginalMax(ficha.getVidaMaxima());
+            ficha.setCuraAbsolutaVidaOriginalMax(ficha.getVidaMaximaBase());
         }
         ficha.setVidaPersonagem(ficha.getVidaMaxima());
         ficha.setCuraAbsolutaBonus(ficha.getVidaMaxima());

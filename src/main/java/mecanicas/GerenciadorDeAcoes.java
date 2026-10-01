@@ -55,7 +55,7 @@ public class GerenciadorDeAcoes {
             }
 
             if (opVeneno > 0 && escolha == opVeneno) {
-                return new ComandoAplicarVeneno(-1);
+                return new ComandoAplicarVeneno();
             }
 
             if (escolha == 1) {

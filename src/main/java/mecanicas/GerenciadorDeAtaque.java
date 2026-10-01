@@ -308,7 +308,7 @@ public class GerenciadorDeAtaque {
                 Interface.Pausa(1500);
             }
             aplicarDanoCriatura(inimigo, dano);
-            if (ficha.isArmaEnvenenada() && inimigo.getVida() > 0 && !inimigo.isEnvenenado()) {
+            if (armaIndex >= 0 && ficha.isArmaEnvenenada() && inimigo.getVida() > 0 && !inimigo.isEnvenenado()) {
                 inimigo.setEnvenenado(true);
                 ficha.setArmaEnvenenada(false);
                 Interface.MostrarMensagem("(A arma untada envenena " + inimigo.getNome() + "! 1d4 de dano por rodada até o fim do combate)");

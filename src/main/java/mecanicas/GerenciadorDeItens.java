@@ -581,6 +581,15 @@ public class GerenciadorDeItens {
             }
         }
 
+        String nomeItemEscolhido = itemEscolhido.getNome();
+        if (nomeItemEscolhido.equals("Gota de Veneno")) {
+            Interface.MostrarMensagem("\nA Gota de Veneno não se bebe nem se come: ela precisa ser untada na arma.");
+            Interface.Pausa(2000);
+            Interface.MostrarMensagem("Use a opção " + Interface.AMARELO + "\"Aplicar Gota de Veneno na arma\"" + Interface.RESET + ", que gasta a rodada inteira.");
+            Interface.Pausa(2000);
+            return;
+        }
+
         ficha.consumirItem(itemEscolhido, 1);
         if (itemEscolhido.getQuantidade() <= 0) {
             ficha.getInventario().remove(itemEscolhido);
