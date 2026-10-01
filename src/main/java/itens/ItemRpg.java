@@ -39,6 +39,8 @@ public class ItemRpg implements java.io.Serializable {
                 return 0.3;
             case "Poção Grande de Mana":
                 return 0.6;
+            case "Tocha":
+                return 0.5;
             case "Espada Pesada", "Machado de Guerra", "Martelo de Guerra",
                  "Espada do Minotauro", "Armadura Pesada":
                 return 2.0;

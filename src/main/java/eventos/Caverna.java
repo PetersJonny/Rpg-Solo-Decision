@@ -1,7 +1,10 @@
 package eventos;
 
 import fichas.FichaRpg;
+import fichas.GerenciadorDeInventarioFicha;
 import fichas.GerenciadorDeMissoesECompanheiro;
+import itens.ItemRpg;
+import mecanicas.MecanicasRpg;
 import telas.Interface;
 
 public class Caverna {
@@ -87,28 +90,113 @@ public class Caverna {
         ficha.setVelhinhaEncontrada(true);
     }
 
-        private static void CenaDaCaverna(FichaRpg ficha) {
-        Interface.MostrarMensagem("\nO caminho de terra termina num barranco alto de pedra escura. Ali, aberta no fundo da vila, " + VERMELHO + "a caverna" + RESET + " engole a luz do dia.");
-        Interface.Pausa(2200);
-        Interface.MostrarMensagem("Da boca da caverna escorre um ar frio e úmido, e o escuro lá dentro é absoluto. É aqui que a filha da moça da alfaiataria foi vista pela última vez.");
-        Interface.Pausa(2200);
+        private static boolean testePresenca(FichaRpg ficha, int dificuldade, String rotulo) {
+        Interface.pressionarParaTeste("Presença (" + rotulo + ")");
+        int dado = MecanicasRpg.rolarDado(20);
+        int atributo = ficha.getPresencaTeste();
+        int total = dado + atributo;
+        Interface.MostrarMensagem("-> Presença: " + dado + " (Dado) + " + atributo + " (Atributo) = " + total + " (Dificuldade: " + dificuldade + ")");
+        Interface.Pausa(2500);
+        return total >= dificuldade;
+    }
 
-        System.out.println("\n  O que você faz?\n");
-        System.out.println("  1. Espreitar a entrada");
-        System.out.println("  2. Voltar para a vila");
-        System.out.println("\n  " + VERDE + "Digite a opção:" + RESET);
-        if (Interface.lerOpcao(2) == 2) {
-            Interface.MostrarMensagem("\nVocê decide não se aprofundar agora e retorna para a vila.");
-            Interface.Pausa(1500);
+            public static int penalidadeEscuridao(FichaRpg ficha) {
+        if (!ficha.isDentroDaCaverna()) return 0;
+        return (ficha.isTochaNaMao() && ficha.temItem("Tocha")) ? 0 : -2;
+    }
+
+            private static void EntradaDaMina(FichaRpg ficha) {
+        Interface.MostrarMensagem("\nO caminho de terra termina num paredão de pedra escura, e ali a " + AMARELO + "montanha" + RESET + " se ergue à frente. Encostado no paredão, um emaranhado de " + CIANO + "pedras empilhadas" + RESET + " desenha o contorno de uma parede sólida — e, no meio dela, um vão estreito e escuro, como se alguém tivesse fechado a boca de um túnel com um montão de Entulho.");
+        Interface.Pausa(2600);
+        Interface.MostrarMensagem("A configuração não deixa dúvida: aquilo é a " + VERMELHO + "entrada de uma mina" + RESET + ", descendo na direção da montanha. É aqui que a filha da moça da alfaiataria foi vista pela última vez.");
+        Interface.Pausa(2400);
+
+        boolean viuGoblin = ficha.isGoblinVistoNaMina();
+        if (!viuGoblin) {
+            viuGoblin = testePresenca(ficha, 12, " notar algo na entrada");
+        }
+        if (viuGoblin) {
+            ficha.setGoblinVistoNaMina(true);
+            boolean draconico = ficha.getRaca() != null && ficha.getRaca().getNome().equals("Dracônico");
+            if (draconico) {
+                Interface.MostrarMensagem("\nSua atenção atrai um " + VERDE + "pequeno goblin" + RESET + " encostado no lado de fora do vão. Ele te vê, e o corpo inteiro dele " + VERMELHO + "se encolhe" + RESET + " — para um dracônico, ele não quer nem estar perto. Solta um guincho curto e some correndo para dentro da mina.");
+            } else {
+                Interface.MostrarMensagem("\nSua atenção atrai um " + VERDE + "pequeno goblin" + RESET + " encostado no lado de fora do vão. Ele te vê, dá um pulo para trás e " + VERMELHO + "corre para dentro da mina" + RESET + ", batendo os calcanhares nas pedras até a escuridão engoli-lo.");
+            }
+            Interface.Pausa(2600);
+            if (ficha.isMissaoAceita("A Filha Perdida")) {
+                GerenciadorDeMissoesECompanheiro.registrarNovidade(ficha, "A Filha Perdida", "Um goblin foi visto entrando e saindo da boca da mina. Eles se escondem lá dentro.");
+            }
+        } else {
+            Interface.MostrarMensagem("\nVocê examina a entrada por um bom tempo. Não se mexe nada ali dentro — só as pedras, o vão escuro e o silêncio da montanha.");
+            Interface.Pausa(2200);
+        }
+    }
+
+            private static void OlharEmVoltaNaEntrada(FichaRpg ficha) {
+        Interface.MostrarMensagem("\nVocê não entra. Em vez disso, se agacha e examina os arredores: as pedras empilhadas, o chão batendo em volta do vão, as frestas de sombra nas laterais.");
+        Interface.Pausa(2400);
+
+        if (ficha.isTochaVistaNaMina()) {
+            Interface.MostrarMensagem("\nNão tem mais nada por aqui. A tocha que você achou continua onde você a deixou.");
+            Interface.Pausa(1800);
             return;
         }
 
-        Interface.MostrarMensagem("\nVocê se aproxima da entrada e espreita o interior. Pedras soltas se amontoam no chão, e o escuro se estende sem fim. Sem uma fonte de luz, é impossível enxergar além de alguns passos.");
+        if (!testePresenca(ficha, 7, " revistar os arredores")) {
+            Interface.MostrarMensagem("\nVocê vasculha por um tempo e não encontra nada além de entulho e poeira.");
+            Interface.Pausa(2000);
+            return;
+        }
+
+        Interface.MostrarMensagem("\nSeu olhar pega algo entre as pedras: uma " + AMARELO + "tocha" + RESET + " — toco de madeira envolto em trapo e respingos de resina seca. Deve ter caído de alguém que entrou antes.");
+        Interface.Pausa(2400);
+        ficha.setTochaVistaNaMina(true);
+        GerenciadorDeInventarioFicha.coletarItemEncontrado(ficha, new ItemRpg("Tocha", "Um toco de madeira envolto em trapo e respingos de resina seca. Ilumina o escuro.", 1), "Você encontra");
+        if (ficha.temItem("Tocha")) {
+            ficha.setTochaNaMao(true);
+            Interface.MostrarMensagem("\nVocê acende a tocha e a guarda na mão. A chama ilumina o vão escuro da mina.");
+            Interface.Pausa(2000);
+        }
+    }
+
+            private static void CenaDaCaverna(FichaRpg ficha) {
+        EntradaDaMina(ficha);
+
+        System.out.println("\n  O que você faz?\n");
+        System.out.println("  1. Olhar em volta da entrada");
+        System.out.println("  2. Entrar na mina");
+        System.out.println("\n  " + VERDE + "Digite a opção:" + RESET);
+        int escolha = Interface.lerOpcao(2);
+
+        if (escolha == 1) {
+            OlharEmVoltaNaEntrada(ficha);
+            System.out.println("\n  O que você faz agora?\n");
+            System.out.println("  1. Voltar para a vila");
+            System.out.println("  2. Entrar na mina");
+            System.out.println("\n  " + VERDE + "Digite a opção:" + RESET);
+            escolha = Interface.lerOpcao(2) == 2 ? 2 : 1;
+        }
+
+        if (escolha != 2) {
+            Interface.MostrarMensagem("\nVocê se afasta da boca da mina e refaz o caminho de terra de volta, até as ruas da vila.");
+            Interface.Pausa(1800);
+            return;
+        }
+
+        ficha.setDentroDaCaverna(true);
+        if (ficha.isTochaNaMao()) {
+            Interface.MostrarMensagem("\nVocê atravessa o vão e desce. A tocha na sua mão derrama luz nas paredes");
+            Interface.MostrarMensagem("e afasta de você a " + VERMELHO + "penalidade de escuridão" + RESET + ": os testes lá dentro saem sem o -2 enquanto ela estiver na sua mão.");
+        } else {
+            Interface.MostrarMensagem("\nVocê atravessa o vão e desce. Sem nenhuma luz, o escuro fecha-se em volta de você como água: a partir daqui, todo teste leva " + VERMELHO + "-2" + RESET + " até você achar uma fonte de luz.");
+        }
         Interface.Pausa(2400);
         if (ficha.isMissaoAceita("A Filha Perdida")) {
-            GerenciadorDeMissoesECompanheiro.registrarNovidade(ficha, "A Filha Perdida", "A caverna é escura e profunda: sem uma fonte de luz, é impossível enxergar além de alguns passos.");
+            GerenciadorDeMissoesECompanheiro.registrarNovidade(ficha, "A Filha Perdida", "Você entrou na mina. Ela é escura e profunda: sem uma fonte de luz, todo teste leva -2.");
         }
-        Interface.MostrarMensagem("Por enquanto, você volta para a vila para se preparar antes de se aventurar a fundo.");
+        Interface.MostrarMensagem("Por enquanto, você não vai além — volta para a vila para se preparar antes de se aventurar mais fundo.");
         Interface.Pausa(1800);
+        ficha.setDentroDaCaverna(false);
     }
 }

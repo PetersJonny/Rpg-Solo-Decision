@@ -358,6 +358,19 @@ Dizem que quem caminha por tempo suficiente, adentrando a mata em busca de algo 
 - O menu do vilarejo permite **Ver ficha**, **Olhar em volta**, **ir à taverna**, **ir ao ferreiro**, **ir à Casa do Chapéu Mágico**, **Ver missões em andamento**, **Voltar para a floresta** (refaz todo o caminho de volta até as construções), **Salvar Jogo** e **Encerrar jogo**.
 - **Cada visita a uma loja gasta 1 período do dia** (taverna, ferreiro, alfaiataria, barraca de frutas e Chapéu Mágico). O período é cobrado ao sair da loja, então comprar vários itens no mesmo dia só custa 1 período.
 
+### A Mina (A Filha Perdida)
+
+No fundo da vila, encostado no paredão da montanha, fica o local que Célia Morel indicou. Ali se vê um emaranhado de pedras empilhadas desenhando uma parede sólida, com um vão estreito no meio: é a **entrada de uma mina** que desce na direção da montanha.
+
+Ao chegar na entrada:
+
+1. **Teste de Presença DT 12** — se passar, você percebe um **pequeno goblin** encostado no lado de fora do vão. Ele te vê e corre para dentro. Se você for **dracônico**, ele se encolhe assustado antes de sumir na escuridão (texto diferente). Se falhar, você não vê nada. O goblin só precisa ser notado uma vez.
+2. Escolha: **olhar em volta da entrada** ou **entrar na mina**.
+3. Se olhar em volta, **Teste de Presença DT 7** — se passar, encontra uma **tocha** (peso 0,5 kg) entre as pedras, com a mesma pergunta de pegar ou deixar para trás usada no resto do jogo. A tocha só precisa ser vista uma vez.
+4. Escolha final: **voltar para a vila** ou **entrar na mina**.
+
+**Escuridão:** lá dentro, todo teste leva **-2** por está escuro — a menos que você esteja **com a tocha na mão**, o que anula a penalidade. O bônus só vale com a tocha realmente na mochila: se ela for vendida ou derrubada, o -2 volta.
+
 ### Casa do Chapéu Mágico
 
 Loja da Dona Maga, fica **no começo da vila, ao lado do ferreiro**. Como o ferreiro, só vende **itens mágicos** — e também só **compra** itens mágicos, pagando 80% do valor.

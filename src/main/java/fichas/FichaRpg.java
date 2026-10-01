@@ -154,6 +154,10 @@ public class FichaRpg implements java.io.Serializable {
         private boolean velhinhaEncontrada = false;
     private boolean filhaEncontrada = false;
     private boolean netaEncontrada = false;
+    private boolean goblinVistoNaMina = false;
+    private boolean tochaVistaNaMina = false;
+    private boolean tochaNaMao = false;
+    private boolean dentroDaCaverna = false;
 
     private int diaAceitouNeta = 0;
     private boolean netaMorta = false;
@@ -450,6 +454,14 @@ public class FichaRpg implements java.io.Serializable {
     public void setFilhaEncontrada(boolean filhaEncontrada) { this.filhaEncontrada = filhaEncontrada; }
     public boolean isNetaEncontrada() { return netaEncontrada; }
     public void setNetaEncontrada(boolean netaEncontrada) { this.netaEncontrada = netaEncontrada; }
+    public boolean isGoblinVistoNaMina() { return goblinVistoNaMina; }
+    public void setGoblinVistoNaMina(boolean goblinVistoNaMina) { this.goblinVistoNaMina = goblinVistoNaMina; }
+    public boolean isTochaVistaNaMina() { return tochaVistaNaMina; }
+    public void setTochaVistaNaMina(boolean tochaVistaNaMina) { this.tochaVistaNaMina = tochaVistaNaMina; }
+    public boolean isTochaNaMao() { return tochaNaMao; }
+    public void setTochaNaMao(boolean tochaNaMao) { this.tochaNaMao = tochaNaMao; }
+    public boolean isDentroDaCaverna() { return dentroDaCaverna; }
+    public void setDentroDaCaverna(boolean dentroDaCaverna) { this.dentroDaCaverna = dentroDaCaverna; }
     public void setDiaAtual(int diaAtual) { this.diaAtual = Math.max(1, diaAtual); }
     public int getDiaAceitouNeta() { return diaAceitouNeta; }
     public void setDiaAceitouNeta(int diaAceitouNeta) { this.diaAceitouNeta = diaAceitouNeta; }
