@@ -366,6 +366,9 @@ Loja da Dona Maga, fica **no começo da vila, ao lado do ferreiro**. Como o ferr
 
 | Item | Preço | Efeito |
 |---|---|---|
+| Chapéu Mágico | 70 | +3 de dano nas suas magias |
+| Pequeno Grimório | 90 | As magias custam 1 de mana a menos |
+| Poção Grande de Mana | 30 | Restaura 7 de mana (consumível, 1–5 por dia) |
 | Manto do Astrólogo | 150 | +1 em todos os testes de Intelecto |
 | Gema de Mana | 100 | +10 de mana máxima (a mana atual sobe junto) |
 | Amuleto do Coração | 110 | +10 de vida máxima (a vida atual sobe junto) |

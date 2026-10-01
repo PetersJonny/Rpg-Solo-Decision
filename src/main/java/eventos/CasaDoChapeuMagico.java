@@ -24,7 +24,7 @@ public class CasaDoChapeuMagico {
     );
 
     private static final List<String> CONSUMIVEIS = List.of(
-            "Gota de Veneno"
+            "Poção Grande de Mana", "Gota de Veneno"
     );
 
     private static final int ITENS_POR_DIA = 5;

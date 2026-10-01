@@ -74,6 +74,42 @@ class CasaDoChapeuMagicoTest {
     }
 
     @Test
+    void osItensMagicosAntigosEstaoNaLoja() {
+        FichaRpg ficha = ficha();
+        boolean viuChapeu = false, viuGrimorio = false, viuPocao = false;
+
+        for (int dia = 1; dia <= 60; dia++) {
+            ficha.setDiaAtual(dia);
+            CasaDoChapeuMagico.renovarEstoqueSeNovoDiaPublico(ficha);
+            int qtdChapeu = CasaDoChapeuMagico.quantidadeEmEstoque(ficha, "Chapéu Mágico");
+            int qtdGrimorio = CasaDoChapeuMagico.quantidadeEmEstoque(ficha, "Pequeno Grimório");
+            int qtdPocao = CasaDoChapeuMagico.quantidadeEmEstoque(ficha, "Poção Grande de Mana");
+
+            assertTrue(qtdChapeu == 0 || qtdChapeu == 1, "Chapéu Mágico deve valer 1");
+            assertTrue(qtdGrimorio == 0 || qtdGrimorio == 1, "Pequeno Grimório deve valer 1");
+            assertTrue(qtdPocao >= 0 && qtdPocao <= 5, "Poção Grande de Mana é consumível: 0..5");
+
+            if (qtdChapeu > 0) viuChapeu = true;
+            if (qtdGrimorio > 0) viuGrimorio = true;
+            if (qtdPocao > 0) viuPocao = true;
+        }
+
+        assertTrue(viuChapeu, "Chapéu Mágico nunca apareceu");
+        assertTrue(viuGrimorio, "Pequeno Grimório nunca apareceu");
+        assertTrue(viuPocao, "Poção Grande de Mana nunca apareceu");
+    }
+
+    @Test
+    void pocaoGrandeDeManaPodeSerCompradaMaisDeUmaVez() {
+        FichaRpg ficha = ficha();
+        ficha.getEstoqueConsumiveisLoja().put("Poção Grande de Mana", 4);
+        ficha.adicionarItem(Vendedor.criarItem("Poção Grande de Mana"));
+
+        assertTrue(CasaDoChapeuMagico.podeComprarItem(ficha, "Poção Grande de Mana"),
+                "sendo consumível, não é bloqueada por já ter uma");
+    }
+
+    @Test
     void naoCompraOMesmoNaoConsumivelDuasVezes() {
         FichaRpg ficha = ficha();
         ficha.adicionarItem(Vendedor.criarItem("Luvas de Prata"));
