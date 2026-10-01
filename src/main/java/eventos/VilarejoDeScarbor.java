@@ -17,7 +17,16 @@ public class VilarejoDeScarbor {
     private static final String AMARELO = Interface.AMARELO;
     private static final String VERMELHO = Interface.VERMELHO;
 
-            public static void ObservarCidade(FichaRpg ficha) {
+            public static boolean chegadaSilenciaTaverna(FichaRpg ficha, boolean virouTempo) {
+        return ficha.getCidadeAtual() == null && virouTempo;
+    }
+
+            public static void ChegadaSilenciadaPorViradaDeTempo(FichaRpg ficha) {
+        ficha.setGoblinsResolvido(true);
+        ficha.setDonoDaTavernaAgradeceu(true);
+    }
+
+            public static void DescreverChegada(FichaRpg ficha) {
         Interface.MostrarMensagem("\nVocê atravessa a entrada e é recebido por uma visão que o faz parar no meio do caminho.");
         Interface.Pausa(2000);
 
@@ -30,6 +39,11 @@ public class VilarejoDeScarbor {
         Interface.Pausa(2200);
         Interface.MostrarMensagem("Mesmo assim, ninguém parece se importar com a sua presença: ferreiros batem o martelo, comerciantes gritam seus preços, crianças correm entre as pernas dos adultos. Cada um segue no seu próprio afazer, como se o mundo girasse normalmente.");
         Interface.Pausa(2200);
+    }
+
+            public static void ObservarCidade(FichaRpg ficha) {
+        DescreverChegada(ficha);
+
         Interface.MostrarMensagem("É então que, mais adiante, um barulho chama sua atenção. " + AMARELO + "Uma taverna" + RESET + " — e dela vêm " + VERMELHO + "gritos, arremessos e o som de algo quebrando" + RESET + ". Confusão, discussão, gente brigando.");
         Interface.Pausa(2000);
         Interface.MostrarMensagem("\nDa porta aberta, você vê corpos se atracando lá dentro, enquanto alguns dracônicos saem correndo e outros apenas assistem em volta.");

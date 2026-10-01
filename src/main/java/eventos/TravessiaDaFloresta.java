@@ -43,11 +43,12 @@ public class TravessiaDaFloresta {
 
         int caminhados = 0;
         while (caminhados < plano) {
+            boolean noiteAntes = ficha.isEhNoite();
             boolean houveAcontecimento = percorrerUmTurno(ficha, true);
             if (ficha.getVidaPersonagem() <= 0) return;             caminhados++;
 
             if (ficha.isNoVilarejo()) {
-                chegarForaDaFloresta(ficha);
+                chegarForaDaFloresta(ficha, noiteAntes != ficha.isEhNoite());
                 return;
             }
 
@@ -141,7 +142,9 @@ public class TravessiaDaFloresta {
         return houveAcontecimento;
     }
 
-        private static void chegarForaDaFloresta(FichaRpg ficha) {
+        private static void chegarForaDaFloresta(FichaRpg ficha, boolean virouTempo) {
+        boolean chegadaSilenciada = VilarejoDeScarbor.chegadaSilenciaTaverna(ficha, virouTempo);
+
         Interface.MostrarMensagem("\nDiante de você, as árvores se abrem... A floresta de Freijord fica para trás!");
         Interface.Pausa(2500);
         Interface.MostrarMensagem("Depois de tanto mato, seus olhos avistam campos abertos e, ao longe, um vilarejo. Você finalmente saiu da floresta!");
@@ -156,7 +159,14 @@ public class TravessiaDaFloresta {
         Interface.MostrarMensagem("O letreiro anuncia o nome da cidade: " + CIANO + ficha.getCidadeAtual() + RESET + ". Você chegou.");
         Interface.Pausa(2500);
 
-        VilarejoDeScarbor.ObservarCidade(ficha);
+        if (chegadaSilenciada) {
+            VilarejoDeScarbor.ChegadaSilenciadaPorViradaDeTempo(ficha);
+            Interface.MostrarMensagem("\n" + CIANO + "Foi bem na hora que você apareceu: o tempo virou enquanto você vinha pela estrada." + RESET + " A vila já está com a cara do outro horário — " + ficha.getPeriodoDescritivo().toLowerCase() + " em " + ficha.getCidadeAtual() + " — e você não viu nada de mais nas redondezas, só que as ruas já não são as mesmas.");
+            Interface.Pausa(2500);
+            VilarejoDeScarbor.DescreverChegada(ficha);
+        } else {
+            VilarejoDeScarbor.ObservarCidade(ficha);
+        }
     }
 
         public static String sortearDestino() {

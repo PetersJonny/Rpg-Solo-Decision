@@ -350,6 +350,7 @@ Dizem que quem caminha por tempo suficiente, adentrando a mata em busca de algo 
 - Cada período de caminhada tem **a mesma chance de encontro da exploração** (30% de dia, 50% à noite) — só que **sem encontrar recursos**.
 - Pode acontecer de você parar e o menu **Construção** ficar acessível no ponto atual: cada construção é **ancorada no ponto da mata onde foi montada**, então a opção sempre mostra **a distância (em períodos de caminhada) até cada construção** e permite **caminhar até ela** (mesmo custo turno a turno da ida) ou **montar uma construção nova ali**, que passa a ser o novo ponto (veja a seção Construção).
 - Ao sair da floresta, o jogador chega a uma **cidade para além dela** (o destino é sorteado). O primeiro destino disponível é o **Vilarejo de Scarbor**. Enquanto estiver fora das suas construções, **não dá para construir, treinar ou dormir** — é preciso voltar para as construções.
+- **Virada de tempo na chegada:** se o jogador sair da floresta pela primeira vez e o tempo virar (dia→noite ou noite→dia) **exatamente** no momento em que ele chega à vila, a confusão na taverna **não acontece**. Ele vê apenas a descrição da chegada e entra direto no menu da taverna, podendo comer e ler o quadro de missões — o Draven não fala com ele. Isso vale **só na primeira chegada**; nas saídas seguintes da floresta os goblins voltam a aparecer normalmente.
 
 ### Vilarejo (fora da floresta)
 
