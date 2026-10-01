@@ -69,6 +69,7 @@ public class Interface {
     }
 
         public static void Pausa(int milisegundos) {
+        if (modoTeste) return;
         try { Thread.sleep(milisegundos); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
     }
 

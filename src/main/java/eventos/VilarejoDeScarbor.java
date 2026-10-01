@@ -41,8 +41,14 @@ public class VilarejoDeScarbor {
         Interface.Pausa(2200);
     }
 
+            public static boolean tavernaTemConfusaoPendente(FichaRpg ficha) {
+        return !ficha.isGoblinsResolvido();
+    }
+
             public static void ObservarCidade(FichaRpg ficha) {
         DescreverChegada(ficha);
+
+        if (!tavernaTemConfusaoPendente(ficha)) return;
 
         Interface.MostrarMensagem("É então que, mais adiante, um barulho chama sua atenção. " + AMARELO + "Uma taverna" + RESET + " — e dela vêm " + VERMELHO + "gritos, arremessos e o som de algo quebrando" + RESET + ". Confusão, discussão, gente brigando.");
         Interface.Pausa(2000);
