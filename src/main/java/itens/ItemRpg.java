@@ -37,10 +37,17 @@ public class ItemRpg implements java.io.Serializable {
                  "Caldo de Lobo", "Peixe Assado", "Estofado de Urso",
                  "Torta de Frutas", "Hidromel":
                 return 0.3;
-            case "Poção Grande de Mana":
-                return 0.6;
-            case "Tocha":
+            case "Fruta do Diabo", "Gota de Veneno":
+                return 0.2;
+            case "Tocha",
+                 "Ampulheta de Prata", "Amuleto do Coração", "Chapéu Mágico",
+                 "Gema de Mana", "Luvas de Prata", "Manto do Astrólogo",
+                 "Pequeno Grimório", "Pó de Midas":
                 return 0.5;
+            case "Poção Grande de Mana",
+                 "Botas de Correio", "Capa do Viajante", "Lenço de Seda",
+                 "Manto do Atirador", "Túnica de Aventureiro":
+                return 0.6;
             case "Espada Pesada", "Machado de Guerra", "Martelo de Guerra",
                  "Espada do Minotauro", "Armadura Pesada":
                 return 2.0;
