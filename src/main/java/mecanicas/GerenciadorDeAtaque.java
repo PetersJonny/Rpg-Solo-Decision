@@ -278,6 +278,27 @@ public class GerenciadorDeAtaque {
                         Interface.Pausa(1500);
                     }
                 }
+                
+                if (armaEscolhida.getNome().equals("Espada Jurada")) {
+                    Interface.MostrarMensagem("\n(A Espada Jurada ecoa com o poder do Vazio!)");
+                    Interface.Pausa(1500);
+                    int testeJogador = MecanicasRpg.rolarDado(20) + ficha.getForca();
+                    int testeInimigo = MecanicasRpg.rolarDado(20) + inimigo.getNivel();
+                    Interface.MostrarMensagem("-> Teste de Domínio (Você): d20 + " + ficha.getForca() + " (Força) = " + testeJogador);
+                    Interface.MostrarMensagem("-> Teste de Resistência (" + inimigo.getNome() + "): d20 + " + inimigo.getNivel() + " (Nível) = " + testeInimigo);
+                    Interface.Pausa(2000);
+                    
+                    if (testeJogador >= testeInimigo) {
+                        int vazio1 = MecanicasRpg.rolarDado(6);
+                        int vazio2 = MecanicasRpg.rolarDado(6);
+                        int vazioTotal = vazio1 + vazio2;
+                        dano += vazioTotal;
+                        Interface.MostrarMensagem("-> " + inimigo.getNome() + " sucumbe ao vazio! Sofre +" + vazioTotal + " de dano!");
+                    } else {
+                        Interface.MostrarMensagem("-> " + inimigo.getNome() + " resiste ao efeito do vazio.");
+                    }
+                    Interface.Pausa(1500);
+                }
             } else {
                 Interface.MostrarMensagem("-> Errou! (defesa do alvo: " + defesaAlvo + ")");
                 Interface.Pausa(1500);

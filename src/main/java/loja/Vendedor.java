@@ -420,7 +420,7 @@ switch (nome) {
             case "Espada Pesada":
                 return new Arma("Espada Pesada", "Uma espada gigante que causa 1d10 de dano, usando Força.", "CaC", 10, 1, 1);
             case "Espada Jurada":
-                return new Arma("Espada Jurada", "A lâmina forjada de Balthazar, entregue como recompensa por vingar seus antigos companheiros. Causa 1d12 de dano, usando Força.", "CaC", 12, 1, 1);
+                return new Arma("Espada Jurada", "A lâmina de Balthazar, imbuída com o poder do Vazio. Causa 1d12 de dano (Força). Ao acertar, você rola d20+Força contra d20+Nível do alvo; vencendo, causa +2d6 de dano do vazio.", "CaC", 12, 1, 1);
             case "Machado de Guerra":
                 return new Arma("Machado de Guerra", "Um machado de batalha que causa 1d12 de dano, usando Força.", "CaC", 12, 1, 1);
             case "Martelo de Guerra":
