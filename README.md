@@ -45,12 +45,12 @@ Este README é o guia completo do jogo: se ficar perdido em qualquer momento, vo
 
 ## Como Rodar
 
-### Requisitos
+#### Requisitos
 
 - **Java 21+** (JDK 21)
 - **Apache Maven** (ou uma IDE compatível: IntelliJ IDEA, Eclipse, VS Code)
 
-### Comandos
+#### Comandos
 
 ```bash
 # Testar a arquitetura (suíte de testes automatizados)
@@ -82,7 +82,7 @@ Não existe autosave: **salve manualmente** (`Salvar Jogo`, disponível na flore
 
 Você distribui **6 pontos** entre os seis atributos, escolhe uma **raça**, uma **classe** (Mago com um elemento, Guerreiro ou Healer) e a **dificuldade**.
 
-### Atributos
+#### Atributos
 
 | Atributo | Papel principal |
 |---|---|
@@ -93,7 +93,7 @@ Você distribui **6 pontos** entre os seis atributos, escolhe uma **raça**, uma
 | **Intelecto** | Testes de conhecimento, salvamento de companheiro |
 | **Presença** | Detecta ameaças antes de serem emboscadas; define a Mana |
 
-### Raças
+#### Raças
 
 Cada raça dá **+1 em um atributo** e uma **passiva**. As duas coisas valem para sempre — não há escolha de build que "descarte" uma passiva.
 
@@ -109,11 +109,11 @@ Cada raça dá **+1 em um atributo** e uma **passiva**. As duas coisas valem par
 
 > **Humano** é a única raça em que o atributo bônus é escolhido na criação (o padrão, se nada for escolhido, é Constituição).
 
-### Fadiga (cansado)
+#### Fadiga (cansado)
 
 Depois de **2 noites sem dormir**, o personagem fica **cansado**: **−1 em todos os testes de atributo** (iniciativa, presença, fuga, intelecto, etc.). Não afeta vida, mana ou dano. Dormir na cabana remove o cansaço.
 
-### Fome e saciedade
+#### Fome e saciedade
 
 - A fome é contada em **dias sem comer** e zera assim que você come qualquer coisa que sacie.
 - **1 dia sem comer:** −1 em testes de Destreza e Força. **5 dias ou mais:** além da penalidade, o personagem **perde vida a cada período** (o valor cresce com os dias).
@@ -122,7 +122,7 @@ Depois de **2 noites sem dormir**, o personagem fica **cansado**: **−1 em todo
 - **Saciedade (estar cheio):** cada refeição que sacia a fome conta **1 de 3 por dia**. Ao comer a **terceira**, o personagem fica **cheio** e **não consegue comer mais nada** — o jogo recusa o uso de qualquer comida e **a comida permanece no inventário**. A saciedade zera ao virar o dia. Os menus da floresta e do vilarejo mostram o estado: `Saciado (1/3 refeições hoje)` e `CHEIO (3/3 refeições hoje | não cabe mais nada)`.
 - **Dormir** divide a cura pela metade quando você comeu no dia (`vida máxima / 2`) e usa a divisão completa quando não comeu (`vida máxima / 3`).
 
-### Dificuldade
+#### Dificuldade
 
 - **Normal** — ao morrer, os saves do personagem são mantidos.
 - **Difícil** — morte permanente: ao morrer, **todos os saves com o nome do personagem são apagados**. Não há segunda chance.
@@ -156,7 +156,7 @@ Dica: **Flechas, Madeira, Folha, Pedra e materiais** são baratos em peso. Já a
 
 ## Classes
 
-### Mago
+#### Mago
 
 - **Vida base:** 10 + Constituição | **Mana base:** 8 + Presença
 - **Modificadores:** Força −2, Presença +2, Intelecto +1
@@ -176,7 +176,7 @@ Dica: **Flechas, Madeira, Folha, Pedra e materiais** são baratos em peso. Já a
 
 > Para usar magias, o Mago precisa de um **Cajado** no inventário.
 
-### Guerreiro
+#### Guerreiro
 
 - **Vida base:** 20 + Constituição | **Mana base:** 2 + Presença
 - **Modificadores:** Constituição +2, Força +1, Intelecto −2
@@ -194,7 +194,7 @@ Dica: **Flechas, Madeira, Folha, Pedra e materiais** são baratos em peso. Já a
 | 9 | **Semi Deus** | toda a mana | +50% de vida máxima, cura total e **+4 dados de dano corpo a corpo** até o fim do combate |
 | 10 | **Deus** | — | Passiva: Semi Deus fica sempre ativo (+50% de vida, +4 dados CaC) e ganha **Cura Incessante** (cura total, uma vez por combate) |
 
-### Healer
+#### Healer
 
 - **Vida base:** 14 + Constituição | **Mana base:** 5 + Presença
 - **Modificadores:** Sabedoria +1, Intelecto +2, Força −2
@@ -217,7 +217,7 @@ Dica: **Flechas, Madeira, Folha, Pedra e materiais** são baratos em peso. Já a
 
 O nível máximo é **10**. O XP vem **apenas de matar criaturas**.
 
-### Tabela de XP
+#### Tabela de XP
 
 | De nível | XP necessário |
 |---|---|
@@ -233,7 +233,7 @@ O nível máximo é **10**. O XP vem **apenas de matar criaturas**.
 
 O excesso de XP é acumulado (não é desperdiçado ao subir de nível).
 
-### Recompensas por nível
+#### Recompensas por nível
 
 - **Nível 3:** habilidade automática da classe (Guerreiro: Peso da Espada; Healer: Cura Reforçada; Mago: Pequena Magia vira área).
 - **Níveis 2, 4, 6 e 8:** **+1 ponto de atributo** (Constituição dá vida retroativa).
@@ -260,11 +260,11 @@ Defesa = 10 + Destreza   (+ bônus da armadura equipada)
 
 ## Combate
 
-### Iniciativa
+#### Iniciativa
 
 Cada combatente rola `d20 + Destreza` (você e o companheiro) ou `d20 + Iniciativa` (criaturas). Todos agem em **ordem decrescente** a cada rodada. Se você detectou a ameaça primeiro (teste de Presença) e escolheu lutar, ganha **+2 de Iniciativa**.
 
-### Ações por turno
+#### Ações por turno
 
 1. **Lutar** — atacar com arma ou soco, usar habilidade, ativar passiva manual (ex.: Casca Grossa, Espada Afiada) ou usar Magia Proibida (ação livre).
 2. **Abrir Mochila** — usar um consumível (gasta o turno).
@@ -273,7 +273,7 @@ Cada combatente rola `d20 + Destreza` (você e o companheiro) ou `d20 + Iniciati
 
 Depois do **Estrondo**, você fica **2 rodadas sem poder usar habilidades** (itens, ataques e fuga continuam liberados).
 
-### Ataque
+#### Ataque
 
 ```
 Teste:          d20 + atributo  vs  Defesa do alvo
@@ -288,11 +288,11 @@ Dano:           dados da arma + atributo
 - **Espada Afiada** adiciona 2d8 em ataques com arma.
 - **Túnica de Aventureiro** dá +1 de dano corpo a corpo; **Manto do Atirador** dá +1 de dano à distância.
 
-### Fuga
+#### Fuga
 
 Teste: `d20 + Destreza` contra **10 + Iniciativa da criatura mais rápida viva**. Você precisa de **3 sucessos** para fugir. Falhar dá um **ataque grátis da criatura mais rápida** e o turno segue normalmente.
 
-### Magia
+#### Magia
 
 - Custo de mana é descontado ao lançar. Cada dado é rolado e exibido.
 - **Pequeno Grimório** (item) reduz o custo das magias pagas em 1 (mínimo 1).
@@ -305,11 +305,11 @@ Teste: `d20 + Destreza` contra **10 + Iniciativa da criatura mais rápida viva**
 - Magias **sempre acertam** (sem teste de defesa) e aplicam o veneno da Cura para a Morte no alvo.
 - **Meio-Fada** reduz em 1 o custo de mana de magias e habilidades (nunca abaixo de 1).
 
-### Veneno em combate
+#### Veneno em combate
 
 A **Gota de Veneno** (item da Casa do Chapéu Mágico) é aplicada por uma ação inteira: a opção **"Aplicar Gota de Veneno na arma"** consome a gota e gasta a rodada. O próximo ataque **com arma** que acertar envenena o alvo, causando **1d4 por rodada até o fim do combate**. Se o ataque errar, o veneno seca. Não funciona com magia.
 
-### Companheiro em combate
+#### Companheiro em combate
 
 O companheiro age sozinho no seu turno de iniciativa:
 
@@ -318,14 +318,14 @@ O companheiro age sozinho no seu turno de iniciativa:
 - **Guerreiro/outros:** ataque físico com a arma.
 - Os inimigos têm **50% de chance** de atacar o companheiro em vez de você (quando ele está vivo).
 
-### Morte e resgate
+#### Morte e resgate
 
 - Se **você** cair a 0 de vida, o Healer tenta reviver com **Cura Total** (10 de mana, uma vez por combate).
 - Se **você** for curado para 0 e sua raça for **Humano**, a passiva **Vontade de Viver** pode deixá-lo com 1 de vida (uma vez por dia).
 - Se o **companheiro** morrer, você tenta estabilizá-lo: precisa de **Intelecto ≥ 14** e um **d20 ≥ 16**. Se o resgate falhar, o companheiro morre em definitivo e **todos os itens e o ouro dele passam para você**.
 - Companheiro vivo com menos de 30% de vida após a vitória se recupera para 50%.
 
-### Vitória e Derrota
+#### Vitória e Derrota
 
 - **Vitória:** cada criatura processa seus drops (ouro e itens) e concede XP.
 - **Derrota:** sua jornada termina e o jogo volta ao menu principal (a dificuldade define se os saves sobrevivem).
@@ -482,132 +482,6 @@ Se **Draven** te pagou a comida uma vez (por ter chegado com fome), a **primeira
 - **Opções condicionais:** a **alfaiataria** só aparece depois que você conheceu a alfaiateira; a **barraca de frutas** e a **caverna** só entram no menu depois de certos acontecimentos do jogo (veja os spoilers das missões).
 - **Cada visita a uma loja gasta 1 período do dia** (taverna, ferreiro, alfaiataria, barraca de frutas e Chapéu Mágico). O período é cobrado ao sair da loja, então comprar vários itens no mesmo dia só custa 1 período. A caverna e o quadro de missões **não** cobram período.
 
-<details>
-<summary>⚠️ <b>AVISO DE SPOILER: a mina, o prazo e o funeral de A Filha Perdida</b> — clique para revelar</summary>
-
-### A Caverna (A Filha Perdida)
-
-A caverna fica no fundo da vila, encostada no paredão da montanha. É o lugar que Célia Morel indicou — e ela só conta onde fica **depois que você aceita a missão**.
-
-Ao chegar na entrada:
-
-1. **Teste de Presença DT 12** — se passar, você percebe um **pequeno goblin** encostado do lado de fora do vão. Ele te vê e corre para dentro. Se você for **Dracônico**, ele se encolhe assustado antes de sumir na escuridão (texto diferente). Se falhar, você não vê nada. O goblin só precisa ser notado uma vez.
-2. Escolha: **olhar em volta da entrada** ou **entrar na caverna**.
-3. Se olhar em volta, **Teste de Presença DT 7** — se passar, encontra uma **tocha** (peso 0,5 kg) entre as pedras, com a mesma pergunta de pegar ou deixar para trás usada no resto do jogo. A tocha só precisa ser vista uma vez.
-4. Escolha final: **voltar para a vila** ou **entrar na caverna**.
-
-**Escuridão:** lá dentro, todo teste leva **-2** por está escuro — a menos que você esteja **com a tocha na mão**, o que anula a penalidade. O bônus só vale com a tocha realmente na mochila: se ela for vendida ou derrubada, o -2 volta.
-
-### O Prazo de 3 Dias (A Filha Perdida)
-
-Ao aceitar **A Filha Perdida**, o jogo registra o dia do aceite e passa a contar **3 dias inteiros**. Não há nenhum aviso antes: o jogador não recebe nenhuma dica de que existe um prazo.
-
-**No terceiro dia (ou no dia em que o jogador voltar à vila depois disso), se ele estiver dentro da vila:**
-
-1. A vila acorda errada. Os guardas desceram à mina de madrugada, entraram, viram o que havia lá dentro e voltaram **sem ninguém**.
-2. A filha é encontrada **morta** dentro da mina, e a **boca da mina é fechada para reforma** — com tábuas novas, corda de obra e guarda no portão. O bloqueio é permanente, sem prazo.
-3. É perceptível que vários **dracônicos estão assustados e em pânico**, todos indo na mesma direção. O jogador escolhe:
-   - **Seguir o povo** — chega ao largo e percebe que é um **funeral**. A cena só menciona os NPCs que o jogador **já conheceu** (Draven, Célia, Gorak, Dona Maga, a velha). Se não conheceu ninguém, o texto diz que não reconhece ninguém. Depois o jogador decide **ficar** ou **voltar**:
-     - **Ficar** — cena triste: Célia toca a testa da filha e precisa ser afastada, uma criança pergunta por que ela chora, o largo passa o dia chamando o nome da menina.
-     - **Não ficar** — sai do largo e volta para a vila.
-   - **Ficar para trás** — a rua esvazia em minutos e a vila fica sem ninguém.
-
-**A vila deserta:** no dia do funeral, as lojas **continuam aparecendo no menu** mas estão vazias — é possível entrar, ver que não há ninguém e voltar. **Nenhuma compra funciona e é impossível falar com qualquer NPC.** A visita a uma loja fechada **cobra 1 período** normalmente, o que permite virar o dia dentro da própria vila. O `Olhar em volta` também muda de texto.
-
-**No dia seguinte**, tudo volta a funcionar sozinho: as lojas reabrem, os NPCs voltam e o menu da vila perde os avisos de "vila vazia" e "mina fechada".
-
-### O Interior da Caverna
-
-Ao entrar, a caverna é explorada em sequência:
-
-1. **Escuridão.** Com a tocha na mão você vê o túnel inteiro: o chão, as paredes, a largura. Sem tocha, o escuro deixa de ser ausência de luz e vira um problema prático — você se orienta pelo tato, pelo som e pelo cheiro de mineral.
-2. **Trilha de trem e cristais** (só visíveis com tocha): dois fios de metal meio afundados no cascalho, gastos no meio por muita passagem, correndo fundo para dentro da mina. E veios de cristal cravados nas paredes, alguns rachados como se alguém tivesse tentado arrancar um. Isso não é buraco de bicho: alguém cavou e trouxe um carrinho. Cada detalhe só aparece uma vez.
-3. **Teste de Presença DT 10** — "sentir algo à frente":
-   - **Passou:** você sente um peso no ar e um cheiro de ferrugem e suor frio. Alguém está adiante, e surge a opção de **seguir em frente** ou **sair da mina**.
-   - **Falhou:** só barulho de água e nada mais. Não há como recuar aqui — só seguir.
-4. **O goblin e a criança.** O túnel alarga e aparecem pequenas luzes verdes baixas, espalhadas pelo chão. Perto delas, agachado, um goblin **com medo**; ao lado, deitada, uma criança desmaiada de escamas quase brancas. O goblin te vê e repete sem parar: *"não foi culpa minha, eu não quis fazer isso, não não não"*. Três opções:
-   - **Tentar acalmar (Presença DT 15).** **Passou:** ele conta que não controla, que só faz o que mandam — os dracônicos expulsaram ele e todos os irmãos da mina, depois mandaram voltar, e trouxeram a menina antes, obrigando-o a olhar. **Falhou:** ele se levanta de um pulo e não é para correr, é para gritar.
-   - **Atacar.** O combate começa **antes** da transformação, contra um **Goblin comum** (nível 3, 15 de vida) — o mesmo que você vê fugindo da entrada da mina. Se ele morrer aqui, acabou: ele desaba sem crescer, as pequenas luzes se apagam e a criança continua no chão — ele não tinha encostado nela. Você segue direto para a decisão sobre a criança. Se ele **sobreviver**, ele se levanta gritando e aí sim se transforma.
-   - **Sair correndo.** Ninguém persegue ninguém. A criança fica lá, o prazo de 3 dias continua rodando e o funeral acontece como se você nunca tivesse entrado.
-
-**Passe ou falhe, a luta acontece.** Depois do teste ele grita que a culpa é dos dracônicos que mandaram ele e todos os irmãos embora, começa a **crescer** — os ombros estalam, os braços engrossam, e o goblin pequeno vira uma coisa grande e imponente no meio do túnel. No meio do crescimento ele pega um **porrete** do chão. Só sabe rugir e atacar o que está na frente.
-
-**O goblin transformado** é nível **5**, com **90 de vida**, **+3 de iniciativa** sobre o goblin comum, ataque **Porretada de 1d8 + 5**, e não foge. Derruba **200 XP**, pode soltar o **Porrete** (50% de chance) e sempre deixa entre **12 e 26 de ouro**. Depois de vencer, o porrete que ele segurava **fica no chão e dá para pegar**, independentemente do drop.
-
-**Se você vencer a luta, três escolhas:**
-
-| Escolha | Resultado |
-|---|---|
-| **Levar a criança até a mãe** | Célia pega a filha, agradece, você recebe **100 de ouro**. Missão encerrada. |
-| **Deixar a criança e buscar um guarda** | Os guardas descem e levam a criança até a mãe. **Sem recompensa.** Missão encerrada. |
-| **Ir embora e deixar a criança lá** | O prazo de 3 dias continua e o funeral acontece depois, normalmente. |
-
-### O Fim da Missão no Quadro
-
-Assim que o funeral acontece, a missão **some na hora** do menu de **missões em andamento** — ela é encerrada e não aparece mais entre as aceitas.
-
-O aviso no **quadro de missões da taverna**, porém, **continua pregado por mais 2 dias** (o dia do funeral e os dois dias seguintes). Nesse período ele pode ser **lido normalmente**, exatamente como estava antes — local, objetivo e recompensa aparecem igual. A única diferença é que **não aparece a opção de aceitar**: o jogo só informa que a missão ainda está lá e que ninguém mexeu no papel.
-
-Passados os 2 dias, o aviso **desaparece do quadro** de vez.
-
-> **Nota de escopo:** o interior e o resgate existem, mas a trilha de trem e os cristais só aparecem se você tiver levado a tocha. Sem ela, o túnel continua sendo atravessado às cegas — o que é o ponto da penalidade de escuridão, mas significa que dá para chegar ao goblin sem ter visto nenhum dos dois detalhes.
-
-</details>
-
-<details>
-<summary>⚠️ <b>AVISO DE SPOILER: a trilha da netinha (A Neta Perdida)</b> — clique para revelar</summary>
-
-### Como se aceita
-
-A missão **não está no quadro de missões** — ela nunca aparece para nenhum jogador. Você só a recebe **cruzando com a velhinha no caminho para a caverna**, depois que já conhece a caverna (ou depois que a velhinha te para na estrada, com as duas missões):
-
-- Se você **parar e escutar**, ela conta da netinha.
-- Se você **ignorar e seguir**, ela desiste na hora e some — a missão é perdida para sempre.
-
-Ao aceitar, a **barraca de frutas passa a aparecer no menu da vila**, e a floresta ganha a opção **"Procurar a netinha da velhinha na mata da entrada"**.
-
-### O prazo de 7 dias
-
-A missão conta **7 dias inteiros** a partir do aceite, com a mesma mecânica da filha: **nenhum aviso**. Passados os 7 dias, quando você chega à cabana, a criança **já está morta** — a cabana está lá, o homem de roupas de médico está de costas sobre a mesa, e a netinha está no chão, num canto.
-
-### A trilha, passo a passo
-
-1. **Pegadas** — frutas caídas rolando numa direção só, marcadas por pegadas de criança arrastando um pé: a netinha corria com a bolsa de frutas.
-2. **O acampamento** — a trilha termina numa clareira com um **acampamento de bandidos**. Dá para tentar ver quantos são (**Teste de Presença**, 3 turnos de caminho até lá) ou advance direto. São **sete bandidos armados**: você pode **atacar de frente** ou **tentar pegá-los de surpresa** (Teste de Destreza DT 15).
-3. **Vasculhar** — depois de vencer, o local mostra uma **gaiola arrombada por dentro**: a netinha foi mantida presa ali e fugiu correndo.
-4. **A cabana** — as pegadas terminam numa clareira menor com uma **cabana de madeira e luz piscando**. Dá para observar de longe ou **espiar o interior** (Teste de Destreza DT 7). Lá dentro há um **grande homem de roupas de médico** trabalhando em algo sobre a mesa.
-5. **Entrar** — **de frente** ou **furtivo** (Teste de Destreza DT 12, +3 de iniciativa se passar). A luz apaga e o que estava na mesa aparece: **carne humana** aberta, em pedaços. Ele faz magias com carne e plantas e usa pessoas como matéria-prima.
-
-### O Mago Macabro
-
-O dono da cabana é o **Mago Macabro**: nível **5**, **80 de vida**, **14 de defesa**, **+4 de iniciativa**, **100 XP**, **não foge**.
-
-| Ataque | Efeito |
-|---|---|
-| **Cutelo** (2d8 + Força) | 30% de chance de **sangrar**: 1d6 por rodada até o fim do combate |
-| **Soco** (1d6) | Ataque simples |
-| **Sede de Carne e Planta** | Cura a si mesmo com 3d4 — até **5 vezes** por combate |
-
-Ele derruba o **Cutelo** (arma de **2d8 + Força**, 15% de chance) com 15% de chance. É a **arma mais pesada do jogo em valor de venda** entre as que você pode encontrar antes do chefe do labirinto.
-
-### O final
-
-Se a criança está **viva**, ela se solta e te segue de volta até a vila. Na entrada, os **guardas** aparecem, ouvem sua história e mandam você **levar ela até a avó** antes de voltar — a cabana ainda tem o que explicar. Na barraca, a velhinha chora em silêncio e a menina se joga nos braços da avó. A velhinha então tira do avental uma **fruta escura, quase preta, que brilha de um jeito errado** e a dá para você, dizendo para usar só em momento de extrema urgência.
-
-Se a criança está **morta**, você escolhe **levar o corpo até a vila** ou **deixá-lo na cabana**. Na vila, os guardas ouvem a história e saem correndo para a cabana. Você pode **contar para a velhinha** (ela chora em silêncio e promete enterrar a netinha junto às macieiras) ou **deixar os guardas resolverem**.
-
-### A Fruta do Diabo
-
-| Item | Valor | Peso | Efeito |
-|---|---|---|---|
-| **Fruta do Diabo** | 500 (vendedor paga 350) | 0,2 | Consumível de **uso único**, só funciona dentro de combate. Restaura **vida e mana ao máximo**, deixa você **imune a todo dano na primeira rodada** e **sobe um dado de dano em todos os seus golpes** (1d4→1d6, 1d6→1d8, 1d8→1d10, 1d10→1d12). O que já é 1d12 não perde dado: ganha um **dado extra** (1d12 vira 1d12+1d4, 2d12 vira 2d12+1d6, e assim por diante). O poder dura **até o fim daquele combate** — depois se desfaz. |
-
-É o item mais poderoso do jogo em termos de burst de dano, e o único que pode literalmente te salvar de um golpe fatal. Ninguém no jogo explica o que ela é.
-
-</details>
-
----
-
 ### Taverna
 
 A taverna é o **coração da vila**: serve comida, tem o quadro de missões na parede, e é onde o dono se apresenta.
@@ -699,13 +573,139 @@ O quadro de missões fica **na parede da taverna**. Ele guarda avisos pregados c
 <details>
 <summary>⚠️ <b>Spoiler: as missões do quadro</b> — clique para revelar</summary>
 
-Só **A Filha Perdida** aparece no quadro. **A Neta Perdida** existe, mas nunca é anunciada no quadro — você só a recebe pessoalmente (ver o bloco da netinha acima).
+Só **A Filha Perdida** aparece no quadro. **A Neta Perdida** existe, mas nunca é anunciada no quadro — você só a recebe pessoalmente (ver o bloco da netinha abaixo).
 
 | Missão | Onde | Objetivo | Recompensa |
 |---|---|---|---|
 | **A Filha Perdida** | Perto das cavernas ao redor da vila | Uma filha foi vista por último perto das cavernas da vila. É preciso encontrá-la antes que algo pior aconteça. | 100 ouro — falar com a dona da alfaiataria ao encontrá-la |
 
 O aviso fica no quadro mesmo depois de encerrada (a formalização do funeral), e some 2 dias depois.
+
+</details>
+
+---
+
+<details>
+<summary>⚠️ <b>AVISO DE SPOILER: a mina, o prazo e o funeral de A Filha Perdida</b> — clique para revelar</summary>
+
+#### A Caverna (A Filha Perdida)
+
+A caverna fica no fundo da vila, encostada no paredão da montanha. É o lugar que Célia Morel indicou — e ela só conta onde fica **depois que você aceita a missão**.
+
+Ao chegar na entrada:
+
+1. **Teste de Presença DT 12** — se passar, você percebe um **pequeno goblin** encostado do lado de fora do vão. Ele te vê e corre para dentro. Se você for **Dracônico**, ele se encolhe assustado antes de sumir na escuridão (texto diferente). Se falhar, você não vê nada. O goblin só precisa ser notado uma vez.
+2. Escolha: **olhar em volta da entrada** ou **entrar na caverna**.
+3. Se olhar em volta, **Teste de Presença DT 7** — se passar, encontra uma **tocha** (peso 0,5 kg) entre as pedras, com a mesma pergunta de pegar ou deixar para trás usada no resto do jogo. A tocha só precisa ser vista uma vez.
+4. Escolha final: **voltar para a vila** ou **entrar na caverna**.
+
+**Escuridão:** lá dentro, todo teste leva **-2** por está escuro — a menos que você esteja **com a tocha na mão**, o que anula a penalidade. O bônus só vale com a tocha realmente na mochila: se ela for vendida ou derrubada, o -2 volta.
+
+#### O Prazo de 3 Dias (A Filha Perdida)
+
+Ao aceitar **A Filha Perdida**, o jogo registra o dia do aceite e passa a contar **3 dias inteiros**. Não há nenhum aviso antes: o jogador não recebe nenhuma dica de que existe um prazo.
+
+**No terceiro dia (ou no dia em que o jogador voltar à vila depois disso), se ele estiver dentro da vila:**
+
+1. A vila acorda errada. Os guardas desceram à mina de madrugada, entraram, viram o que havia lá dentro e voltaram **sem ninguém**.
+2. A filha é encontrada **morta** dentro da mina, e a **boca da mina é fechada para reforma** — com tábuas novas, corda de obra e guarda no portão. O bloqueio é permanente, sem prazo.
+3. É perceptível que vários **dracônicos estão assustados e em pânico**, todos indo na mesma direção. O jogador escolhe:
+   - **Seguir o povo** — chega ao largo e percebe que é um **funeral**. A cena só menciona os NPCs que o jogador **já conheceu** (Draven, Célia, Gorak, Dona Maga, a velha). Se não conheceu ninguém, o texto diz que não reconhece ninguém. Depois o jogador decide **ficar** ou **voltar**:
+     - **Ficar** — cena triste: Célia toca a testa da filha e precisa ser afastada, uma criança pergunta por que ela chora, o largo passa o dia chamando o nome da menina.
+     - **Não ficar** — sai do largo e volta para a vila.
+   - **Ficar para trás** — a rua esvazia em minutos e a vila fica sem ninguém.
+
+**A vila deserta:** no dia do funeral, as lojas **continuam aparecendo no menu** mas estão vazias — é possível entrar, ver que não há ninguém e voltar. **Nenhuma compra funciona e é impossível falar com qualquer NPC.** A visita a uma loja fechada **cobra 1 período** normalmente, o que permite virar o dia dentro da própria vila. O `Olhar em volta` também muda de texto.
+
+**No dia seguinte**, tudo volta a funcionar sozinho: as lojas reabrem, os NPCs voltam e o menu da vila perde os avisos de "vila vazia" e "mina fechada".
+
+#### O Interior da Caverna
+
+Ao entrar, a caverna é explorada em sequência:
+
+1. **Escuridão.** Com a tocha na mão você vê o túnel inteiro: o chão, as paredes, a largura. Sem tocha, o escuro deixa de ser ausência de luz e vira um problema prático — você se orienta pelo tato, pelo som e pelo cheiro de mineral.
+2. **Trilha de trem e cristais** (só visíveis com tocha): dois fios de metal meio afundados no cascalho, gastos no meio por muita passagem, correndo fundo para dentro da mina. E veios de cristal cravados nas paredes, alguns rachados como se alguém tivesse tentado arrancar um. Isso não é buraco de bicho: alguém cavou e trouxe um carrinho. Cada detalhe só aparece uma vez.
+3. **Teste de Presença DT 10** — "sentir algo à frente":
+   - **Passou:** você sente um peso no ar e um cheiro de ferrugem e suor frio. Alguém está adiante, e surge a opção de **seguir em frente** ou **sair da mina**.
+   - **Falhou:** só barulho de água e nada mais. Não há como recuar aqui — só seguir.
+4. **O goblin e a criança.** O túnel alarga e aparecem pequenas luzes verdes baixas, espalhadas pelo chão. Perto delas, agachado, um goblin **com medo**; ao lado, deitada, uma criança desmaiada de escamas quase brancas. O goblin te vê e repete sem parar: *"não foi culpa minha, eu não quis fazer isso, não não não"*. Três opções:
+   - **Tentar acalmar (Presença DT 15).** **Passou:** ele conta que não controla, que só faz o que mandam — os dracônicos expulsaram ele e todos os irmãos da mina, depois mandaram voltar, e trouxeram a menina antes, obrigando-o a olhar. **Falhou:** ele se levanta de um pulo e não é para correr, é para gritar.
+   - **Atacar.** O combate começa **antes** da transformação, contra um **Goblin comum** (nível 3, 15 de vida) — o mesmo que você vê fugindo da entrada da mina. Se ele morrer aqui, acabou: ele desaba sem crescer, as pequenas luzes se apagam e a criança continua no chão — ele não tinha encostado nela. Você segue direto para a decisão sobre a criança. Se ele **sobreviver**, ele se levanta gritando e aí sim se transforma.
+   - **Sair correndo.** Ninguém persegue ninguém. A criança fica lá, o prazo de 3 dias continua rodando e o funeral acontece como se você nunca tivesse entrado.
+
+**Passe ou falhe, a luta acontece.** Depois do teste ele grita que a culpa é dos dracônicos que mandaram ele e todos os irmãos embora, começa a **crescer** — os ombros estalam, os braços engrossam, e o goblin pequeno vira uma coisa grande e imponente no meio do túnel. No meio do crescimento ele pega um **porrete** do chão. Só sabe rugir e atacar o que está na frente.
+
+**O goblin transformado** é nível **5**, com **90 de vida**, **+3 de iniciativa** sobre o goblin comum, ataque **Porretada de 1d8 + 5**, e não foge. Derruba **200 XP**, pode soltar o **Porrete** (50% de chance) e sempre deixa entre **12 e 26 de ouro**. Depois de vencer, o porrete que ele segurava **fica no chão e dá para pegar**, independentemente do drop.
+
+**Se você vencer a luta, três escolhas:**
+
+| Escolha | Resultado |
+|---|---|
+| **Levar a criança até a mãe** | Célia pega a filha, agradece, você recebe **100 de ouro**. Missão encerrada. |
+| **Deixar a criança e buscar um guarda** | Os guardas descem e levam a criança até a mãe. **Sem recompensa.** Missão encerrada. |
+| **Ir embora e deixar a criança lá** | O prazo de 3 dias continua e o funeral acontece depois, normalmente. |
+
+#### O Fim da Missão no Quadro
+
+Assim que o funeral acontece, a missão **some na hora** do menu de **missões em andamento** — ela é encerrada e não aparece mais entre as aceitas.
+
+O aviso no **quadro de missões da taverna**, porém, **continua pregado por mais 2 dias** (o dia do funeral e os dois dias seguintes). Nesse período ele pode ser **lido normalmente**, exatamente como estava antes — local, objetivo e recompensa aparecem igual. A única diferença é que **não aparece a opção de aceitar**: o jogo só informa que a missão ainda está lá e que ninguém mexeu no papel.
+
+Passados os 2 dias, o aviso **desaparece do quadro** de vez.
+
+> **Nota de escopo:** o interior e o resgate existem, mas a trilha de trem e os cristais só aparecem se você tiver levado a tocha. Sem ela, o túnel continua sendo atravessado às cegas — o que é o ponto da penalidade de escuridão, mas significa que dá para chegar ao goblin sem ter visto nenhum dos dois detalhes.
+
+</details>
+
+<details>
+<summary>⚠️ <b>AVISO DE SPOILER: a trilha da netinha (A Neta Perdida)</b> — clique para revelar</summary>
+
+#### Como se aceita
+
+A missão **não está no quadro de missões** — ela nunca aparece para nenhum jogador. Você só a recebe **cruzando com a velhinha no caminho para a caverna**, depois que já conhece a caverna (ou depois que a velhinha te para na estrada, com as duas missões):
+
+- Se você **parar e escutar**, ela conta da netinha.
+- Se você **ignorar e seguir**, ela desiste na hora e some — a missão é perdida para sempre.
+
+Ao aceitar, a **barraca de frutas passa a aparecer no menu da vila**, e a floresta ganha a opção **"Procurar a netinha da velhinha na mata da entrada"**.
+
+#### O prazo de 7 dias
+
+A missão conta **7 dias inteiros** a partir do aceite, com a mesma mecânica da filha: **nenhum aviso**. Passados os 7 dias, quando você chega à cabana, a criança **já está morta** — a cabana está lá, o homem de roupas de médico está de costas sobre a mesa, e a netinha está no chão, num canto.
+
+#### A trilha, passo a passo
+
+1. **Pegadas** — frutas caídas rolando numa direção só, marcadas por pegadas de criança arrastando um pé: a netinha corria com a bolsa de frutas.
+2. **O acampamento** — a trilha termina numa clareira com um **acampamento de bandidos**. Dá para tentar ver quantos são (**Teste de Presença**, 3 turnos de caminho até lá) ou advance direto. São **sete bandidos armados**: você pode **atacar de frente** ou **tentar pegá-los de surpresa** (Teste de Destreza DT 15).
+3. **Vasculhar** — depois de vencer, o local mostra uma **gaiola arrombada por dentro**: a netinha foi mantida presa ali e fugiu correndo.
+4. **A cabana** — as pegadas terminam numa clareira menor com uma **cabana de madeira e luz piscando**. Dá para observar de longe ou **espiar o interior** (Teste de Destreza DT 7). Lá dentro há um **grande homem de roupas de médico** trabalhando em algo sobre a mesa.
+5. **Entrar** — **de frente** ou **furtivo** (Teste de Destreza DT 12, +3 de iniciativa se passar). A luz apaga e o que estava na mesa aparece: **carne humana** aberta, em pedaços. Ele faz magias com carne e plantas e usa pessoas como matéria-prima.
+
+#### O Mago Macabro
+
+O dono da cabana é o **Mago Macabro**: nível **5**, **80 de vida**, **14 de defesa**, **+4 de iniciativa**, **100 XP**, **não foge**.
+
+| Ataque | Efeito |
+|---|---|
+| **Cutelo** (2d8 + Força) | 30% de chance de **sangrar**: 1d6 por rodada até o fim do combate |
+| **Soco** (1d6) | Ataque simples |
+| **Sede de Carne e Planta** | Cura a si mesmo com 3d4 — até **5 vezes** por combate |
+
+Ele derruba o **Cutelo** (arma de **2d8 + Força**, 15% de chance) com 15% de chance. É a **arma mais pesada do jogo em valor de venda** entre as que você pode encontrar antes do chefe do labirinto.
+
+#### O final
+
+Se a criança está **viva**, ela se solta e te segue de volta até a vila. Na entrada, os **guardas** aparecem, ouvem sua história e mandam você **levar ela até a avó** antes de voltar — a cabana ainda tem o que explicar. Na barraca, a velhinha chora em silêncio e a menina se joga nos braços da avó. A velhinha então tira do avental uma **fruta escura, quase preta, que brilha de um jeito errado** e a dá para você, dizendo para usar só em momento de extrema urgência.
+
+Se a criança está **morta**, você escolhe **levar o corpo até a vila** ou **deixá-lo na cabana**. Na vila, os guardas ouvem a história e saem correndo para a cabana. Você pode **contar para a velhinha** (ela chora em silêncio e promete enterrar a netinha junto às macieiras) ou **deixar os guardas resolverem**.
+
+#### A Fruta do Diabo
+
+| Item | Valor | Peso | Efeito |
+|---|---|---|---|
+| **Fruta do Diabo** | 500 (vendedor paga 350) | 0,2 | Consumível de **uso único**, só funciona dentro de combate. Restaura **vida e mana ao máximo**, deixa você **imune a todo dano na primeira rodada** e **sobe um dado de dano em todos os seus golpes** (1d4→1d6, 1d6→1d8, 1d8→1d10, 1d10→1d12). O que já é 1d12 não perde dado: ganha um **dado extra** (1d12 vira 1d12+1d4, 2d12 vira 2d12+1d6, e assim por diante). O poder dura **até o fim daquele combate** — depois se desfaz. |
+
+É o item mais poderoso do jogo em termos de burst de dano, e o único que pode literalmente te salvar de um golpe fatal. Ninguém no jogo explica o que ela é.
 
 </details>
 
