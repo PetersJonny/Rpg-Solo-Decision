@@ -578,6 +578,7 @@ Só **A Filha Perdida** aparece no quadro. **A Neta Perdida** existe, mas nunca 
 | Missão | Onde | Objetivo | Recompensa |
 |---|---|---|---|
 | **A Filha Perdida** | Perto das cavernas ao redor da vila | Uma filha foi vista por último perto das cavernas da vila. É preciso encontrá-la antes que algo pior aconteça. | 100 ouro — falar com a dona da alfaiataria ao encontrá-la |
+| **O Labirinto Secreto** | Floresta de Freijord | Balthazar, um ex-aventureiro, está na taverna toda manhã (fale com Draven para encontrá-lo) e quer o chifre do colosso do labirinto como prova de que a fera que matou seus companheiros está morta. | A Espada Jurada (causa 1d12, usando Força) |
 
 O aviso fica no quadro mesmo depois de encerrada (a formalização do funeral), e some 2 dias depois.
 

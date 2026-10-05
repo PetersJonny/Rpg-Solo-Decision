@@ -419,6 +419,8 @@ switch (nome) {
                 return new Arma("Espada", "Uma espada de aço afiada que causa 1d8 de dano.", "CaC", 8, 1, 1);
             case "Espada Pesada":
                 return new Arma("Espada Pesada", "Uma espada gigante que causa 1d10 de dano, usando Força.", "CaC", 10, 1, 1);
+            case "Espada Jurada":
+                return new Arma("Espada Jurada", "A lâmina forjada de Balthazar, entregue como recompensa por vingar seus antigos companheiros. Causa 1d12 de dano, usando Força.", "CaC", 12, 1, 1);
             case "Machado de Guerra":
                 return new Arma("Machado de Guerra", "Um machado de batalha que causa 1d12 de dano, usando Força.", "CaC", 12, 1, 1);
             case "Martelo de Guerra":

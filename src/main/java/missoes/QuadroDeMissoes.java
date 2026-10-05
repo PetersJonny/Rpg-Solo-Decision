@@ -45,7 +45,12 @@ public class QuadroDeMissoes {
                     "Entrada da vila, perto da barraca de frutas",
                     "A netinha da velhinha sumiu enquanto colhiam frutas na floresta para fazer uma torta. Encontrá-la antes que algo aconteça.",
                     "A gratidão eterna da velhinha",
-                    false)
+                    false),
+            new Missao(
+                    "O Labirinto Secreto",
+                    "Floresta de Freijord (local exato desconhecido)",
+                    "Procure por Balthazar na taverna pela manhã. Ele busca vingança contra o mal que vive no labirinto.",
+                    "A Espada Jurada (com muita história)")
     );
 
     private static void exibirAviso(Missao m) {

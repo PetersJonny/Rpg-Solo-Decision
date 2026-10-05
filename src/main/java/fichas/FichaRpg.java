@@ -180,6 +180,7 @@ public class FichaRpg implements java.io.Serializable {
     private boolean cabanaVisitada = false;
     private boolean netaSeguindo = false;
     private boolean missaoNetaEncerrada = false;
+    private boolean missaoBalthazarEncerrada = false;
     private boolean presencaNetaPassou = false;
     private boolean acampamentoAlcancado = false;
     private boolean cabanaAlcancada = false;
@@ -412,7 +413,7 @@ public class FichaRpg implements java.io.Serializable {
     public void aceitarMissao(String nome) { GerenciadorDeMissoesECompanheiro.aceitarMissao(this, nome); }
     public void encerrarMissao(String nome) { missoesAceitas.remove(nome); }
     public boolean isMissaoEncerrada(String nome) {
-        return ("A Filha Perdida".equals(nome) && filhaMorta) || ("A Neta Perdida".equals(nome) && missaoNetaEncerrada);
+        return ("A Filha Perdida".equals(nome) && filhaMorta) || ("A Neta Perdida".equals(nome) && missaoNetaEncerrada) || ("O Labirinto Secreto".equals(nome) && missaoBalthazarEncerrada);
     }
     public void adicionarNovidade(String missao, String texto) {
         missoesNovidades.computeIfAbsent(missao, k -> new ArrayList<>()).add(texto);
@@ -553,6 +554,8 @@ public class FichaRpg implements java.io.Serializable {
     public boolean isPresencaNetaPassou() { return presencaNetaPassou; }
     public void setPresencaNetaPassou(boolean v) { this.presencaNetaPassou = v; }
     public boolean isMissaoNetaEncerrada() { return missaoNetaEncerrada; }
+    public boolean isMissaoBalthazarEncerrada() { return missaoBalthazarEncerrada; }
+    public void setMissaoBalthazarEncerrada(boolean v) { this.missaoBalthazarEncerrada = v; }
     public void setMissaoNetaEncerrada(boolean v) { this.missaoNetaEncerrada = v; }
     public int getTurnosParaVoltar() { return turnosParaVoltar; }
     public void setTurnosParaVoltar(int v) { this.turnosParaVoltar = v; }

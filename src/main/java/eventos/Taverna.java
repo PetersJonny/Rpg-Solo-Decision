@@ -110,16 +110,34 @@ public class Taverna {
             }
 
             boolean podePerguntar = Alfaiataria.podePerguntarOndeFica(ficha);
+            boolean missaoBalthazarAtiva = ficha.isMissaoAceita("O Labirinto Secreto") && !ficha.isMissaoBalthazarEncerrada();
+            boolean deManha = !ficha.isEhNoite();
+            boolean sabeOndeBalthazarEsta = ficha.getNovidades("O Labirinto Secreto").stream().anyMatch(n -> n.contains("mesa no canto"));
 
             System.out.println("\n  O que você deseja fazer?\n");
             System.out.println("  1. " + CIANO + "Comer" + RESET + " (do cardápio da taverna)");
             System.out.println("  2. " + CIANO + "Ler o quadro de missões" + RESET + " na parede");
-            int opPerguntar = -1, opSair = 3;
+            
+            int opAtual = 3;
+            int opPerguntar = -1;
+            int opPerguntarBalthazar = -1;
+            int opFalarBalthazar = -1;
+            
             if (podePerguntar) {
-                opPerguntar = 3;
-                System.out.println("  3. " + CIANO + "Perguntar onde fica a alfaiataria" + RESET);
-                opSair = 4;
+                opPerguntar = opAtual++;
+                System.out.println("  " + opPerguntar + ". " + CIANO + "Perguntar onde fica a alfaiataria" + RESET);
             }
+            if (missaoBalthazarAtiva && deManha) {
+                if (!sabeOndeBalthazarEsta) {
+                    opPerguntarBalthazar = opAtual++;
+                    System.out.println("  " + opPerguntarBalthazar + ". " + CIANO + "Perguntar a Draven sobre Balthazar" + RESET);
+                } else {
+                    opFalarBalthazar = opAtual++;
+                    System.out.println("  " + opFalarBalthazar + ". " + CIANO + "Falar com Balthazar na mesa do canto" + RESET);
+                }
+            }
+            
+            int opSair = opAtual;
             System.out.println("  " + VERMELHO + opSair + ". Sair da taverna" + RESET);
             System.out.println("\n  " + VERDE + "Digite a opção:" + RESET);
             int escolha = Interface.lerOpcao(1, opSair);
@@ -130,7 +148,14 @@ public class Taverna {
                 QuadroDeMissoes.QuadroDeMissoes(ficha);
             } else if (escolha == opPerguntar) {
                 Alfaiataria.PerguntarOndeFica(ficha, VERMELHO + "Draven" + RESET);
-            } else {
+            } else if (escolha == opPerguntarBalthazar) {
+                Interface.MostrarMensagem("\nVocê chama Draven e aponta para o aviso do Labirinto Secreto.");
+                Interface.MostrarMensagem("\"Ah, o velho Balthazar...\" Draven aponta com a cabeça para uma mesa afastada. \"Ele está ali, afogando as mágoas no hidromel de sempre. Vá falar com ele.\"");
+                ficha.adicionarNovidade("O Labirinto Secreto", "!Draven apontou Balthazar em uma mesa no canto da taverna.");
+                Interface.Pausa(2000);
+            } else if (escolha == opFalarBalthazar) {
+                falarComBalthazar(ficha);
+            } else if (escolha == opSair) {
                 Interface.MostrarMensagem("\nVocê se levanta e sai da taverna, deixando o dracônico limpando seus copos.");
                 Interface.Pausa(1500);
                 return;
@@ -194,6 +219,60 @@ public class Taverna {
             System.out.println("  1. Sim");
             System.out.println("  2. Voltar");
             if (Interface.lerOpcao(2) == 2) return;
+        }
+    }
+    private static void falarComBalthazar(FichaRpg ficha) {
+        Interface.cabecalhoMenu("BALTHAZAR");
+        Interface.MostrarMensagem("\nVocê se aproxima da mesa do canto. Um homem velho, de barba grisalha suja e olhar distante, encara uma caneca de hidromel pela metade.");
+        Interface.MostrarMensagem("\"O que você quer?\" ele resmunga, sem levantar os olhos.");
+        Interface.Pausa(1800);
+        Interface.MostrarMensagem("\"Você leu o aviso? Sim, eu postei aquilo... Eu era um aventureiro, como você.\"");
+        Interface.Pausa(1800);
+        Interface.MostrarMensagem("\"Há muitos anos, entramos naquele labirinto secreto na floresta. Éramos quatro. Apenas eu saí de lá...\" Sua voz embarga. \"Eles morreram lá dentro. Aquele colosso amaldiçoado...\"");
+        Interface.Pausa(2500);
+        Interface.MostrarMensagem("\"Eu quero vingança. Quero que quem ou o que quer que viva no centro daquele inferno seja destruído. Traga-me uma prova. Traga-me o chifre daquela aberração. Se você conseguir... essa espada será sua. A Espada Jurada. Ela já cortou reis e demônios, mas agora só serve de muleta para um velho bêbado.\"");
+        Interface.Pausa(3500);
+
+        if (ficha.isMinotauroDerrotado()) {
+            Interface.MostrarMensagem("\nVocê olha para ele, lembrando-se do labirinto escuro e do colosso que tombou diante de você.");
+            Interface.Pausa(1500);
+            if (ficha.temItem("Chifre de Minotauro")) {
+                System.out.println("\n  1. Entregar o Chifre de Minotauro");
+                System.out.println("  2. Não falar nada ainda e voltar depois");
+                if (Interface.lerOpcao(2) == 1) {
+                    ficha.removerItem("Chifre de Minotauro", 1);
+                    ficha.adicionarItem(Vendedor.criarItem("Espada Jurada"));
+                    Interface.MostrarMensagem("\nVocê coloca o pesado Chifre de Minotauro sobre a mesa.");
+                    Interface.MostrarMensagem("Os olhos do velho Balthazar se arregalam. Ele toca a base ensanguentada do chifre, tremendo.");
+                    Interface.Pausa(2000);
+                    Interface.MostrarMensagem("\"Você... você fez isso. Eles finalmente podem descansar.\"");
+                    Interface.MostrarMensagem("Balthazar desamarra a bainha da espada e a entrega para você. " + AMARELO + "+1x Espada Jurada" + RESET);
+                    Interface.Pausa(2000);
+                    ficha.encerrarMissao("O Labirinto Secreto");
+                    ficha.setMissaoBalthazarEncerrada(true);
+                }
+            } else {
+                Interface.MostrarMensagem("\nVocê diz a ele que já encontrou o labirinto e que matou a besta que vivia lá dentro.");
+                Interface.Pausa(1500);
+                Interface.MostrarMensagem("Balthazar te olha de cima a baixo. \"E cadê a prova? Você fala muito para quem não tem nada nas mãos.\"");
+                Interface.Pausa(2000);
+                Interface.MostrarMensagem("\"Achei que você fosse diferente, mas é só mais um falastrão! Vá embora!\"");
+                Interface.Pausa(2000);
+                Interface.MostrarMensagem("\n(Balthazar desiste da missão, descrente de que você ou qualquer um possa ajudá-lo.)");
+                Interface.Pausa(2000);
+                ficha.encerrarMissao("O Labirinto Secreto");
+                ficha.setMissaoBalthazarEncerrada(true);
+            }
+        } else {
+            System.out.println("\n  1. Aceitar o desafio");
+            System.out.println("  2. Sair da mesa");
+            if (Interface.lerOpcao(2) == 1) {
+                Interface.MostrarMensagem("\nVocê acena positivamente. Ele levanta a caneca para você. \"Que os deuses te protejam.\"");
+                if (!ficha.getNovidades("O Labirinto Secreto").stream().anyMatch(n -> n.contains("Falei com Balthazar"))) {
+                    ficha.adicionarNovidade("O Labirinto Secreto", "!Falei com Balthazar. Ele quer o Chifre do Minotauro como prova de vingança.");
+                }
+                Interface.Pausa(1800);
+            }
         }
     }
 }
