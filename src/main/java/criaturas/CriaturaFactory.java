@@ -189,4 +189,30 @@ public class CriaturaFactory {
         c.adicionarDrop("Chifre de Minotauro", 1, 2, 50);
         return c;
     }
+
+    public static Criatura criarCompanheiroCriatura(companheiros.Companheiro comp) {
+        fichas.FichaRpg fc = comp.getFicha();
+        int vidaMax = fc.getVidaMaxima();
+        int def = 10 + fc.getDestrezaTeste() + (fc.temItem("Lenço de Seda") ? 1 : 0);
+        int ini = fc.getDestrezaTeste();
+        int nivel = fc.getNivel();
+        
+        Criatura c = new Criatura(comp.getNomeCompleto(), nivel, vidaMax, def, ini);
+        c.setXpGanho(nivel * 50); // XP if defeated
+        
+        // Define attacks based on class
+        if (fc.getClasseDoPersonagem() instanceof classes.Mago) {
+            c.getAtaques().add(new Criatura.Ataque("Bola Elementar", "mágico", 3, 10));
+            c.getAtaques().add(new Criatura.Ataque("Ataque com Cajado", "CaC/mágico", 1, 4));
+        } else if (fc.getClasseDoPersonagem() instanceof classes.Guerreiro) {
+            c.getAtaques().add(new Criatura.Ataque("Peso da Espada", "CaC", 3, 8));
+            c.getAtaques().add(new Criatura.Ataque("Ataque com Espada", "CaC", 1, 8));
+        } else if (fc.getClasseDoPersonagem() instanceof classes.Healer) {
+            c.getAtaques().add(new Criatura.Ataque("Ataque com Bisturi", "Ágil", 3, 8));
+        } else {
+            c.getAtaques().add(new Criatura.Ataque("Soco", "CaC", 1, 6));
+        }
+        
+        return c;
+    }
 }

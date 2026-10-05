@@ -33,12 +33,15 @@ public class Companheiro implements java.io.Serializable {
         private boolean dormiuPrimeiraVez = false;
     private int diasRestantes = 0;
     private boolean partindo = false;
+    private final boolean doMal;
+    private int ouroRoubado = 0;
 
     public Companheiro() {
         this.nome = sortearNome();
         this.sobrenome = sortearSobrenome();
         this.nivel = MecanicasRpg.rolarEntre(1, 2);
         this.ficha = gerarFicha();
+        this.doMal = MecanicasRpg.rolarDado(100) <= 15;
     }
 
     private static String sortearNome() {
@@ -105,6 +108,9 @@ public class Companheiro implements java.io.Serializable {
     }
 
     public boolean isPartindo() { return partindo; }
+    public boolean isDoMal() { return doMal; }
+    public int getOuroRoubado() { return ouroRoubado; }
+    public void adicionarOuroRoubado(int amount) { this.ouroRoubado += amount; }
     public boolean isDormiuPrimeiraVez() { return dormiuPrimeiraVez; }
     public int getDiasRestantes() { return diasRestantes; }
 

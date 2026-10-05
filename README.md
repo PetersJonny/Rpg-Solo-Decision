@@ -824,6 +824,19 @@ Enquanto estiver com você, o companheiro:
 - **Ver itens** mostra o inventário dele.
 - **Curar com Kit Médico** cura ele em 1d4 (consome 1 do seu Kit). Ele também dorme na cabana à noite.
 - **Despedir-se** (menu de conversa) faz o companheiro se despedir na hora e seguir o próprio caminho — útil se você quiser se livrar dele antes da hora (não há segunda chance).
+- **Lutar contra** (menu de conversa): Se a convivência acabar, você pode escolher atacá-mo. É uma luta até a morte: vencendo, você ganha o XP dele e pega todos os itens e o ouro que ele carregava.
+
+<details>
+<summary>⚠️ <b>Spoiler: A verdadeira índole dos companheiros</b> — clique para revelar</summary>
+
+Nem todos que pedem abrigo têm boas intenções. O jogo sorteia secretamente se o seu companheiro é do bem ou do mal:
+
+- **Companheiros do bem:** comportam-se normalmente e vão embora pacificamente quando o tempo deles acaba.
+- **Companheiros do mal:** em qualquer momento durante a exploração na floresta, eles têm uma chance de te trair, atacando-o de surpresa. Pior ainda: ao dormir, existe uma pequena chance de que o companheiro roube metade do seu ouro e fuja silenciosamente para a mata!
+
+Se você sobreviver à traição e derrotá-lo em combate, você recupera o ouro roubado (e fica com os pertences dele).
+
+</details>
 
 ---
 

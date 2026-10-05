@@ -62,8 +62,33 @@ public class Floresta {
     }
 
         public static void verificarCompanheiroPosDormir(FichaRpg ficha) {
+        if (!ficha.temCompanheiro()) return;
+        companheiros.Companheiro comp = ficha.getCompanheiro();
+
+        // Evil companion steal logic
+        if (comp.isDoMal() && mecanicas.MecanicasRpg.rolarDado(100) <= 20) { // 20% chance se for do mal
+            int ouroJogador = ficha.getOuro();
+            if (ouroJogador > 0) {
+                int roubado = Math.max(1, (int)(ouroJogador * 0.5)); // Rouba metade
+                ficha.adicionarOuro(-roubado);
+                comp.adicionarOuroRoubado(roubado);
+                String nomePartiu = comp.getNomeCompleto();
+                ficha.removerCompanheiro();
+                Interface.MostrarMensagem("\nVocê acorda e percebe que " + nomePartiu + " sumiu na mata durante a noite!");
+                Interface.MostrarMensagem("Pior ainda: você foi furtado. " + roubado + " moedas de ouro sumiram da sua mochila.");
+                Interface.Pausa(3000);
+                return;
+            } else {
+                String nomePartiu = comp.getNomeCompleto();
+                ficha.removerCompanheiro();
+                Interface.MostrarMensagem("\nVocê acorda e percebe que " + nomePartiu + " sumiu na mata durante a noite, sem deixar rastros.");
+                Interface.Pausa(3000);
+                return;
+            }
+        }
+
         if (!ficha.companheiroQuerPartir()) return;
-        String nomePartiu = ficha.getCompanheiro().getNomeCompleto();
+        String nomePartiu = comp.getNomeCompleto();
         ficha.removerCompanheiro();
         Interface.MostrarMensagem("\nApós passar a noite e decidir seu futuro, " + nomePartiu + " percebe que é hora de seguir o próprio caminho.");
         Interface.MostrarMensagem("Vocês se despedem com gratidão e ela/e segue a própria jornada!");
@@ -82,10 +107,37 @@ public class Floresta {
             Interface.Pausa(1500);
             ficha.sairDaCabana();
         }
+        if (ficha.temCompanheiro() && ficha.getCompanheiro().isDoMal() && mecanicas.MecanicasRpg.rolarDado(100) <= 10) {
+            Interface.MostrarMensagem("\n" + Interface.VERMELHO + "Traição!" + Interface.RESET + " " + ficha.getCompanheiro().getNomeCompleto() + " te ataca de surpresa!");
+            Interface.Pausa(2500);
+            java.util.List<Criatura> compList = new java.util.ArrayList<>();
+            compList.add(criaturas.CriaturaFactory.criarCompanheiroCriatura(ficha.getCompanheiro()));
+            // We temporarily remove the companion so they don't fight alongside the player against themselves
+            companheiros.Companheiro compInimigo = ficha.getCompanheiro();
+            ficha.removerCompanheiro();
+            mecanicas.MotorDeCombate.IniciarCombate(ficha, compList, false);
+            // Se sobreviveu e ganhou
+            if (ficha.getVidaPersonagem() > 0) {
+                Interface.MostrarMensagem("\nVocê derrotou " + compInimigo.getNome() + " e pegou os seus pertences!");
+                // Transfer items
+                for (itens.ItemRpg item : compInimigo.getFicha().getInventario()) {
+                    ficha.adicionarItem(item);
+                    Interface.MostrarMensagem("Pegou: " + item.getNome());
+                }
+                int ouroRoubadoEDele = compInimigo.getFicha().getOuro() + compInimigo.getOuroRoubado();
+                if (ouroRoubadoEDele > 0) {
+                    ficha.adicionarOuro(ouroRoubadoEDele);
+                    Interface.MostrarMensagem("Recuperou/Pegou " + ouroRoubadoEDele + " moedas de ouro!");
+                }
+            }
+        } else {
+            
 
                 EventoAnimal(ficha);
 
         avancarTempoComMensagens(ficha, 1);
+        }
+
     }
 
     public static void BuscarRecursos(FichaRpg ficha) {
@@ -190,6 +242,8 @@ public class Floresta {
             }
             opDespedir = num++;
             System.out.println("  " + opDespedir + ". Despedir-se de " + comp.getNome());
+            int opLutar = num++;
+            System.out.println("  " + opLutar + ". " + Interface.VERMELHO + "Lutar contra " + comp.getNome() + Interface.RESET);
             System.out.println("\n  " + VERDE + "0. Voltar" + RESET);
 
             int escolha = Interface.lerOpcao(0, num - 1);
@@ -207,6 +261,32 @@ public class Floresta {
                     ficha.removerCompanheiro();
                     Interface.MostrarMensagem("\nVocês se despedem com gratidão. " + nomePartiu + " segue agora o próprio caminho.");
                     Interface.Pausa(2000);
+                    return;
+                }
+            } else if (escolha == opLutar) {
+                System.out.println("\n  Tem certeza que deseja ATACAR " + comp.getNome() + "? Essa ação não tem volta.\n");
+                System.out.println("  1. Sim, atacar");
+                System.out.println("  2. Não, recuar");
+                if (Interface.lerOpcao(2) == 1) {
+                    Interface.MostrarMensagem("\nVocê saca sua arma! " + comp.getNome() + " recua assustado(a) e se prepara para o combate!");
+                    Interface.Pausa(2500);
+                    java.util.List<Criatura> compList = new java.util.ArrayList<>();
+                    compList.add(criaturas.CriaturaFactory.criarCompanheiroCriatura(comp));
+                    companheiros.Companheiro compInimigo = comp;
+                    ficha.removerCompanheiro();
+                    mecanicas.MotorDeCombate.IniciarCombate(ficha, compList, true);
+                    if (ficha.getVidaPersonagem() > 0) {
+                        Interface.MostrarMensagem("\nVocê derrotou " + compInimigo.getNome() + ".");
+                        for (itens.ItemRpg item : compInimigo.getFicha().getInventario()) {
+                            ficha.adicionarItem(item);
+                            Interface.MostrarMensagem("Pegou: " + item.getNome());
+                        }
+                        int ouroRoubadoEDele = compInimigo.getFicha().getOuro() + compInimigo.getOuroRoubado();
+                        if (ouroRoubadoEDele > 0) {
+                            ficha.adicionarOuro(ouroRoubadoEDele);
+                            Interface.MostrarMensagem("Pegou " + ouroRoubadoEDele + " moedas de ouro.");
+                        }
+                    }
                     return;
                 }
             }
