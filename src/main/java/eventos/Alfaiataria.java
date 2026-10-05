@@ -38,6 +38,7 @@ public class Alfaiataria {
     }
 
     public static void Alfaiataria(FichaRpg ficha) {
+        if (FuneralDaFilha.bloquearLojaVazia(ficha, "a alfaiataria")) return;
         Interface.cabecalhoMenu("ALFAIATARIA DA VILA");
         Interface.MostrarMensagem("\nNo meio da praça de comércio, a alfaiataria é a única loja com tecidos estendidos na porta: linho, lã e retalhos coloridos balançam ao vento. A dona, uma " + CIANO + "dracônica de escamas verde-acinzentadas e olhar cansado" + RESET + ", mexe em uma agulha sem erguer os olhos.");
         Interface.Pausa(2200);

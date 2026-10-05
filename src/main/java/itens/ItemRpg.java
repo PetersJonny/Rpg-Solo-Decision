@@ -49,7 +49,7 @@ public class ItemRpg implements java.io.Serializable {
                  "Manto do Atirador", "Túnica de Aventureiro":
                 return 0.6;
             case "Espada Pesada", "Machado de Guerra", "Martelo de Guerra",
-                 "Espada do Minotauro", "Armadura Pesada":
+                 "Espada do Minotauro", "Armadura Pesada", "Porrete":
                 return 2.0;
             default:
                 return 1.0;

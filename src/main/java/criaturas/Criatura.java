@@ -23,6 +23,7 @@ public class Criatura implements java.io.Serializable {
     private int defesa;
     private int iniciativa;
     private int bonusAcerto;
+    private int bonusDano;
     private boolean acertoAutomatico;
     private int testePresenca;
     private int chanceAparecer;
@@ -93,12 +94,15 @@ public class Criatura implements java.io.Serializable {
         this.defesa = defesa;
         this.iniciativa = iniciativa;
         this.bonusAcerto = 0;
+        this.bonusDano = 0;
         this.acertoAutomatico = false;
         this.testePresenca = 10;
         this.chanceAparecer = 100;
     }
 
     public void setBonusAcerto(int bonusAcerto) { this.bonusAcerto = bonusAcerto; }
+    public void setBonusDano(int bonusDano) { this.bonusDano = bonusDano; }
+    public int getBonusDano() { return bonusDano; }
     public void setAcertoAutomatico(boolean acertoAutomatico) { this.acertoAutomatico = acertoAutomatico; }
     public void setTestePresenca(int testePresenca) { this.testePresenca = testePresenca; }
     public void setChanceAparecer(int chanceAparecer) { this.chanceAparecer = chanceAparecer; }
@@ -150,6 +154,10 @@ public class Criatura implements java.io.Serializable {
     public void adicionarDrop(String nomeItem, int qtdMin, int qtdMax, int chance) {
         drops.add(new Drop(nomeItem, qtdMin, qtdMax, chance));
     }
+
+    public int getOuroMin() { return ouroMin; }
+    public int getOuroMax() { return ouroMax; }
+    public int getChanceOuro() { return chanceOuro; }
 
     public void setOuroDrop(int ouroMin, int ouroMax, int chanceOuro) {
         this.ouroMin = ouroMin;
@@ -371,7 +379,7 @@ public class Criatura implements java.io.Serializable {
 
     private int rolarDanoDoAtaque(Ataque ataque, boolean critico) {
         int dados = ataque.qtdDado * (critico ? 2 : 1);
-        int dano = 0;
+        int dano = bonusDano;
         for (int i = 0; i < dados; i++) {
             dano += MecanicasRpg.rolarDado(ataque.ladosDado);
         }

@@ -84,6 +84,7 @@ public class CasaDoChapeuMagico {
     }
 
     public static void CasaDoChapeuMagico(FichaRpg ficha) {
+        if (FuneralDaFilha.bloquearLojaVazia(ficha, "a loja do chapéu")) return;
         Interface.cabecalhoMenu("CASA DO CHAPÉU MÁGICO");
 
         List<String> estoque = sortearEstoqueDoDia(ficha);

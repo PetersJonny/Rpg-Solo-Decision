@@ -55,6 +55,7 @@ public class Ferreiro {
     }
 
     public static void Ferreiro(FichaRpg ficha) {
+        if (FuneralDaFilha.bloquearLojaVazia(ficha, "a forja")) return;
         Interface.cabecalhoMenu("FERREIRO DA VILA");
 
         if (!ficha.isFerreiroSeApresentou()) {

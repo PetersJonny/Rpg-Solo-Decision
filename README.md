@@ -358,6 +358,9 @@ Dizem que quem caminha por tempo suficiente, adentrando a mata em busca de algo 
 - O menu do vilarejo permite **Ver ficha**, **Olhar em volta**, **ir à taverna**, **ir ao ferreiro**, **ir à Casa do Chapéu Mágico**, **Ver missões em andamento**, **Voltar para a floresta** (refaz todo o caminho de volta até as construções), **Salvar Jogo** e **Encerrar jogo**.
 - **Cada visita a uma loja gasta 1 período do dia** (taverna, ferreiro, alfaiataria, barraca de frutas e Chapéu Mágico). O período é cobrado ao sair da loja, então comprar vários itens no mesmo dia só custa 1 período.
 
+<details>
+<summary>⚠️ <b>AVISO DE SPOILER: a mina, o prazo e o funeral de A Filha Perdida</b> — clique para revelar</summary>
+
 ### A Mina (A Filha Perdida)
 
 No fundo da vila, encostado no paredão da montanha, fica o local que Célia Morel indicou. Ali se vê um emaranhado de pedras empilhadas desenhando uma parede sólida, com um vão estreito no meio: é a **entrada de uma mina** que desce na direção da montanha.
@@ -370,6 +373,64 @@ Ao chegar na entrada:
 4. Escolha final: **voltar para a vila** ou **entrar na mina**.
 
 **Escuridão:** lá dentro, todo teste leva **-2** por está escuro — a menos que você esteja **com a tocha na mão**, o que anula a penalidade. O bônus só vale com a tocha realmente na mochila: se ela for vendida ou derrubada, o -2 volta.
+
+### O Prazo de 3 Dias (A Filha Perdida)
+
+Ao aceitar **A Filha Perdida**, o jogo registra o dia do aceite e passa a contar **3 dias inteiros**. Não há nenhum aviso antes: o jogador não recebe nenhuma dica de que existe um prazo.
+
+**No terceiro dia (ou no dia em que o jogador voltar à vila depois disso), se ele estiver dentro da vila:**
+
+1. A vila acorda errada. Os guardas desceram à mina de madrugada, entraram, viram o que havia lá dentro e voltaram **sem ninguém**.
+2. A filha é encontrada **morta** dentro da mina, e a **boca da mina é fechada para reforma** — com tábuas novas, corda de obra e guarda no portão. O bloqueio é permanente, sem prazo.
+3. É perceptível que vários **dracônicos estão assustados e em pânico**, todos indo na mesma direção. O jogador escolhe:
+   - **Seguir o povo** — chega ao largo e percebe que é um **funeral**. A cena só menciona os NPCs que o jogador **já conheceu** (Draven, Célia, Gorak, Dona Maga, a velha). Se não conheceu ninguém, o texto diz que não reconhece ninguém. Depois o jogador decide **ficar** ou **voltar**:
+     - **Ficar** — cena triste: Célia toca a testa da filha e precisa ser afastada, uma criança pergunta por que ela chora, o largo passa o dia chamando o nome da menina.
+     - **Não ficar** — sai do largo e volta para a vila.
+   - **Ficar para trás** — a rua esvazia em minutos e a vila fica sem ninguém.
+
+**A vila deserta:** no dia do funeral, as lojas **continuam aparecendo no menu** mas estão vazias — é possível entrar, ver que não há ninguém e voltar. **Nenhuma compra funciona e é impossível falar com qualquer NPC.** A visita a uma loja fechada **cobra 1 período** normalmente, o que permite virar o dia dentro da própria vila.
+
+**No dia seguinte**, tudo volta a funcionar sozinho: as lojas reabrem, os NPCs voltam e o menu da vila perde os avisos de "vila vazia" e "mina fechada".
+
+### O Interior da Mina
+
+Ao entrar, a caverna é explorada em sequência:
+
+1. **Escuridão.** Com a tocha na mão você vê o túnel inteiro: o chão, as paredes, a largura. Sem tocha, o escuro deixa de ser ausência de luz e vira um problema prático — você se orienta pelo tato, pelo som e pelo cheiro de mineral.
+2. **Trilha de trem e cristais** (só visíveis com tocha): dois fios de metal meio afundados no cascalho, gastos no meio por muita passagem, correndo fundo para dentro da mina. E veios de cristal cravados nas paredes, alguns rachados como se alguém tivesse tentado arrancar um. Isso não é buraco de bicho: alguém cavou e trouxe um carrinho. Cada detalhe só aparece uma vez.
+3. **Teste de Presença DT 10** — "sentir algo à frente":
+   - **Passou:** você sente um peso no ar e um cheiro de ferrugem e suor frio. Alguém está adiante, e surge a opção de **seguir em frente** ou **sair da mina**.
+   - **Falhou:** só barulho de água e nada mais. Não há como recuar aqui — só seguir.
+4. **O goblin e a criança.** O túnel alarga e aparecem pequenas luzes verdes baixas, espalhadas pelo chão. Perto delas, agachado, um goblin **com medo**; ao lado, deitada, uma criança desmaiada de escamas quase brancas. O goblin te vê e repete sem parar: *"não foi culpa minha, eu não quis fazer isso, não não não"*. Três opções:
+   - **Tentar acalmar (Presença DT 15).** **Passou:** ele conta que não controla, que só faz o que mandam — os dracônicos expulsaram ele e todos os irmãos da mina, depois mandaram voltar, e trouxeram a menina antes, obrigando-o a olhar. **Falhou:** ele se levanta de um pulo e não é para correr, é para gritar.
+   - **Atacar.** O combate começa **antes** da transformação, contra um **Goblin comum** (nível 3, 15 de vida) — o mesmo que você vê fugindo da entrada da mina. Se ele morrer aqui, acabou: ele desaba sem crescer, as pequenas luzes se apagam e a criança continua no chão — ele não tinha encostado nela. Você segue direto para a decisão sobre a criança. Se ele **sobreviver**, ele se levanta gritando e aí sim se transforma.
+   - **Sair correndo.** Ninguém persegue ninguém. A criança fica lá, o prazo de 3 dias continua rodando e o funeral acontece como se você nunca tivesse entrado.
+
+**O goblin transformado** é nível **5**, com **90 de vida**, **+3 de iniciativa** sobre o goblin comum, ataque **Porretada de 1d8 + 5**, e não foge. Derruba **200 XP**, pode soltar o **Porrete** (50% de chance) e sempre deixa entre **12 e 26 de ouro**. Depois de vencer, o porrete que ele segurava **fica no chão e dá para pegar**, independentemente do drop.
+
+O **Porrete** é uma arma de **1d8 com Força**, pesa **2,0**, e vale **40 de ouro** como preço base. O ferreiro paga **80%** disso na compra, ou seja **32 de ouro** na venda dele. É o mesmo dano do Martelo, mas vale menos: metade do preço do Martelo, porque um porrete não é uma peça de ferreiro.
+
+**Passe ou falhe, a luta acontece.** Depois do teste ele grita que a culpa é dos dracônicos que mandaram ele e todos os irmãos embora, começa a **crescer** — os ombros estalam, os braços engrossam, e o goblin pequeno vira uma coisa grande e imponente no meio do túnel. No meio do crescimento ele pega um **porrete** do chão. Só sabe rugir e atacar o que está na frente.
+
+**Se você vencer a luta, três escolhas:**
+
+| Escolha | Resultado |
+|---|---|
+| **Levar a criança até a mãe** | Célia pega a filha, agradece, você recebe **100 de ouro**. Missão encerrada. |
+| **Deixar a criança e buscar um guarda** | Os guardas descem e levam a criança até a mãe. **Sem recompensa.** Missão encerrada. |
+| **Ir embora e deixar a criança lá** | O prazo de 3 dias continua e o funeral acontece depois, normalmente. |
+
+### O Fim da Missão no Quadro
+
+Assim que o funeral acontece, a missão **some na hora** do menu de **missões em andamento** — ela é encerrada e não aparece mais entre as aceitas.
+
+O aviso no **quadro de missões da taverna**, porém, **continua pregado por mais 2 dias** (o dia do funeral e os dois dias seguintes). Nesse período ele pode ser **lido normalmente**, exatamente como estava antes — local, objetivo e recompensa aparecem igual. A única diferença é que **não aparece a opção de aceitar**: o jogo só informa que a missão ainda está lá e que ninguém mexeu no papel.
+
+Passados os 2 dias, o aviso **desaparece do quadro** de vez.
+
+> **Nota de escopo:** o interior e o resgate existem, mas a trilha de trem e os cristais só aparecem se você tiver levado a tocha. Sem ela, o túnel continua sendo atravessado às cegas — o que é o ponto do penalidade de escuridão, mas significa que dá para chegar ao goblin sem ter visto nenhum dos dois detalhes.
+
+</details>
 
 ### Casa do Chapéu Mágico
 

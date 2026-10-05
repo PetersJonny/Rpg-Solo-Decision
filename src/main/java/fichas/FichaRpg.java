@@ -154,10 +154,21 @@ public class FichaRpg implements java.io.Serializable {
         private boolean velhinhaEncontrada = false;
     private boolean filhaEncontrada = false;
     private boolean netaEncontrada = false;
+    private int diaAceitouFilha = 0;
+    private int diaDoFuneral = 0;
+    private boolean filhaMorta = false;
+    private boolean minaFechadaParaReforma = false;
+    private boolean funeralApresenciado = false;
     private boolean goblinVistoNaMina = false;
     private boolean tochaVistaNaMina = false;
     private boolean tochaNaMao = false;
     private boolean dentroDaCaverna = false;
+    private boolean trilhaDeTremVistaNaMina = false;
+    private boolean cristaisVistosNaMina = false;
+    private boolean presencaSentidaNaMina = false;
+    private boolean cenaDoGoblinVista = false;
+    private boolean filhaResgatada = false;
+    private String desfechoDaFilha = "";
 
     private int diaAceitouNeta = 0;
     private boolean netaMorta = false;
@@ -399,6 +410,10 @@ public class FichaRpg implements java.io.Serializable {
     public List<String> getMissoesAceitas() { return missoesAceitas; }
     public boolean isMissaoAceita(String nome) { return missoesAceitas.contains(nome); }
     public void aceitarMissao(String nome) { GerenciadorDeMissoesECompanheiro.aceitarMissao(this, nome); }
+    public void encerrarMissao(String nome) { missoesAceitas.remove(nome); }
+    public boolean isMissaoEncerrada(String nome) {
+        return ("A Filha Perdida".equals(nome) && filhaMorta) || ("A Neta Perdida".equals(nome) && missaoNetaEncerrada);
+    }
     public void adicionarNovidade(String missao, String texto) {
         missoesNovidades.computeIfAbsent(missao, k -> new ArrayList<>()).add(texto);
     }
@@ -452,6 +467,16 @@ public class FichaRpg implements java.io.Serializable {
     public void setVelhinhaEncontrada(boolean velhinhaEncontrada) { this.velhinhaEncontrada = velhinhaEncontrada; }
     public boolean isFilhaEncontrada() { return filhaEncontrada; }
     public void setFilhaEncontrada(boolean filhaEncontrada) { this.filhaEncontrada = filhaEncontrada; }
+    public int getDiaAceitouFilha() { return diaAceitouFilha; }
+    public void setDiaAceitouFilha(int diaAceitouFilha) { this.diaAceitouFilha = diaAceitouFilha; }
+    public int getDiaDoFuneral() { return diaDoFuneral; }
+    public void setDiaDoFuneral(int diaDoFuneral) { this.diaDoFuneral = diaDoFuneral; }
+    public boolean isFilhaMorta() { return filhaMorta; }
+    public void setFilhaMorta(boolean filhaMorta) { this.filhaMorta = filhaMorta; }
+    public boolean isMinaFechadaParaReforma() { return minaFechadaParaReforma; }
+    public void setMinaFechadaParaReforma(boolean v) { this.minaFechadaParaReforma = v; }
+    public boolean isFuneralApresenciado() { return funeralApresenciado; }
+    public void setFuneralApresenciado(boolean v) { this.funeralApresenciado = v; }
     public boolean isNetaEncontrada() { return netaEncontrada; }
     public void setNetaEncontrada(boolean netaEncontrada) { this.netaEncontrada = netaEncontrada; }
     public boolean isGoblinVistoNaMina() { return goblinVistoNaMina; }
@@ -462,6 +487,18 @@ public class FichaRpg implements java.io.Serializable {
     public void setTochaNaMao(boolean tochaNaMao) { this.tochaNaMao = tochaNaMao; }
     public boolean isDentroDaCaverna() { return dentroDaCaverna; }
     public void setDentroDaCaverna(boolean dentroDaCaverna) { this.dentroDaCaverna = dentroDaCaverna; }
+    public boolean isTrilhaDeTremVistaNaMina() { return trilhaDeTremVistaNaMina; }
+    public void setTrilhaDeTremVistaNaMina(boolean v) { this.trilhaDeTremVistaNaMina = v; }
+    public boolean isCristaisVistosNaMina() { return cristaisVistosNaMina; }
+    public void setCristaisVistosNaMina(boolean v) { this.cristaisVistosNaMina = v; }
+    public boolean isPresencaSentidaNaMina() { return presencaSentidaNaMina; }
+    public void setPresencaSentidaNaMina(boolean v) { this.presencaSentidaNaMina = v; }
+    public boolean isCenaDoGoblinVista() { return cenaDoGoblinVista; }
+    public void setCenaDoGoblinVista(boolean v) { this.cenaDoGoblinVista = v; }
+    public boolean isFilhaResgatada() { return filhaResgatada; }
+    public void setFilhaResgatada(boolean v) { this.filhaResgatada = v; }
+    public String getDesfechoDaFilha() { return desfechoDaFilha; }
+    public void setDesfechoDaFilha(String desfechoDaFilha) { this.desfechoDaFilha = desfechoDaFilha; }
     public void setDiaAtual(int diaAtual) { this.diaAtual = Math.max(1, diaAtual); }
     public int getDiaAceitouNeta() { return diaAceitouNeta; }
     public void setDiaAceitouNeta(int diaAceitouNeta) { this.diaAceitouNeta = diaAceitouNeta; }
@@ -521,6 +558,21 @@ public class FichaRpg implements java.io.Serializable {
     public void setTurnosParaVoltar(int v) { this.turnosParaVoltar = v; }
     public static final int PRAZO_MISSAO_NETA = 7;
     public boolean isPrazoNetaEstourado() { return diaAceitouNeta > 0 && (diaAtual - diaAceitouNeta) >= PRAZO_MISSAO_NETA; }
+
+    public static final int PRAZO_MISSAO_FILHA = 3;
+    public boolean isPrazoFilhaVencido() { return diaAceitouFilha > 0 && (diaAtual - diaAceitouFilha) >= PRAZO_MISSAO_FILHA; }
+    public static final int DIAS_NO_MURAL_APOS_O_FUNERAL = 2;
+    public boolean filhaAindaNoMural() {
+        return filhaMorta && (diaAtual - diaDoFuneral) <= DIAS_NO_MURAL_APOS_O_FUNERAL;
+    }
+
+    public boolean funeralPrecisaDisparar() {
+        return isMissaoAceita("A Filha Perdida")
+                && !filhaEncontrada
+                && diaDoFuneral == 0
+                && isPrazoFilhaVencido();
+    }
+    public boolean isVilaDesertaPorFuneral() { return diaDoFuneral > 0 && diaAtual == diaDoFuneral; }
 
     public boolean isPactoMortalAtivo() { return pactoMortalAtivo; }
     public void setPactoMortalAtivo(boolean pactoMortalAtivo) { this.pactoMortalAtivo = pactoMortalAtivo; }

@@ -29,6 +29,137 @@ class MinaECavernaTest {
     }
 
     @Test
+    void goblinTransformadoTemOsNumerosPedidos() {
+        criaturas.Criatura t = criaturas.CriaturaFactory.criarGoblinTransformado();
+        assertEquals(5, t.getNivel());
+        assertEquals(90, t.getVidaMaxima());
+        assertEquals(3, t.getIniciativa() - criaturas.CriaturaFactory.criarGoblin().getIniciativa(), "+3 de iniciativa sobre o goblin comum");
+        assertEquals(200, t.getXpGanho());
+    }
+
+    @Test
+    void goblinTransformadoBateComPorreteDe1d8Mais5() {
+        criaturas.Criatura t = criaturas.CriaturaFactory.criarGoblinTransformado();
+        assertEquals(1, t.getAtaques().size());
+        criaturas.Criatura.Ataque ataque = t.getAtaques().get(0);
+        assertEquals(1, ataque.qtdDado);
+        assertEquals(8, ataque.ladosDado);
+        assertEquals(5, t.getBonusDano());
+    }
+
+    @Test
+    void goblinTransformadoDroporaPorreteCom50PorCento() {
+        criaturas.Criatura t = criaturas.CriaturaFactory.criarGoblinTransformado();
+        criaturas.Criatura.Drop drop = t.getDrops().get(0);
+        assertEquals("Porrete", drop.nomeItem);
+        assertEquals(50, drop.chance);
+        assertEquals(1, drop.qtdMin);
+        assertEquals(1, drop.qtdMax);
+    }
+
+    @Test
+    void goblinTransformadoDroporaEntre12E26DeOuro() {
+        criaturas.Criatura t = criaturas.CriaturaFactory.criarGoblinTransformado();
+        assertEquals(12, t.getOuroMin());
+        assertEquals(26, t.getOuroMax());
+        assertEquals(100, t.getChanceOuro());
+    }
+
+    @Test
+    void porretePesarDoisEOApareceNaLoja() {
+        itens.Arma porrete = (itens.Arma) loja.Vendedor.criarItem("Porrete");
+        assertNotNull(porrete);
+        assertEquals(2.0, porrete.getPeso(), 0.0001);
+        assertEquals(8, porrete.getDadoDanoArma(), "1d8");
+        assertEquals("Força", porrete.getAtributoAtaque());
+        assertEquals(40, loja.Vendedor.precoBase("Porrete"), "custo definido");
+    }
+
+    @Test
+    void porreteTemPrecoJustoDeVendaParaOFerreiro() {
+        int cheio = loja.Vendedor.precoDeCompraMelhorado("Porrete");
+        assertEquals(32, cheio, "80% do valor cheio de 40");
+        assertTrue(cheio < loja.Vendedor.precoDeCompraMelhorado("Martelo"), "vale menos que um martelo igual em dano");
+        assertTrue(cheio > loja.Vendedor.precoDeCompraMelhorado("Faca"), "vale mais que uma faca bem inferior");
+    }
+
+    @Test
+    void goblinComumContinuaNormalParaOCombateAntecipado() {
+        criaturas.Criatura pequeno = criaturas.CriaturaFactory.criarGoblin();
+        assertEquals(15, pequeno.getVidaMaxima(), "o goblin pequeno nao muda de tamanho");
+        assertEquals("Goblin", pequeno.getNome());
+        assertFalse(pequeno.isSemFuga(), "o goblin pequeno ainda pode fugir");
+    }
+
+    @Test
+    void bonusDeDanoDaCriaturaSomeEmQuemNaoTem() {
+        criaturas.Criatura t = criaturas.CriaturaFactory.criarGoblinTransformado();
+        assertEquals(5, t.getBonusDano());
+        assertEquals(0, criaturas.CriaturaFactory.criarGoblin().getBonusDano());
+        assertEquals(0, criaturas.CriaturaFactory.criarLobo().getBonusDano());
+    }
+
+    @Test
+    void interiorRegistraAVistaDaFilhaEVaFilha() {
+        FichaRpg ficha = fichaNova();
+        ficha.aceitarMissao("A Filha Perdida");
+        assertFalse(ficha.isCenaDoGoblinVista());
+        ficha.setCenaDoGoblinVista(true);
+        assertTrue(ficha.isCenaDoGoblinVista());
+        assertFalse(Caverna.ePrimeiraVezQueAfilhaFoiVista(ficha));
+    }
+
+    @Test
+    void levarParaaMaeMarcaResgateEEncerraAMissao() {
+        FichaRpg ficha = fichaNova();
+        ficha.aceitarMissao("A Filha Perdida");
+        ficha.setFilhaResgatada(true);
+        ficha.setFilhaEncontrada(true);
+        ficha.setDesfechoDaFilha("levada_para_a_mae");
+        ficha.encerrarMissao("A Filha Perdida");
+        assertTrue(Caverna.resgateConcluido(ficha));
+        assertFalse(ficha.isMissaoAceita("A Filha Perdida"));
+    }
+
+    @Test
+    void guardasResgatamMasNaoSaoResgateDoJogador() {
+        FichaRpg ficha = fichaNova();
+        ficha.aceitarMissao("A Filha Perdida");
+        ficha.setFilhaEncontrada(true);
+        ficha.setDesfechoDaFilha("resgatada_pelos_guardas");
+        assertTrue(Caverna.resgateConcluido(ficha), "a filha foi salva");
+        assertFalse(ficha.isFilhaResgatada(), "mas quem levou nao foi o jogador");
+        assertFalse(Caverna.filhaFoiAbandonada(ficha));
+    }
+
+    @Test
+    void abandonarAFilhaNaoEncerraAMissaoNemSalvaNinguem() {
+        FichaRpg ficha = fichaNova();
+        ficha.aceitarMissao("A Filha Perdida");
+        ficha.setDesfechoDaFilha("abandonada");
+        assertTrue(Caverna.filhaFoiAbandonada(ficha));
+        assertFalse(ficha.isFilhaResgatada());
+        assertFalse(ficha.isFilhaEncontrada());
+        assertTrue(ficha.isMissaoAceita("A Filha Perdida"), "o prazo continua correndo ate o funeral");
+    }
+
+    @Test
+    void trilhoECristalSoAparecemUmaVez() {
+        FichaRpg ficha = fichaNova();
+        ficha.setTrilhaDeTremVistaNaMina(true);
+        ficha.setCristaisVistosNaMina(true);
+        assertTrue(ficha.isTrilhaDeTremVistaNaMina());
+        assertTrue(ficha.isCristaisVistosNaMina());
+    }
+
+    @Test
+    void presencaSentidaEhPersistente() {
+        FichaRpg ficha = fichaNova();
+        ficha.setPresencaSentidaNaMina(true);
+        assertTrue(ficha.isPresencaSentidaNaMina());
+    }
+
+    @Test
     void tochaPesaMeioQuilo() {
         ItemRpg tocha = new ItemRpg("Tocha", "tocha", 1);
         assertEquals(0.5, tocha.getPeso(), 0.0001, "a tocha deve pesar 0,5");

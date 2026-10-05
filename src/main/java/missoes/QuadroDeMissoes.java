@@ -12,6 +12,7 @@ public class QuadroDeMissoes {
     private static final String CIANO = Interface.CIANO;
     private static final String VERDE = Interface.VERDE;
     private static final String AMARELO = Interface.AMARELO;
+    private static final String VERMELHO = Interface.VERMELHO;
 
     public static class Missao {
         public final String nome;
@@ -78,6 +79,8 @@ public class QuadroDeMissoes {
             else if (m.noQuadro) disponiveis.add(m);
         }
 
+        boolean filhaNoMural = ficha.filhaAindaNoMural();
+
         Interface.cabecalhoMenu("QUADRO DE MISSÕES");
         Interface.MostrarMensagem("\nSobre a parede da taverna, um quadro de cortiça guarda avisos e recompensas pregados com alfinetes.");
 
@@ -115,6 +118,14 @@ public class QuadroDeMissoes {
         Missao m = disponiveis.get(escolha - 1);
         exibirAviso(m);
 
+        if (filhaNoMural && m.nome.equals("A Filha Perdida")) {
+            Interface.MostrarMensagem("\n" + VERMELHO + "A missão ainda está aqui no quadro." + RESET);
+            Interface.MostrarMensagem("Ninguém mexeu no papel: o aviso continua pregado, torto, com a mesma letra de quando foi colocado.");
+            Interface.MostrarMensagem("\nVocê relê o objetivo e a recompensa, e é só isso. Não há o que aceitar.");
+            Interface.Pausa(2600);
+            return;
+        }
+
         System.out.println("  Deseja aceitar esta missão?\n");
         System.out.println("  1. Aceitar");
         System.out.println("  2. Não aceitar");
@@ -125,6 +136,9 @@ public class QuadroDeMissoes {
         }
 
         ficha.aceitarMissao(m.nome);
+        if (m.nome.equals("A Filha Perdida")) {
+            ficha.setDiaAceitouFilha(ficha.getDiaAtual());
+        }
         Interface.MostrarMensagem("\n" + AMARELO + "Missão aceita: " + m.nome.toUpperCase() + RESET + "!");
         Interface.MostrarMensagem("Lembre-se: a recompensa é entregue por quem postou o aviso ao concluir o objetivo.");
         Interface.Pausa(1800);

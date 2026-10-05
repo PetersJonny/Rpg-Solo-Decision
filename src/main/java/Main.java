@@ -211,7 +211,8 @@ public class Main {
             int[] ops = Interface.opcoesMenuFloresta(ficha);
 
             if (ficha.isNoVilarejo()) {
-                                int[] opsVila = Interface.opcoesMenuVilarejo(ficha);
+                                eventos.FuneralDaFilha.dispararSePrecisa(ficha);
+                int[] opsVila = Interface.opcoesMenuVilarejo(ficha);
                 int escolhaVilarejo = Interface.MenuVilarejo(ficha);
 
                 if (escolhaVilarejo == 1) {

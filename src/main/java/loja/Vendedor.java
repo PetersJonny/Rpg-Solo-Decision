@@ -19,7 +19,7 @@ public class Vendedor {
     private static final String CIANO = Interface.CIANO;
 
                     private static final List<String> GERAL = List.of(
-            "Faca", "Machado", "Machadinha", "Martelo", "Mangual", "Arco", "Flechas", "Lança",
+            "Faca", "Machado", "Machadinha", "Martelo", "Porrete", "Mangual", "Arco", "Flechas", "Lança",
             "Poção de Mana", "Kit Médico",
             "Madeira", "Folha", "Pedra", "Frutas"
     );
@@ -36,7 +36,7 @@ public class Vendedor {
     );
 
         private static final List<String> ARMAS_DO_JOGO = List.of(
-            "Faca", "Machado", "Machadinha", "Martelo", "Mangual", "Arco", "Lança", "Espada",
+            "Faca", "Machado", "Machadinha", "Martelo", "Porrete", "Mangual", "Arco", "Lança", "Espada",
             "Espada Pesada", "Machado de Guerra", "Martelo de Guerra", "Bisturi", "Arco Refinado",
             "Nunchako", "Foice", "Cajado"
     );
@@ -287,6 +287,7 @@ public class Vendedor {
             case "Machado": return 55;
             case "Machadinha": return 30;
             case "Martelo": return 80;
+            case "Porrete": return 40;
             case "Mangual": return 55;
             case "Arco": return 65;
             case "Flechas": return 5;
@@ -406,6 +407,8 @@ switch (nome) {
                 return new Arma("Machadinha", "Uma machadinha leve que causa 1d4 de dano, usando Força.", "CaC", 4, 1, 1);
             case "Martelo":
                 return new Arma("Martelo", "Um martelo pesado que causa 1d8 de dano, usando Força.", "CaC", 8, 1, 1);
+            case "Porrete":
+                return new Arma("Porrete", "Um porrete pesado de madeira maciça que causa 1d8 de dano, usando Força.", "CaC", 8, 1, 1);
             case "Mangual":
                 return new Arma("Mangual", "Um mangual de corrente que causa 1d6 de dano, usando Força.", "CaC", 6, 1, 1);
             case "Arco":

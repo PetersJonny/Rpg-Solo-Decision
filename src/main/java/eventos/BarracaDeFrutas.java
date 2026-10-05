@@ -25,6 +25,7 @@ public class BarracaDeFrutas {
     );
 
     public static void BarracaDeFrutas(FichaRpg ficha) {
+        if (FuneralDaFilha.bloquearLojaVazia(ficha, "a barraca")) return;
         Interface.cabecalhoMenu("BARRACA DE FRUTAS");
         Interface.MostrarMensagem("\nPerto da entrada da vila, uma barraca simples de madeira enche o ar com o cheiro doce de frutas frescas. Cestas de maçãs, peras e ameixas se empilham sob o toldo de lona.");
         Interface.Pausa(2200);

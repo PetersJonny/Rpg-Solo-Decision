@@ -238,6 +238,12 @@ public class Interface {
         if (ficha.temCompanheiro()) {
             System.out.println("  Companheiro(a): " + CIANO + ficha.getCompanheiro().getNome() + RESET + " (" + ficha.getCompanheiro().getClasseNome() + ", Nível " + ficha.getCompanheiro().getFicha().getNivel() + ")");
         }
+        if (eventos.FuneralDaFilha.estaVilaDeserta(ficha)) {
+            System.out.println("  " + VERMELHO + "A vila está vazia. Nenhuma loja tem gente, e não há com quem falar." + RESET);
+        }
+        if (ficha.isMinaFechadaParaReforma()) {
+            System.out.println("  " + VERMELHO + "A boca da mina está fechada para reforma." + RESET);
+        }
         System.out.println("\n  O que você deseja fazer?\n");
 
         int[] ops = opcoesMenuVilarejo(ficha);

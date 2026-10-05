@@ -22,6 +22,7 @@ public class Taverna {
     private static String corPratos() { return CIANO; }
 
     public static void Taverna(FichaRpg ficha) {
+        if (FuneralDaFilha.bloquearLojaVazia(ficha, "a taverna")) return;
         Interface.cabecalhoMenu("TAVERNA DA VILA");
         if (ficha.isDonoDaTavernaAgradeceu()) {
             Interface.MostrarMensagem("\nA taverna exala cheiro de madeira velha, fumaça de lareira e comida. " + VERMELHO + "Draven" + RESET + ", o dracônico de pele vermelha, limpa um copo de metal atrás do balcão.");

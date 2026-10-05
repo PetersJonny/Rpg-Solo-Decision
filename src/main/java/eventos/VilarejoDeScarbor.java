@@ -73,6 +73,17 @@ public class VilarejoDeScarbor {
 
             public static void OlharEmVolta(FichaRpg ficha) {
         Interface.cabecalhoMenu("OLHAR EM VOLTA");
+
+        if (FuneralDaFilha.estaVilaDeserta(ficha)) {
+            Interface.MostrarMensagem("\nVocê percorre as ruas do " + CIANO + ficha.getCidadeAtual() + RESET + " e a primeira coisa que percebe é o silêncio. Não o silêncio de dia cedo: o silêncio de quem não está.");
+            Interface.Pausa(2000);
+            Interface.MostrarMensagem("\nA " + CIANO + "forja" + RESET + " está com a porta encostada e a bigorna fria. A " + CIANO + "Casa do Chapéu Mágico" + RESET + " tem a placa virada para dentro. A barraca de frutas está com as cestas vazias e o toldo amarrado, para não voar.");
+            Interface.Pausa(2400);
+            Interface.MostrarMensagem("\nNão há uma pessoa nas ruas. Nenhuma criança, nenhum cachorro, nenhuma voz atrás de loja. Só o vento nas tábuas e, de longe, o som de gente que não está por aqui.");
+            Interface.Pausa(2600);
+            return;
+        }
+
         Interface.MostrarMensagem("\nVocê percorre as ruas do " + CIANO + ficha.getCidadeAtual() + RESET + ", observando as casas e as pessoas.");
         Interface.MostrarMensagem("No começo da rua principal, lado a lado, ficam as duas lojas mais concorridas do vilarejo: " + CIANO + "a forja fumegante do Gorak" + RESET + ", onde o martelo nunca para, e a " + CIANO + "Casa do Chapéu Mágico" + RESET + ", de onde sai um cheiro doce de fumaça roxa.");
         Interface.MostrarMensagem("Tudo parece tranquilo e pacato por aqui. Ainda não há nada de interessante para descobrir no vilarejo.");

@@ -69,6 +69,19 @@ public class CriaturaFactory {
         return c;
     }
 
+    public static Criatura criarGoblinTransformado() {
+        Criatura c = new Criatura("Goblin Transformado", 5, 90, 14, 6);
+        c.setBonusAcerto(4);
+        c.setBonusDano(5);
+        c.setTestePresenca(12);
+        c.setXpGanho(200);
+        c.adicionarAtaque("Porretada", "", 1, 8);
+        c.setSemFuga(true);
+        c.setOuroDrop(12, 26, 100);
+        c.adicionarDrop("Porrete", 1, 1, 50);
+        return c;
+    }
+
     public static Criatura criarBandido() {
         Criatura c = new Criatura("Bandido", 2, 9, 12, 1);
         c.setBonusAcerto(2);
