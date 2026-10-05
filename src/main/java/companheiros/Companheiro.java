@@ -35,6 +35,11 @@ public class Companheiro implements java.io.Serializable {
     private boolean partindo = false;
     private final boolean doMal;
     private int ouroRoubado = 0;
+    
+    private int afinidade = 30; // Starts at 30
+    private boolean permanente = false;
+    private int diasSemComer = 0;
+    private int diasSemDormir = 0;
 
     public Companheiro() {
         this.nome = sortearNome();
@@ -134,11 +139,18 @@ public class Companheiro implements java.io.Serializable {
         Interface.MostrarMensagem("\n  Nome: " + nome + " " + sobrenome);
         Interface.MostrarMensagem("  Classe: " + getClasseNome() + " | Raça: " + getRacaNome() + " | Nível: " + ficha.getNivel());
         Interface.MostrarMensagem("  Vida: " + ficha.getVidaPersonagem() + "/" + ficha.getVidaMaxima() + " | Mana: " + ficha.getManaPersonagem() + "/" + ficha.getManaMaxima());
-        if (dormiuPrimeiraVez) {
-            Interface.MostrarMensagem("  Pretende ficar mais " + diasRestantes + " dia(s) contigo.");
+        if (permanente) {
+            Interface.MostrarMensagem("  Confia em você com a própria vida. É seu parceiro permanente.");
+        } else if (dormiuPrimeiraVez) {
+            Interface.MostrarMensagem("  Está te avaliando. Faltam " + diasRestantes + " dia(s) para decidir o futuro.");
+            String humor = (afinidade >= 80) ? "Muito amigável" : (afinidade >= 50 ? "Neutro" : "Desconfiado");
+            Interface.MostrarMensagem("  Status de Afinidade: " + afinidade + "% (" + humor + ")");
         } else {
             Interface.MostrarMensagem("  Ainda não dormiu na cabana; vai decidir o futuro depois da primeira noite.");
         }
+        
+        if (diasSemComer > 0) Interface.MostrarMensagem("  Fome: " + diasSemComer + " dias sem comer.");
+        if (diasSemDormir > 0) Interface.MostrarMensagem("  Cansaço: " + diasSemDormir + " dias sem dormir na cabana.");
     }
 
     public void mostrarItens() {
@@ -187,4 +199,45 @@ public class Companheiro implements java.io.Serializable {
             System.out.println("  - " + hab.getNome() + " (Custo: " + hab.getCustoMana() + " Mana): " + hab.getDescricao());
         }
     }
+
+    public void passarTempo() {
+        diasSemComer++;
+        diasSemDormir++;
+        if (diasSemComer >= 3) alterarAfinidade(-10);
+        if (diasSemDormir >= 3) alterarAfinidade(-5);
+        if (diasSemComer > 0 && mecanicas.MecanicasRpg.rolarDado(100) <= 20) {
+            telas.Interface.MostrarMensagem("\n(A barriga de " + nome + " ronca alto. \"Tem algo para comer?\", ele(a) pergunta.)");
+            telas.Interface.Pausa(1500);
+        }
+        if (diasSemDormir > 0 && mecanicas.MecanicasRpg.rolarDado(100) <= 20) {
+            telas.Interface.MostrarMensagem("\n(" + nome + " boceja pesado. \"Precisamos descansar na cabana...\")");
+            telas.Interface.Pausa(1500);
+        }
+        if (doMal && mecanicas.MecanicasRpg.rolarDado(100) <= 15) {
+            telas.Interface.MostrarMensagem("\n(Você percebe " + nome + " olhando fixamente para a sua bolsa de moedas... mas logo disfarça.)");
+            telas.Interface.Pausa(1500);
+        }
+    }
+    
+    public void alimentar() {
+        diasSemComer = 0;
+        alterarAfinidade(15);
+    }
+    
+    public void alterarAfinidade(int valor) {
+        if (!doMal && !permanente) {
+            this.afinidade += valor;
+            if (this.afinidade > 100) this.afinidade = 100;
+            if (this.afinidade < 0) this.afinidade = 0;
+        } else if (doMal) {
+            this.afinidade += valor;
+            if (this.afinidade > 99) this.afinidade = 99;
+            if (this.afinidade < 0) this.afinidade = 0;
+        }
+    }
+    
+    public int getDiasSemComer() { return diasSemComer; }
+    public int getDiasSemDormir() { return diasSemDormir; }
+    public int getAfinidade() { return afinidade; }
+    public boolean isPermanente() { return permanente; }
 }

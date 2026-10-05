@@ -108,6 +108,9 @@ public class GerenciadorDeConstrucoes {
             } else {
                 ficha.diaAtual++;
                 ficha.registrarNovoDiaFome();
+                if (ficha.companheiro != null) {
+                    ficha.companheiro.passarTempo();
+                }
                 if (eraNoite && ficha.companheiro != null) {
                                         ficha.registrarDormidaDoCompanheiro();
                 }
