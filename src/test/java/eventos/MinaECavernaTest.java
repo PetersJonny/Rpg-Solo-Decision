@@ -6,6 +6,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class MinaECavernaTest {
@@ -217,5 +220,43 @@ class MinaECavernaTest {
         ficha.adicionarItem(new ItemRpg("Tocha", "tocha", 1));
 
         assertEquals(0.5, antes - ficha.getEspacoLivreMochila(), 0.0001);
+    }
+
+    @Test
+    void porreteColetadoDoGoblinEUmaArmaEquipavel() throws Exception {
+        FichaRpg ficha = fichaNova();
+
+        pegarPorreteDoGoblin(ficha);
+
+        assertTrue(ficha.temItem("Porrete"), "o porrete entra na mochila");
+        ItemRpg coletado = ficha.getInventario().stream()
+                .filter(i -> i.getNome().equals("Porrete"))
+                .findFirst()
+                .orElseThrow();
+        assertInstanceOf(itens.Arma.class, coletado, "tem que ser uma arma, nao um item genérico");
+        assertEquals(8, ((itens.Arma) coletado).getDadoDanoArma(), "1d8");
+        assertEquals("Força", ((itens.Arma) coletado).getAtributoAtaque());
+        assertEquals(2.0, coletado.getPeso(), 0.0001, "mesmo peso do porrete da loja");
+    }
+
+    @Test
+    void porreteColetadoNaoDuplicaSeJaTemUm() throws Exception {
+        FichaRpg ficha = fichaNova();
+        ficha.adicionarItem(loja.Vendedor.criarItem("Porrete"));
+        int antes = ficha.getQuantidadeDe("Porrete");
+
+        pegarPorreteDoGoblin(ficha);
+
+        assertEquals(antes, ficha.getQuantidadeDe("Porrete"), "nao ganha um segundo porrete");
+    }
+
+    private static void pegarPorreteDoGoblin(FichaRpg ficha) throws Exception {
+        Method m = Caverna.class.getDeclaredMethod("PegarPorreteDoGoblin", FichaRpg.class);
+        m.setAccessible(true);
+        try {
+            m.invoke(null, ficha);
+        } catch (InvocationTargetException e) {
+            throw (Exception) e.getCause();
+        }
     }
 }

@@ -4,13 +4,49 @@ Um **RPG de mesa single-player** jogado no terminal, em **Java** (requer Java 21
 
 Este README é o guia completo do jogo: se ficar perdido em qualquer momento, volte aqui.
 
-> **Aviso:** este guia explica **todas as mecânicas** do jogo (combate, progressão, construção, vendedor, salvamento) — mecânica **não é spoiler**. O que é spoiler é o **mundo em si**: as criaturas/monstros, os encontros secretos e os mistérios da floresta. Essas partes estão marcadas com aviso de spoiler e podem ser recolhidas.
+> **O que é spoiler aqui**
+>
+> **Mecânica não é spoiler.** Regras, fórmulas, tabelas de atributos, classes, raças, progressão, combate, economia das lojas, pesos, construções e o funcionamento dos sistemas são documentação — eles são implementados no código e não revelam nada do mundo que você ainda não tenha visto ao jogar.
+>
+> **O que é spoiler é o conteúdo do mundo:** criaturas específicas e seus números, encontros, eventos, personagens que aparecem, segredos, chefes e tesouros. Saber que "existe um goblin na entrada da mina" ou "o labirinto tem um chefe" já é uma vantagem que o jogador não teria.
+>
+> Tudo que se enquadrar nesse segundo tipo está dentro de um bloco `<details>` com aviso. Os blocos são **recolhidos por padrão** — dá para ler o guia inteiro sem encontrar spoiler nenhum.
+
+---
+
+## Sumário
+
+- [Como Rodar](#como-rodar)
+- [Fluxo do Jogo](#fluxo-do-jogo)
+- [Criação de Personagem](#criação-de-personagem)
+  - [Atributos](#atributos) · [Raças](#raças) · [Fadiga](#fadiga-cansado) · [Fome e saciedade](#fome-e-saciedade) · [Dificuldade](#dificuldade)
+- [Mochila e Peso](#mochila-e-peso)
+- [Classes](#classes)
+- [Progressão e Níveis](#progressão-e-níveis)
+- [Defesa](#defesa)
+- [Combate](#combate)
+- [Criaturas](#criaturas) *(spoiler)*
+- [Floresta de Freijord](#floresta-de-freijord)
+- [Travessia (Sair da Floresta)](#travessia-sair-da-floresta)
+- [Vilarejo de Scarbor](#vilarejo-de-scarbor)
+  - [Taverna](#taverna) · [Ferreiro](#ferreiro) · [Alfaiataria](#alfaiataria) · [Barraca de Frutas](#barraca-de-frutas) · [Casa do Chapéu Mágico](#casa-do-chapéu-mágico)
+- [Missões](#missões) *(spoiler)*
+- [Construção](#construção)
+- [Estruturas Encontradas](#estruturas-encontradas) *(spoiler parcial)*
+- [Vendedor](#vendedor)
+- [Companheiros](#companheiros)
+- [Itens](#itens)
+- [Salvar e Carregar](#salvar-e-carregar)
+- [Estrutura do Projeto](#estrutura-do-projeto)
+- [Testes](#testes)
+- [Conceitos Aplicados](#conceitos-aplicados)
 
 ---
 
 ## Como Rodar
 
 ### Requisitos
+
 - **Java 21+** (JDK 21)
 - **Apache Maven** (ou uma IDE compatível: IntelliJ IDEA, Eclipse, VS Code)
 
@@ -32,19 +68,19 @@ mvn exec:java
 ## Fluxo do Jogo
 
 1. **Menu principal** — Novo Jogo, Carregar Jogo, Apagar Save ou Fechar o jogo.
-2. **Criação de Ficha** — nome, distribuição dos atributos, classe e dificuldade. A ficha só é liberada quando completa (nome + 6 pontos de atributo + classe).
+2. **Criação de Ficha** — nome, **raça**, distribuição dos atributos, classe e dificuldade. A ficha só é liberada quando completa.
 3. **Prólogo** — introdução narrada sobre Freijord (opção de pular).
 4. **Floresta de Freijord** — o "hub" do jogo. Daqui você explora, coleta recursos, constrói, dorme, conversa com o companheiro e salva o jogo.
 5. **Exploração** — cada exploração gera um encontro (com comerciantes, criaturas e, raramente, algo mais). O dia e a noite alternam a cada 3 unidades de período.
 6. **Combate** — resolução por iniciativa, com ataques, magias, habilidades, fuga e saque.
 
-Não existe autosave: **salve manualmente** (`Salvar Jogo` no menu principal da floresta).
+Não existe autosave: **salve manualmente** (`Salvar Jogo`, disponível na floresta e no vilarejo).
 
 ---
 
 ## Criação de Personagem
 
-Você distribui **6 pontos** entre os seis atributos. Depois escolhe a classe (Mago com um elemento, Guerreiro ou Healer) e a dificuldade.
+Você distribui **6 pontos** entre os seis atributos, escolhe uma **raça**, uma **classe** (Mago com um elemento, Guerreiro ou Healer) e a **dificuldade**.
 
 ### Atributos
 
@@ -57,6 +93,22 @@ Você distribui **6 pontos** entre os seis atributos. Depois escolhe a classe (M
 | **Intelecto** | Testes de conhecimento, salvamento de companheiro |
 | **Presença** | Detecta ameaças antes de serem emboscadas; define a Mana |
 
+### Raças
+
+Cada raça dá **+1 em um atributo** e uma **passiva**. As duas coisas valem para sempre — não há escolha de build que "descarte" uma passiva.
+
+| Raça | Atributo | Passiva | Efeito |
+|---|---|---|---|
+| **Humano** | +1 em um atributo à sua escolha | **Vontade de Viver** | Uma vez por dia, ao ser reduzido a 0 de vida, você sobrevive com 1 |
+| **Elfo da Floresta** | +1 em Destreza | **Toque da Mata** | 30% de chance de ganhar 1 material extra ao buscar recursos |
+| **Vigia do Crepúsculo** | +1 em Sabedoria | **Visão na Penumbra** | +2 em todos os testes durante a noite |
+| **Meio-Fada** | +1 em Presença | **Encanto Feérico** | Dobra a chance de um certo **encontro secreto** ao explorar e reduz em 1 o custo de mana de magias e habilidades (nunca abaixo de 1) |
+| **Dracônico** | +1 em Constituição | **Escamas de Dragão** | +2 de defesa permanente e +2 de vida máxima |
+| **Meio-Orque** | +1 em Força | **Fúria Sombria** | Com 30% ou menos de vida, o dado de dano das suas armas sobe um degrau (1d4→1d6, 1d6→1d8, ...); em 1d12 (máximo), ganha +1d4 extra |
+| **Gnomo** | +1 em Intelecto | **Mente Afiada** | Uma vez por dia, você pode refazer um teste de Intelecto ou Sabedoria que falhou |
+
+> **Humano** é a única raça em que o atributo bônus é escolhido na criação (o padrão, se nada for escolhido, é Constituição).
+
 ### Fadiga (cansado)
 
 Depois de **2 noites sem dormir**, o personagem fica **cansado**: **−1 em todos os testes de atributo** (iniciativa, presença, fuga, intelecto, etc.). Não afeta vida, mana ou dano. Dormir na cabana remove o cansaço.
@@ -65,15 +117,40 @@ Depois de **2 noites sem dormir**, o personagem fica **cansado**: **−1 em todo
 
 - A fome é contada em **dias sem comer** e zera assim que você come qualquer coisa que sacie.
 - **1 dia sem comer:** −1 em testes de Destreza e Força. **5 dias ou mais:** além da penalidade, o personagem **perde vida a cada período** (o valor cresce com os dias).
-- **Comida estragada** (Carne Podre, ou carne crua que estragou) sacia a fome, mas deixa **enjoado**, com −1 em testes de Destreza e Força até o próximo dia.
+- **Comida estragada** (carne que passou do ponto, inclusive a carne crua que ficou guardada tempo demais) sacia a fome, mas deixa **enjoado**, com −1 em testes de Destreza e Força até o próximo dia.
 - **Frutas**: **3 frutas** (ou a opção "Frutas", que junta várias) contam como **1 refeição**.
-- **Saciedade (estar cheio):** cada refeição que sacia a fome conta **1 de 3 por dia**. Ao comer a **terceira**, o personagem fica **cheio** e **não consegue comer mais nada** — o jogo recusa o uso de qualquer comida e **a comida permanece no inventário**. A saciedade zera ao virar o dia. O menu da floresta e o do vilarejo mostram o estado: `Saciado (1/3 refeições hoje)` e `CHEIO (3/3 refeições hoje | não cabe mais nada)`.
+- **Saciedade (estar cheio):** cada refeição que sacia a fome conta **1 de 3 por dia**. Ao comer a **terceira**, o personagem fica **cheio** e **não consegue comer mais nada** — o jogo recusa o uso de qualquer comida e **a comida permanece no inventário**. A saciedade zera ao virar o dia. Os menus da floresta e do vilarejo mostram o estado: `Saciado (1/3 refeições hoje)` e `CHEIO (3/3 refeições hoje | não cabe mais nada)`.
 - **Dormir** divide a cura pela metade quando você comeu no dia (`vida máxima / 2`) e usa a divisão completa quando não comeu (`vida máxima / 3`).
 
 ### Dificuldade
 
 - **Normal** — ao morrer, os saves do personagem são mantidos.
 - **Difícil** — morte permanente: ao morrer, **todos os saves com o nome do personagem são apagados**. Não há segunda chance.
+
+---
+
+## Mochila e Peso
+
+Toda a sua munição, comida, ouro em forma de item e sucata ocupa **peso** — e a mochila tem limite.
+
+```
+Capacidade da mochila = 10 + 5 × Força      (mínimo de 10)
+```
+
+Itens com peso `0` não ocupam espaço. Quando um item não cabe, o jogo informa **quantas unidades ainda cabem** em vez de simplesmente recusar — a exceção são equipamentos: para **equipar** uma peça nova é preciso que ela caiba inteira.
+
+| Peso | Itens |
+|---|---|
+| **0,0** | (nenhum item comum) |
+| **0,1** | Couro, presas e dentes de criaturas, Carnes (cruas, cozidas e estragadas), Ossos, duas armas raras de chefe, um troféu de chefe, um pó raro de encontro secreto, Flechas, Madeira, Folha, Pedra, Frutas e as frutas da barraca |
+| **0,2** | Gota de Veneno e um consumível raro de missão (ver spoiler) |
+| **0,3** | Poção de Mana, Kit Médico, pratos e bebidas da taverna |
+| **0,5** | Tocha, Ampulheta de Prata, Amuleto do Coração, Chapéu Mágico, Gema de Mana, Luvas de Prata, Manto do Astrólogo, Pequeno Grimório, Pó de Midas |
+| **0,6** | Poção Grande de Mana, roupas (Capa do Viajante, Botas de Correio, Lenço de Seda, Manto do Atirador, Túnica de Aventureiro) |
+| **1,0** | Demais armas leves e itens de valor |
+| **2,0** | Espada Pesada, Machado de Guerra, Martelo de Guerra, Armadura Pesada, Porrete e a espada rara de chefe do Guerreiro |
+
+Dica: **Flechas, Madeira, Folha, Pedra e materiais** são baratos em peso. Já armas pesadas ocupam o equivalente a dezenas de unidades de material.
 
 ---
 
@@ -138,7 +215,7 @@ Depois de **2 noites sem dormir**, o personagem fica **cansado**: **−1 em todo
 
 ## Progressão e Níveis
 
-O nível máximo é **10**. O XP vem apenas de **matar criaturas**.
+O nível máximo é **10**. O XP vem **apenas de matar criaturas**.
 
 ### Tabela de XP
 
@@ -172,6 +249,8 @@ A Defesa é calculada assim:
 Defesa = 10 + Destreza   (+ bônus da armadura equipada)
         (+ 3 se Proteção Absoluta ativa)
         (+ 5 se Defesa Absoluta ativa, até você atacar)
+        (+ 1 se você tem o Lenço de Seda)
+        (+ 2 se sua raça é Dracônico)
 ```
 
 - A **melhor armadura** do inventário é equipada automaticamente (as armaduras extras na mochila não somam defesa).
@@ -207,6 +286,7 @@ Dano:           dados da arma + atributo
 - **Semi Deus** dá **+4 dados de dano** em soco e armas corpo a corpo (armas à distância não recebem).
 - **Arcos e Foices** consomem **1 Flecha por disparo**.
 - **Espada Afiada** adiciona 2d8 em ataques com arma.
+- **Túnica de Aventureiro** dá +1 de dano corpo a corpo; **Manto do Atirador** dá +1 de dano à distância.
 
 ### Fuga
 
@@ -217,11 +297,17 @@ Teste: `d20 + Destreza` contra **10 + Iniciativa da criatura mais rápida viva**
 - Custo de mana é descontado ao lançar. Cada dado é rolado e exibido.
 - **Pequeno Grimório** (item) reduz o custo das magias pagas em 1 (mínimo 1).
 - **Chapéu Mágico** (item) adiciona **+3** de dano a todas as magias.
+- **Pó de Midas** (item) adiciona **+10%** na chance de encontrar itens e ouro nas criaturas.
 - **Poder Absoluto** dobra a quantidade de dados das magias.
 - **Mesa de Magias** (construção) adiciona **+1 dado de dano** a **todas** as habilidades de dano (magias, Estrondo, Giro e Explosão de Poder) por 2 períodos.
 - **Peso da Espada** soma + Força ao dano.
 - **Magia em área** atinge o alvo e os inimigos adjacentes na lista.
 - Magias **sempre acertam** (sem teste de defesa) e aplicam o veneno da Cura para a Morte no alvo.
+- **Meio-Fada** reduz em 1 o custo de mana de magias e habilidades (nunca abaixo de 1).
+
+### Veneno em combate
+
+A **Gota de Veneno** (item da Casa do Chapéu Mágico) é aplicada por uma ação inteira: a opção **"Aplicar Gota de Veneno na arma"** consome a gota e gasta a rodada. O próximo ataque **com arma** que acertar envenena o alvo, causando **1d4 por rodada até o fim do combate**. Se o ataque errar, o veneno seca. Não funciona com magia.
 
 ### Companheiro em combate
 
@@ -235,6 +321,7 @@ O companheiro age sozinho no seu turno de iniciativa:
 ### Morte e resgate
 
 - Se **você** cair a 0 de vida, o Healer tenta reviver com **Cura Total** (10 de mana, uma vez por combate).
+- Se **você** for curado para 0 e sua raça for **Humano**, a passiva **Vontade de Viver** pode deixá-lo com 1 de vida (uma vez por dia).
 - Se o **companheiro** morrer, você tenta estabilizá-lo: precisa de **Intelecto ≥ 14** e um **d20 ≥ 16**. Se o resgate falhar, o companheiro morre em definitivo e **todos os itens e o ouro dele passam para você**.
 - Companheiro vivo com menos de 30% de vida após a vitória se recupera para 50%.
 
@@ -243,22 +330,33 @@ O companheiro age sozinho no seu turno de iniciativa:
 - **Vitória:** cada criatura processa seus drops (ouro e itens) e concede XP.
 - **Derrota:** sua jornada termina e o jogo volta ao menu principal (a dificuldade define se os saves sobrevivem).
 
-### Criaturas
+---
+
+## Criaturas
 
 <details>
 <summary>⚠️ <b>Spoiler: as criaturas da floresta</b> — clique para revelar</summary>
 
-| Criatura | Qtd (dia / noite) | Vida | Defesa | Iniciativa | Acerto | Teste Presença | XP | Ataques | Saque |
-|---|---|---|---|---|---|---|---|---|---|
-| Lobo Selvagem | 1–2 / 1–4 | 14 | 10 | +3 | +3 | 8 | 25 | Mordida 1d6, Arranhão 2d4 | Couro 1–2 (40%) |
-| Urso | 1 / 1 | 35 | 7 | +0 | +1 | 5 | 50 | Mordida 1d10, Arranhão 2d8 | Couro 2–4 (60%), Dente de Urso (20%) |
-| Bandido | 1–3 / 1–5 | 9 | 12 | +1 | +2 | 15 | 10 | Facada 1d4, Soco 1d3 | Ouro 4–17 (100%), Faca (35%) |
-
-Além dos animais e bandidos, existe um encontro raro: a **Fada** (vida 4, defesa 14, acerto automático, ataque Brilho Cintilante 1d6, XP 30). Ela acontece **uma única vez por personagem** (20% de chance a cada exploração até ser encontrada) e oferece três opções:
+Além dos animais e bandidos, existe um encontro raro: a **Fada** (vida 4, defesa 14, acerto automático, ataque Brilho Cintilante 1d6, XP 30). Ela acontece **uma única vez por personagem** (20% de chance a cada exploração até ser encontrada; **40%** se sua raça for **Meio-Fada**) e oferece três opções:
 
 - **Conversar** — teste de Sabedoria (dificuldade 14): se passar, ganha **+1 em um atributo aleatório**.
-- **Lutar** — combate contra a fada; o **Pó da Fada** dela (drop garantido) vale **75 de ouro** — o maior item de valor do jogo, e é o ingrediente da **Mesa de Magias**.
+- **Lutar** — combate contra a fada; o **Pó da Fada** dela (drop garantido) vale **75 de ouro** (o vendedor paga **52**) e é o ingrediente da **Mesa de Magias**.
 - **Deixá-la em paz** — nada acontece.
+
+Os grupos de criaturas da floresta são sorteados assim (a noite sempre permite grupos maiores):
+
+| Tipo | Qtd de dia | Qtd de noite |
+|---|---|---|
+| Lobo Selvagem | 1–2 | 1–4 |
+| Urso | 1 | 1 |
+| Bandido | 1–3 | 1–5 |
+
+| Criatura | Vida | Defesa | Iniciativa | Acerto | Teste Presença | XP | Ataques | Saque |
+|---|---|---|---|---|---|---|---|---|
+| Lobo Selvagem | 14 | 10 | +3 | +3 | 8 | 25 | Mordida 1d6, Aranhão 2d4 | Couro 1–2 (40%), Carne de Lobo 1–2 (40%) |
+| Urso | 35 | 7 | +0 | +1 | 5 | 50 | Mordida 1d10, Aranhão 2d8 | Couro 2–4 (60%), Carne de Urso 1–2 (40%), Dente de Urso (20%) |
+| Bandido | 9 | 12 | +1 | +2 | 15 | 10 | Facada 1d4, Soco 1d3 | Ouro 4–17 (100%), Faca (35%) |
+
 </details>
 
 <details>
@@ -275,7 +373,8 @@ Nos 8 **encontros** do labirinto: **40% Esqueleto, 40% Zumbi e 20% Baú**. Fugir
 
 \* **Minotauro** é o chefe do centro e não pode ser encontrado nas casas comuns. \*\* A fuga dele é bloqueada: a porta se fecha, então nem o Teste de Destreza é oferecido.
 
-O **Baú** (encontro) oferece um **baú antigo**: dá para **abrir** ou **não abrir**. Abrindo, **50%** tem ouro (7–14) e **50%** um **Baú Monstruoso** salta para o combate. **Carne Podre** e **Osso** não podem ser comprados no vendedor (só vendidos). Os três são **mortos-vivos**: a **Espada Majestral** causa **dano dobrado** contra eles.
+O **Baú** (encontro) oferece um **baú antigo**: dá para **abrir** ou **não abrir**. Abrindo, **50%** tem ouro (7–14) e **50%** um **Baú Monstruoso** salta para o combate. O vendedor ambulante compra **Osso** e **Carne Podre** normalmente. Os três são **mortos-vivos**: a **Espada Majestral** causa **dano dobrado** contra eles.
+
 </details>
 
 <details>
@@ -285,13 +384,14 @@ Os **3%** das casas de recompensa sorteiam um **tesouro raro** entre os que aind
 
 | Tesouro | Efeito |
 |---|---|
-| **Olho Demoníaco** | Ao tocá-lo, um **chamado** sussurra: **Aceitar** concede o item + a habilidade **Pacto Mortal** (4 de mana); **Recusar** dá nada, mas o item já conta como achado. O Olho **não pode ser vendido**. |
-| **Espada Majestral** | Arma **CaC**: **1d12 + Força + 1d4 de dano de luz** (luz também dobra no crítico) e **dano total dobrado contra mortos-vivos** (Esqueleto, Zumbi e Baú Monstruoso). **Não pode ser vendida**. |
-| **Coroa do Rei** | Item de **300g** (pode ser vendida). Exige um **Teste de Intelecto 18+** para desvendar o segredo: passando, revela a habilidade **Rei das Criaturas** (funciona enquanto a Coroa estiver consigo); falhando, guarda a Coroa mesmo assim. |
+| **Olho Demoníaco** | Ao tocá-lo, um **chamado** sussurra: **Aceitar** funde o olho em você e concede a habilidade **Pacto Mortal** (4 de mana) — o olho não vira item de mochila, é a própria habilidade que ele abre; **Recusar** dá nada, mas o olho já conta como encontrado e não aparece de novo. |
+| **Espada Majestral** | Arma **CaC**: **1d12 + Força + 1d4 de dano de luz** (luz também dobra no crítico) e **dano total dobrado contra mortos-vivos** (Esqueleto, Zumbi e Baú Monstruoso). |
+| **Coroa do Rei** | Item de **valor alto** (o vendedor paga **700**). Exige um **Teste de Intelecto 18+** para desvendar o segredo: passando, revela a habilidade **Rei das Criaturas** (funciona enquanto a Coroa estiver consigo); falhando, guarda a Coroa mesmo assim. |
 
 **Pacto Mortal** (habilidade ativa, 4 de mana, alvo obrigatório): até o fim do combate o alvo tem **-2 em suas rolagens** e **+5 de dano demoníaco** em cada golpe sofrido, mas **todos os danos que você receber aumentam em +3** enquanto a maldição durar (usar o Olho é obrigatório).
 
 **Rei das Criaturas** (3 de mana, **não gasta a ação**): rode um **Teste de Presença** (1d20 + Presença) contra cada criatura (1d20 + nível). Vencendo, você a **comanda**: **fugir** do combate (some sem dar XP nem saque), **atacar a si mesma** ou **atacar outro monstro** do combate.
+
 </details>
 
 ---
@@ -303,9 +403,10 @@ O hub do jogo é o menu **"FLORESTA DE FREIJORD"**:
 1. **Ver ficha**
 2. **Explorar a Floresta** — sempre gera um encontro (1/3 de período)
 3. **Buscar Recursos na Floresta** — coleta materiais (1/3 de período)
-4. **Construção (Dormir)** — construir, caminhar até uma construção ou dormir (veja a seção Construção)
-5. **Tentar sair da floresta** — caminha adentrando a mata, em busca de algo além de árvores e mato (veja a seção Travessia)
-6. **Conversar com o companheiro** / **Salvar Jogo** / **Encerrar jogo** (os números variam se você tem um companheiro ou já encontrou o Labirinto)
+4. **Construção (Dormir)** — construir, caminhar até uma construção ou dormir (veja a seção [Construção](#construção))
+5. **Tentar sair da floresta** — caminha adentrando a mata, em busca de algo além de árvores e mato (veja a seção [Travessia](#travessia-sair-da-floresta))
+6. Opções condicionais: **Labirinto** (depois de descoberto), **uma busca na mata da entrada** (só depois de certo acontecimento), **Conversar com o companheiro**
+7. **Salvar Jogo** / **Encerrar jogo**
 
 ### Tempo
 
@@ -334,9 +435,11 @@ Coletar recursos (ou voltar para a cabana) tem **30% de chance de gerar um encon
 
 ### Encontros aleatórios (a cada exploração)
 
-1. **Descoberta do Labirinto** (só enquanto não encontrado; veja a seção Estruturas) — chance começa em **1%** e aumenta **+1% a cada dia** que passa
+A rolagem acontece nesta ordem:
+
+1. **Descoberta do Labirinto** (só enquanto não encontrado; veja [Estruturas Encontradas](#estruturas-encontradas)) — chance começa em **1%** e aumenta **+1% a cada dia** que passa
 2. **10%** — Vendedor ambulante
-3. **20%** — encontro secreto raro (veja o aviso de spoiler na seção de Criaturas)
+3. **20%** — um encontro secreto raro (40% para **Meio-Fada**) — acontece uma única vez por personagem (ver spoiler na seção de Criaturas)
 4. Senão — **uma criatura da floresta** (a tabela com os nomes é spoiler; veja a seção de Criaturas)
 
 ---
@@ -345,32 +448,53 @@ Coletar recursos (ou voltar para a cabana) tem **30% de chance de gerar um encon
 
 Dizem que quem caminha por tempo suficiente, adentrando a mata em busca de algo além de árvores e mato, acaba saindo da floresta gélida de Freijord:
 
-- A opção **"Tentar sair da floresta"** (menu principal da floresta) faz você caminhar adentrando o mato. Você escolhe **quantos períodos caminhar por vez** (de **1 a 3**, cada um gasta 1/3 do período) e, **após cada período**, decide se **continua caminhando ou para por aqui**.
-- Leva **20 períodos no total** para sair da floresta — mas esse **contador é oculto**: você nunca sabe o quanto falta.
+- A opção **"Tentar sair da floresta"** (menu principal da floresta) faz você caminhar para o fundo da mata. Você escolhe **quantos períodos caminhar por vez** (de **1 a 3**, cada um gasta 1/3 do período) e, **após cada período**, decide se **continua caminhando ou para por aqui**.
+- Leva **20 períodos no total** para sair da floresta — mas esse **contador é oculto**: você nunca sabe o quanto falta. A única forma de descobrir é pela distância mostrada até suas construções.
 - Cada período de caminhada tem **a mesma chance de encontro da exploração** (30% de dia, 50% à noite) — só que **sem encontrar recursos**.
-- Pode acontecer de você parar e o menu **Construção** ficar acessível no ponto atual: cada construção é **ancorada no ponto da mata onde foi montada**, então a opção sempre mostra **a distância (em períodos de caminhada) até cada construção** e permite **caminhar até ela** (mesmo custo turno a turno da ida) ou **montar uma construção nova ali**, que passa a ser o novo ponto (veja a seção Construção).
-- Ao sair da floresta, o jogador chega a uma **cidade para além dela** (o destino é sorteado). O primeiro destino disponível é o **Vilarejo de Scarbor**. Enquanto estiver fora das suas construções, **não dá para construir, treinar ou dormir** — é preciso voltar para as construções.
-- **Virada de tempo na chegada:** se o jogador sair da floresta pela primeira vez e o tempo virar (dia→noite ou noite→dia) **exatamente** no momento em que ele chega à vila, a confusão na taverna **não acontece**. Ele vê apenas a descrição da chegada e entra direto no menu da taverna, podendo comer e ler o quadro de missões — o Draven não fala com ele. Isso vale **só na primeira chegada**; nas saídas seguintes da floresta os goblins voltam a aparecer normalmente.
-- **O assalto dos goblins é um evento de chegada, não contínuo.** Depois de resolvido (lutando ou espantando os goblins), a confusão na porta da taverna nunca mais é narrada e os goblins não reaparecem, mesmo que o jogador entre e saia da floresta várias vezes. Se ele ignorou a taverna na primeira chegada, a confusão continua pendente e aparece ao entrar na taverna.
+- Pode acontecer de você parar e o menu **Construção** ficar acessível no ponto atual: cada construção é **ancorada no ponto da mata onde foi montada**, então a opção sempre mostra **a distância (em períodos de caminhada) até cada construção** e permite **caminhar até ela** (mesmo custo turno a turno da ida) ou **montar uma construção nova ali**, que passa a ser o novo ponto (veja a seção [Construção](#construção)).
+- Ao sair da floresta, o jogador chega a uma **cidade para além dela** (o destino é sorteado; hoje o único destino é o **Vilarejo de Scarbor**). Enquanto estiver fora das suas construções, **não dá para construir, treinar ou dormir** — é preciso voltar para as construções.
+- **Virada de tempo na chegada:** se o jogador sair da floresta pela primeira vez e o tempo virar (dia→noite ou noite→dia) **exatamente** no momento em que ele chega à vila, a cena de chegada **não acontece**. Ele vê apenas a descrição da chegada e entra direto no menu da taverna, podendo comer e ler o quadro de missões. Isso vale **só na primeira chegada**.
+- **A cena é um evento de chegada, não contínuo.** Depois de resolvida, ela nunca mais é narrada, mesmo que o jogador entre e saia da floresta várias vezes. Se ele ignorou a taverna na primeira chegada, a cena continua pendente e aparece ao entrar na taverna.
 
-### Vilarejo (fora da floresta)
+<details>
+<summary>⚠️ <b>Spoiler: o assalto na chegada à vila</b> — clique para revelar</summary>
+
+Na **primeira chegada** ao Vilarejo de Scarbor, a taverna está sendo assaltada: **4 goblins** pulam sobre as mesas exigindo ouro.
+
+Você pode:
+
+- **Ir até a taverna ver o que está acontecendo** ou **deixar para depois e seguir seu caminho** (a confusão fica pendente até você entrar).
+- Diante dos goblins: **sair dali furtivo** (teste de Destreza), **ir lutar**, **tentar conversar com eles** ou **tentar ir lutar furtivo**.
+- **Conversar** tem duas rotas: **ameaçar** (teste de Presença) ou **tentar entender o motivo** — é aqui que o jogo explica que os **dracônicos confiscaram as minas de ouro dos goblins**, e o grupo passa a ver você como parte da dívida. Se você **perguntar o que tiraram deles**, entende na hora e a fuga seguinte fica mais fácil (DT 5 em vez de 15).
+- **Se você for Dracônico**, o líder já começa com a história na cara — ele reconhece a raça antes de você dizer nada, e a memória das minas tomadas volta à tona. Isso muda o diálogo e a fuga.
+
+Quem resolve o assalto vira conhecido da casa: o dono da taverna, **Draven Moreau**, agradece pessoalmente e oferece **30 de ouro** — mas só na primeira vez. Se você recusar, ele insiste uma vez.
+
+Se **Draven** te pagou a comida uma vez (por ter chegado com fome), a **primeira refeição na taverna é por conta da casa**.
+
+</details>
+
+---
+
+## Vilarejo de Scarbor
 
 - O menu do vilarejo permite **Ver ficha**, **Olhar em volta**, **ir à taverna**, **ir ao ferreiro**, **ir à Casa do Chapéu Mágico**, **Ver missões em andamento**, **Voltar para a floresta** (refaz todo o caminho de volta até as construções), **Salvar Jogo** e **Encerrar jogo**.
-- **Cada visita a uma loja gasta 1 período do dia** (taverna, ferreiro, alfaiataria, barraca de frutas e Chapéu Mágico). O período é cobrado ao sair da loja, então comprar vários itens no mesmo dia só custa 1 período.
+- **Opções condicionais:** a **alfaiataria** só aparece depois que você conheceu a alfaiateira; a **barraca de frutas** e a **caverna** só entram no menu depois de certos acontecimentos do jogo (veja os spoilers das missões).
+- **Cada visita a uma loja gasta 1 período do dia** (taverna, ferreiro, alfaiataria, barraca de frutas e Chapéu Mágico). O período é cobrado ao sair da loja, então comprar vários itens no mesmo dia só custa 1 período. A caverna e o quadro de missões **não** cobram período.
 
 <details>
 <summary>⚠️ <b>AVISO DE SPOILER: a mina, o prazo e o funeral de A Filha Perdida</b> — clique para revelar</summary>
 
-### A Mina (A Filha Perdida)
+### A Caverna (A Filha Perdida)
 
-No fundo da vila, encostado no paredão da montanha, fica o local que Célia Morel indicou. Ali se vê um emaranhado de pedras empilhadas desenhando uma parede sólida, com um vão estreito no meio: é a **entrada de uma mina** que desce na direção da montanha.
+A caverna fica no fundo da vila, encostada no paredão da montanha. É o lugar que Célia Morel indicou — e ela só conta onde fica **depois que você aceita a missão**.
 
 Ao chegar na entrada:
 
-1. **Teste de Presença DT 12** — se passar, você percebe um **pequeno goblin** encostado no lado de fora do vão. Ele te vê e corre para dentro. Se você for **dracônico**, ele se encolhe assustado antes de sumir na escuridão (texto diferente). Se falhar, você não vê nada. O goblin só precisa ser notado uma vez.
-2. Escolha: **olhar em volta da entrada** ou **entrar na mina**.
+1. **Teste de Presença DT 12** — se passar, você percebe um **pequeno goblin** encostado do lado de fora do vão. Ele te vê e corre para dentro. Se você for **Dracônico**, ele se encolhe assustado antes de sumir na escuridão (texto diferente). Se falhar, você não vê nada. O goblin só precisa ser notado uma vez.
+2. Escolha: **olhar em volta da entrada** ou **entrar na caverna**.
 3. Se olhar em volta, **Teste de Presença DT 7** — se passar, encontra uma **tocha** (peso 0,5 kg) entre as pedras, com a mesma pergunta de pegar ou deixar para trás usada no resto do jogo. A tocha só precisa ser vista uma vez.
-4. Escolha final: **voltar para a vila** ou **entrar na mina**.
+4. Escolha final: **voltar para a vila** ou **entrar na caverna**.
 
 **Escuridão:** lá dentro, todo teste leva **-2** por está escuro — a menos que você esteja **com a tocha na mão**, o que anula a penalidade. O bônus só vale com a tocha realmente na mochila: se ela for vendida ou derrubada, o -2 volta.
 
@@ -388,11 +512,11 @@ Ao aceitar **A Filha Perdida**, o jogo registra o dia do aceite e passa a contar
      - **Não ficar** — sai do largo e volta para a vila.
    - **Ficar para trás** — a rua esvazia em minutos e a vila fica sem ninguém.
 
-**A vila deserta:** no dia do funeral, as lojas **continuam aparecendo no menu** mas estão vazias — é possível entrar, ver que não há ninguém e voltar. **Nenhuma compra funciona e é impossível falar com qualquer NPC.** A visita a uma loja fechada **cobra 1 período** normalmente, o que permite virar o dia dentro da própria vila.
+**A vila deserta:** no dia do funeral, as lojas **continuam aparecendo no menu** mas estão vazias — é possível entrar, ver que não há ninguém e voltar. **Nenhuma compra funciona e é impossível falar com qualquer NPC.** A visita a uma loja fechada **cobra 1 período** normalmente, o que permite virar o dia dentro da própria vila. O `Olhar em volta` também muda de texto.
 
 **No dia seguinte**, tudo volta a funcionar sozinho: as lojas reabrem, os NPCs voltam e o menu da vila perde os avisos de "vila vazia" e "mina fechada".
 
-### O Interior da Mina
+### O Interior da Caverna
 
 Ao entrar, a caverna é explorada em sequência:
 
@@ -406,11 +530,9 @@ Ao entrar, a caverna é explorada em sequência:
    - **Atacar.** O combate começa **antes** da transformação, contra um **Goblin comum** (nível 3, 15 de vida) — o mesmo que você vê fugindo da entrada da mina. Se ele morrer aqui, acabou: ele desaba sem crescer, as pequenas luzes se apagam e a criança continua no chão — ele não tinha encostado nela. Você segue direto para a decisão sobre a criança. Se ele **sobreviver**, ele se levanta gritando e aí sim se transforma.
    - **Sair correndo.** Ninguém persegue ninguém. A criança fica lá, o prazo de 3 dias continua rodando e o funeral acontece como se você nunca tivesse entrado.
 
-**O goblin transformado** é nível **5**, com **90 de vida**, **+3 de iniciativa** sobre o goblin comum, ataque **Porretada de 1d8 + 5**, e não foge. Derruba **200 XP**, pode soltar o **Porrete** (50% de chance) e sempre deixa entre **12 e 26 de ouro**. Depois de vencer, o porrete que ele segurava **fica no chão e dá para pegar**, independentemente do drop.
-
-O **Porrete** é uma arma de **1d8 com Força**, pesa **2,0**, e vale **40 de ouro** como preço base. O ferreiro paga **80%** disso na compra, ou seja **32 de ouro** na venda dele. É o mesmo dano do Martelo, mas vale menos: metade do preço do Martelo, porque um porrete não é uma peça de ferreiro.
-
 **Passe ou falhe, a luta acontece.** Depois do teste ele grita que a culpa é dos dracônicos que mandaram ele e todos os irmãos embora, começa a **crescer** — os ombros estalam, os braços engrossam, e o goblin pequeno vira uma coisa grande e imponente no meio do túnel. No meio do crescimento ele pega um **porrete** do chão. Só sabe rugir e atacar o que está na frente.
+
+**O goblin transformado** é nível **5**, com **90 de vida**, **+3 de iniciativa** sobre o goblin comum, ataque **Porretada de 1d8 + 5**, e não foge. Derruba **200 XP**, pode soltar o **Porrete** (50% de chance) e sempre deixa entre **12 e 26 de ouro**. Depois de vencer, o porrete que ele segurava **fica no chão e dá para pegar**, independentemente do drop.
 
 **Se você vencer a luta, três escolhas:**
 
@@ -428,13 +550,128 @@ O aviso no **quadro de missões da taverna**, porém, **continua pregado por mai
 
 Passados os 2 dias, o aviso **desaparece do quadro** de vez.
 
-> **Nota de escopo:** o interior e o resgate existem, mas a trilha de trem e os cristais só aparecem se você tiver levado a tocha. Sem ela, o túnel continua sendo atravessado às cegas — o que é o ponto do penalidade de escuridão, mas significa que dá para chegar ao goblin sem ter visto nenhum dos dois detalhes.
+> **Nota de escopo:** o interior e o resgate existem, mas a trilha de trem e os cristais só aparecem se você tiver levado a tocha. Sem ela, o túnel continua sendo atravessado às cegas — o que é o ponto da penalidade de escuridão, mas significa que dá para chegar ao goblin sem ter visto nenhum dos dois detalhes.
 
 </details>
 
+<details>
+<summary>⚠️ <b>AVISO DE SPOILER: a trilha da netinha (A Neta Perdida)</b> — clique para revelar</summary>
+
+### Como se aceita
+
+A missão **não está no quadro de missões** — ela nunca aparece para nenhum jogador. Você só a recebe **cruzando com a velhinha no caminho para a caverna**, depois que já conhece a caverna (ou depois que a velhinha te para na estrada, com as duas missões):
+
+- Se você **parar e escutar**, ela conta da netinha.
+- Se você **ignorar e seguir**, ela desiste na hora e some — a missão é perdida para sempre.
+
+Ao aceitar, a **barraca de frutas passa a aparecer no menu da vila**, e a floresta ganha a opção **"Procurar a netinha da velhinha na mata da entrada"**.
+
+### O prazo de 7 dias
+
+A missão conta **7 dias inteiros** a partir do aceite, com a mesma mecânica da filha: **nenhum aviso**. Passados os 7 dias, quando você chega à cabana, a criança **já está morta** — a cabana está lá, o homem de roupas de médico está de costas sobre a mesa, e a netinha está no chão, num canto.
+
+### A trilha, passo a passo
+
+1. **Pegadas** — frutas caídas rolando numa direção só, marcadas por pegadas de criança arrastando um pé: a netinha corria com a bolsa de frutas.
+2. **O acampamento** — a trilha termina numa clareira com um **acampamento de bandidos**. Dá para tentar ver quantos são (**Teste de Presença**, 3 turnos de caminho até lá) ou advance direto. São **sete bandidos armados**: você pode **atacar de frente** ou **tentar pegá-los de surpresa** (Teste de Destreza DT 15).
+3. **Vasculhar** — depois de vencer, o local mostra uma **gaiola arrombada por dentro**: a netinha foi mantida presa ali e fugiu correndo.
+4. **A cabana** — as pegadas terminam numa clareira menor com uma **cabana de madeira e luz piscando**. Dá para observar de longe ou **espiar o interior** (Teste de Destreza DT 7). Lá dentro há um **grande homem de roupas de médico** trabalhando em algo sobre a mesa.
+5. **Entrar** — **de frente** ou **furtivo** (Teste de Destreza DT 12, +3 de iniciativa se passar). A luz apaga e o que estava na mesa aparece: **carne humana** aberta, em pedaços. Ele faz magias com carne e plantas e usa pessoas como matéria-prima.
+
+### O Mago Macabro
+
+O dono da cabana é o **Mago Macabro**: nível **5**, **80 de vida**, **14 de defesa**, **+4 de iniciativa**, **100 XP**, **não foge**.
+
+| Ataque | Efeito |
+|---|---|
+| **Cutelo** (2d8 + Força) | 30% de chance de **sangrar**: 1d6 por rodada até o fim do combate |
+| **Soco** (1d6) | Ataque simples |
+| **Sede de Carne e Planta** | Cura a si mesmo com 3d4 — até **5 vezes** por combate |
+
+Ele derruba o **Cutelo** (arma de **2d8 + Força**, 15% de chance) com 15% de chance. É a **arma mais pesada do jogo em valor de venda** entre as que você pode encontrar antes do chefe do labirinto.
+
+### O final
+
+Se a criança está **viva**, ela se solta e te segue de volta até a vila. Na entrada, os **guardas** aparecem, ouvem sua história e mandam você **levar ela até a avó** antes de voltar — a cabana ainda tem o que explicar. Na barraca, a velhinha chora em silêncio e a menina se joga nos braços da avó. A velhinha então tira do avental uma **fruta escura, quase preta, que brilha de um jeito errado** e a dá para você, dizendo para usar só em momento de extrema urgência.
+
+Se a criança está **morta**, você escolhe **levar o corpo até a vila** ou **deixá-lo na cabana**. Na vila, os guardas ouvem a história e saem correndo para a cabana. Você pode **contar para a velhinha** (ela chora em silêncio e promete enterrar a netinha junto às macieiras) ou **deixar os guardas resolverem**.
+
+### A Fruta do Diabo
+
+| Item | Valor | Peso | Efeito |
+|---|---|---|---|
+| **Fruta do Diabo** | 500 (vendedor paga 350) | 0,2 | Consumível de **uso único**, só funciona dentro de combate. Restaura **vida e mana ao máximo**, deixa você **imune a todo dano na primeira rodada** e **sobe um dado de dano em todos os seus golpes** (1d4→1d6, 1d6→1d8, 1d8→1d10, 1d10→1d12). O que já é 1d12 não perde dado: ganha um **dado extra** (1d12 vira 1d12+1d4, 2d12 vira 2d12+1d6, e assim por diante). O poder dura **até o fim daquele combate** — depois se desfaz. |
+
+É o item mais poderoso do jogo em termos de burst de dano, e o único que pode literalmente te salvar de um golpe fatal. Ninguém no jogo explica o que ela é.
+
+</details>
+
+---
+
+### Taverna
+
+A taverna é o **coração da vila**: serve comida, tem o quadro de missões na parede, e é onde o dono se apresenta.
+
+**Cardápio** (o prato vai para a mochila e você come de dentro dela):
+
+| Prato | Preço | Efeito |
+|---|---|---|
+| Pão Quente com Manteiga | 4 | Sacia a fome (não cura vida) |
+| Sopa do Vilarejo | 6 | Cura 1d2 e sacia |
+| Ovos Mexidos | 7 | Cura 1d3 e sacia |
+| Torta de Frutas | 7 | Cura 1d3 e sacia |
+| Hidromel | 8 | Restaura 1d4 de **mana** (não sacia) |
+| Caldo de Lobo | 9 | Cura 1d4 e sacia |
+| Peixe Assado | 9 | Cura 1d4 e sacia |
+| Estofado de Urso | 13 | Cura 1d6 e sacia |
+
+Além de comer, na taverna você pode **ler o quadro de missões** e **perguntar onde fica a alfaiataria** (é assim que você descobre a Célia). Se você chegou à vila com fome, o dono pode pagar a primeira refeição.
+
+### Ferreiro
+
+O **Gorak Vieira** é o ferreiro da vila. O menu tem quatro abas: comprar do estoque do dia, encomendar, vender e retirar encomenda.
+
+- **Estoque do dia:** 5 itens sorteados (com a semente do dia, então é o mesmo estoque o dia inteiro). Pode incluir armas gerais, armaduras e itens restritos de classe.
+- **Encomenda:** qualquer peça do acervo do ferreiro, por **+20%** do preço, **pronta em 1 dia completo**. Você pode encomendar e buscar depois — o pedido fica salvo no save.
+- **Vender:** o ferreiro compra **armas e armaduras** por **80%** do valor cheio. É o melhor comprador do jogo para equipamento.
+
+### Alfaiataria
+
+A alfaiateira **Célia Morel** costura na praça do comércio. A alfaiataria só aparece no menu depois que você a conheceu (perguntando na taverna).
+
+- **Comprar roupas:** 5 peças, uma de cada (não dá para comprar duas iguais nem empilhar bônus).
+
+| Roupa | Preço | Efeito |
+|---|---|---|
+| **Lenço de Seda** | 60 | +1 de Defesa permanente |
+| **Botas de Correio** | 70 | +1 em testes de Destreza |
+| **Capa do Viajante** | 80 | +4 de vida ao dormir na cabana |
+| **Túnica de Aventureiro** | 90 | +1 de dano em ataques corpo a corpo |
+| **Manto do Atirador** | 90 | +1 de dano em ataques à distância |
+
+- **Vender couro:** Célia paga **80%** do valor cheio do Couro — mais que o vendedor ambulante.
+
+### Barraca de Frutas
+
+Perto da entrada da vila, com uma **velhinha de xale surrado** no balcão. Só aparece no menu depois de um certo acontecimento (ver spoilers das missões).
+
+- **Comprar frutas:** 6 frutas, preço por unidade, quantidade à vontade (respeitando o espaço da mochila).
+
+| Fruta | Preço | Efeito |
+|---|---|---|
+| Figo Seco | 5 | Sacia totalmente a fome (não cura vida) |
+| Maçã | 6 | Cura 1d3 e conta como comida |
+| Ameixa | 7 | Cura 1d2 e **cura o enjoo** |
+| Pera | 8 | Cura 1d2 e restaura 1d3 de mana |
+| Uva | 9 | Restaura 1d4 de mana |
+| Morango Selvagem | 12 | Cura 1d3 |
+
+- **Olhar ao redor:** procura pistas. Com a missão ativa, a velhinha confirma onde a criança desapareceu — e isso é registrado nas novidades da missão (ver spoilers).
+- **Missões concluídas:** voltar à barraca depois de resolver a missão encerra ela e entrega a recompensa (ver spoilers).
+
 ### Casa do Chapéu Mágico
 
-Loja da Dona Maga, fica **no começo da vila, ao lado do ferreiro**. Como o ferreiro, só vende **itens mágicos** — e também só **compra** itens mágicos, pagando 80% do valor.
+Loja da **Dona Maga**, fica **no começo da vila, ao lado do ferreiro**. Como o ferreiro, só vende **itens mágicos** — e também só **compra** itens mágicos, pagando 80% do valor.
 
 - O estoque muda a cada dia: **5 itens sorteados**.
 - **Não-consumível: 1 unidade cada.** Depois de comprar, aquele item fica esgotado para você (a loja não vende duplicata).
@@ -442,18 +679,35 @@ Loja da Dona Maga, fica **no começo da vila, ao lado do ferreiro**. Como o ferr
 
 | Item | Preço | Efeito |
 |---|---|---|
-| Chapéu Mágico | 70 | +3 de dano nas suas magias |
-| Pequeno Grimório | 90 | As magias custam 1 de mana a menos |
 | Poção Grande de Mana | 30 | Restaura 7 de mana (consumível, 1–5 por dia) |
-| Manto do Astrólogo | 150 | +1 em todos os testes de Intelecto |
+| Gota de Veneno | 40 | Ver [Veneno em combate](#veneno-em-combate) (consumível, 1–5 por dia) |
+| Chapéu Mágico | 70 | +3 de dano nas suas magias |
+| Ampulheta de Prata | 80 | +1 de Iniciativa |
+| Pequeno Grimório | 90 | As magias custam 1 de mana a menos |
+| Luvas de Prata | 90 | Ataques com arma tiram **1 da Defesa do alvo**. Não acumula por ataque nem por par de luvas |
 | Gema de Mana | 100 | +10 de mana máxima (a mana atual sobe junto) |
 | Amuleto do Coração | 110 | +10 de vida máxima (a vida atual sobe junto) |
-| Ampulheta de Prata | 80 | +1 de Iniciativa |
-| Luvas de Prata | 90 | Ataques com arma tiram **1 da Defesa do alvo**. Não acumula por ataque nem por par de luvas |
+| Manto do Astrólogo | 150 | +1 em todos os testes de Intelecto |
 | Pó de Midas | 70 | +10% na chance de encontrar itens e ouro nas criaturas |
-| Gota de Veneno | 40 | Ver abaixo |
 
-**Gota de Veneno** (1 uso): no combate, a opção **"Aplicar Gota de Veneno na arma"** gasta a rodada inteira e consome a gota. O veneno **só dura até o seu próximo turno**: o próximo ataque **com arma** que acertar deixa o alvo envenenado, causando **1d4 de dano por rodada até o fim do combate**. Se o ataque errar, o veneno seca e é preciso outra gota. Não funciona com magia.
+---
+
+## Missões
+
+O quadro de missões fica **na parede da taverna**. Ele guarda avisos pregados com alfinete, e cada um tem local, objetivo e recompensa. A estrutura é a mesma para todas: você lê o aviso, aceita, e o jogo passa a registrar **novidades** sobre o que você já descobriu daquela missão.
+
+<details>
+<summary>⚠️ <b>Spoiler: as missões do quadro</b> — clique para revelar</summary>
+
+Só **A Filha Perdida** aparece no quadro. **A Neta Perdida** existe, mas nunca é anunciada no quadro — você só a recebe pessoalmente (ver o bloco da netinha acima).
+
+| Missão | Onde | Objetivo | Recompensa |
+|---|---|---|---|
+| **A Filha Perdida** | Perto das cavernas ao redor da vila | Uma filha foi vista por último perto das cavernas da vila. É preciso encontrá-la antes que algo pior aconteça. | 100 ouro — falar com a dona da alfaiataria ao encontrá-la |
+
+O aviso fica no quadro mesmo depois de encerrada (a formalização do funeral), e some 2 dias depois.
+
+</details>
 
 ---
 
@@ -468,9 +722,14 @@ Cada construção fica **ancorada no ponto da mata onde foi montada** — na tri
 ### Cabana
 
 - **Custo:** 7 Madeira + 10 Folha + 4 Pedra (2/3 de período)
-- Permite **dormir à noite** (recupera **metade da vida e metade da mana**) e zera o cansaço — só estando no ponto dela.
-- É o pré-requisito para receber visitas (veja a seção de Companheiros).
+- Permite **dormir à noite** (recupera **metade da vida e metade da mana**) e zera o cansaço — só estando no ponto dela. A **Capa do Viajante** acrescenta +4 de vida ao sono.
+- É o pré-requisito para receber visitas (veja a seção de [Companheiros](#companheiros)).
 - Sair da cabana para a floresta (explorar/recursos) ou **ir ao Labirinto** conta como **não estar mais nela**.
+
+### Fogueira
+
+- **Custo:** 4 Madeira + 3 Folha (2/3 de período)
+- **Cozinhar** (só no ponto da fogueira): gasta **2 Madeiras** e converte **todas as carnes cruas** da mochila (Lobo e Urso) na versão **cozida** correspondente. A carne cozida não estraga — é a forma segura de comer carne de criatura selvagem sem risco de enjoo.
 
 ### Sala de Treino
 
@@ -480,15 +739,16 @@ Cada construção fica **ancorada no ponto da mata onde foi montada** — na tri
 
 ### Mesa de Magias
 
-- **Custo:** 5 Madeira + 4 Folha + 4 Pedra + 1 **Pó da Fada** (2/3 de período; o Pó da Fada vem de um encontro secreto — veja spoiler na seção de Criaturas)
-- **Estudar:** gasta o período restante e dá **+1 dado de dano em TODAS as habilidades de dano por 2 períodos** (magias, Estrondo, Giro e Explosão de Poder). O efeito vale os 2 períodos seguintes ao estudo (estudou de dia → vale na noite + no dia seguinte; estudou de noite → vale no dia + na noite seguinte). Não dá para estudar de novo enquanto o bônus estiver ativo.
+- **Custo:** 5 Madeira + 4 Folha + 4 Pedra + 1 **pó raro** (2/3 de período; esse pó vem de um encontro secreto — veja o spoiler na seção de Criaturas)
+- **Estudar:** gasta o período restante e dá **+1 dado de dano em TODAS as habilidades de dano por 2 períodos** (magias, Estrondo, Giro e Explosão de Poder). O efeito vale os 2 períodos seguintes ao estudo (estudou de dia → vale na noite + no dia seguinte; estudou de noite → vale o dia + a noite seguinte). Não dá para estudar de novo enquanto o bônus estiver ativo.
 - **Localização:** fica no ponto desta travessia onde você a montou. Se for o mesmo ponto da cabana ou da sala, elas ficam **junto** (usa sem novo deslocamento); caso contrário, é preciso **caminhar até a mesa** (a distância entre os pontos), não dá para usar de longe.
 
 ---
 
 ## Estruturas Encontradas
 
-### Labirinto
+<details>
+<summary>⚠️ <b>Spoiler: o Labirinto</b> — clique para revelar</summary>
 
 - **Como encontrar:** apenas **explorando a floresta**. A chance começa em **1%** por exploração e aumenta **+1% a cada dia** que passa (até 100%). Uma vez encontrado, não é sorteado de novo.
 - Ao descobrir a entrada, o jogador escolhe **entrar agora** ou **não entrar** — se não entrar, o local fica acessível pelo menu principal (como as construções), na opção **Labirinto**.
@@ -496,29 +756,33 @@ Cada construção fica **ancorada no ponto da mata onde foi montada** — na tri
 - Ao entrar, a interface vira sobre o labirinto (apenas **ver a ficha** continua disponível).
 - **O caminho é randomizado na descoberta e salvo na ficha** — ao voltar depois, continua exatamente de onde parou (células visitadas permanecem iluminadas).
 - **Navegação:** a tela mostra apenas a grade ao redor do personagem — as **laterais/paredes** onde você está (`##`) e os corredores vizinhos (`.`) — mais o que **já foi percorrido** (iluminado `·`) e sua posição (`@`). O resto do labirinto fica escuro, inclusive o centro (visível apenas enquanto se explora). Movimento via **W/A/S/D ou as setas do teclado** (↑ ↓ ← →) — executa no momento da tecla, **sem Enter**; qualquer outra tecla (número, caractere etc.) não faz nada. Uma câmera acompanha o personagem para que o labirinto (grade 31x31, bem maior) caiba na tela.
-- Há **apenas uma entrada**. **Casas especiais:** em algumas casas aleatórias há **encontros** (8 por labirinto) e em outras há **recompensas** (6 por labirinto) — cada casa especial é sorteada na geração e ativa uma única vez. **Encontros:** 40% Esqueleto, 40% Zumbi e 20% Baú. **Recompensas:** ao achar, o jogo pergunta **"quer pegar?"** — escolher **sim** sorteia: **80%** ouro (7–19), **17%** uma arma sorteada entre as armas do vendedor e **3%** um dos **tesouros raros** (Olho Demoníaco, Espada Majestral e Coroa do Rei — cada um só cai **uma vez** por ficha; detalhes no spoiler abaixo) e mostra **"Você pegou X"**; escolher **não** faz a casa ser consumida e a recompensa é **perdida** — não dá para voltar para pegá-la. Ao perceber um monstro, dá para **Lutar** ou **Tentar Fugir** com um **Teste de Destreza** (a dificuldade é por criatura — veja o spoiler abaixo). Ao pisar na **primeira casa do centro**, o **Minotauro** enfrenta você — **a porta se fecha e não dá para fugir** do combate. **Vencendo o Minotauro**, o labirinto **desmorona**: o jogador foge correndo, volta à floresta e o labirinto se **fecha para sempre** — a opção **Labirinto** some do menu.
-  <details>
-  <summary>⚠️ <b>Spoiler: o Minotauro (chefe do centro)</b> — clique para revelar</summary>
+- Há **apenas uma entrada**. **Casas especiais:** em algumas casas aleatórias há **encontros** (8 por labirinto) e em outras há **recompensas** (6 por labirinto) — cada casa especial é sorteada na geração e ativa uma única vez. **Encontros:** 40% Esqueleto, 40% Zumbi e 20% Baú. **Recompensas:** ao achar, o jogo pergunta **"quer pegar?"** — escolher **sim** sorteia: **80%** ouro (7–19), **17%** uma arma sorteada entre as armas do vendedor e **3%** um dos **tesouros raros** (Olho Demoníaco, Espada Majestral e Coroa do Rei — cada um só cai **uma vez** por ficha; detalhes no spoiler abaixo) e mostra **"Você pegou X"**; escolher **não** ainda **consome a casa** e a recompensa é **perdida** — não dá para voltar para pegá-la. Ao perceber um monstro, dá para **Lutar** ou **Tentar Fugir** com um **Teste de Destreza** (a dificuldade é por criatura — veja o spoiler abaixo). Ao pisar na **primeira casa do centro**, o **Minotauro** enfrenta você — **a porta se fecha e não dá para fugir** do combate. **Vencendo o Minotauro**, o labirinto **desmorona**: o jogador foge correndo, volta à floresta e o labirinto se **fecha para sempre** — a opção **Labirinto** some do menu.
 
-  Ao pisar na **primeira casa do centro**, uma silhueta colossal barra seu caminho e a porta se fecha:
+<details>
+<summary>⚠️ <b>Spoiler: o Minotauro (chefe do centro)</b> — clique para revelar</summary>
 
-  - **Minotauro** (Nível 5): **150** de vida, **15** de defesa, **+5** de iniciativa e **+4** de bônus de ataque; ataques comuns de **Garras 2d6** e **Chifre 1d12**.
-  - **Investida (20% dos ataques):** o Minotauro baixa a cabeça e investe. Você rola um **Teste de Destreza** contra o **teste de ataque** dele (empate favorece você). **Passou:** ele bate de frente na parede e sofre **25** de dano. **Falhou:** ele te atinge em cheio e você sofre **2d10** de dano.
-  - **A porta se fecha:** não há como fugir — a opção de fuga fica bloqueada até a vitória (se o **Rei das Criaturas** ordenar que ele fuja, ele se retira e reaparece com a vida cheia numa próxima tentativa).
-  - Recompensas: **500 XP**, **Chifre de Minotauro** (50% de cair, 1–2, vale **150g** no total — o vendedor paga **105g** por unidade) e a **recompensa exclusiva da classe**:
-    - **Guerreiro:** a **Espada do Minotauro** — **2d10 + Força**, com **30%** de chance de **atacar de novo** após cada golpe.
-    - **Mago:** o **Cajado de Sangue** — **1d6 + Força** e **+1 dado de dano** em todas as suas magias (conta como Cajado para conjurar).
-    - **Healer:** a habilidade passiva **Curandeiro Combatente** — ao atacar, cada **1 de mana** (máximo = seu nível) compra **1 ataque extra**, e **todo ataque que acerta cura metade do dano causado**.
-  - **Vitória:** o labirinto **desmorona e se fecha para sempre** (XP e drops são aplicados na morte do chefe). **Derrota:** você morre no coração do labirinto.
-  </details>
+Ao pisar na **primeira casa do centro**, uma silhueta colossal barra seu caminho e a porta se fecha:
+
+- **Minotauro** (Nível 5): **150** de vida, **15** de defesa, **+5** de iniciativa e **+4** de bônus de ataque; ataques comuns de **Garras 2d6** e **Chifre 1d12**.
+- **Investida (20% dos ataques):** o Minotauro baixa a cabeça e investe. Você rola um **Teste de Destreza** contra o **teste de ataque** dele (empate favorece você). **Passou:** ele bate de frente na parede e sofre **25** de dano. **Falhou:** ele te atinge em cheio e você sofre **2d10** de dano.
+- **A porta se fecha:** não há como fugir — a opção de fuga fica bloqueada até a vitória (se o **Rei das Criaturas** ordenar que ele fuja, ele se retira e reaparece com a vida cheia numa próxima tentativa).
+- Recompensas: **500 XP**, **Chifre de Minotauro** (50% de cair, 1–2, vale **150g** no total — o vendedor paga **105g** por unidade) e a **recompensa exclusiva da classe**:
+  - **Guerreiro:** a **Espada do Minotauro** — **2d10 + Força**, com **30%** de chance de **atacar de novo** após cada golpe.
+  - **Mago:** o **Cajado de Sangue** — **1d6 + Força** e **+1 dado de dano** em todas as suas magias (conta como Cajado para conjurar).
+  - **Healer:** a habilidade passiva **Curandeiro Combatente** — ao atacar, cada **1 de mana** (máximo = seu nível) compra **1 ataque extra**, e **todo ataque que acerta cura metade do dano causado**.
+- **Vitória:** o labirinto **desmorona e se fecha para sempre** (XP e drops são aplicados na morte do chefe). **Derrota:** você morre no coração do labirinto.
+
+</details>
+
+</details>
 
 ---
 
 ## Vendedor
 
-O **vendedor ambulante** aparece em 10% das explorações. O estoque é sorteado a cada visita entre os **14 itens do catálogo geral** (5 itens por visita). O vendedor **não** vende armas, armaduras ou itens exclusivos de classe — esses ficam com o **ferreiro**.
+O **vendedor ambulante** aparece em 10% das explorações. O estoque é sorteado a cada visita entre os **15 itens do catálogo geral** (5 itens por visita). O vendedor não vende armaduras nem itens exclusivos de classe — esses ficam com o **ferreiro**.
 
-### Preços de compra
+### Preços de compra (catálogo geral)
 
 | Item | Preço | Item | Preço |
 |---|---|---|---|
@@ -526,35 +790,31 @@ O **vendedor ambulante** aparece em 10% das explorações. O estoque é sorteado
 | Machado | 55 | Kit Médico | 25 |
 | Machadinha | 30 | Madeira | 6 |
 | Martelo | 80 | Folha | 4 |
-| Mangual | 55 | Pedra | 5 |
-| Arco | 65 | Frutas | 5 |
-| Flechas | 5 / un. | | |
+| Porrete | 40 | Pedra | 5 |
+| Mangual | 55 | Frutas | 5 |
+| Arco | 65 | Flechas | 5 / un. |
 | Lança | 80 | | |
 
 ### Regras de venda
 
-- O vendedor compra **qualquer item** seu por **70% do valor original** — o preço da loja para os produtos dele e o valor cheio de raridade para drops/tesouros (Osso 23 → **16**, Dente de Urso 14 → **9**, Chifre de Minotauro 150 → **105**, etc.).
-- O **ferreiro** e a **alfaiataria** pagam um pouco mais: **80%** do valor cheio.
+- O vendedor ambulante compra **qualquer item** seu por **70% do valor original** — o preço da loja para os produtos dele e o valor cheio de raridade para drops e tesouros (materiais de saque viram 16g, 9g, 105g; um tesouro raro de 1000g vira **700g**).
+- O **ferreiro** paga **80%** do valor cheio, mas só de **armas e armaduras**.
+- A **Dona Maga** paga **80%** do valor cheio, mas só de **itens mágicos**.
+- A **alfaiataria** paga **80%** do valor cheio do **Couro**.
 
 ### Onde ficam os itens exclusivos de classe
 
 Espada, Espada Pesada, Machado de Guerra, Martelo de Guerra, Armadura Pesada (Guerreiro), Bisturi, Arco Refinado, Nunchako, Foice (Healer) e Cajado (Mago) são vendidos **apenas pelo ferreiro**, com restrição de classe.
 
-> **Lacuna conhecida:** o **Chapéu Mágico** (+3 de dano em todas as magias), o **Pequeno Grimório** (magias pagas custam 1 de mana a menos, mínimo 1) e a **Poção Grande de Mana** existem no código e têm efeitos implementados, mas **não têm nenhuma fonte de obtenção no jogo** — não estão no estoque do vendedor.
-
 ---
 
 ## Companheiros
-
-<details>
-<summary>⚠️ <b>AVISO DE SPOILER: obtenção e permanência de companheiros</b> — clique para revelar</summary>
 
 Depois que você **constrói a cabana**, a cada troca de período (dia/noite) há **20% de chance** de uma **pessoa perdida** aparecer pedindo abrigo. Você pode acolhê-la ou recusar. Se já tiver um companheiro, o visitante vai embora.
 
 O companheiro é gerado com nome, classe aleatória (Mago/Guerreiro/Healer), nível 1 ou 2 e 6 pontos de atributos sorteados.
 
 **Atenção — ele vai embora:** cada noite que dorme na cabana, o companheiro recupera metade da vida/mana. Na **primeira noite**, um contador de `1–3 dias` é sorteado; quando ele zera, **na manhã seguinte o companheiro agradece e parte para sempre.**
-</details>
 
 Enquanto estiver com você, o companheiro:
 
@@ -571,34 +831,47 @@ Enquanto estiver com você, o companheiro:
 
 ### Armas
 
-| Arma | Dano | Tipo | Atributo | Observação |
-|---|---|---|---|---|
-| Soco | 1d3 | CaC | Força | Ataque desarmado universal |
-| Espada | 1d8 | CaC | Força | Inicial do Guerreiro |
-| Espada Pesada | 1d10 | CaC | Força | Vendedor (Guerreiro) |
-| Machado de Guerra | 1d12 | CaC | Força | Vendedor (Guerreiro) |
-| Martelo de Guerra | 1d12 | CaC | Força | Vendedor (Guerreiro) |
-| Machado | 1d6 | CaC | Força | Vendedor |
-| Machadinha | 1d4 | CaC | Força | Vendedor |
-| Martelo | 1d8 | CaC | Força | Vendedor |
-| Mangual | 1d6 | CaC | Força | Vendedor |
-| Lança | 1d6 | CaC | **Ágil** | Usa o maior entre Força/Destreza |
-| Faca | 1d4 | CaC | Destreza | Drop dos bandidos |
-| Nunchako | 1d6 | CaC | Destreza | Vendedor (Healer) |
-| Cajado | 1d4 | CaC/mágico | Força | Inicial do Mago; **obrigatório para lançar magias** |
-| Bisturi | 1d4 → 3d8 | CaC | Ágil | Inicial do Healer; vira 3d8 com **Arma Mental** |
-| Arco | 1d6 | à distância | Destreza | Consome Flechas |
-| Arco Refinado | 1d8 | à distância | Destreza | Consome Flechas |
-| Foice | 1d8 | à distância | Destreza | Consome Flechas |
+| Arma | Dano | Tipo | Atributo | Preço | Observação |
+|---|---|---|---|---|---|
+| Soco | 1d3 | CaC | Força | — | Ataque desarmado universal |
+| Espada | 1d8 | CaC | Força | 65 | Inicial do Guerreiro |
+| Espada Pesada | 1d10 | CaC | Força | 110 | Ferreiro (Guerreiro) |
+| Machado de Guerra | 1d12 | CaC | Força | 140 | Ferreiro (Guerreiro) |
+| Martelo de Guerra | 1d12 | CaC | Força | 140 | Ferreiro (Guerreiro) |
+| Machado | 1d6 | CaC | Força | 55 | Vendedor |
+| Machadinha | 1d4 | CaC | Força | 30 | Vendedor |
+| Martelo | 1d8 | CaC | Força | 80 | Vendedor |
+| Porrete | 1d8 | CaC | Força | 40 | Vendedor |
+| Mangual | 1d6 | CaC | Força | 55 | Vendedor |
+| Lança | 1d6 | CaC | **Ágil** | 80 | Usa o maior entre Força/Destreza |
+| Faca | 1d4 | CaC | Destreza | 30 | Drop dos bandidos |
+| Nunchako | 1d6 | CaC | Destreza | 70 | Ferreiro (Healer) |
+| Cajado | 1d4 | CaC/mágico | Força | 50 | Inicial do Mago; **obrigatório para lançar magias** |
+| Bisturi | 1d4 → 3d8 | CaC | Ágil | 40 | Inicial do Healer; vira 3d8 com **Arma Mental** |
+| Arco | 1d6 | à distância | Destreza | 65 | Consome Flechas |
+| Arco Refinado | 1d8 | à distância | Destreza | 95 | Ferreiro (Healer); consome Flechas |
+| Foice | 1d8 | à distância | Destreza | 85 | Ferreiro (Healer); consome Flechas |
+
+Existem quatro armas que só aparecem bem depois do começo do jogo. Os nomes, a origem e as estatísticas delas estão no spoiler de itens raros, mais abaixo.
 
 ### Armaduras
 
 | Armadura | Bônus | Preço |
 |---|---|---|
-| Armadura Leve | +3 Defesa | 60g |
-| Armadura Pesada | +5 Defesa | 100g (Guerreiro) |
+| Armadura Leve | +3 Defesa | 230g |
+| Armadura Pesada | +5 Defesa | 450g (Guerreiro) |
 
 A melhor armadura é equipada automaticamente; as demais ficam na mochila sem efeito.
+
+### Roupas
+
+| Roupa | Bônus | Preço |
+|---|---|---|
+| Lenço de Seda | +1 Defesa | 60g |
+| Botas de Correio | +1 em testes de Destreza | 70g |
+| Capa do Viajante | +4 de vida ao dormir | 80g |
+| Túnica de Aventureiro | +1 de dano CaC | 90g |
+| Manto do Atirador | +1 de dano à distância | 90g |
 
 ### Consumíveis
 
@@ -607,33 +880,46 @@ A melhor armadura é equipada automaticamente; as demais ficam na mochila sem ef
 | Kit Médico | Cura 1d4 (em você ou no companheiro) e **acaba com uma infecção** | Combate (gasta o turno) ou inventário |
 | Frutas | Cura 1d2 | Recurso coletado na floresta |
 | Poção de Mana | +5 de mana | ✔ |
-| Poção Grande de Mana | +7 de mana | Vendedor (Mago) |
-| Flechas | Munição (3g/un.) | Consumida pelos arcos |
+| Poção Grande de Mana | +7 de mana | Casa do Chapéu Mágico |
+| Hidromel | +1d4 de mana | Taverna |
+| Gota de Veneno | Envenena o próximo ataque com arma que acertar (1d4 por rodada) | Uma rodada inteira para aplicar |
+| *Um consumível raro* | Existe um item que só aparece depois de uma missão específica | Só em combate — ver spoiler |
 
-> Kit Médico: cada "uso" é uma unidade do item (o Healer começa com 5).
+> Kit Médico: cada "uso" é uma unidade do item (o Healer começa com 5). Comidas da taverna e frutas da barraca também contam como comida e saciam a fome.
 
 ### Materiais e valor
 
 | Material | De onde vem | Uso / valor |
 |---|---|---|
-| Couro | Saque de criaturas (ver spoiler na seção de Criaturas) | Construção da Sala de Treino (4x) · vende por 6g |
-| Dente de Urso | Saque de criaturas (ver spoiler na seção de Criaturas) | Vende por 14g |
-| Pó da Fada | Encontro secreto (ver spoiler na seção de Criaturas) | Ingrediente da Mesa de Magias · vende por 75g |
+| Couro | Saque de criaturas (ver spoiler na seção de Criaturas) | Construção da Sala de Treino (4x) · alfaiataria paga 5g |
+| Presas e dentes | Saque de criaturas (ver spoiler na seção de Criaturas) | Vende por 9g |
+| Carne de animal | Saque de criaturas | Cozinhe na **Fogueira** para não estragar (vende por 7g / 12g) |
+| Pó raro de encontro secreto | Ver spoiler na seção de Criaturas | Ingrediente da Mesa de Magias · vende por 52g |
 | Madeira / Folha / Pedra | Recursos da floresta | Construção |
-| Osso | Labirinto (Esqueleto) | Vende por 16g (70% do valor cheio 23) · não é comprado no vendedor |
-| Carne Podre | Labirinto (Zumbi) | Vende por 10g (70% do valor 15) · não é comprado no vendedor |
-| Olho Demoníaco | Labirinto (recompensa rara) | Desbloqueia o **Pacto Mortal** · não é vendido |
-| Espada Majestral | Labirinto (recompensa rara) | Arma 1d12 + 1d4 de luz, dobro contra mortos-vivos · não é vendida |
-| Coroa do Rei | Labirinto (recompensa rara) | Desbloqueia o **Rei das Criaturas** · vende por 210g (70% do valor 300) |
-| Chifre de Minotauro | Labirinto (chefe Minotauro) | Vende por 70g (70% do valor 100) · não é comprado no vendedor |
-| Espada do Minotauro | Labirinto (chefe Minotauro, Guerreiro) | Arma 2d10 + Força, 30% de atacar de novo · não é vendida |
-| Cajado de Sangue | Labirinto (chefe Minotauro, Mago) | Arma 1d6 + Força, +1 dado de dano em magias · não é vendido |
+
+<details>
+<summary>⚠️ <b>Spoiler: os itens raros e onde eles aparecem</b> — clique para revelar</summary>
+
+| Material | De onde vem | Uso / valor |
+|---|---|---|
+| Osso | Labirinto (Esqueleto) | Vende por 16g (70% de 23) |
+| Carne Podre | Labirinto (Zumbi) | Vende por 10g (70% de 15) |
+| Fruta do Diabo | Recompensa da velhinha (ver spoiler da netinha) | Burst de combate · vende por 350g |
+| Cutelo | Mago Macabro (ver spoiler da netinha) | Arma 2d8 com sangramento · vende por 182g |
+| Coroa do Rei | Labirinto (recompensa rara) | Desbloqueia o **Rei das Criaturas** · vende por 700g |
+| Chifre de Minotauro | Labirinto (chefe Minotauro) | Vende por 105g (70% de 150) |
+| Espada do Minotauro | Labirinto (chefe, Guerreiro) | Arma 2d10, 30% de atacar de novo · venda 875g |
+| Cajado de Sangue | Labirinto (chefe, Mago) | Arma 1d6, +1d de magia · venda 1050g |
+| Espada Majestral | Labirinto (recompensa rara) | Arma 1d12 + 1d4 de luz, dobro contra mortos-vivos · venda 490g |
+| Olho Demoníaco | Labirinto (recompensa rara) | Abre o **Pacto Mortal** · não é um item de mochila |
+
+</details>
 
 ---
 
 ## Salvar e Carregar
 
-- Existem **3 slots** de save (`saves/save1.dat` a `save3.dat`).
+- Existem **3 slots** de save (`saves/save1.dat` a `save3.dat`), gravados com serialização de objeto Java (`ObjectOutputStream`).
 - O menu mostra nome, classe, nível, dificuldade, período atual e a data do último save.
 - **Não há autosave** — salve com frequência.
 - **Apagar Save** pede confirmação antes de apagar.
@@ -645,25 +931,44 @@ A melhor armadura é equipada automaticamente; as demais ficam na mochila sem ef
 ```
 ├── pom.xml                        # Build Maven, dependências e testes
 ├── src/main/java/
-│   ├── Main.java                  # Loop principal, menus e navegação
-│   ├── classes/                   # ClasseRpg, Mago, Guerreiro, Healer
-│   ├── fichas/FichaRpg.java       # Atributos, inventário, ouro, defesa, tempo
-│   ├── fichas/ModoDificuldade.java# Normal e Difícil
+│   ├── Main.java                  # Loop principal, navegação e fluxo entre menus
+│   ├── classes/                   # ClasseRpg, Mago, Guerreiro, Healer (Strategy)
+│   ├── fichas/                    # FichaRpg, gerenciadores de inventário/construções/vida
+│   ├── racas/                     # Raças e suas passivas
 │   ├── criaturas/                 # Criatura e CriaturaFactory (monstros e drops)
-│   ├── eventos/Floresta.java      # Exploração, encontros, construção e vendedor
-│   ├── eventos/TravessiaDaFloresta.java  # Sair da floresta adentrando a mata
-│   ├── eventos/VilarejoDeScarbor.java    # Vila além da floresta (destino da travessia)
-│   ├── mecanicas/                 # MotorDeCombate e MecanicasRpg (dados, fórmulas)
-│   ├── habilidades/               # Habilidade e Magia
-│   ├── habilidades/ativas/        # Implementações das habilidades ativas (Command)
-│   ├── companheiros/              # Companheiro (NPC que te acompanha)
-│   ├── itens/                     # ItemRpg, Arma, Armadura, Consumivel
-│   ├── loja/Vendedor.java         # Comércio e preços
-│   ├── narrativa/Aventura.java    # Prólogo
+│   ├── eventos/                   # Floresta, Travessia, Vilarejo, Taverna, Ferreiro,
+│   │                              #   Alfaiataria, BarracaDeFrutas, CasaDoChapeuMagico,
+│   │                              #   Caverna, funeral, trilha da neta, acampamento
+│   ├── estruturas/                # Labirinto e a disputa com o chefe dele
+│   ├── missoes/                   # QuadroDeMissoes (avisos, aceite, novidades)
+│   ├── mecanicas/                 # MotorDeCombate, Gerenciadores de Turnos/Ataque/
+│   │                              #   Habilidades/Itens/Evolucao/Companheiro, MecanicasRpg
+│   ├── habilidades/               # Habilidade, Magia e habilidades ativas (Command)
 │   ├── comandos/                  # Padrão Command das ações de combate
-│   └── telas/Interface.java       # Menus, ficha e entradas do jogador
-└── src/test/java/                 # Suíte de testes automatizados
+│   ├── companheiros/              # Companheiro (NPC que te acompanha)
+│   ├── itens/                     # ItemRpg, Arma, Armadura, Consumivel (+ pesos)
+│   ├── loja/                      # Vendedor (catálogo, preços, criação de itens)
+│   ├── narrativa/                 # Aventura (prólogo)
+│   ├── salvamento/                # GerenciadorSaves (3 slots)
+│   ├── telas/                     # Interface, MenuCriacaoPersonagem, MenuSalvamento,
+│   │                              #   MenuVisualizacao, Teclado (WASD)
+│   └── dev/                       # ModificarFicha
+└── src/test/java/                 # Suíte de testes automatizados (JUnit 5 + Mockito)
 ```
+
+---
+
+## Testes
+
+A suíte cobre regras matemáticas, inventário, combate, evolução, creaturas, missões e os eventos de história.
+
+```bash
+mvn clean test
+```
+
+**264 testes** passam com 0 falhas e 0 erros.
+
+---
 
 ## Conceitos Aplicados
 

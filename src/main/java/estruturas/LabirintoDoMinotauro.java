@@ -263,7 +263,7 @@ public class LabirintoDoMinotauro {
         ficha.setCoroaReiEncontrada(true);
         Interface.MostrarMensagem(AMARELO + "Sentada em um trono de pedra, uma coroa enferrujada aguarda. Perto dela, criaturas parecem hesitar em avançar." + RESET);
         Interface.Pausa(3500);
-        ficha.adicionarItem(new itens.ItemRpg("Coroa do Rei", "A coroa do senhor do labirinto. Vale 300 moedas de ouro... e talvez guarde um segredo.", 1));
+        ficha.adicionarItem(new itens.ItemRpg("Coroa do Rei", "A coroa do senhor do labirinto. Vale 1000 moedas de ouro... e talvez guarde um segredo.", 1));
         Interface.MostrarMensagem(VERDE + "Você pegou a Coroa do Rei!" + RESET);
         Interface.Pausa(2500);
 

@@ -409,7 +409,7 @@ public class Caverna {
             Interface.Pausa(1600);
             return;
         }
-        GerenciadorDeInventarioFicha.coletarItemEncontrado(ficha, new ItemRpg("Porrete", "Um porrete pesado de madeira maciça que causa 1d8 de dano, usando Força.", 1), "Você pega");
+        GerenciadorDeInventarioFicha.coletarItemEncontrado(ficha, loja.Vendedor.criarItem("Porrete"), "Você pega");
         if (ficha.temItem("Porrete")) {
             GerenciadorDeMissoesECompanheiro.registrarNovidade(ficha, "A Filha Perdida", "Você pegou o porrete do goblin transformado. É uma peça pesada, do tamanho de um antebraço.");
         }
